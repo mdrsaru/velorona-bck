@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - ${PORT}:${PORT}
+    volumes:
+      - ./:/app
+      - /app/node_modules
+
+  postgres:
+    image: postgres:14.2-alpine
+    ports:
+      - 5432:5432
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+    environment:
+      POSTGRES_USER: ${POSTGRES_DATABASE_USERNAME}
+      POSTGRES_PASSWORD: ${POSTGRES_DATABASE_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DATABASE_NAME} 
+
+volumes:
+  pgdata:

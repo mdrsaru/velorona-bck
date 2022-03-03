@@ -1,0 +1,5 @@
+node_modules
+.husky
+.git
+.eslintrc.json
+.prettierrc.json
