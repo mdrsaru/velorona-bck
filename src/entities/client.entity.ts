@@ -3,14 +3,13 @@ import { ObjectType, Field, ID, InputType } from 'type-graphql';
 
 import { entities } from '../config/constants';
 import { PagingResult } from './common.entity';
+import { Base } from './base.entity';
+
+declare function returnsString(): string;
 
 @Entity({ name: entities.clients })
 @ObjectType()
-export default class Client extends BaseEntity {
-  @Field((type) => ID)
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
+export default class Client extends Base {
   @Field()
   @Column()
   name: string;
@@ -18,14 +17,6 @@ export default class Client extends BaseEntity {
   @Field()
   @Column()
   status: string;
-
-  @Field()
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @Field()
-  @UpdateDateColumn()
-  updatedAt: Date;
 }
 
 @ObjectType()
@@ -38,7 +29,7 @@ export class ClientPagingResult {
 }
 
 @InputType()
-export class ClientCreate {
+export class ClientCreateInput {
   @Field()
   name: string;
 
@@ -47,7 +38,10 @@ export class ClientCreate {
 }
 
 @InputType()
-export class ClientUpdate {
+export class ClientUpdateInput {
+  @Field()
+  id: string;
+
   @Field()
   name: string;
 

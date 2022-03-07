@@ -46,6 +46,12 @@ export const entities = {
   clients: 'clients',
 };
 
+export const clientStatus = {
+  Active: 'Active',
+  Inactive: 'Inactive',
+  Archived: 'Archived',
+};
+
 export default {
   env,
   origins,

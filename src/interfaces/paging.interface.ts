@@ -9,6 +9,10 @@ export interface IPagingArgs {
   query?: any;
 }
 
+export interface IPagingResultArgs extends IPagingArgs {
+  total: number;
+}
+
 export interface IPagingResult {
   total: number;
   startIndex: number;
@@ -18,10 +22,10 @@ export interface IPagingResult {
 
 export interface IPaginationData<T> {
   paging: IPagingResult;
-  data: T;
+  data: T[];
 }
 
 export interface IGetAllAndCountResult<T> {
   count: number;
-  rows: T;
+  rows: T[];
 }

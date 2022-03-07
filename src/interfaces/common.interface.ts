@@ -1,8 +1,11 @@
 import { CustomError } from '../utils/api-error';
+import { IPagingArgs, IGetAllAndCountResult } from './paging.interface';
 
-export interface IEntityRemove {
+export interface IEntityID {
   id: string;
 }
+
+export interface IEntityRemove extends IEntityID {}
 
 // Logger
 export interface ILoggerInput {
@@ -59,4 +62,11 @@ export interface IHashService {
 // app
 export interface IAppService {
   getStatus(): string;
+}
+
+export interface IBaseRepository<T> {
+  getAllAndCount(args: IPagingArgs): Promise<IGetAllAndCountResult<T>>;
+  getAll(args: any): Promise<T[]>;
+  getById(args: IEntityID): Promise<T | undefined>;
+  remove(args: IEntityRemove): Promise<T>;
 }

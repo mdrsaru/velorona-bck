@@ -47,11 +47,13 @@ export default class ErrorService implements IErrorService {
     if (err instanceof Joi.ValidationError) {
       err = new ValidationError({
         details: err.details.map((x) => x.message),
+        error: err,
       });
     } else if (!(err instanceof CustomError)) {
       // Error is unknown error
       err = new AppError({
         details: [err?.message],
+        error: err,
       });
     }
 

@@ -1,8 +1,8 @@
-import { IPagingArgs, IPagingResult } from '../interfaces/paging.interface';
+import { IPagingArgs, IPagingResult, IPagingResultArgs } from '../interfaces/paging.interface';
 
 export default class Paging {
   static getPagingArgs(args: any): IPagingArgs {
-    let { skip = 0, limit = 50, sort = 'createdAt:desc', ...query } = args;
+    let { skip = 0, limit = 50, sort = 'createdAt:desc', ...query } = args ?? {};
 
     let [field, orderBy] = sort.split(':');
     sort = { [field]: orderBy };
@@ -18,10 +18,10 @@ export default class Paging {
     };
   }
 
-  static getPagingResult(args: any, data: any): IPagingResult {
+  static getPagingResult(args: IPagingResultArgs): IPagingResult {
     const skip = args.skip || 0;
     const limit = args.limit || 10;
-    const total = data.total;
+    const total = args.total;
     const endIndex = +skip + +limit - 1;
 
     return {
