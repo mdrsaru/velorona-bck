@@ -1,14 +1,19 @@
 import { inject, injectable } from 'inversify';
 import { Resolver, Query, Ctx, Arg, Mutation, UseMiddleware } from 'type-graphql';
 
+import { TYPES } from '../../types';
+import Paging from '../../utils/paging';
+import Client from '../../entities/client.entity';
+import { IClient, IClientService } from '../../interfaces/client.interface';
 import { IErrorService, IJoiService } from '../../interfaces/common.interface';
 import ClientValidation from '../../validation/client.validation';
-import Client from '../../entities/client.entity';
-import { ClientPagingResult, ClientQueryInput, ClientCreate, ClientUpdate } from '../../entities/client.entity';
+import {
+  ClientPagingResult,
+  ClientQueryInput,
+  ClientCreateInput,
+  ClientUpdateInput,
+} from '../../entities/client.entity';
 import { PagingInput, DeleteInput, MessageResponse } from '../../entities/common.entity';
-
-import { TYPES } from '../../types';
-import { IClient, IClientService } from '../../interfaces/client.interface';
 import { IPaginationData } from '../../interfaces/paging.interface';
 
 @injectable()
@@ -33,19 +38,20 @@ export class ClientResolver {
   async Clients(
     @Arg('input', { nullable: true }) args: ClientQueryInput,
     @Ctx() ctx: any
-  ): Promise<IPaginationData<IClient[]>> {
+  ): Promise<IPaginationData<Client>> {
     const operation = 'Clients';
 
     try {
-      let result: IPaginationData<IClient[]> = await this.clientService.getAllAndCount(args || {});
+      const pagingArgs = Paging.getPagingArgs(args);
+      let result: IPaginationData<Client> = await this.clientService.getAllAndCount(pagingArgs);
       return result;
     } catch (err) {
-      this.errorService.throwError({ err, name: this.name, operation, logError: false });
+      this.errorService.throwError({ err, name: this.name, operation, logError: true });
     }
   }
 
   @Mutation((returns) => Client)
-  async ClientCreate(@Arg('input') args: ClientCreate, @Ctx() ctx: any): Promise<IClient> {
+  async ClientCreate(@Arg('input') args: ClientCreateInput, @Ctx() ctx: any): Promise<Client> {
     const operation = 'ClientCreate';
 
     try {
@@ -61,22 +67,23 @@ export class ClientResolver {
         },
       });
 
-      let client: IClient = await this.clientService.create({
+      let client: Client = await this.clientService.create({
         name,
         status,
       });
 
       return client;
     } catch (err) {
-      this.errorService.throwError({ err, name: this.name, operation, logError: false });
+      this.errorService.throwError({ err, name: this.name, operation, logError: true });
     }
   }
 
   @Mutation((returns) => Client)
-  async ClientUpdate(@Arg('input') args: ClientUpdate, @Ctx() ctx: any): Promise<IClient> {
+  async ClientUpdate(@Arg('input') args: ClientUpdateInput, @Ctx() ctx: any): Promise<Client> {
     const operation = 'ClientUpdate';
 
     try {
+      const id = args.id;
       const name = args.name;
       const status = args.status;
 
@@ -84,12 +91,14 @@ export class ClientResolver {
       await this.joiService.validate({
         schema,
         input: {
+          id,
           name,
           status,
         },
       });
 
-      let client: IClient = await this.clientService.update({
+      let client: Client = await this.clientService.update({
+        id,
         name,
         status,
       });
@@ -101,13 +110,13 @@ export class ClientResolver {
   }
 
   @Mutation((returns) => Client)
-  async ClientDelete(@Arg('input') args: DeleteInput, @Ctx() ctx: any): Promise<IClient> {
+  async ClientDelete(@Arg('input') args: DeleteInput, @Ctx() ctx: any): Promise<Client> {
     const operation = 'ClientDelete';
 
     try {
       const id = args.id;
 
-      let client: IClient = await this.clientService.remove({ id });
+      let client: Client = await this.clientService.remove({ id });
 
       return client;
     } catch (err) {

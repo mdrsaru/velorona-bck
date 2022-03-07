@@ -12,8 +12,8 @@ const connectionConfig = {
   database: databaseSetting.name,
   synchronize: databaseSetting.synchronize,
   logging: databaseSetting.logging,
-  entities: [path.join(__dirname, '../..', 'entities/**/*.ts'), path.join(__dirname, '../..', 'entities/**/*.js')],
-  migrations: [path.join(__dirname, 'migrations/**/*.ts'), path.join(__dirname, 'migrations/**/*.js')],
+  entities: [path.join(__dirname, '../..', 'entities/**/*.ts')],
+  migrations: [path.join(__dirname, 'migrations/**/*.ts')],
   cli: {
     entitiesDir: path.join(__dirname, '../..', 'entities'),
     migrationsDir: path.join(__dirname, 'migrations'),

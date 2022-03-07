@@ -1,33 +1,62 @@
+import merge from 'lodash/merge';
 import { injectable, inject } from 'inversify';
 import { getRepository, Repository } from 'typeorm';
 
 import { TYPES } from '../types';
 import Client from '../entities/client.entity';
+import BaseRepository from './base.repository';
 import { IClient, IClientCreate, IClientUpdate, IClientRepository } from '../interfaces/client.interface';
 import { IPagingArgs, IGetAllAndCountResult } from '../interfaces/paging.interface';
-import { IEntityRemove } from '../interfaces/common.interface';
+import { IEntityRemove, IEntityID } from '../interfaces/common.interface';
+import { NotFoundError } from '../utils/api-error';
 
 @injectable()
-export default class ClientRepository implements IClientRepository {
-  private repo: Repository<Client>;
-
+export default class ClientRepository extends BaseRepository<Client> implements IClientRepository {
   constructor() {
-    this.repo = getRepository(Client);
+    super(getRepository(Client));
   }
 
-  getAllAndCount = (args: IPagingArgs) => {
-    throw new Error('not implemented');
+  create = async (args: IClientCreate): Promise<Client> => {
+    try {
+      const name = args.name;
+      const status = args.status;
+
+      const client = await this.repo.save({
+        name,
+        status,
+      });
+
+      return client;
+    } catch (err) {
+      throw err;
+    }
   };
 
-  create = (args: IClientCreate) => {
-    throw new Error('not implemented');
-  };
+  update = async (args: IClientUpdate): Promise<Client> => {
+    try {
+      const id = args.id;
+      const name = args.name;
+      const status = args.status;
 
-  update = (args: IClientUpdate) => {
-    throw new Error('not implemented');
-  };
+      const found = await this.getById({ id });
 
-  remove = (args: IEntityRemove) => {
-    throw new Error('not implemented');
+      if (!found) {
+        throw new NotFoundError({
+          details: ['Client not found'],
+        });
+      }
+
+      const update = merge(found, {
+        id,
+        name,
+        status,
+      });
+
+      const client = await this.repo.save(update);
+
+      return client;
+    } catch (err) {
+      throw err;
+    }
   };
 }
