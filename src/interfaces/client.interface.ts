@@ -1,11 +1,12 @@
 import { IPagingArgs, IGetAllAndCountResult, IPaginationData } from './paging.interface';
 import { IEntityRemove, IEntityID } from './common.interface';
 import Client from '../entities/client.entity';
+import { ClientStatus } from '../config/constants';
 
 export interface IClient {
   id: string;
   name: string;
-  status: string;
+  status: ClientStatus;
   createdAt: string;
   updatedAt: string;
 }

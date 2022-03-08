@@ -46,11 +46,11 @@ export const entities = {
   clients: 'clients',
 };
 
-export const clientStatus = {
-  Active: 'Active',
-  Inactive: 'Inactive',
-  Archived: 'Archived',
-};
+export enum ClientStatus {
+  Active = 'Active',
+  Inactive = 'Inactive',
+  Archived = 'Archived',
+}
 
 export default {
   env,
