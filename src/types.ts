@@ -14,6 +14,8 @@ const COMMON = {
   AuthenticateMiddleware: Symbol('AuthenticateMiddleware'),
   ErrorService: Symbol('ErrorService'),
   JoiService: Symbol('JoiService'),
+  RoleService: Symbol('RoleService'),
+  RoleRepository: Symbol('RoleRepository'),
 };
 
 const TYPES = {
