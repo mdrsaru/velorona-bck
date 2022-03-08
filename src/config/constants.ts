@@ -44,6 +44,7 @@ export const databaseSetting = {
 export const entities = {
   users: 'users',
   clients: 'clients',
+  roles: 'roles',
 };
 
 export enum ClientStatus {
