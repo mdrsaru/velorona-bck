@@ -1,11 +1,13 @@
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, UpdateDateColumn } from 'typeorm';
-import { ObjectType, Field, ID, InputType } from 'type-graphql';
+import { ObjectType, Field, ID, InputType, registerEnumType } from 'type-graphql';
 
-import { entities } from '../config/constants';
-import { PagingResult } from './common.entity';
 import { Base } from './base.entity';
+import { entities, ClientStatus } from '../config/constants';
+import { PagingResult, PagingInput } from './common.entity';
 
-declare function returnsString(): string;
+registerEnumType(ClientStatus, {
+  name: 'ClientStatus',
+});
 
 @Entity({ name: entities.clients })
 @ObjectType()
@@ -14,9 +16,13 @@ export default class Client extends Base {
   @Column()
   name: string;
 
-  @Field()
-  @Column()
-  status: string;
+  @Field((type) => ClientStatus)
+  @Column({
+    type: 'enum',
+    enum: ClientStatus,
+    default: ClientStatus.Inactive,
+  })
+  status: ClientStatus;
 }
 
 @ObjectType()
@@ -33,8 +39,8 @@ export class ClientCreateInput {
   @Field()
   name: string;
 
-  @Field()
-  status: string;
+  @Field((type) => ClientStatus)
+  status: ClientStatus;
 }
 
 @InputType()
@@ -45,18 +51,21 @@ export class ClientUpdateInput {
   @Field()
   name: string;
 
-  @Field()
-  status: string;
+  @Field((type) => ClientStatus)
+  status: ClientStatus;
+}
+
+@InputType()
+export class ClientQuery {
+  @Field({ nullable: true })
+  id: string;
 }
 
 @InputType()
 export class ClientQueryInput {
   @Field({ nullable: true })
-  skip: number;
+  paging: PagingInput;
 
   @Field({ nullable: true })
-  limit: number;
-
-  @Field({ nullable: true })
-  sort: string;
+  query: ClientQuery;
 }

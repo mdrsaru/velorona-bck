@@ -1,19 +1,27 @@
 import { IPagingArgs, IPagingResult, IPagingResultArgs } from '../interfaces/paging.interface';
 
 export default class Paging {
-  static getPagingArgs(args: any): IPagingArgs {
-    let { skip = 0, limit = 50, sort = 'createdAt:desc', ...query } = args ?? {};
+  static createPagingPayload(args: any): IPagingArgs {
+    const skip = args?.paging?.skip ?? 0;
+    const limit: number = args?.paging?.limit;
+    let sort: string | string[] = args?.paging?.sort ?? [];
+    const query: any = args?.query ?? {};
 
-    let [field, orderBy] = sort.split(':');
-    sort = { [field]: orderBy };
-    if (limit > 150) {
-      limit = 150;
+    if (typeof sort === 'string') {
+      sort = [sort];
     }
+
+    let _sort: { [key: string]: string } = {};
+
+    sort.forEach((s) => {
+      let [field, orderBy] = s.split(':');
+      _sort[field] = orderBy;
+    });
 
     return {
       skip: +skip,
       limit: +limit,
-      sort,
+      sort: _sort,
       query,
     };
   }

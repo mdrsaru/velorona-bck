@@ -42,7 +42,7 @@ export class ClientResolver {
     const operation = 'Clients';
 
     try {
-      const pagingArgs = Paging.getPagingArgs(args);
+      const pagingArgs = Paging.createPagingPayload(args);
       let result: IPaginationData<Client> = await this.clientService.getAllAndCount(pagingArgs);
       return result;
     } catch (err) {
