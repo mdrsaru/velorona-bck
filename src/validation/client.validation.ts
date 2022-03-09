@@ -31,7 +31,7 @@ const messages = {
 export default class ClientValidation {
   static create() {
     return Joi.object({
-      name: Joi.string().required().required().messages(messages.name),
+      name: Joi.string().required().messages(messages.name),
       status: Joi.string().required().messages(messages.status),
     });
   }
@@ -39,8 +39,8 @@ export default class ClientValidation {
   static update() {
     return Joi.object({
       id: Joi.string().required().messages(messages.id),
-      name: Joi.string().required().required().messages(messages.name),
-      status: Joi.string().required().messages(messages.status),
+      name: Joi.string().messages(messages.name),
+      status: Joi.string().messages(messages.status),
     });
   }
 }

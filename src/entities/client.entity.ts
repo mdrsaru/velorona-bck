@@ -1,7 +1,16 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  BaseEntity,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToMany,
+} from 'typeorm';
 import { ObjectType, Field, ID, InputType, registerEnumType } from 'type-graphql';
 
 import { Base } from './base.entity';
+import User from './user.entity';
 import { entities, ClientStatus } from '../config/constants';
 import { PagingResult, PagingInput } from './common.entity';
 
@@ -23,6 +32,9 @@ export default class Client extends Base {
     default: ClientStatus.Inactive,
   })
   status: ClientStatus;
+
+  @OneToMany(() => User, (user) => user.client_id)
+  users: User[];
 }
 
 @ObjectType()
@@ -48,10 +60,10 @@ export class ClientUpdateInput {
   @Field()
   id: string;
 
-  @Field()
+  @Field({ nullable: true })
   name: string;
 
-  @Field((type) => ClientStatus)
+  @Field((type) => ClientStatus, { nullable: true })
   status: ClientStatus;
 }
 

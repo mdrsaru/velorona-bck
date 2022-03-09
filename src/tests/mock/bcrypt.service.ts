@@ -1,7 +1,7 @@
 import { injectable } from 'inversify';
 import bcrypt from 'bcrypt';
 
-import { IHashService } from '../../../interfaces/common.interface';
+import { IHashService } from '../../interfaces/common.interface';
 
 @injectable()
 export default class BcryptServiceMock implements IHashService {

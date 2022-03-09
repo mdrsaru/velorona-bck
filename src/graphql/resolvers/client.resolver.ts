@@ -35,7 +35,7 @@ export class ClientResolver {
   }
 
   @Query((returns) => ClientPagingResult)
-  async Clients(
+  async Client(
     @Arg('input', { nullable: true }) args: ClientQueryInput,
     @Ctx() ctx: any
   ): Promise<IPaginationData<Client>> {

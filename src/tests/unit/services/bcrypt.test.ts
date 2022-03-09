@@ -1,4 +1,4 @@
-import container from '../../../inversify.config/index';
+import container from '../../../inversify.config';
 import { TYPES } from '../../../types';
 
 import { IHashService } from '../../../interfaces/common.interface';

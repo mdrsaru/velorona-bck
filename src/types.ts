@@ -4,6 +4,12 @@ const CLIENT = {
   ClientController: Symbol('ClientController'),
 };
 
+const USER = {
+  UserRepository: Symbol('UserRepository'),
+  UserService: Symbol('UserService'),
+  UserController: Symbol('UserController'),
+};
+
 const COMMON = {
   AppService: Symbol('AppService'),
   AppController: Symbol('AppController'),
@@ -21,6 +27,7 @@ const COMMON = {
 const TYPES = {
   ...COMMON,
   ...CLIENT,
+  ...USER,
 };
 
 export { TYPES };
