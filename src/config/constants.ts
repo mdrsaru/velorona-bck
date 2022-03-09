@@ -53,6 +53,12 @@ export enum ClientStatus {
   Archived = 'Archived',
 }
 
+export enum UserStatus {
+  Active = 'Active',
+  Inactive = 'Inactive',
+  Archived = 'Archived',
+}
+
 export default {
   env,
   origins,

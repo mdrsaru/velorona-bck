@@ -41,6 +41,12 @@ Specifying env file:
 $ docker-compose --env-file [path-to-env-file] up
 ```
 
+To run the tests inside docker container and watch
+
+```
+$ docker-compose --env-file [path-to-env-file] -p tests run --rm app yarn test --watchAll
+```
+
 ## Other available scripts
 
 #### `npm run prettier:fix`
