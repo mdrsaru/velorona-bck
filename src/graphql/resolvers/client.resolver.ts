@@ -1,11 +1,15 @@
 import { inject, injectable } from 'inversify';
-import { Resolver, Query, Ctx, Arg, Mutation, UseMiddleware } from 'type-graphql';
+import { Resolver, Query, Ctx, Arg, Mutation, UseMiddleware, FieldResolver, Root } from 'type-graphql';
+
+import { IPaginationData } from '../../interfaces/paging.interface';
+import { IClient, IClientService } from '../../interfaces/client.interface';
+import { IErrorService, IJoiService } from '../../interfaces/common.interface';
+import { IGraphqlContext } from '../../interfaces/graphql.interface';
 
 import { TYPES } from '../../types';
 import Paging from '../../utils/paging';
+import User from '../../entities/user.entity';
 import Client from '../../entities/client.entity';
-import { IClient, IClientService } from '../../interfaces/client.interface';
-import { IErrorService, IJoiService } from '../../interfaces/common.interface';
 import ClientValidation from '../../validation/client.validation';
 import {
   ClientPagingResult,
@@ -14,10 +18,9 @@ import {
   ClientUpdateInput,
 } from '../../entities/client.entity';
 import { PagingInput, DeleteInput, MessageResponse } from '../../entities/common.entity';
-import { IPaginationData } from '../../interfaces/paging.interface';
 
 @injectable()
-@Resolver()
+@Resolver((of) => Client)
 export class ClientResolver {
   private name = 'ClientResolver';
   private clientService: IClientService;
@@ -122,5 +125,10 @@ export class ClientResolver {
     } catch (err) {
       this.errorService.throwError({ err, name: this.name, operation, logError: false });
     }
+  }
+
+  @FieldResolver()
+  users(@Root() root: Client, @Ctx() ctx: IGraphqlContext) {
+    return ctx.loaders.usersByClientIdLoader.load(root.id);
   }
 }

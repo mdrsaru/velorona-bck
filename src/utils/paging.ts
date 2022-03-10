@@ -3,40 +3,40 @@ import { IPagingArgs, IPagingResult, IPagingResultArgs } from '../interfaces/pag
 export default class Paging {
   static createPagingPayload(args: any): IPagingArgs {
     const skip = args?.paging?.skip ?? 0;
-    const limit: number = args?.paging?.limit;
-    let sort: string | string[] = args?.paging?.sort ?? [];
+    const take = args?.paging?.take;
+    let order: string | string[] = args?.paging?.order ?? [];
     const query: any = args?.query ?? {};
 
-    if (typeof sort === 'string') {
-      sort = [sort];
+    if (typeof order === 'string') {
+      order = [order];
     }
 
-    let _sort: { [key: string]: string } = {};
+    let _order: any = {};
 
-    sort.forEach((s) => {
+    order.forEach((s) => {
       let [field, orderBy] = s.split(':');
-      _sort[field] = orderBy;
+      _order[field] = orderBy;
     });
 
     return {
-      skip: +skip,
-      limit: +limit,
-      sort: _sort,
+      skip,
+      ...(take && { take }),
+      order: _order,
       query,
     };
   }
 
   static getPagingResult(args: IPagingResultArgs): IPagingResult {
     const skip = args.skip || 0;
-    const limit = args.limit || 10;
+    const take = args.take || 10;
     const total = args.total;
-    const endIndex = +skip + +limit - 1;
+    const endIndex = skip + take - 1;
 
     return {
       total,
-      startIndex: +skip,
+      startIndex: skip,
       endIndex: endIndex > total - 1 ? total - 1 : endIndex,
-      hasNextPage: skip + limit < total ? true : false,
+      hasNextPage: skip + take < total ? true : false,
     };
   }
 }

@@ -1,11 +1,11 @@
-export interface ISort {
+export interface IOrder {
   [field: string]: string;
 }
 
 export interface IPagingArgs {
   skip?: number;
-  limit?: number;
-  sort?: ISort;
+  take?: number;
+  order?: any;
   query?: any;
 }
 

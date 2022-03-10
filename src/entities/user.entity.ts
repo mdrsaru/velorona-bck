@@ -44,12 +44,17 @@ export default class User extends Base {
   })
   status: UserStatus;
 
+  @Field(() => Client, { nullable: true })
   @ManyToOne(() => Client, (client) => client.users)
   @JoinColumn({ name: 'client_id' })
-  client_id: string;
+  client: Client;
 
   @ManyToMany(() => User)
   roles: Role[];
+
+  @Field()
+  @Column({ nullable: true })
+  client_id: string;
 }
 
 @ObjectType()

@@ -33,7 +33,8 @@ export default class Client extends Base {
   })
   status: ClientStatus;
 
-  @OneToMany(() => User, (user) => user.client_id)
+  @Field(() => [User])
+  @OneToMany(() => User, (user) => user.client)
   users: User[];
 }
 

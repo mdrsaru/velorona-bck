@@ -1,7 +1,9 @@
 import { unmanaged, injectable } from 'inversify';
+import isArray from 'lodash/isArray';
 
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 
+import strings from '../config/strings';
 import { IPagingArgs, IGetAllAndCountResult } from '../interfaces/paging.interface';
 import { IBaseRepository, IEntityID, IEntityRemove } from '../interfaces/common.interface';
 import { NotFoundError } from '../utils/api-error';
@@ -14,21 +16,46 @@ export default class BaseRepository<T> implements IBaseRepository<T> {
   }
 
   getAllAndCount = async (args: IPagingArgs): Promise<IGetAllAndCountResult<T>> => {
-    const query = args?.query ?? {};
-    const rows = await this.repo.find({
-      where: query,
-    });
+    try {
+      let { query = {}, ...rest } = args;
 
-    return {
-      count: 0,
-      rows,
-    };
+      // For array values to be used as In operator
+      // https://github.com/typeorm/typeorm/blob/master/docs/find-options.md
+      for (let key in query) {
+        if (isArray(query[key])) {
+          query[key] = In(query[key]);
+        }
+      }
+
+      const [rows, count] = await this.repo.findAndCount({
+        ...rest,
+        ...query,
+      });
+
+      return {
+        count,
+        rows,
+      };
+    } catch (err) {
+      throw err;
+    }
   };
 
-  async getAll(args: any = {}): Promise<T[]> {
+  async getAll(args: IPagingArgs): Promise<T[]> {
     try {
+      let { query = {}, ...rest } = args;
+
+      // For array values to be used as In operator
+      // https://github.com/typeorm/typeorm/blob/master/docs/find-options.md
+      for (let key in query) {
+        if (isArray(query[key])) {
+          query[key] = In(query[key]);
+        }
+      }
+
       const rows = await this.repo.find({
-        where: args,
+        ...rest,
+        ...query,
       });
 
       return rows;
@@ -52,7 +79,7 @@ export default class BaseRepository<T> implements IBaseRepository<T> {
 
       if (!row) {
         throw new NotFoundError({
-          details: ['Resource not found'],
+          details: [strings.resourceNotFound],
         });
       }
 
