@@ -2,7 +2,10 @@ import get from 'lodash/get';
 import { injectable, inject } from 'inversify';
 
 import { TYPES } from '../types';
-import { IGraphql } from '../interfaces/graphql.interface';
+import container from '../inversify.config';
+import { IGraphql, IGraphqlContext } from '../interfaces/graphql.interface';
+import * as clientLoader from '../loaders/dataloader/client.dataloader';
+import * as userLoader from '../loaders/dataloader/user.dataloader';
 
 @injectable()
 export default class GraphqlService implements IGraphql {
@@ -22,8 +25,15 @@ export default class GraphqlService implements IGraphql {
     };
   }
 
-  setContext = async (args: any) => {
+  setContext = (args: any): IGraphqlContext => {
     const { req, res } = args;
-    return { req, res };
+    return {
+      req,
+      res,
+      loaders: {
+        clientByIdLoader: clientLoader.clientByIdLoader(),
+        usersByClientIdLoader: userLoader.usersByClientIdLoader(),
+      },
+    };
   };
 }

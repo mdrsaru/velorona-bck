@@ -8,4 +8,5 @@ export default {
   lastNameRequired: 'Lastname required',
   emailNotValid: 'Email not valid',
   phoneRequired: 'Phone required',
+  resourceNotFound: 'Resource not found',
 };

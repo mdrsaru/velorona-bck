@@ -66,7 +66,7 @@ export interface IAppService {
 
 export interface IBaseRepository<T> {
   getAllAndCount(args: IPagingArgs): Promise<IGetAllAndCountResult<T>>;
-  getAll(args: any): Promise<T[]>;
+  getAll(args: IPagingArgs): Promise<T[]>;
   getById(args: IEntityID): Promise<T | undefined>;
   remove(args: IEntityRemove): Promise<T>;
 }

@@ -12,10 +12,10 @@ export class PagingInput {
   skip: number;
 
   @Field({ nullable: true })
-  limit: number;
+  take: number;
 
-  @Field({ nullable: true })
-  sort: string;
+  @Field((type) => [String], { nullable: true })
+  order: string[];
 }
 
 @ObjectType()

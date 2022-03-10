@@ -1,22 +1,26 @@
 import { inject, injectable } from 'inversify';
-import { Resolver, Query, Ctx, Arg, Mutation, UseMiddleware } from 'type-graphql';
+import { Resolver, Query, Ctx, Arg, Mutation, UseMiddleware, FieldResolver, Root } from 'type-graphql';
 
 import { TYPES } from '../../types';
+import Client from '../../entities/client.entity';
 import Paging from '../../utils/paging';
 import UserValidation from '../../validation/user.validation';
 import { IErrorService, IJoiService } from '../../interfaces/common.interface';
 import { PagingInput, DeleteInput, MessageResponse } from '../../entities/common.entity';
 import { IPaginationData } from '../../interfaces/paging.interface';
 import { IUserService } from '../../interfaces/user.interface';
+import { IGraphqlContext } from '../../interfaces/graphql.interface';
 import User, { UserPagingResult, UserCreateInput, UserUpdateInput, UserQueryInput } from '../../entities/user.entity';
 
 @injectable()
-@Resolver()
+@Resolver((of) => User)
 export class UserResolver {
   private name = 'UserResolver';
   private userService: IUserService;
   private joiService: IJoiService;
   private errorService: IErrorService;
+  private clientLoader: any;
+  private loader: any;
 
   constructor(
     @inject(TYPES.UserService) _userService: IUserService,
@@ -123,5 +127,14 @@ export class UserResolver {
     } catch (err) {
       this.errorService.throwError({ err, name: this.name, operation, logError: true });
     }
+  }
+
+  @FieldResolver()
+  client(@Root() root: User, @Ctx() ctx: IGraphqlContext) {
+    if (root.client_id) {
+      return ctx.loaders.clientByIdLoader.load(root.client_id);
+    }
+
+    return null;
   }
 }
