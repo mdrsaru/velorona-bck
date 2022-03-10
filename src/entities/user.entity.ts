@@ -1,10 +1,11 @@
-import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, ManyToOne, JoinColumn, ManyToMany, JoinTable } from 'typeorm';
 import { ObjectType, Field, ID, InputType, registerEnumType } from 'type-graphql';
 
 import { Base } from './base.entity';
 import Client from './client.entity';
 import { entities, UserStatus } from '../config/constants';
 import { PagingInput, PagingResult } from './common.entity';
+import Role from './role.entity';
 
 registerEnumType(UserStatus, {
   name: 'UserStatus',
@@ -46,6 +47,9 @@ export default class User extends Base {
   @ManyToOne(() => Client, (client) => client.users)
   @JoinColumn({ name: 'client_id' })
   client_id: string;
+
+  @ManyToMany(() => User)
+  roles: Role[];
 }
 
 @ObjectType()

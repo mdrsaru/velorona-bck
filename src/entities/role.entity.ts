@@ -1,9 +1,19 @@
 import { string } from 'joi';
 import { Field, ID, InputType, ObjectType } from 'type-graphql';
-import { BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { entities } from '../config/constants';
 import { Base } from './base.entity';
 import { PagingInput, PagingResult } from './common.entity';
+import User from './user.entity';
 
 @Entity({ name: entities.roles })
 @ObjectType()
@@ -15,6 +25,20 @@ export default class Role extends Base {
   @Field()
   @Column()
   description: string;
+
+  @ManyToMany(() => Role)
+  @JoinTable({
+    name: 'user_roles',
+    joinColumn: {
+      name: 'role_id',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'user_id',
+      referencedColumnName: 'id',
+    },
+  })
+  users: User[];
 }
 
 @ObjectType()
