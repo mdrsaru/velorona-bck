@@ -1,5 +1,5 @@
 import Joi from 'joi';
-const idRequired = 'Name required';
+const idRequired = 'ID required';
 const nameRequired = 'Name required';
 const descriptionRequired = 'Description required';
 

@@ -1,16 +1,14 @@
 import merge from 'lodash/merge';
 import isNil from 'lodash/isNil';
 import isString from 'lodash/isString';
-import { injectable, inject } from 'inversify';
-import { getRepository, Repository } from 'typeorm';
+import { injectable } from 'inversify';
+import { getRepository } from 'typeorm';
 
-import { TYPES } from '../types';
 import strings from '../config/strings';
 import User from '../entities/user.entity';
+import Address from '../entities/address.entity';
 import BaseRepository from './base.repository';
 import { IUser, IUserCreate, IUserUpdate, IUserRepository } from '../interfaces/user.interface';
-import { IPagingArgs, IGetAllAndCountResult } from '../interfaces/paging.interface';
-import { IEntityRemove, IEntityID } from '../interfaces/common.interface';
 import * as apiError from '../utils/api-error';
 
 @injectable()
@@ -29,6 +27,7 @@ export default class UserRepository extends BaseRepository<User> implements IUse
       const middleName = args.middleName;
       const status = args.status;
       const client_id = args.client_id;
+      const address = args?.address;
 
       const errors: string[] = [];
 
@@ -62,7 +61,6 @@ export default class UserRepository extends BaseRepository<User> implements IUse
           details: [strings.userAlreadyExists],
         });
       }
-
       const user = await this.repo.save({
         email,
         password,
@@ -72,6 +70,7 @@ export default class UserRepository extends BaseRepository<User> implements IUse
         status,
         phone,
         client_id,
+        address,
       });
 
       return user;
@@ -88,15 +87,19 @@ export default class UserRepository extends BaseRepository<User> implements IUse
       const middleName = args.middleName;
       const status = args.status;
       const phone = args.phone;
+      const address = args?.address;
 
-      const found = await this.getById({ id });
+      const found = await this.repo.findOne(id, { relations: ['address'] });
 
       if (!found) {
         throw new apiError.NotFoundError({
           details: [strings.userNotFound],
         });
       }
-
+      const _address = {
+        id: found.address.id,
+        ...address,
+      };
       const update = merge(found, {
         id,
         firstName,
@@ -104,10 +107,10 @@ export default class UserRepository extends BaseRepository<User> implements IUse
         middleName,
         status,
         phone,
+        address: _address,
       });
 
       const user = await this.repo.save(update);
-
       return user;
     } catch (err) {
       throw err;

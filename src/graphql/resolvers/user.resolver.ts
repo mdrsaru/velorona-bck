@@ -58,6 +58,13 @@ export class UserResolver {
       const phone = args.phone;
       const status = args.status;
       const client_id = args.client_id;
+      const address = {
+        streetAddress: args.address.streetAddress,
+        aptOrSuite: args.address.aptOrSuite,
+        city: args.address.city,
+        state: args.address.state,
+        zipcode: args.address.zipcode,
+      };
 
       const schema = UserValidation.create();
       await this.joiService.validate({
@@ -70,6 +77,7 @@ export class UserResolver {
           middleName,
           phone,
           client_id,
+          address,
         },
       });
 
@@ -82,6 +90,7 @@ export class UserResolver {
         status,
         phone,
         client_id,
+        address,
       });
 
       return user;
@@ -102,6 +111,14 @@ export class UserResolver {
       const status = args.status;
       const phone = args.phone;
 
+      const address = {
+        streetAddress: args.address.streetAddress,
+        aptOrSuite: args.address.aptOrSuite,
+        city: args.address.city,
+        state: args.address.state,
+        zipcode: args.address.zipcode,
+      };
+
       const schema = UserValidation.update();
       await this.joiService.validate({
         schema,
@@ -111,6 +128,7 @@ export class UserResolver {
           lastName,
           middleName,
           phone,
+          address,
         },
       });
 
@@ -121,6 +139,7 @@ export class UserResolver {
         middleName,
         status,
         phone,
+        address,
       });
 
       return user;

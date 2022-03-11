@@ -22,6 +22,8 @@ const COMMON = {
   JoiService: Symbol('JoiService'),
   RoleService: Symbol('RoleService'),
   RoleRepository: Symbol('RoleRepository'),
+  AddressService: Symbol('AddressService'),
+  AddressRepository: Symbol('AddressRepository'),
 };
 
 const TYPES = {

@@ -45,6 +45,7 @@ export const entities = {
   users: 'users',
   clients: 'clients',
   roles: 'roles',
+  addresses: 'addresses',
 };
 
 export enum ClientStatus {

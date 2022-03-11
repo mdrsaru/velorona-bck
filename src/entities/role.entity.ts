@@ -23,7 +23,7 @@ export default class Role extends Base {
   name: string;
 
   @Field()
-  @Column()
+  @Column({ nullable: true })
   description: string;
 
   @ManyToMany(() => Role)
@@ -55,7 +55,7 @@ export class RoleCreateInput {
   @Field()
   name: string;
 
-  @Field()
+  @Field({ nullable: true })
   description: string;
 }
 

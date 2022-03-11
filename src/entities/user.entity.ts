@@ -1,4 +1,4 @@
-import { Entity, Column, ManyToOne, JoinColumn, ManyToMany, JoinTable } from 'typeorm';
+import { Entity, Column, ManyToOne, JoinColumn, ManyToMany, JoinTable, OneToOne } from 'typeorm';
 import { ObjectType, Field, ID, InputType, registerEnumType } from 'type-graphql';
 
 import { Base } from './base.entity';
@@ -6,6 +6,7 @@ import Client from './client.entity';
 import { entities, UserStatus } from '../config/constants';
 import { PagingInput, PagingResult } from './common.entity';
 import Role from './role.entity';
+import Address, { AddressCreateInput, AddressUpdateInput } from './address.entity';
 
 registerEnumType(UserStatus, {
   name: 'UserStatus',
@@ -49,12 +50,18 @@ export default class User extends Base {
   @JoinColumn({ name: 'client_id' })
   client: Client;
 
-  @ManyToMany(() => User)
+  @ManyToMany(() => Role)
   roles: Role[];
 
   @Field()
   @Column({ nullable: true })
   client_id: string;
+
+  @Field()
+  @OneToOne(() => Address, (address) => address.user, {
+    cascade: true,
+  })
+  address: Address;
 }
 
 @ObjectType()
@@ -91,6 +98,9 @@ export class UserCreateInput {
 
   @Field({ nullable: true })
   client_id: string;
+
+  @Field({ nullable: true })
+  address: AddressCreateInput;
 }
 
 @InputType()
@@ -115,6 +125,9 @@ export class UserUpdateInput {
 
   @Field((type) => UserStatus, { nullable: true })
   status: UserStatus;
+
+  @Field({ nullable: true })
+  address: AddressUpdateInput;
 }
 
 @InputType()
