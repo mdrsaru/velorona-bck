@@ -99,7 +99,7 @@ export class UserCreateInput {
   @Field({ nullable: true })
   client_id: string;
 
-  @Field({ nullable: true })
+  @Field()
   address: AddressCreateInput;
 }
 

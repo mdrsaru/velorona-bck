@@ -1,20 +1,27 @@
 import merge from 'lodash/merge';
 import isNil from 'lodash/isNil';
 import isString from 'lodash/isString';
-import { injectable } from 'inversify';
+import { injectable, inject } from 'inversify';
 import { getRepository } from 'typeorm';
 
+import { TYPES } from '../types';
 import strings from '../config/strings';
+import config from '../config/constants';
 import User from '../entities/user.entity';
 import Address from '../entities/address.entity';
 import BaseRepository from './base.repository';
-import { IUser, IUserCreate, IUserUpdate, IUserRepository } from '../interfaces/user.interface';
 import * as apiError from '../utils/api-error';
+
+import { IUser, IUserCreate, IUserUpdate, IUserRepository } from '../interfaces/user.interface';
+import { IHashService } from '../interfaces/common.interface';
 
 @injectable()
 export default class UserRepository extends BaseRepository<User> implements IUserRepository {
-  constructor() {
+  private hashService: IHashService;
+
+  constructor(@inject(TYPES.HashService) _hashService: IHashService) {
     super(getRepository(User));
+    this.hashService = _hashService;
   }
 
   create = async (args: IUserCreate): Promise<User> => {
@@ -61,9 +68,11 @@ export default class UserRepository extends BaseRepository<User> implements IUse
           details: [strings.userAlreadyExists],
         });
       }
+
+      const hashedPassword = await this.hashService.hash(password, config.saltRounds);
       const user = await this.repo.save({
         email,
-        password,
+        password: hashedPassword,
         firstName,
         lastName,
         middleName,
