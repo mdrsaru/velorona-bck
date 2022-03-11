@@ -1,4 +1,4 @@
-import { Entity, Column, ManyToOne, JoinColumn, ManyToMany, JoinTable, OneToOne } from 'typeorm';
+import { Entity, Column, ManyToOne, JoinColumn, ManyToMany, JoinTable, OneToOne, RelationId } from 'typeorm';
 import { ObjectType, Field, ID, InputType, registerEnumType } from 'type-graphql';
 
 import { Base } from './base.entity';
@@ -50,7 +50,19 @@ export default class User extends Base {
   @JoinColumn({ name: 'client_id' })
   client: Client;
 
+  @Field((type) => [Role])
   @ManyToMany(() => Role)
+  @JoinTable({
+    name: 'user_roles',
+    joinColumn: {
+      name: 'role_id',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'user_id',
+      referencedColumnName: 'id',
+    },
+  })
   roles: Role[];
 
   @Field()
@@ -101,6 +113,9 @@ export class UserCreateInput {
 
   @Field()
   address: AddressCreateInput;
+
+  @Field((type) => [String])
+  roles: string[];
 }
 
 @InputType()

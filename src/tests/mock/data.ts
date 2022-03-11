@@ -1,6 +1,11 @@
 import { UserStatus } from '../../config/constants';
 import { IUser } from '../../interfaces/user.interface';
 import User from '../../entities/user.entity';
+import Role from '../../entities/role.entity';
+
+const role = new Role();
+role.name = 'SuperAdmin';
+role.id = '050c4350-2e1f-49b6-a3f4-849cf7478612';
 
 const _users: IUser[] = [
   {
@@ -11,6 +16,7 @@ const _users: IUser[] = [
     lastName: 'Doe',
     status: UserStatus.Active,
     phone: '98432871234',
+    roles: [role],
     createdAt: '2022-03-08T08:01:04.776Z',
     updatedAt: '2022-03-08T08:01:04.776Z',
   },

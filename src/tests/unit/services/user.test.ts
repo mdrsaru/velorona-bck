@@ -42,6 +42,7 @@ describe('User Service', () => {
         password: 'password',
         phone: '9841273487',
         status: UserStatus.Active,
+        roles: ['1', '2'],
       };
 
       let error: any;
@@ -63,6 +64,7 @@ describe('User Service', () => {
         password: 'password',
         status: UserStatus.Active,
         phone: '9841273487',
+        roles: ['1,', '2'],
       };
 
       const user = await userService.create(args);
@@ -99,6 +101,7 @@ describe('User Service', () => {
         password: 'password',
         status: UserStatus.Active,
         phone: '98412783748',
+        roles: ['1', '2'],
       };
 
       const user = await userService.create(args);

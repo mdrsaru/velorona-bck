@@ -27,17 +27,6 @@ export default class Role extends Base {
   description: string;
 
   @ManyToMany(() => Role)
-  @JoinTable({
-    name: 'user_roles',
-    joinColumn: {
-      name: 'role_id',
-      referencedColumnName: 'id',
-    },
-    inverseJoinColumn: {
-      name: 'user_id',
-      referencedColumnName: 'id',
-    },
-  })
   users: User[];
 }
 

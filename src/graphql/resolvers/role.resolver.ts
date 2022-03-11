@@ -27,7 +27,7 @@ export class RoleResolver {
     this.errorService = errorService;
   }
   @Query((returns) => RolePagingResult)
-  async Roles(@Arg('input', { nullable: true }) args: RoleQueryInput, @Ctx() ctx: any): Promise<IPaginationData<Role>> {
+  async Role(@Arg('input', { nullable: true }) args: RoleQueryInput, @Ctx() ctx: any): Promise<IPaginationData<Role>> {
     const operation = 'Roles';
 
     try {

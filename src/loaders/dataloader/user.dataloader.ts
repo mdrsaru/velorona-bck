@@ -5,6 +5,7 @@ import Dataloader from 'dataloader';
 import { TYPES } from '../../types';
 import container from '../../inversify.config';
 import User from '../../entities/user.entity';
+import Role from '../../entities/role.entity';
 import { IUserRepository } from '../../interfaces/user.interface';
 
 const batchUsersByClientIdFn = async (ids: readonly string[]) => {
@@ -25,4 +26,19 @@ const batchUsersByClientIdFn = async (ids: readonly string[]) => {
   return ids.map((id) => userObj[id] ?? []);
 };
 
+const batchRolesByUserIdFn = async (ids: readonly string[]) => {
+  const userRepo: IUserRepository = container.get(TYPES.UserRepository);
+  const query = { id: ids };
+  const users = await userRepo.getAll({ query, relations: ['roles'] });
+
+  const roleObj: { [userId: string]: Role[] } = {};
+
+  users.forEach((user: User) => {
+    roleObj[user.id] = user.roles ?? [];
+  });
+
+  return ids.map((userId: string) => roleObj[userId] ?? []);
+};
+
 export const usersByClientIdLoader = () => new Dataloader(batchUsersByClientIdFn);
+export const rolesByUserIdLoader = () => new Dataloader(batchRolesByUserIdFn);
