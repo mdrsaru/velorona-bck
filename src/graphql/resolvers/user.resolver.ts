@@ -58,6 +58,7 @@ export class UserResolver {
       const phone = args.phone;
       const status = args.status;
       const client_id = args.client_id;
+      const roles = args.roles;
       const address = {
         streetAddress: args.address.streetAddress,
         aptOrSuite: args.address.aptOrSuite,
@@ -78,6 +79,7 @@ export class UserResolver {
           phone,
           client_id,
           address,
+          roles,
         },
       });
 
@@ -91,6 +93,7 @@ export class UserResolver {
         phone,
         client_id,
         address,
+        roles,
       });
 
       return user;
@@ -155,5 +158,10 @@ export class UserResolver {
     }
 
     return null;
+  }
+
+  @FieldResolver()
+  roles(@Root() root: User, @Ctx() ctx: IGraphqlContext) {
+    return ctx.loaders.rolesByUserIdLoader.load(root.id);
   }
 }
