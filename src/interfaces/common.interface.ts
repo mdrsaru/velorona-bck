@@ -1,5 +1,5 @@
 import { CustomError } from '../utils/api-error';
-import { IPagingArgs, IGetAllAndCountResult } from './paging.interface';
+import { IPagingArgs, IGetAllAndCountResult, IGetOptions } from './paging.interface';
 
 export interface IEntityID {
   id: string;
@@ -65,8 +65,8 @@ export interface IAppService {
 }
 
 export interface IBaseRepository<T> {
-  getAllAndCount(args: IPagingArgs): Promise<IGetAllAndCountResult<T>>;
-  getAll(args: IPagingArgs): Promise<T[]>;
+  getAllAndCount(args: IGetOptions): Promise<IGetAllAndCountResult<T>>;
+  getAll(args: IGetOptions): Promise<T[]>;
   getById(args: IEntityID): Promise<T | undefined>;
   remove(args: IEntityRemove): Promise<T>;
 }

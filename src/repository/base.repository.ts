@@ -4,7 +4,7 @@ import isArray from 'lodash/isArray';
 import { Repository, In } from 'typeorm';
 
 import strings from '../config/strings';
-import { IPagingArgs, IGetAllAndCountResult } from '../interfaces/paging.interface';
+import { IPagingArgs, IGetAllAndCountResult, IGetOptions } from '../interfaces/paging.interface';
 import { IBaseRepository, IEntityID, IEntityRemove } from '../interfaces/common.interface';
 import { NotFoundError } from '../utils/api-error';
 
@@ -15,7 +15,7 @@ export default class BaseRepository<T> implements IBaseRepository<T> {
     this.repo = repo;
   }
 
-  getAllAndCount = async (args: IPagingArgs): Promise<IGetAllAndCountResult<T>> => {
+  getAllAndCount = async (args: IGetOptions): Promise<IGetAllAndCountResult<T>> => {
     try {
       let { query = {}, ...rest } = args;
 
@@ -28,8 +28,8 @@ export default class BaseRepository<T> implements IBaseRepository<T> {
       }
 
       const [rows, count] = await this.repo.findAndCount({
-        ...rest,
         ...query,
+        ...rest,
       });
 
       return {
@@ -41,7 +41,7 @@ export default class BaseRepository<T> implements IBaseRepository<T> {
     }
   };
 
-  async getAll(args: IPagingArgs): Promise<T[]> {
+  async getAll(args: IGetOptions): Promise<T[]> {
     try {
       let { query = {}, ...rest } = args;
 

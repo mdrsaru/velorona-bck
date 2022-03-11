@@ -9,6 +9,11 @@ export interface IPagingArgs {
   query?: any;
 }
 
+// typeorm specific
+export interface IGetOptions extends IPagingArgs {
+  relations?: string[];
+}
+
 export interface IPagingResultArgs extends IPagingArgs {
   total: number;
 }
