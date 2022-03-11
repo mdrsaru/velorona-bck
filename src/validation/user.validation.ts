@@ -1,7 +1,4 @@
-import { injectable } from 'inversify';
 import Joi from 'joi';
-
-import * as apiError from '../utils/api-error';
 import strings from '../config/strings';
 
 const messages = {
@@ -54,6 +51,7 @@ export default class UserValidation {
       middleName: Joi.string(),
       phone: Joi.string().required().messages(messages.phone),
       client_id: Joi.string(),
+      address: Joi.object(),
     });
   }
 
@@ -64,6 +62,7 @@ export default class UserValidation {
       lastName: Joi.string().messages(messages.lastName),
       middleName: Joi.string(),
       phone: Joi.string().messages(messages.phone),
+      address: Joi.object(),
     });
   }
 }

@@ -2,6 +2,7 @@ import { IPagingArgs, IGetAllAndCountResult, IPaginationData } from './paging.in
 import { IEntityRemove, IEntityID } from './common.interface';
 import User from '../entities/user.entity';
 import { UserStatus } from '../config/constants';
+import { IAddress, IAddressCreateInput, IAddressUpdateInput } from './address.interface';
 
 export interface IUser {
   id: string;
@@ -12,6 +13,7 @@ export interface IUser {
   middleName?: string;
   phone: string;
   status: UserStatus;
+  address?: IAddress;
   createdAt: string;
   updatedAt: string;
 }
@@ -25,6 +27,7 @@ export interface IUserCreate {
   phone: IUser['phone'];
   status: IUser['status'];
   client_id?: string;
+  address?: IAddressCreateInput;
 }
 
 export interface IUserUpdate {
@@ -34,6 +37,7 @@ export interface IUserUpdate {
   middleName?: IUser['middleName'];
   phone?: IUser['phone'];
   status?: IUser['status'];
+  address?: IAddressUpdateInput;
 }
 
 export interface IUserRepository {

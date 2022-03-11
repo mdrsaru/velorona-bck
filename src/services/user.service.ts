@@ -44,6 +44,7 @@ export default class UserService implements IUserService {
       const status = args.status;
       const phone = args.phone;
       const client_id = args.client_id;
+      const address = args?.address;
 
       const user = await this.userRepository.create({
         email,
@@ -54,6 +55,7 @@ export default class UserService implements IUserService {
         status,
         phone,
         client_id,
+        address,
       });
 
       return user;
@@ -70,6 +72,7 @@ export default class UserService implements IUserService {
       const middleName = args.middleName;
       const status = args.status;
       const phone = args.phone;
+      const address = args?.address;
 
       const user = await this.userRepository.update({
         id,
@@ -78,6 +81,7 @@ export default class UserService implements IUserService {
         middleName,
         status,
         phone,
+        address,
       });
 
       return user;

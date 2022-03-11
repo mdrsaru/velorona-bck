@@ -13,7 +13,8 @@
     "lint:fix": "eslint \"src/**/*.ts\" --fix",
     "test": "jest",
     "typeorm": "ts-node ./node_modules/.bin/typeorm -f ./src/config/db/ormconfig.ts",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "docs": "apidoc -i src/config/apidoc/ -o public/docs/"
   },
   "dependencies": {
     "@types/colors": "^1.2.1",
