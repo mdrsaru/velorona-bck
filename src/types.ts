@@ -10,6 +10,9 @@ const USER = {
   UserController: Symbol('UserController'),
 };
 
+const AUTH = {
+  AuthService: Symbol('AuthService'),
+};
 const COMMON = {
   AppService: Symbol('AppService'),
   AppController: Symbol('AppController'),
@@ -17,6 +20,7 @@ const COMMON = {
   LoggerFactory: Symbol('LoggerFactory'),
   GraphqlService: Symbol('GrahqlService'),
   HashService: Symbol('HashService'),
+  TokenService: Symbol('TokenService'),
   AuthenticateMiddleware: Symbol('AuthenticateMiddleware'),
   ErrorService: Symbol('ErrorService'),
   JoiService: Symbol('JoiService'),
@@ -30,6 +34,7 @@ const TYPES = {
   ...COMMON,
   ...CLIENT,
   ...USER,
+  ...AUTH,
 };
 
 export { TYPES };

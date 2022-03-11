@@ -20,6 +20,10 @@ export interface IUser {
   updatedAt: string;
 }
 
+export interface IEmailInput {
+  email: string;
+}
+
 export interface IUserCreate {
   email: IUser['email'];
   password: IUser['password'];
@@ -50,6 +54,7 @@ export interface IUserRepository {
   create(args: IUserCreate): Promise<User>;
   update(args: IUserUpdate): Promise<User>;
   remove(args: IEntityRemove): Promise<User>;
+  getByEmail(args: IEmailInput): Promise<User | undefined>;
 }
 
 export interface IUserService {
