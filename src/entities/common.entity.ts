@@ -8,19 +8,19 @@ export class DeleteInput {
 
 @InputType()
 export class PagingInput {
-  @Field({ nullable: true })
+  @Field((type) => Int, { nullable: true, description: 'Number to skip' })
   skip: number;
 
-  @Field({ nullable: true })
+  @Field((type) => Int, { nullable: true, description: 'Limit - max number of entities that should be taken' })
   take: number;
 
-  @Field((type) => [String], { nullable: true })
-  order: string[];
+  @Field((type) => [String], { nullable: true, description: 'Sort order' })
+  order?: string[];
 }
 
 @ObjectType()
 export class PagingResult {
-  @Field((type) => Int)
+  @Field((type) => Int, { description: 'Total number of entities with the provided filter/query' })
   total: number;
 
   @Field((type) => Int)

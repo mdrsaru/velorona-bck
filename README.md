@@ -26,6 +26,10 @@ Runs the test cases from the folder `src/tests`
 
 Builds the app for production to the `build` folder.
 
+### `yarn docs`
+
+Generate API documentation
+
 ## Using Docker
 
 Make sure docker and docker-compose is installed in your system
