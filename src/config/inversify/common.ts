@@ -21,8 +21,8 @@ import AppController from '../../controllers/app.controller';
 import GraphqlService from '../../services/graphql.service';
 import BcryptService from '../../services/bcrypt.service';
 import ErrorService from '../../services/error.service';
-import JoiService from '../../services/JoiService';
-import TokenService from '../../services/token.service';
+import JoiService from '../../services/joi.service';
+import TokenService from '../../services/jwt.service';
 import EmailService from '../../services/email.service';
 
 export const app = new ContainerModule((bind: interfaces.Bind, unbind: interfaces.Unbind) => {

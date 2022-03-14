@@ -1,10 +1,11 @@
 import Role from '../entities/role.entity';
 import { IEntityID, IEntityRemove } from './common.interface';
 import { IGetAllAndCountResult, IPaginationData, IPagingArgs } from './paging.interface';
+import { Role as RoleEnum } from '../config/constants';
 
 export interface IRole {
   id: string;
-  name: string;
+  name: RoleEnum;
   description?: string;
 }
 

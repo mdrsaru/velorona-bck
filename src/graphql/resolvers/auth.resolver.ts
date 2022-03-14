@@ -1,5 +1,6 @@
 import { inject, injectable } from 'inversify';
-import { Arg, Ctx, Mutation, Resolver } from 'type-graphql';
+import { Arg, Ctx, Mutation } from 'type-graphql';
+
 import {
   ForgotPasswordInput,
   ForgotPasswordResponse,
@@ -8,11 +9,12 @@ import {
   ResetPasswordInput,
   ResetPasswordResponse,
 } from '../../entities/auth.entity';
-import { IErrorService, IJoiService } from '../../interfaces/common.interface';
-
-import { IAuthService } from '../../interfaces/auth.interface';
 import { TYPES } from '../../types';
 import AuthValidation from '../../validation/auth.validation';
+
+import { IErrorService, IJoiService } from '../../interfaces/common.interface';
+import { IAuthService } from '../../interfaces/auth.interface';
+import { IGraphqlContext } from '../../interfaces/graphql.interface';
 
 @injectable()
 export class AuthResolver {
@@ -81,10 +83,10 @@ export class AuthResolver {
   }
 
   @Mutation((returns) => ResetPasswordResponse)
-  async ResetPassword(@Arg('input') args: ResetPasswordInput) {
+  async ResetPassword(@Arg('input') args: ResetPasswordInput, @Ctx() ctx: IGraphqlContext) {
     const operation = 'ResetPassword';
     try {
-      const token = args.token;
+      const token = ctx.req.headers;
       const password = args.password;
       const schema = AuthValidation.resetPassword();
       await this.joiService.validate({

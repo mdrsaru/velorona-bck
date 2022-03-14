@@ -37,7 +37,7 @@ export default class AuthValidation {
   }
   static resetPassword() {
     return Joi.object({
-      token: Joi.string().required().messages(messages.token),
+      token: Joi.object().required().messages(messages.token),
       password: Joi.string().required().messages(messages.password),
     });
   }

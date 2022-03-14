@@ -37,7 +37,7 @@ export class ForgotPasswordInput {
 
 @InputType()
 export class ResetPasswordInput {
-  @Field()
+  @Field({ nullable: true })
   token: string;
 
   @Field()

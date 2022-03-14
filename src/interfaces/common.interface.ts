@@ -62,7 +62,8 @@ export interface IHashService {
 
 export interface ITokenService {
   generateToken(args: any): Promise<string>;
-  verifyToken(args: any): Promise<any>;
+  verifyToken(data: ITokenVerificationInput): Promise<any>;
+  extractToken(args: any): string;
 }
 
 export interface IEmailService {
@@ -78,4 +79,9 @@ export interface IBaseRepository<T> {
   getAll(args: IGetOptions): Promise<T[]>;
   getById(args: IEntityID): Promise<T | undefined>;
   remove(args: IEntityRemove): Promise<T>;
+}
+
+export interface ITokenVerificationInput {
+  token: string;
+  secretKey: string;
 }

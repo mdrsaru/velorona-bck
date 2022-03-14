@@ -10,7 +10,6 @@ import { TYPES } from '../types';
 import strings from '../config/strings';
 import config from '../config/constants';
 import User from '../entities/user.entity';
-import Address from '../entities/address.entity';
 import BaseRepository from './base.repository';
 import * as apiError from '../utils/api-error';
 
