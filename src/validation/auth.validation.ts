@@ -24,4 +24,9 @@ export default class AuthValidation {
       password: Joi.string().required().messages(messages.password),
     });
   }
+  static forgotPassword() {
+    return Joi.object({
+      email: Joi.string().required().messages(messages.email),
+    });
+  }
 }

@@ -94,4 +94,9 @@ export default {
   events: {},
   accessTokenSecret: process.env.ACCESS_TOKEN_SECRET || 'accessSecrect',
   accessTokenLife: process.env.ACCESS_TOKEN_LIFE || '15m',
+  frontendUrl: process.env.FRONT_END_URL || 'http://localhost:3000',
+  changePassword: {
+    changePasswordSubject: process.env.CHANGEPASSWORD_SUBJECT || 'Change your password',
+    changePasswordBody: process.env.CHANGEPASSWORD_BODY || 'Here is the link',
+  },
 };

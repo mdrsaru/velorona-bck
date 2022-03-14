@@ -63,6 +63,9 @@ export interface ITokenService {
   generateToken(args: any): Promise<string>;
 }
 
+export interface IEmailService {
+  sendEmail(args: any): Promise<any>;
+}
 // app
 export interface IAppService {
   getStatus(): string;

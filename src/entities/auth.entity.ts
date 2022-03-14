@@ -9,6 +9,11 @@ export class LoginResponse {
   token?: string;
 }
 
+@ObjectType()
+export class ForgotPasswordResponse {
+  @Field()
+  token: string;
+}
 @InputType()
 export class LoginInput {
   @Field()
@@ -16,4 +21,10 @@ export class LoginInput {
 
   @Field()
   password: string;
+}
+
+@InputType()
+export class ForgotPasswordInput {
+  @Field()
+  email: string;
 }
