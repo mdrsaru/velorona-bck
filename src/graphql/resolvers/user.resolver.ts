@@ -4,13 +4,15 @@ import { Resolver, Query, Ctx, Arg, Mutation, UseMiddleware, FieldResolver, Root
 import { TYPES } from '../../types';
 import Client from '../../entities/client.entity';
 import Paging from '../../utils/paging';
+import authenticate from '../middlewares/authenticate';
 import UserValidation from '../../validation/user.validation';
-import { IErrorService, IJoiService } from '../../interfaces/common.interface';
 import { PagingInput, DeleteInput, MessageResponse } from '../../entities/common.entity';
+import User, { UserPagingResult, UserCreateInput, UserUpdateInput, UserQueryInput } from '../../entities/user.entity';
+
 import { IPaginationData } from '../../interfaces/paging.interface';
 import { IUserService } from '../../interfaces/user.interface';
 import { IGraphqlContext } from '../../interfaces/graphql.interface';
-import User, { UserPagingResult, UserCreateInput, UserUpdateInput, UserQueryInput } from '../../entities/user.entity';
+import { IErrorService, IJoiService } from '../../interfaces/common.interface';
 
 @injectable()
 @Resolver((of) => User)
@@ -33,6 +35,7 @@ export class UserResolver {
   }
 
   @Query((returns) => UserPagingResult)
+  @UseMiddleware(authenticate)
   async User(@Arg('input', { nullable: true }) args: UserQueryInput, @Ctx() ctx: any): Promise<IPaginationData<User>> {
     const operation = 'User';
 
@@ -46,6 +49,7 @@ export class UserResolver {
   }
 
   @Mutation((returns) => User)
+  @UseMiddleware(authenticate)
   async UserCreate(@Arg('input') args: UserCreateInput): Promise<User> {
     const operation = 'UserCreate';
 
@@ -58,6 +62,7 @@ export class UserResolver {
       const phone = args.phone;
       const status = args.status;
       const client_id = args.client_id;
+      const roles = args.roles;
       const address = {
         streetAddress: args.address.streetAddress,
         aptOrSuite: args.address.aptOrSuite,
@@ -78,6 +83,7 @@ export class UserResolver {
           phone,
           client_id,
           address,
+          roles,
         },
       });
 
@@ -91,6 +97,7 @@ export class UserResolver {
         phone,
         client_id,
         address,
+        roles,
       });
 
       return user;
@@ -100,6 +107,7 @@ export class UserResolver {
   }
 
   @Mutation((returns) => User)
+  @UseMiddleware(authenticate)
   async UserUpdate(@Arg('input') args: UserUpdateInput): Promise<User> {
     const operation = 'UserUpdate';
 
@@ -155,5 +163,10 @@ export class UserResolver {
     }
 
     return null;
+  }
+
+  @FieldResolver()
+  roles(@Root() root: User, @Ctx() ctx: IGraphqlContext) {
+    return ctx.loaders.rolesByUserIdLoader.load(root.id);
   }
 }

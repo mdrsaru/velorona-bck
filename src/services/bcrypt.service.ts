@@ -11,7 +11,7 @@ export default class BcryptService implements IHashService {
     return bcrypt.hash(password, salt);
   }
 
-  compare(plainText: string, hash: string): Promise<boolean> {
+  compare(plainText: string, hash: any): Promise<boolean> {
     return bcrypt.compare(plainText, hash);
   }
 }

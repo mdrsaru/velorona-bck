@@ -1,6 +1,7 @@
 import { IPagingArgs, IGetAllAndCountResult, IPaginationData } from './paging.interface';
 import { IEntityRemove, IEntityID } from './common.interface';
 import User from '../entities/user.entity';
+import Role from '../entities/role.entity';
 import { UserStatus } from '../config/constants';
 import { IAddress, IAddressCreateInput, IAddressUpdateInput } from './address.interface';
 
@@ -14,8 +15,13 @@ export interface IUser {
   phone: string;
   status: UserStatus;
   address?: IAddress;
+  roles: Role[];
   createdAt: string;
   updatedAt: string;
+}
+
+export interface IEmailInput {
+  email: string;
 }
 
 export interface IUserCreate {
@@ -26,6 +32,7 @@ export interface IUserCreate {
   middleName?: IUser['middleName'];
   phone: IUser['phone'];
   status: IUser['status'];
+  roles: string[];
   client_id?: string;
   address?: IAddressCreateInput;
 }
@@ -47,6 +54,7 @@ export interface IUserRepository {
   create(args: IUserCreate): Promise<User>;
   update(args: IUserUpdate): Promise<User>;
   remove(args: IEntityRemove): Promise<User>;
+  getByEmail(args: IEmailInput): Promise<User | undefined>;
 }
 
 export interface IUserService {

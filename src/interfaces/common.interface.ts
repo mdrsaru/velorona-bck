@@ -59,6 +59,15 @@ export interface IHashService {
   compare(plainText: string, hash: string): Promise<boolean>;
 }
 
+export interface ITokenService {
+  generateToken(args: any): Promise<string>;
+  verifyToken(data: ITokenVerificationInput): Promise<any>;
+  extractToken(args: any): string;
+}
+
+export interface IEmailService {
+  sendEmail(args: any): Promise<any>;
+}
 // app
 export interface IAppService {
   getStatus(): string;
@@ -69,4 +78,9 @@ export interface IBaseRepository<T> {
   getAll(args: IGetOptions): Promise<T[]>;
   getById(args: IEntityID): Promise<T | undefined>;
   remove(args: IEntityRemove): Promise<T>;
+}
+
+export interface ITokenVerificationInput {
+  token: string;
+  secretKey: string;
 }

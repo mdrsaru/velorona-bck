@@ -13,10 +13,12 @@ const connectionConfig = {
   synchronize: databaseSetting.synchronize,
   logging: databaseSetting.logging,
   entities: [path.join(__dirname, '../..', 'entities/**/*.entity.{ts,js}')],
-  migrations: [path.join(__dirname, '../..', 'migrations/**/*.{ts,js}')],
+  migrations: [path.join(__dirname, 'migrations/**/*.{ts,js}')],
+  seeds: [path.join(__dirname, 'seeds/**/*.{ts,js}')],
+  factories: [path.join(__dirname, 'factories/**/*.{ts,js}')],
   cli: {
     entitiesDir: path.join(__dirname, '../..', 'entities'),
-    migrationsDir: path.join(__dirname, '../..', 'migrations'),
+    migrationsDir: path.join(__dirname, 'migrations'),
   },
 };
 

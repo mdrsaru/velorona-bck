@@ -1,13 +1,16 @@
 import { inject, injectable } from 'inversify';
-import { Arg, Ctx, Mutation, Query, Resolver } from 'type-graphql';
+import { Arg, Ctx, Mutation, Query, Resolver, UseMiddleware } from 'type-graphql';
+
+import { TYPES } from '../../types';
+import Paging from '../../utils/paging';
+import authenticate from '../middlewares/authenticate';
+import RoleValidation from '../../validation/role.validation';
+import { DeleteInput } from '../../entities/common.entity';
 import Role, { RoleCreateInput, RolePagingResult, RoleQueryInput, RoleUpdateInput } from '../../entities/role.entity';
+
 import { IPaginationData } from '../../interfaces/paging.interface';
 import { IErrorService, IJoiService } from '../../interfaces/common.interface';
-import { TYPES } from '../../types';
-import RoleValidation from '../../validation/role.validation';
 import { IRole, IRoleService } from '../../interfaces/role.interface';
-import { DeleteInput } from '../../entities/common.entity';
-import Paging from '../../utils/paging';
 
 @injectable()
 @Resolver()
@@ -26,8 +29,10 @@ export class RoleResolver {
     this.joiService = joiService;
     this.errorService = errorService;
   }
+
   @Query((returns) => RolePagingResult)
-  async Roles(@Arg('input', { nullable: true }) args: RoleQueryInput, @Ctx() ctx: any): Promise<IPaginationData<Role>> {
+  @UseMiddleware(authenticate)
+  async Role(@Arg('input', { nullable: true }) args: RoleQueryInput, @Ctx() ctx: any): Promise<IPaginationData<Role>> {
     const operation = 'Roles';
 
     try {
@@ -40,6 +45,7 @@ export class RoleResolver {
   }
 
   @Mutation((returns) => Role)
+  @UseMiddleware(authenticate)
   async RoleCreate(@Arg('input') args: RoleCreateInput, @Ctx() ctx: any): Promise<Role> {
     const operation = 'RoleCreate';
     try {
@@ -65,6 +71,7 @@ export class RoleResolver {
   }
 
   @Mutation((returns) => Role)
+  @UseMiddleware(authenticate)
   async RoleUpdate(@Arg('input') args: RoleUpdateInput, @Ctx() ctx: any): Promise<IRole> {
     const operation = 'RoleUpdate';
 
@@ -94,7 +101,9 @@ export class RoleResolver {
       this.errorService.throwError({ err, name: this.name, operation, logError: false });
     }
   }
+
   @Mutation((returns) => Role)
+  @UseMiddleware(authenticate)
   async RoleDelete(@Arg('input') args: DeleteInput, @Ctx() ctx: any): Promise<Role> {
     const operation = 'RoleDelete';
 

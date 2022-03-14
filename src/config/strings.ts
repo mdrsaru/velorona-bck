@@ -9,4 +9,8 @@ export default {
   emailNotValid: 'Email not valid',
   phoneRequired: 'Phone required',
   resourceNotFound: 'Resource not found',
+  rolesRequired: 'Roles required',
+  userCreateRoleNotFound: 'One of the roles is not a valid role',
+  userNotAuthenticated: 'User not authenticated',
+  emailPasswordNotCorrect: 'Email or password is not correct',
 };

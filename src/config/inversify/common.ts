@@ -3,7 +3,15 @@ import { ContainerModule, interfaces } from 'inversify';
 import { TYPES } from '../../types';
 
 // Interfaces
-import { ILogger, IErrorService, IJoiService, IHashService, IAppService } from '../../interfaces/common.interface';
+import {
+  ILogger,
+  IErrorService,
+  IJoiService,
+  IHashService,
+  IAppService,
+  ITokenService,
+  IEmailService,
+} from '../../interfaces/common.interface';
 import { IGraphql } from '../../interfaces/graphql.interface';
 
 // Implementations
@@ -13,7 +21,9 @@ import AppController from '../../controllers/app.controller';
 import GraphqlService from '../../services/graphql.service';
 import BcryptService from '../../services/bcrypt.service';
 import ErrorService from '../../services/error.service';
-import JoiService from '../../services/JoiService';
+import JoiService from '../../services/joi.service';
+import TokenService from '../../services/jwt.service';
+import EmailService from '../../services/email.service';
 
 export const app = new ContainerModule((bind: interfaces.Bind, unbind: interfaces.Unbind) => {
   bind<IAppService>(TYPES.AppService).to(AppService);
@@ -37,6 +47,14 @@ export const graphql = new ContainerModule((bind: interfaces.Bind, unbind: inter
 
 export const hash = new ContainerModule((bind: interfaces.Bind, unbind: interfaces.Unbind) => {
   bind<IHashService>(TYPES.HashService).to(BcryptService);
+});
+
+export const token = new ContainerModule((bind: interfaces.Bind, unbind: interfaces.Unbind) => {
+  bind<ITokenService>(TYPES.TokenService).to(TokenService);
+});
+
+export const email = new ContainerModule((bind: interfaces.Bind, unbind: interfaces.Unbind) => {
+  bind<IEmailService>(TYPES.EmailService).to(EmailService);
 });
 
 export const error = new ContainerModule((bind: interfaces.Bind, unbind: interfaces.Unbind) => {

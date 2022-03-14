@@ -9,10 +9,10 @@ const messages = {
     'any.required': strings.idRequired,
   },
   email: {
-    'string.base': strings.firstNameRequired,
-    'string.empty': strings.firstNameRequired,
-    'string.name': strings.firstNameRequired,
-    'any.required': strings.firstNameRequired,
+    'string.base': strings.emailRequired,
+    'string.empty': strings.emailRequired,
+    'string.name': strings.emailRequired,
+    'any.required': strings.emailRequired,
     'string.email': strings.emailNotValid,
   },
   password: {
@@ -39,6 +39,13 @@ const messages = {
     'string.name': strings.phoneRequired,
     'any.required': strings.phoneRequired,
   },
+  roles: {
+    'string.base': strings.rolesRequired,
+    'string.empty': strings.rolesRequired,
+    'string.name': strings.rolesRequired,
+    'any.required': strings.rolesRequired,
+    'any.message': strings.rolesRequired,
+  },
 };
 
 export default class UserValidation {
@@ -52,6 +59,7 @@ export default class UserValidation {
       phone: Joi.string().required().messages(messages.phone),
       client_id: Joi.string(),
       address: Joi.object(),
+      roles: Joi.array().items(Joi.string().required()).required(),
     });
   }
 

@@ -1,5 +1,5 @@
 import { string } from 'joi';
-import { Field, ID, InputType, ObjectType } from 'type-graphql';
+import { Field, ID, InputType, ObjectType, registerEnumType } from 'type-graphql';
 import {
   BaseEntity,
   Column,
@@ -9,35 +9,34 @@ import {
   ManyToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  Index,
 } from 'typeorm';
-import { entities } from '../config/constants';
+import { entities, Role as RoleEnum } from '../config/constants';
 import { Base } from './base.entity';
 import { PagingInput, PagingResult } from './common.entity';
 import User from './user.entity';
 
+registerEnumType(RoleEnum, {
+  name: 'RoleName',
+});
+
 @Entity({ name: entities.roles })
 @ObjectType()
 export default class Role extends Base {
-  @Field()
-  @Column()
-  name: string;
+  @Field((type) => RoleEnum)
+  @Index()
+  @Column({
+    type: 'enum',
+    enum: RoleEnum,
+    default: RoleEnum.ClientAdmin,
+  })
+  name: RoleEnum;
 
   @Field()
   @Column({ nullable: true })
   description: string;
 
   @ManyToMany(() => Role)
-  @JoinTable({
-    name: 'user_roles',
-    joinColumn: {
-      name: 'role_id',
-      referencedColumnName: 'id',
-    },
-    inverseJoinColumn: {
-      name: 'user_id',
-      referencedColumnName: 'id',
-    },
-  })
   users: User[];
 }
 
@@ -52,8 +51,8 @@ export class RolePagingResult {
 
 @InputType()
 export class RoleCreateInput {
-  @Field()
-  name: string;
+  @Field((type) => RoleEnum)
+  name: RoleEnum;
 
   @Field({ nullable: true })
   description: string;
@@ -64,8 +63,8 @@ export class RoleUpdateInput {
   @Field()
   id: string;
 
-  @Field()
-  name: string;
+  @Field((type) => RoleEnum)
+  name: RoleEnum;
 
   @Field({ nullable: true })
   description: string;
@@ -75,6 +74,9 @@ export class RoleUpdateInput {
 export class RoleQuery {
   @Field({ nullable: true })
   id: string;
+
+  @Field((type) => RoleEnum)
+  name: RoleEnum;
 }
 
 @InputType()

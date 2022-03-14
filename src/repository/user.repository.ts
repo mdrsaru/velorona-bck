@@ -1,6 +1,8 @@
 import merge from 'lodash/merge';
+
 import isNil from 'lodash/isNil';
 import isString from 'lodash/isString';
+import isArray from 'lodash/isArray';
 import { injectable, inject } from 'inversify';
 import { getRepository } from 'typeorm';
 
@@ -12,16 +14,22 @@ import Address from '../entities/address.entity';
 import BaseRepository from './base.repository';
 import * as apiError from '../utils/api-error';
 
-import { IUser, IUserCreate, IUserUpdate, IUserRepository } from '../interfaces/user.interface';
 import { IHashService } from '../interfaces/common.interface';
+import { IUser, IUserCreate, IUserUpdate, IUserRepository } from '../interfaces/user.interface';
+import { IRoleRepository } from '../interfaces/role.interface';
 
 @injectable()
 export default class UserRepository extends BaseRepository<User> implements IUserRepository {
   private hashService: IHashService;
+  private roleRepository: IRoleRepository;
 
-  constructor(@inject(TYPES.HashService) _hashService: IHashService) {
+  constructor(
+    @inject(TYPES.HashService) _hashService: IHashService,
+    @inject(TYPES.RoleRepository) _roleRepository: IRoleRepository
+  ) {
     super(getRepository(User));
     this.hashService = _hashService;
+    this.roleRepository = _roleRepository;
   }
 
   create = async (args: IUserCreate): Promise<User> => {
@@ -35,6 +43,7 @@ export default class UserRepository extends BaseRepository<User> implements IUse
       const status = args.status;
       const client_id = args.client_id;
       const address = args?.address;
+      const roles = args.roles;
 
       const errors: string[] = [];
 
@@ -53,6 +62,9 @@ export default class UserRepository extends BaseRepository<User> implements IUse
       if (isNil(phone) || !isString(phone)) {
         errors.push(strings.phoneRequired);
       }
+      if (isNil(roles) || !isArray(roles) || !roles.length) {
+        errors.push(strings.rolesRequired);
+      }
 
       let found;
       if (client_id) {
@@ -69,7 +81,20 @@ export default class UserRepository extends BaseRepository<User> implements IUse
         });
       }
 
+      const existingRoles = await this.roleRepository.getAll({
+        query: {
+          id: roles,
+        },
+      });
+
+      if (existingRoles?.length !== roles.length) {
+        throw new apiError.ValidationError({
+          details: [strings.userCreateRoleNotFound],
+        });
+      }
+
       const hashedPassword = await this.hashService.hash(password, config.saltRounds);
+
       const user = await this.repo.save({
         email,
         password: hashedPassword,
@@ -80,6 +105,7 @@ export default class UserRepository extends BaseRepository<User> implements IUse
         phone,
         client_id,
         address,
+        roles: existingRoles,
       });
 
       return user;
@@ -105,10 +131,7 @@ export default class UserRepository extends BaseRepository<User> implements IUse
           details: [strings.userNotFound],
         });
       }
-      const _address = {
-        id: found.address.id,
-        ...address,
-      };
+
       const update = merge(found, {
         id,
         firstName,
@@ -116,10 +139,23 @@ export default class UserRepository extends BaseRepository<User> implements IUse
         middleName,
         status,
         phone,
-        address: _address,
+        address: {
+          ...(found.address ?? {}),
+          ...address,
+        },
       });
 
       const user = await this.repo.save(update);
+
+      return user;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  getByEmail = async (args: any = {}): Promise<User | undefined> => {
+    try {
+      const user = await this.repo.findOne({ email: args.email });
       return user;
     } catch (err) {
       throw err;

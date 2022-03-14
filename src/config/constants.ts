@@ -46,6 +46,7 @@ export const entities = {
   clients: 'clients',
   roles: 'roles',
   addresses: 'addresses',
+  userTokens: 'user_tokens',
 };
 
 export enum ClientStatus {
@@ -60,13 +61,24 @@ export enum UserStatus {
   Archived = 'Archived',
 }
 
+export enum Role {
+  SuperAdmin = 'SuperAdmin',
+  ClientAdmin = 'ClientAdmin',
+  Employee = 'Employee',
+  TaskManager = 'TaskManager',
+  Vendor = 'Vendor',
+}
+
+export enum TokenType {
+  refresh = 'refresh',
+}
+
 export default {
   env,
   origins,
   port: process.env.PORT,
   baseUrl: process.env.BASE_URL,
   appName: process.env.APP_NAME || 'Vellorum_API',
-  secretKey: process.env.SECRET_KEY || 'secretKey',
   refreshTokenKey: process.env.REFRESH_TOKEN_SECRET_KEY || 'refreshSecretKey',
   refreshTokenCookieName: process.env.REFRESH_TOKEN_COOKIE_NAME || 'refreshToken',
   saltRounds: process.env.SALT_ROUNDS || 10,
@@ -74,10 +86,6 @@ export default {
   authTokenExpiration: process.env.AUTH_TOKEN_EXPIRATION || '15m',
   refreshTokenExpiration: process.env.REFRESH_TOKEN_EXPIRATION || '7d',
   forgotPasswordTokenExpiration: process.env.FORGOT_PASSWORD_TOKEN_EXPIRATION || '1hr',
-  tokenType: {
-    refresh: 'refresh',
-  },
-  roles: {},
   log: {
     fileLogLevel: process.env.FILE_LOG_LEVEL,
     dirname: process.env.LOG_DIRNAME || '.logs',
@@ -92,4 +100,11 @@ export default {
     },
   },
   events: {},
+  accessTokenSecret: process.env.ACCESS_TOKEN_SECRET || 'accessSecrect',
+  accessTokenLife: process.env.ACCESS_TOKEN_LIFE || '15m',
+  frontendUrl: process.env.FRONT_END_URL || 'http://localhost:3000',
+  changePassword: {
+    changePasswordSubject: process.env.CHANGEPASSWORD_SUBJECT || 'Change your password',
+    changePasswordBody: process.env.CHANGEPASSWORD_BODY || 'Here is the link',
+  },
 };
