@@ -59,6 +59,10 @@ export interface IHashService {
   compare(plainText: string, hash: string): Promise<boolean>;
 }
 
+export interface ITokenService {
+  generateToken(args: any): Promise<string>;
+}
+
 // app
 export interface IAppService {
   getStatus(): string;

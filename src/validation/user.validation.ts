@@ -9,10 +9,10 @@ const messages = {
     'any.required': strings.idRequired,
   },
   email: {
-    'string.base': strings.firstNameRequired,
-    'string.empty': strings.firstNameRequired,
-    'string.name': strings.firstNameRequired,
-    'any.required': strings.firstNameRequired,
+    'string.base': strings.emailRequired,
+    'string.empty': strings.emailRequired,
+    'string.name': strings.emailRequired,
+    'any.required': strings.emailRequired,
     'string.email': strings.emailNotValid,
   },
   password: {

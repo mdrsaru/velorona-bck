@@ -92,4 +92,6 @@ export default {
     },
   },
   events: {},
+  accessTokenSecret: process.env.ACCESS_TOKEN_SECRET || 'accessSecrect',
+  accessTokenLife: process.env.ACCESS_TOKEN_LIFE || '15m',
 };
