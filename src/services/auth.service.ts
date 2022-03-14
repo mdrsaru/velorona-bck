@@ -1,11 +1,13 @@
 import { inject, injectable } from 'inversify';
+
+import { TYPES } from '../types';
 import constants from '../config/constants';
 import { ForgotPasswordResponse, LoginResponse } from '../entities/auth.entity';
 import { IAuthService, IForgotPasswordInput, ILoginInput } from '../interfaces/auth.interface';
 import { IEmailService, IHashService, ITokenService } from '../interfaces/common.interface';
 import { IUserRepository } from '../interfaces/user.interface';
-import { TYPES } from '../types';
 import { NotAuthenticatedError } from '../utils/api-error';
+import strings from '../config/strings';
 
 @injectable()
 export default class AuthService implements IAuthService {
@@ -31,30 +33,38 @@ export default class AuthService implements IAuthService {
       const email = args.email;
       const password = args.password;
       let user = await this.userRepository.getByEmail({ email: email });
-      if (user) {
-        const userPassword: any = user.password;
 
-        let check = await this.hashService.compare(password, userPassword);
-        if (check) {
-          let payload = {
-            id: user?.id,
-          };
-          let accessTokenData = {
-            payload: payload,
-            tokenSecret: constants.accessTokenSecret,
-            tokenLife: constants.accessTokenLife,
-          };
-          let token = await this.tokenService.generateToken(accessTokenData);
-          return {
-            id: user.id,
-            token: token,
-          };
-        } else {
-          throw new NotAuthenticatedError({ details: ["Password doesn't match"] });
-        }
-      } else {
-        throw new NotAuthenticatedError({ details: ["User doesn't exist"] });
+      if (!user) {
+        throw new NotAuthenticatedError({
+          details: [strings.emailPasswordNotCorrect],
+        });
       }
+
+      const userPassword: any = user.password;
+
+      let isPasswordCorrect = await this.hashService.compare(password, userPassword);
+      if (!isPasswordCorrect) {
+        throw new NotAuthenticatedError({
+          details: [strings.emailPasswordNotCorrect],
+        });
+      }
+
+      let payload = {
+        id: user?.id,
+      };
+
+      let accessTokenData = {
+        payload: payload,
+        tokenSecret: constants.accessTokenSecret,
+        tokenLife: constants.accessTokenLife,
+      };
+
+      let token = await this.tokenService.generateToken(accessTokenData);
+
+      return {
+        id: user.id,
+        token: token,
+      };
     } catch (err) {
       throw err;
     }

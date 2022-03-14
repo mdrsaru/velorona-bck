@@ -11,6 +11,7 @@ import Paging from '../../utils/paging';
 import User from '../../entities/user.entity';
 import Client from '../../entities/client.entity';
 import ClientValidation from '../../validation/client.validation';
+import authenticate from '../middlewares/authenticate';
 import {
   ClientPagingResult,
   ClientQueryInput,
@@ -38,6 +39,7 @@ export class ClientResolver {
   }
 
   @Query((returns) => ClientPagingResult)
+  @UseMiddleware(authenticate)
   async Client(
     @Arg('input', { nullable: true }) args: ClientQueryInput,
     @Ctx() ctx: any
@@ -54,6 +56,7 @@ export class ClientResolver {
   }
 
   @Mutation((returns) => Client)
+  @UseMiddleware(authenticate)
   async ClientCreate(@Arg('input') args: ClientCreateInput, @Ctx() ctx: any): Promise<Client> {
     const operation = 'ClientCreate';
 
@@ -82,6 +85,7 @@ export class ClientResolver {
   }
 
   @Mutation((returns) => Client)
+  @UseMiddleware(authenticate)
   async ClientUpdate(@Arg('input') args: ClientUpdateInput, @Ctx() ctx: any): Promise<Client> {
     const operation = 'ClientUpdate';
 
@@ -113,6 +117,7 @@ export class ClientResolver {
   }
 
   @Mutation((returns) => Client)
+  @UseMiddleware(authenticate)
   async ClientDelete(@Arg('input') args: DeleteInput, @Ctx() ctx: any): Promise<Client> {
     const operation = 'ClientDelete';
 
