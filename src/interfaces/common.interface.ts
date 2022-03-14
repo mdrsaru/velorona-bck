@@ -1,3 +1,4 @@
+import { ResetPasswordResponse } from '../entities/auth.entity';
 import { CustomError } from '../utils/api-error';
 import { IPagingArgs, IGetAllAndCountResult, IGetOptions } from './paging.interface';
 
@@ -61,6 +62,7 @@ export interface IHashService {
 
 export interface ITokenService {
   generateToken(args: any): Promise<string>;
+  verifyToken(args: any): Promise<any>;
 }
 
 export interface IEmailService {

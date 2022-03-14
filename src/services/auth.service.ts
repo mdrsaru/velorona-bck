@@ -1,7 +1,7 @@
 import { inject, injectable } from 'inversify';
 import constants from '../config/constants';
-import { ForgotPasswordResponse, LoginResponse } from '../entities/auth.entity';
-import { IAuthService, IForgotPasswordInput, ILoginInput } from '../interfaces/auth.interface';
+import { ForgotPasswordResponse, LoginResponse, ResetPasswordResponse } from '../entities/auth.entity';
+import { IAuthService, IForgotPasswordInput, ILoginInput, IResetPasswordInput } from '../interfaces/auth.interface';
 import { IEmailService, IHashService, ITokenService } from '../interfaces/common.interface';
 import { IUserRepository } from '../interfaces/user.interface';
 import { TYPES } from '../types';
@@ -84,12 +84,38 @@ export default class AuthService implements IAuthService {
           mailBody,
           baseUrl,
         };
-        this.emailService.sendEmail(emailData);
+        // this.emailService.sendEmail(emailData);
         return {
           token: token,
         };
       } else {
         throw new NotAuthenticatedError({ details: ["User doesn't exist"] });
+      }
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  resetPassword = async (args: IResetPasswordInput): Promise<ResetPasswordResponse> => {
+    try {
+      const token = args.token;
+      const password = args.password;
+      const tokenData = {
+        token: token,
+        tokenSecret: constants.accessTokenSecret,
+      };
+      const result = await this.tokenService.verifyToken(tokenData);
+      if (result) {
+        const id = result.id;
+        const user = await this.userRepository.update({
+          id,
+          password: password,
+        });
+        return {
+          message: 'Password changed sucessfully',
+        };
+      } else {
+        throw new NotAuthenticatedError({ details: ['Invalid Token'] });
       }
     } catch (err) {
       throw err;

@@ -75,6 +75,7 @@ export default class UserService implements IUserService {
       const status = args.status;
       const phone = args.phone;
       const address = args?.address;
+      const password = args?.password;
 
       const user = await this.userRepository.update({
         id,
@@ -84,6 +85,7 @@ export default class UserService implements IUserService {
         status,
         phone,
         address,
+        password,
       });
 
       return user;

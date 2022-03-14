@@ -24,4 +24,11 @@ export default class TokenService implements ITokenService {
       );
     });
   };
+
+  verifyToken = async (args: any = {}): Promise<any> => {
+    const token = args.token;
+    const tokenSecret = args.tokenSecret;
+
+    return await jwt.verify(token, tokenSecret);
+  };
 }

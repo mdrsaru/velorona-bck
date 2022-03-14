@@ -1,4 +1,4 @@
-import { ForgotPasswordResponse } from '../entities/auth.entity';
+import { ForgotPasswordResponse, ResetPasswordResponse } from '../entities/auth.entity';
 
 export interface ILoginInput {
   email: string;
@@ -7,7 +7,13 @@ export interface ILoginInput {
 export interface IForgotPasswordInput {
   email: string;
 }
+
+export interface IResetPasswordInput {
+  token: string;
+  password: string;
+}
 export interface IAuthService {
   login(args: ILoginInput): Promise<any>;
   forgotPassword(args: IForgotPasswordInput): Promise<ForgotPasswordResponse>;
+  resetPassword(args: IResetPasswordInput): Promise<ResetPasswordResponse>;
 }
