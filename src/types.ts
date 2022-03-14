@@ -21,6 +21,7 @@ const COMMON = {
   GraphqlService: Symbol('GrahqlService'),
   HashService: Symbol('HashService'),
   TokenService: Symbol('TokenService'),
+  EmailService: Symbol('EmailService'),
   AuthenticateMiddleware: Symbol('AuthenticateMiddleware'),
   ErrorService: Symbol('ErrorService'),
   JoiService: Symbol('JoiService'),

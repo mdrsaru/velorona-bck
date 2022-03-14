@@ -1,6 +1,6 @@
 import { inject, injectable } from 'inversify';
 import { Arg, Ctx, Mutation, Resolver } from 'type-graphql';
-import { LoginInput, LoginResponse } from '../../entities/auth.entity';
+import { ForgotPasswordInput, ForgotPasswordResponse, LoginInput, LoginResponse } from '../../entities/auth.entity';
 import { IErrorService, IJoiService } from '../../interfaces/common.interface';
 
 import { IAuthService } from '../../interfaces/auth.interface';
@@ -43,6 +43,29 @@ export class AuthResolver {
       const res = this.authService.login({
         email,
         password,
+      });
+      return res;
+    } catch (err) {
+      this.errorService.throwError({ err, name: this.name, operation, logError: true });
+    }
+  }
+
+  @Mutation((returns) => ForgotPasswordResponse)
+  async ForgotPassword(@Arg('input') args: ForgotPasswordInput) {
+    const operation = 'ForgetPassword';
+
+    try {
+      const email = args.email;
+
+      const schema = AuthValidation.forgotPassword();
+      await this.joiService.validate({
+        schema,
+        input: {
+          email,
+        },
+      });
+      const res = await this.authService.forgotPassword({
+        email,
       });
       return res;
     } catch (err) {

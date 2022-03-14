@@ -10,6 +10,7 @@ import {
   IHashService,
   IAppService,
   ITokenService,
+  IEmailService,
 } from '../../interfaces/common.interface';
 import { IGraphql } from '../../interfaces/graphql.interface';
 
@@ -22,6 +23,7 @@ import BcryptService from '../../services/bcrypt.service';
 import ErrorService from '../../services/error.service';
 import JoiService from '../../services/JoiService';
 import TokenService from '../../services/token.service';
+import EmailService from '../../services/email.service';
 
 export const app = new ContainerModule((bind: interfaces.Bind, unbind: interfaces.Unbind) => {
   bind<IAppService>(TYPES.AppService).to(AppService);
@@ -49,6 +51,10 @@ export const hash = new ContainerModule((bind: interfaces.Bind, unbind: interfac
 
 export const token = new ContainerModule((bind: interfaces.Bind, unbind: interfaces.Unbind) => {
   bind<ITokenService>(TYPES.TokenService).to(TokenService);
+});
+
+export const email = new ContainerModule((bind: interfaces.Bind, unbind: interfaces.Unbind) => {
+  bind<IEmailService>(TYPES.EmailService).to(EmailService);
 });
 
 export const error = new ContainerModule((bind: interfaces.Bind, unbind: interfaces.Unbind) => {
