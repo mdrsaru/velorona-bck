@@ -22,6 +22,7 @@ export interface IUser {
 
 export interface IEmailInput {
   email: string;
+  relations?: string[];
 }
 
 export interface IUserCreate {

@@ -2,11 +2,18 @@ import { inject, injectable } from 'inversify';
 
 import { TYPES } from '../types';
 import constants from '../config/constants';
-import { ForgotPasswordResponse, LoginResponse, ResetPasswordResponse } from '../entities/auth.entity';
 import { NotAuthenticatedError } from '../utils/api-error';
 import strings from '../config/strings';
 
-import { IAuthService, IForgotPasswordInput, ILoginInput, IResetPasswordInput } from '../interfaces/auth.interface';
+import {
+  IAuthService,
+  IForgotPasswordInput,
+  ILoginInput,
+  IResetPasswordInput,
+  ILoginResponse,
+  IResetPasswordResponse,
+  IForgotPasswordResponse,
+} from '../interfaces/auth.interface';
 import { IEmailService, IHashService, ITokenService } from '../interfaces/common.interface';
 import { IUserRepository } from '../interfaces/user.interface';
 
@@ -29,11 +36,15 @@ export default class AuthService implements IAuthService {
     this.tokenService = _tokenService;
     this.emailService = _emailService;
   }
-  login = async (args: ILoginInput): Promise<LoginResponse | undefined> => {
+
+  login = async (args: ILoginInput): Promise<ILoginResponse> => {
     try {
       const email = args.email;
       const password = args.password;
-      let user = await this.userRepository.getByEmail({ email: email });
+      let user = await this.userRepository.getByEmail({
+        email,
+        relations: ['roles'],
+      });
 
       if (!user) {
         throw new NotAuthenticatedError({
@@ -52,6 +63,7 @@ export default class AuthService implements IAuthService {
 
       let payload = {
         id: user?.id,
+        roles: user.roles.map((role) => role.id),
       };
 
       let accessTokenData = {
@@ -65,63 +77,73 @@ export default class AuthService implements IAuthService {
       return {
         id: user.id,
         token: token,
+        roles: user.roles,
       };
     } catch (err) {
       throw err;
     }
   };
 
-  forgotPassword = async (args: IForgotPasswordInput): Promise<ForgotPasswordResponse> => {
+  forgotPassword = async (args: IForgotPasswordInput): Promise<IForgotPasswordResponse> => {
     try {
       const email = args.email;
       const baseUrl = constants.frontendUrl + '/reset-password/?token=';
-      let user = await this.userRepository.getByEmail({ email: email });
-      if (user) {
-        let payload = {
-          id: user?.id,
-        };
-        let accessTokenData = {
-          payload: payload,
-          tokenSecret: constants.accessTokenSecret,
-          tokenLife: constants.accessTokenLife,
-        };
-        let token = await this.tokenService.generateToken(accessTokenData);
-        const mailSubject = constants.changePassword.changePasswordSubject;
-        const mailBody = constants.changePassword.changePasswordBody;
-        let emailData = {
-          email: user.email,
-          token: token,
-          mailSubject,
-          mailBody,
-          baseUrl,
-        };
-        this.emailService.sendEmail(emailData);
-        return {
-          token: token,
-        };
-      } else {
+      let user = await this.userRepository.getByEmail({ email });
+
+      if (!user) {
         throw new NotAuthenticatedError({ details: ["User doesn't exist"] });
       }
+
+      const payload = {
+        id: user?.id,
+      };
+
+      const accessTokenData = {
+        payload: payload,
+        tokenSecret: constants.accessTokenSecret,
+        tokenLife: constants.accessTokenLife,
+      };
+
+      const token = await this.tokenService.generateToken(accessTokenData);
+      const mailSubject = constants.changePassword.changePasswordSubject;
+      const mailBody = constants.changePassword.changePasswordBody;
+
+      let emailData = {
+        email: user.email,
+        token: token,
+        mailSubject,
+        mailBody,
+        baseUrl,
+      };
+
+      this.emailService.sendEmail(emailData);
+
+      return {
+        token: token,
+      };
     } catch (err) {
       throw err;
     }
   };
 
-  resetPassword = async (args: IResetPasswordInput): Promise<ResetPasswordResponse> => {
+  resetPassword = async (args: IResetPasswordInput): Promise<IResetPasswordResponse> => {
     try {
-      let token = await this.tokenService.extractToken(args.token);
+      const token = await this.tokenService.extractToken(args.token);
       const password = args.password;
       const tokenData = {
         token: token,
         secretKey: constants.accessTokenSecret,
       };
+
       const result = await this.tokenService.verifyToken(tokenData);
+
       if (result) {
         const id = result.id;
         await this.userRepository.update({
           id,
           password: password,
         });
+
         return {
           message: 'Password changed sucessfully',
         };

@@ -32,21 +32,17 @@ export default class InitialDatabaseSeed implements Seeder {
 
     let createdRoles: any = [];
 
-    roles.forEach(async (role) => {
+    for (let role of roles) {
       const createdRole = await factory(Role)().create({
         ...role,
       });
 
       createdRoles.push(createdRole);
-    });
+    }
 
-    await factory(User)()
-      .map(async (user) => {
-        user.roles = [createdRoles[0]];
-        return user;
-      })
-      .create({
-        email: 'admin@admin.com',
-      });
+    await factory(User)().create({
+      roles: [createdRoles[0]],
+      email: 'admin@admin.com',
+    });
   }
 }

@@ -159,7 +159,15 @@ export default class UserRepository extends BaseRepository<User> implements IUse
 
   getByEmail = async (args: any = {}): Promise<User | undefined> => {
     try {
-      const user = await this.repo.findOne({ email: args.email });
+      const user = await this.repo.findOne(
+        {
+          email: args.email,
+        },
+        {
+          relations: args?.relations ?? [],
+        }
+      );
+
       return user;
     } catch (err) {
       throw err;
