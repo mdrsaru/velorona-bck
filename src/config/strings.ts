@@ -14,4 +14,5 @@ export default {
   tokenRequired: 'Token required',
   userNotAuthenticated: 'User not authenticated',
   emailPasswordNotCorrect: 'Email or password is not correct',
+  notAllowedToCreateAdmin: 'User is not allowed to create admin',
 };

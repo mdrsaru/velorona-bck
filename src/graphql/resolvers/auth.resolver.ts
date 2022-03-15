@@ -74,10 +74,12 @@ export class AuthResolver {
           password,
         },
       });
-      const res = this.authService.login({
+
+      const res = await this.authService.login({
         email,
         password,
       });
+
       return res;
     } catch (err) {
       this.errorService.throwError({ err, name: this.name, operation, logError: true });
@@ -98,6 +100,7 @@ export class AuthResolver {
           email,
         },
       });
+
       const res = await this.authService.forgotPassword({
         email,
       });

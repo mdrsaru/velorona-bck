@@ -10,19 +10,23 @@ import * as userLoader from '../loaders/dataloader/user.dataloader';
 import { IGraphql, IGraphqlContext } from '../interfaces/graphql.interface';
 import { ITokenService, ILogger } from '../interfaces/common.interface';
 import { IUserAuth } from '../interfaces/auth.interface';
+import { IRoleRepository } from '../interfaces/role.interface';
 
 @injectable()
 export default class GraphqlService implements IGraphql {
   private name = 'GraphqlService';
   private tokenService: ITokenService;
   private logger: ILogger;
+  private roleRepository: IRoleRepository;
 
   constructor(
     @inject(TYPES.TokenService) _tokenService: ITokenService,
     @inject(TYPES.LoggerFactory) loggerFactory: (name: string) => ILogger
+    //@inject(TYPES.RoleRepository) _roleRepository: IRoleRepository,
   ) {
     this.tokenService = _tokenService;
     this.logger = loggerFactory(this.name);
+    //this.roleRepository = _roleRepository;
   }
 
   formatError(err: any) {
@@ -42,6 +46,7 @@ export default class GraphqlService implements IGraphql {
   }
 
   setContext = async (args: any): Promise<IGraphqlContext> => {
+    const roleRepository = container.get<IRoleRepository>(TYPES.RoleRepository); // could not inject as connection is needed
     const operation = 'setContext';
     const { req, res } = args;
     let user: IUserAuth | undefined;
@@ -54,7 +59,13 @@ export default class GraphqlService implements IGraphql {
           secretKey: config.accessTokenSecret,
         });
 
-        user = decoded as IUserAuth;
+        const roles = decoded?.roles ?? [];
+        const userRoles = await roleRepository.getAll({ query: { id: roles } });
+
+        user = {
+          id: decoded.id,
+          roles: userRoles,
+        };
       }
     } catch (err: any) {
       this.logger.info({

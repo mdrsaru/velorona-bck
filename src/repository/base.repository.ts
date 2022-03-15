@@ -28,7 +28,7 @@ export default class BaseRepository<T> implements IBaseRepository<T> {
       }
 
       const [rows, count] = await this.repo.findAndCount({
-        ...query,
+        where: query,
         ...rest,
       });
 
@@ -54,8 +54,8 @@ export default class BaseRepository<T> implements IBaseRepository<T> {
       }
 
       const rows = await this.repo.find({
+        where: query,
         ...rest,
-        ...query,
       });
 
       return rows;

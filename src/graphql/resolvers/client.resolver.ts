@@ -1,17 +1,14 @@
 import { inject, injectable } from 'inversify';
 import { Resolver, Query, Ctx, Arg, Mutation, UseMiddleware, FieldResolver, Root } from 'type-graphql';
 
-import { IPaginationData } from '../../interfaces/paging.interface';
-import { IClient, IClientService } from '../../interfaces/client.interface';
-import { IErrorService, IJoiService } from '../../interfaces/common.interface';
-import { IGraphqlContext } from '../../interfaces/graphql.interface';
-
 import { TYPES } from '../../types';
 import Paging from '../../utils/paging';
 import User from '../../entities/user.entity';
 import Client from '../../entities/client.entity';
+import { Role as RoleEnum } from '../../config/constants';
 import ClientValidation from '../../validation/client.validation';
 import authenticate from '../middlewares/authenticate';
+import authorize from '../middlewares/authorize';
 import {
   ClientPagingResult,
   ClientQueryInput,
@@ -19,6 +16,11 @@ import {
   ClientUpdateInput,
 } from '../../entities/client.entity';
 import { PagingInput, DeleteInput, MessageResponse } from '../../entities/common.entity';
+
+import { IPaginationData } from '../../interfaces/paging.interface';
+import { IClient, IClientService } from '../../interfaces/client.interface';
+import { IErrorService, IJoiService } from '../../interfaces/common.interface';
+import { IGraphqlContext } from '../../interfaces/graphql.interface';
 
 @injectable()
 @Resolver((of) => Client)
@@ -56,7 +58,7 @@ export class ClientResolver {
   }
 
   @Mutation((returns) => Client)
-  @UseMiddleware(authenticate)
+  @UseMiddleware(authenticate, authorize(RoleEnum.SuperAdmin))
   async ClientCreate(@Arg('input') args: ClientCreateInput, @Ctx() ctx: any): Promise<Client> {
     const operation = 'ClientCreate';
 
@@ -85,7 +87,7 @@ export class ClientResolver {
   }
 
   @Mutation((returns) => Client)
-  @UseMiddleware(authenticate)
+  @UseMiddleware(authenticate, authorize(RoleEnum.SuperAdmin))
   async ClientUpdate(@Arg('input') args: ClientUpdateInput, @Ctx() ctx: any): Promise<Client> {
     const operation = 'ClientUpdate';
 
@@ -117,7 +119,7 @@ export class ClientResolver {
   }
 
   @Mutation((returns) => Client)
-  @UseMiddleware(authenticate)
+  @UseMiddleware(authenticate, authorize(RoleEnum.SuperAdmin))
   async ClientDelete(@Arg('input') args: DeleteInput, @Ctx() ctx: any): Promise<Client> {
     const operation = 'ClientDelete';
 
