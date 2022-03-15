@@ -64,4 +64,5 @@ export interface IUserService {
   create(args: IUserCreate): Promise<User>;
   update(args: IUserUpdate): Promise<User>;
   remove(args: IEntityRemove): Promise<User>;
+  getById(args: IEntityID): Promise<User | undefined>;
 }

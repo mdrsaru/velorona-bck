@@ -97,4 +97,13 @@ export default class UserService implements IUserService {
   remove = (args: IEntityRemove): Promise<User> => {
     throw new Error('not implemented');
   };
+
+  getById = async (args: IEntityID): Promise<User | undefined> => {
+    try {
+      const id = args.id;
+      return await this.userRepository.getById({ id });
+    } catch (err) {
+      throw err;
+    }
+  };
 }

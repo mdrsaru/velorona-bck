@@ -18,6 +18,7 @@ import authenticate from '../middlewares/authenticate';
 import { IErrorService, IJoiService } from '../../interfaces/common.interface';
 import { IAuthService } from '../../interfaces/auth.interface';
 import { IGraphqlContext } from '../../interfaces/graphql.interface';
+import { IUserService } from '../../interfaces/user.interface';
 
 @injectable()
 export class AuthResolver {
@@ -25,15 +26,18 @@ export class AuthResolver {
   private authService: IAuthService;
   private joiService: IJoiService;
   private errorService: IErrorService;
+  private userService: IUserService;
 
   constructor(
     @inject(TYPES.AuthService) authService: IAuthService,
     @inject(TYPES.JoiService) _joiService: IJoiService,
-    @inject(TYPES.ErrorService) _errorService: IErrorService
+    @inject(TYPES.ErrorService) _errorService: IErrorService,
+    @inject(TYPES.UserService) userService: IUserService
   ) {
     this.authService = authService;
     this.joiService = _joiService;
     this.errorService = _errorService;
+    this.userService = userService;
   }
 
   @Query((returns) => User)
@@ -41,16 +45,9 @@ export class AuthResolver {
   async me(@Ctx() ctx: IGraphqlContext) {
     const operation = 'me';
     try {
-      const token = ctx.req.headers;
-      const schema = AuthValidation.me();
-      await this.joiService.validate({
-        schema,
-        input: {
-          token,
-        },
-      });
-      const res = await this.authService.me({
-        token,
+      const id: any = ctx.user?.id;
+      const res = await this.userService.getById({
+        id,
       });
       return res;
     } catch (err) {

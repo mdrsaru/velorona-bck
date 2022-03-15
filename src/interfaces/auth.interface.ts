@@ -1,6 +1,6 @@
-import { ForgotPasswordResponse, ResetPasswordResponse } from '../entities/auth.entity';
 import User from '../entities/user.entity';
 import Role from '../entities/role.entity';
+import { IEntityID } from './common.interface';
 
 export interface ILoginInput {
   email: string;
@@ -14,10 +14,6 @@ export interface IForgotPasswordInput {
 export interface IResetPasswordInput {
   token?: any;
   password: string;
-}
-
-export interface ITokenInput {
-  token: any;
 }
 export interface ILoginResponse {
   id: string;
@@ -37,7 +33,6 @@ export interface IAuthService {
   login(args: ILoginInput): Promise<ILoginResponse>;
   forgotPassword(args: IForgotPasswordInput): Promise<IForgotPasswordResponse>;
   resetPassword(args: IResetPasswordInput): Promise<IResetPasswordResponse>;
-  me(args: ITokenInput): Promise<User | undefined>;
 }
 
 export interface IUserAuth {
