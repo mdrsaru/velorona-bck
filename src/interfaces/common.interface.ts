@@ -1,3 +1,4 @@
+import { ResetPasswordResponse } from '../entities/auth.entity';
 import { CustomError } from '../utils/api-error';
 import { IPagingArgs, IGetAllAndCountResult, IGetOptions } from './paging.interface';
 

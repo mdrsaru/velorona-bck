@@ -10,7 +10,6 @@ import { TYPES } from '../types';
 import strings from '../config/strings';
 import config from '../config/constants';
 import User from '../entities/user.entity';
-import Address from '../entities/address.entity';
 import BaseRepository from './base.repository';
 import * as apiError from '../utils/api-error';
 
@@ -123,6 +122,7 @@ export default class UserRepository extends BaseRepository<User> implements IUse
       const status = args.status;
       const phone = args.phone;
       const address = args?.address;
+      const password = args?.password;
 
       const found = await this.repo.findOne(id, { relations: ['address'] });
 
@@ -131,7 +131,10 @@ export default class UserRepository extends BaseRepository<User> implements IUse
           details: [strings.userNotFound],
         });
       }
-
+      let hashedPassword;
+      if (password) {
+        hashedPassword = await this.hashService.hash(password, config.saltRounds);
+      }
       const update = merge(found, {
         id,
         firstName,
@@ -143,6 +146,7 @@ export default class UserRepository extends BaseRepository<User> implements IUse
           ...(found.address ?? {}),
           ...address,
         },
+        password: hashedPassword,
       });
 
       const user = await this.repo.save(update);

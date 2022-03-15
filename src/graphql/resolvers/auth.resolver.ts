@@ -1,11 +1,20 @@
 import { inject, injectable } from 'inversify';
-import { Arg, Ctx, Mutation, Resolver } from 'type-graphql';
-import { ForgotPasswordInput, ForgotPasswordResponse, LoginInput, LoginResponse } from '../../entities/auth.entity';
-import { IErrorService, IJoiService } from '../../interfaces/common.interface';
+import { Arg, Ctx, Mutation } from 'type-graphql';
 
-import { IAuthService } from '../../interfaces/auth.interface';
+import {
+  ForgotPasswordInput,
+  ForgotPasswordResponse,
+  LoginInput,
+  LoginResponse,
+  ResetPasswordInput,
+  ResetPasswordResponse,
+} from '../../entities/auth.entity';
 import { TYPES } from '../../types';
 import AuthValidation from '../../validation/auth.validation';
+
+import { IErrorService, IJoiService } from '../../interfaces/common.interface';
+import { IAuthService } from '../../interfaces/auth.interface';
+import { IGraphqlContext } from '../../interfaces/graphql.interface';
 
 @injectable()
 export class AuthResolver {
@@ -66,6 +75,30 @@ export class AuthResolver {
       });
       const res = await this.authService.forgotPassword({
         email,
+      });
+      return res;
+    } catch (err) {
+      this.errorService.throwError({ err, name: this.name, operation, logError: true });
+    }
+  }
+
+  @Mutation((returns) => ResetPasswordResponse)
+  async ResetPassword(@Arg('input') args: ResetPasswordInput, @Ctx() ctx: IGraphqlContext) {
+    const operation = 'ResetPassword';
+    try {
+      const token = ctx.req.headers;
+      const password = args.password;
+      const schema = AuthValidation.resetPassword();
+      await this.joiService.validate({
+        schema,
+        input: {
+          token,
+          password,
+        },
+      });
+      const res = await this.authService.resetPassword({
+        token,
+        password,
       });
       return res;
     } catch (err) {

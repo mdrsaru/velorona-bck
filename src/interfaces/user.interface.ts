@@ -45,6 +45,7 @@ export interface IUserUpdate {
   phone?: IUser['phone'];
   status?: IUser['status'];
   address?: IAddressUpdateInput;
+  password?: string;
 }
 
 export interface IUserRepository {

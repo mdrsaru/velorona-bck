@@ -14,6 +14,12 @@ export class ForgotPasswordResponse {
   @Field()
   token: string;
 }
+
+@ObjectType()
+export class ResetPasswordResponse {
+  @Field()
+  message: string;
+}
 @InputType()
 export class LoginInput {
   @Field()
@@ -27,4 +33,13 @@ export class LoginInput {
 export class ForgotPasswordInput {
   @Field()
   email: string;
+}
+
+@InputType()
+export class ResetPasswordInput {
+  @Field({ nullable: true })
+  token: string;
+
+  @Field()
+  password: string;
 }

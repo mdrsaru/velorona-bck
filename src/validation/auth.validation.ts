@@ -15,6 +15,12 @@ const messages = {
     'string.name': strings.passwordRequired,
     'any.required': strings.passwordRequired,
   },
+  token: {
+    'string.base': strings.tokenRequired,
+    'string.empty': strings.tokenRequired,
+    'string.name': strings.tokenRequired,
+    'any.required': strings.tokenRequired,
+  },
 };
 
 export default class AuthValidation {
@@ -27,6 +33,12 @@ export default class AuthValidation {
   static forgotPassword() {
     return Joi.object({
       email: Joi.string().required().messages(messages.email),
+    });
+  }
+  static resetPassword() {
+    return Joi.object({
+      token: Joi.object().required().messages(messages.token),
+      password: Joi.string().required().messages(messages.password),
     });
   }
 }

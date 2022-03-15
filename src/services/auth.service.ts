@@ -2,12 +2,13 @@ import { inject, injectable } from 'inversify';
 
 import { TYPES } from '../types';
 import constants from '../config/constants';
-import { ForgotPasswordResponse, LoginResponse } from '../entities/auth.entity';
-import { IAuthService, IForgotPasswordInput, ILoginInput } from '../interfaces/auth.interface';
-import { IEmailService, IHashService, ITokenService } from '../interfaces/common.interface';
-import { IUserRepository } from '../interfaces/user.interface';
+import { ForgotPasswordResponse, LoginResponse, ResetPasswordResponse } from '../entities/auth.entity';
 import { NotAuthenticatedError } from '../utils/api-error';
 import strings from '../config/strings';
+
+import { IAuthService, IForgotPasswordInput, ILoginInput, IResetPasswordInput } from '../interfaces/auth.interface';
+import { IEmailService, IHashService, ITokenService } from '../interfaces/common.interface';
+import { IUserRepository } from '../interfaces/user.interface';
 
 @injectable()
 export default class AuthService implements IAuthService {
@@ -100,6 +101,32 @@ export default class AuthService implements IAuthService {
         };
       } else {
         throw new NotAuthenticatedError({ details: ["User doesn't exist"] });
+      }
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  resetPassword = async (args: IResetPasswordInput): Promise<ResetPasswordResponse> => {
+    try {
+      let token = await this.tokenService.extractToken(args.token);
+      const password = args.password;
+      const tokenData = {
+        token: token,
+        secretKey: constants.accessTokenSecret,
+      };
+      const result = await this.tokenService.verifyToken(tokenData);
+      if (result) {
+        const id = result.id;
+        await this.userRepository.update({
+          id,
+          password: password,
+        });
+        return {
+          message: 'Password changed sucessfully',
+        };
+      } else {
+        throw new NotAuthenticatedError({ details: ['Invalid Token'] });
       }
     } catch (err) {
       throw err;
