@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { Arg, Ctx, Mutation } from 'type-graphql';
+import { Arg, Ctx, Mutation, Query, UseMiddleware } from 'type-graphql';
 
 import {
   ForgotPasswordInput,
@@ -9,8 +9,11 @@ import {
   ResetPasswordInput,
   ResetPasswordResponse,
 } from '../../entities/auth.entity';
+import User from '../../entities/user.entity';
+
 import { TYPES } from '../../types';
 import AuthValidation from '../../validation/auth.validation';
+import authenticate from '../middlewares/authenticate';
 
 import { IErrorService, IJoiService } from '../../interfaces/common.interface';
 import { IAuthService } from '../../interfaces/auth.interface';
@@ -31,6 +34,28 @@ export class AuthResolver {
     this.authService = authService;
     this.joiService = _joiService;
     this.errorService = _errorService;
+  }
+
+  @Query((returns) => User)
+  @UseMiddleware(authenticate)
+  async me(@Ctx() ctx: IGraphqlContext) {
+    const operation = 'me';
+    try {
+      const token = ctx.req.headers;
+      const schema = AuthValidation.me();
+      await this.joiService.validate({
+        schema,
+        input: {
+          token,
+        },
+      });
+      const res = await this.authService.me({
+        token,
+      });
+      return res;
+    } catch (err) {
+      this.errorService.throwError({ err, name: this.name, operation, logError: true });
+    }
   }
 
   @Mutation((returns) => LoginResponse)

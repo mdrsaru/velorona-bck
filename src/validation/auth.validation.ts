@@ -41,4 +41,9 @@ export default class AuthValidation {
       password: Joi.string().required().messages(messages.password),
     });
   }
+  static me() {
+    return Joi.object({
+      token: Joi.object().required().messages(messages.token),
+    });
+  }
 }
