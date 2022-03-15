@@ -14,8 +14,9 @@ import {
   IResetPasswordResponse,
   IForgotPasswordResponse,
 } from '../interfaces/auth.interface';
-import { IEmailService, IHashService, ITokenService } from '../interfaces/common.interface';
+import { IEmailService, IEntityID, IHashService, ITokenService } from '../interfaces/common.interface';
 import { IUserRepository } from '../interfaces/user.interface';
+import User from '../entities/user.entity';
 
 @injectable()
 export default class AuthService implements IAuthService {

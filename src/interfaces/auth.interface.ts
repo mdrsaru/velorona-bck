@@ -1,5 +1,6 @@
-import { ForgotPasswordResponse, ResetPasswordResponse } from '../entities/auth.entity';
+import User from '../entities/user.entity';
 import Role from '../entities/role.entity';
+import { IEntityID } from './common.interface';
 
 export interface ILoginInput {
   email: string;
@@ -14,7 +15,6 @@ export interface IResetPasswordInput {
   token?: any;
   password: string;
 }
-
 export interface ILoginResponse {
   id: string;
   token: string;

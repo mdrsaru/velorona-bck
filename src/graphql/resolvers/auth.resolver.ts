@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { Arg, Ctx, Mutation, FieldResolver } from 'type-graphql';
+import { Arg, Ctx, Mutation, Query, UseMiddleware } from 'type-graphql';
 
 import {
   ForgotPasswordInput,
@@ -9,12 +9,16 @@ import {
   ResetPasswordInput,
   ResetPasswordResponse,
 } from '../../entities/auth.entity';
+import User from '../../entities/user.entity';
+
 import { TYPES } from '../../types';
 import AuthValidation from '../../validation/auth.validation';
+import authenticate from '../middlewares/authenticate';
 
 import { IErrorService, IJoiService } from '../../interfaces/common.interface';
 import { IAuthService } from '../../interfaces/auth.interface';
 import { IGraphqlContext } from '../../interfaces/graphql.interface';
+import { IUserService } from '../../interfaces/user.interface';
 
 @injectable()
 export class AuthResolver {
@@ -22,15 +26,33 @@ export class AuthResolver {
   private authService: IAuthService;
   private joiService: IJoiService;
   private errorService: IErrorService;
+  private userService: IUserService;
 
   constructor(
     @inject(TYPES.AuthService) authService: IAuthService,
     @inject(TYPES.JoiService) _joiService: IJoiService,
-    @inject(TYPES.ErrorService) _errorService: IErrorService
+    @inject(TYPES.ErrorService) _errorService: IErrorService,
+    @inject(TYPES.UserService) userService: IUserService
   ) {
     this.authService = authService;
     this.joiService = _joiService;
     this.errorService = _errorService;
+    this.userService = userService;
+  }
+
+  @Query((returns) => User)
+  @UseMiddleware(authenticate)
+  async me(@Ctx() ctx: IGraphqlContext) {
+    const operation = 'me';
+    try {
+      const id: any = ctx.user?.id;
+      const res = await this.userService.getById({
+        id,
+      });
+      return res;
+    } catch (err) {
+      this.errorService.throwError({ err, name: this.name, operation, logError: true });
+    }
   }
 
   @Mutation((returns) => LoginResponse)
