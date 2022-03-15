@@ -15,4 +15,7 @@ export default {
   userNotAuthenticated: 'User not authenticated',
   emailPasswordNotCorrect: 'Email or password is not correct',
   notAllowedToCreateAdmin: 'User is not allowed to create admin',
+  tokenTypeRequired: 'Token type required',
+  expiresInNotValid: 'Argument expiresIn is not valid',
+  userIdRequired: 'User id is required',
 };

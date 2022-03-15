@@ -18,9 +18,8 @@ export default class UserToken extends Base {
   @Column({
     type: 'enum',
     enum: TokenType,
-    default: TokenType.refresh,
   })
-  name: TokenType;
+  tokenType: TokenType;
 
   @Field()
   @Column({ type: 'text' })
@@ -31,6 +30,7 @@ export default class UserToken extends Base {
   expiresIn: Date;
 
   @Column()
+  @Index()
   user_id: string;
 
   @ManyToOne(() => User, (user) => user.tokens)

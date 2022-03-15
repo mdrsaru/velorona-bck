@@ -13,6 +13,7 @@ const USER = {
 const AUTH = {
   AuthService: Symbol('AuthService'),
 };
+
 const COMMON = {
   AppService: Symbol('AppService'),
   AppController: Symbol('AppController'),
@@ -31,11 +32,17 @@ const COMMON = {
   AddressRepository: Symbol('AddressRepository'),
 };
 
+const USER_TOKEN = {
+  UserTokenRepository: Symbol('UserTokenRepository'),
+  UserTokenService: Symbol('UserTokenService'),
+};
+
 const TYPES = {
   ...COMMON,
   ...CLIENT,
   ...USER,
   ...AUTH,
+  ...USER_TOKEN,
 };
 
 export { TYPES };
