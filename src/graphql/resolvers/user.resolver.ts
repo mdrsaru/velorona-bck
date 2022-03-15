@@ -2,9 +2,12 @@ import { inject, injectable } from 'inversify';
 import { Resolver, Query, Ctx, Arg, Mutation, UseMiddleware, FieldResolver, Root } from 'type-graphql';
 
 import { TYPES } from '../../types';
+import { Role as RoleEnum } from '../../config/constants';
 import Client from '../../entities/client.entity';
 import Paging from '../../utils/paging';
 import authenticate from '../middlewares/authenticate';
+import { canCreateSystemAdmin } from '../middlewares/user';
+import authorize from '../middlewares/authorize';
 import UserValidation from '../../validation/user.validation';
 import { PagingInput, DeleteInput, MessageResponse } from '../../entities/common.entity';
 import User, { UserPagingResult, UserCreateInput, UserUpdateInput, UserQueryInput } from '../../entities/user.entity';
@@ -49,7 +52,7 @@ export class UserResolver {
   }
 
   @Mutation((returns) => User)
-  @UseMiddleware(authenticate)
+  @UseMiddleware(authenticate, authorize(RoleEnum.ClientAdmin, RoleEnum.SuperAdmin), canCreateSystemAdmin)
   async UserCreate(@Arg('input') args: UserCreateInput): Promise<User> {
     const operation = 'UserCreate';
 

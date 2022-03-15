@@ -75,7 +75,7 @@ export class RoleQuery {
   @Field({ nullable: true })
   id: string;
 
-  @Field((type) => RoleEnum)
+  @Field((type) => RoleEnum, { nullable: true })
   name: RoleEnum;
 }
 

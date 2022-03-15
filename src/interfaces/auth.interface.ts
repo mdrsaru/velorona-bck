@@ -37,5 +37,5 @@ export interface IAuthService {
 
 export interface IUserAuth {
   id: string;
-  roles: string[];
+  roles: Role[];
 }

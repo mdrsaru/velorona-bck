@@ -4,6 +4,8 @@ import { Arg, Ctx, Mutation, Query, Resolver, UseMiddleware } from 'type-graphql
 import { TYPES } from '../../types';
 import Paging from '../../utils/paging';
 import authenticate from '../middlewares/authenticate';
+import authorize from '../middlewares/authorize';
+import { Role as RoleEnum } from '../../config/constants';
 import RoleValidation from '../../validation/role.validation';
 import { DeleteInput } from '../../entities/common.entity';
 import Role, { RoleCreateInput, RolePagingResult, RoleQueryInput, RoleUpdateInput } from '../../entities/role.entity';
@@ -45,7 +47,7 @@ export class RoleResolver {
   }
 
   @Mutation((returns) => Role)
-  @UseMiddleware(authenticate)
+  @UseMiddleware(authenticate, authorize(RoleEnum.SuperAdmin))
   async RoleCreate(@Arg('input') args: RoleCreateInput, @Ctx() ctx: any): Promise<Role> {
     const operation = 'RoleCreate';
     try {
@@ -71,7 +73,7 @@ export class RoleResolver {
   }
 
   @Mutation((returns) => Role)
-  @UseMiddleware(authenticate)
+  @UseMiddleware(authenticate, authorize(RoleEnum.SuperAdmin))
   async RoleUpdate(@Arg('input') args: RoleUpdateInput, @Ctx() ctx: any): Promise<IRole> {
     const operation = 'RoleUpdate';
 
@@ -103,7 +105,7 @@ export class RoleResolver {
   }
 
   @Mutation((returns) => Role)
-  @UseMiddleware(authenticate)
+  @UseMiddleware(authenticate, authorize(RoleEnum.SuperAdmin))
   async RoleDelete(@Arg('input') args: DeleteInput, @Ctx() ctx: any): Promise<Role> {
     const operation = 'RoleDelete';
 
