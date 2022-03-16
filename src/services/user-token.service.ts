@@ -48,12 +48,11 @@ export default class UserTokenService implements IUserTokenService {
 
   create = async (args: IUserTokenCreate): Promise<UserToken> => {
     const operation = 'create';
-
     try {
       const token = await this.tokenService.generateToken({
         payload: args.payload,
-        expiresAt: args.expiresIn,
-        secretKey: args.secretKey,
+        tokenLife: args.expiresIn,
+        tokenSecret: args.secretKey,
       });
 
       const userToken = await this.userTokenRepository.create({

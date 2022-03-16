@@ -102,6 +102,8 @@ export default {
   events: {},
   accessTokenSecret: process.env.ACCESS_TOKEN_SECRET || 'accessSecrect',
   accessTokenLife: process.env.ACCESS_TOKEN_LIFE || '15m',
+  refreshTokenSecret: process.env.REFRESH_TOKEN_SECRET || 'refreshSecret',
+  refreshTokenLife: process.env.REFRESH_TOKEN_LIFE || '7d',
   frontendUrl: process.env.FRONT_END_URL || 'http://localhost:3000',
   changePassword: {
     changePasswordSubject: process.env.CHANGEPASSWORD_SUBJECT || 'Change your password',

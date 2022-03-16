@@ -1,7 +1,7 @@
 import { inject, injectable } from 'inversify';
 
 import { TYPES } from '../types';
-import constants from '../config/constants';
+import constants, { TokenType } from '../config/constants';
 import { NotAuthenticatedError } from '../utils/api-error';
 import strings from '../config/strings';
 
@@ -17,6 +17,7 @@ import {
 import { IEmailService, IEntityID, IHashService, ITokenService } from '../interfaces/common.interface';
 import { IUserRepository } from '../interfaces/user.interface';
 import User from '../entities/user.entity';
+import { IUserTokenService } from '../interfaces/user-token.interface';
 
 @injectable()
 export default class AuthService implements IAuthService {
@@ -25,17 +26,20 @@ export default class AuthService implements IAuthService {
   private hashService: IHashService;
   private tokenService: ITokenService;
   private emailService: IEmailService;
+  private userTokenService: IUserTokenService;
 
   constructor(
     @inject(TYPES.UserRepository) _userRepository: IUserRepository,
     @inject(TYPES.HashService) _hashService: IHashService,
     @inject(TYPES.TokenService) _tokenService: ITokenService,
-    @inject(TYPES.EmailService) _emailService: IEmailService
+    @inject(TYPES.EmailService) _emailService: IEmailService,
+    @inject(TYPES.UserTokenService) userTokenService: IUserTokenService
   ) {
     this.userRepository = _userRepository;
     this.hashService = _hashService;
     this.tokenService = _tokenService;
     this.emailService = _emailService;
+    this.userTokenService = userTokenService;
   }
 
   login = async (args: ILoginInput): Promise<ILoginResponse> => {
@@ -72,13 +76,23 @@ export default class AuthService implements IAuthService {
         tokenSecret: constants.accessTokenSecret,
         tokenLife: constants.accessTokenLife,
       };
+      let refreshTokenData = {
+        payload: payload,
+        secretKey: constants.refreshTokenSecret,
+        user_id: user.id,
+        expiresIn: constants.accessTokenLife,
+        tokenType: TokenType?.refresh,
+      };
 
       let token = await this.tokenService.generateToken(accessTokenData);
+
+      let refreshToken = await this.userTokenService.create(refreshTokenData);
 
       return {
         id: user.id,
         token: token,
         roles: user.roles,
+        refreshToken: refreshToken,
       };
     } catch (err) {
       throw err;

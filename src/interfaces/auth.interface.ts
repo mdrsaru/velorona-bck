@@ -19,6 +19,7 @@ export interface ILoginResponse {
   id: string;
   token: string;
   roles: Role[];
+  refreshToken: any;
 }
 
 export interface IForgotPasswordResponse {

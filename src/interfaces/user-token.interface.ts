@@ -46,8 +46,8 @@ export interface IUserTokenService {
 }
 
 export interface ITokenArgs {
-  expiresAt: string;
-  secretKey: string;
+  tokenLife: string;
+  tokenSecret: string;
   payload: any;
 }
 
