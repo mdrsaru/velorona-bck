@@ -44,20 +44,3 @@ export interface IUserTokenService {
   deleteByToken(args: IUserTokenDeleteByToken): Promise<UserToken | undefined>;
   deleteByUserId(args: IUserTokenDeleteByUserId): Promise<boolean>;
 }
-
-export interface ITokenArgs {
-  tokenLife: string;
-  tokenSecret: string;
-  payload: any;
-}
-
-export interface ITokenVerificationInput {
-  token: string;
-  secretKey: string;
-}
-
-export interface ITokenService {
-  generateToken(tokenData: ITokenArgs): Promise<string>;
-  verifyToken(data: ITokenVerificationInput): Promise<any>;
-  extractToken(args: any): string;
-}

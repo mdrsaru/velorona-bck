@@ -1,9 +1,15 @@
-import express from 'express';
+import express, { Application } from 'express';
 
 import appRouter from './app';
+import tokenRouter from './token';
 
-const app: express.Application = express();
+const routes = () => {
+  const app: express.Application = express();
 
-app.use('/', appRouter);
+  app.use('/', appRouter());
+  app.use('/token', tokenRouter());
 
-export default app;
+  return app;
+};
+
+export default routes;

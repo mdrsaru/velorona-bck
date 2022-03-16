@@ -1,11 +1,11 @@
 import { injectable } from 'inversify';
 import jwt from 'jsonwebtoken';
 
-import { ITokenService, ITokenVerificationInput } from '../interfaces/common.interface';
+import { ITokenService, ITokenVerificationInput, ITokenArgs } from '../interfaces/common.interface';
 
 @injectable()
 export default class TokenService implements ITokenService {
-  generateToken = async (args: any = {}): Promise<string> => {
+  generateToken = async (args: ITokenArgs): Promise<string> => {
     return new Promise((resolve, reject) => {
       jwt.sign(
         args.payload,

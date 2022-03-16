@@ -19,7 +19,7 @@ export interface ILoginResponse {
   id: string;
   token: string;
   roles: Role[];
-  refreshToken: any;
+  refreshToken: string;
 }
 
 export interface IForgotPasswordResponse {
@@ -34,6 +34,7 @@ export interface IAuthService {
   login(args: ILoginInput): Promise<ILoginResponse>;
   forgotPassword(args: IForgotPasswordInput): Promise<IForgotPasswordResponse>;
   resetPassword(args: IResetPasswordInput): Promise<IResetPasswordResponse>;
+  renewAccessToken(refreshToken: string): Promise<ILoginResponse>;
 }
 
 export interface IUserAuth {

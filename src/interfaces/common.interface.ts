@@ -85,3 +85,9 @@ export interface ITokenVerificationInput {
   token: string;
   secretKey: string;
 }
+
+export interface ITokenArgs {
+  tokenLife: string;
+  tokenSecret: string;
+  payload: any;
+}

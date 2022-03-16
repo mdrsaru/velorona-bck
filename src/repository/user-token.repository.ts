@@ -68,7 +68,7 @@ export default class UserTokenRepository extends BaseRepository<UserToken> imple
   };
 
   async getByToken(token: string): Promise<UserToken | undefined> {
-    return this.repo.findOne({ where: token });
+    return this.repo.findOne({ where: { token } });
   }
 
   deleteByToken = async (args: IUserTokenDeleteByToken): Promise<UserToken | undefined> => {

@@ -1,5 +1,7 @@
+import ms from 'ms';
 import { inject, injectable } from 'inversify';
 import { Arg, Ctx, Mutation, Query, UseMiddleware } from 'type-graphql';
+import { CookieOptions } from 'express';
 
 import {
   ForgotPasswordInput,
@@ -12,6 +14,7 @@ import {
 import User from '../../entities/user.entity';
 
 import { TYPES } from '../../types';
+import constants from '../../config/constants';
 import AuthValidation from '../../validation/auth.validation';
 import authenticate from '../middlewares/authenticate';
 
@@ -56,7 +59,7 @@ export class AuthResolver {
   }
 
   @Mutation((returns) => LoginResponse)
-  async Login(@Arg('input') args: LoginInput) {
+  async Login(@Arg('input') args: LoginInput, @Ctx() ctx: IGraphqlContext) {
     const operation = 'Login';
 
     try {
@@ -72,12 +75,19 @@ export class AuthResolver {
         },
       });
 
-      const res = await this.authService.login({
+      const loginResponse = await this.authService.login({
         email,
         password,
       });
 
-      return res;
+      const options: CookieOptions = {
+        maxAge: ms(constants.refreshTokenExpiration),
+        httpOnly: true,
+      };
+
+      ctx.res.cookie(constants.refreshTokenCookieName, loginResponse.refreshToken, options);
+
+      return loginResponse;
     } catch (err) {
       this.errorService.throwError({ err, name: this.name, operation, logError: true });
     }

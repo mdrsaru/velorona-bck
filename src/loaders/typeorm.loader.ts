@@ -8,7 +8,7 @@ const logger = container.get<ILogger>(TYPES.Logger);
 logger.init('typeorm.loader');
 
 export default async (): Promise<void> => {
-  connection()
+  return connection()
     .then(() => {
       logger.info({
         operation: 'connection',

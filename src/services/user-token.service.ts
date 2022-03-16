@@ -10,8 +10,7 @@ import {
   IUserTokenRepository,
   IUserTokenService,
 } from '../interfaces/user-token.interface';
-import { ITokenService } from '../interfaces/user-token.interface';
-import { IErrorService } from '../interfaces/common.interface';
+import { IErrorService, ITokenService } from '../interfaces/common.interface';
 
 @injectable()
 export default class UserTokenService implements IUserTokenService {

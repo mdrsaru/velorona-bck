@@ -18,4 +18,5 @@ export default {
   tokenTypeRequired: 'Token type required',
   expiresInNotValid: 'Argument expiresIn is not valid',
   userIdRequired: 'User id is required',
+  tokenInvalid: 'Token is invalid',
 };

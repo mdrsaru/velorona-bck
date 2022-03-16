@@ -35,6 +35,7 @@ const COMMON = {
 const USER_TOKEN = {
   UserTokenRepository: Symbol('UserTokenRepository'),
   UserTokenService: Symbol('UserTokenService'),
+  UserTokenController: Symbol('UserTokenController'),
 };
 
 const TYPES = {
