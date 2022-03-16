@@ -19,4 +19,7 @@ export default {
   expiresInNotValid: 'Argument expiresIn is not valid',
   userIdRequired: 'User id is required',
   tokenInvalid: 'Token is invalid',
+  startDate: 'Start Date required',
+  endDate: 'End Date required',
+  payRate: 'PayRate required',
 };

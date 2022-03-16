@@ -1,4 +1,5 @@
 import Joi from 'joi';
+import { isEmpty } from 'lodash';
 import strings from '../config/strings';
 
 const messages = {
@@ -46,6 +47,27 @@ const messages = {
     'any.required': strings.rolesRequired,
     'any.message': strings.rolesRequired,
   },
+  startDate: {
+    'string.base': strings.startDate,
+    'string.empty': strings.startDate,
+    'string.name': strings.startDate,
+    'any.required': strings.startDate,
+    'any.message': strings.startDate,
+  },
+  endDate: {
+    'string.base': strings.endDate,
+    'string.empty': strings.endDate,
+    'string.name': strings.endDate,
+    'any.required': strings.endDate,
+    'any.message': strings.endDate,
+  },
+  payRate: {
+    'string.base': strings.payRate,
+    'string.empty': strings.payRate,
+    'string.name': strings.payRate,
+    'any.required': strings.payRate,
+    'any.message': strings.payRate,
+  },
 };
 
 export default class UserValidation {
@@ -60,6 +82,21 @@ export default class UserValidation {
       client_id: Joi.string(),
       address: Joi.object(),
       roles: Joi.array().items(Joi.string().required()).required(),
+      startDate: Joi.date().when('client_id', {
+        is: undefined,
+        then: Joi.date().required().messages(messages.startDate),
+        otherwise: Joi.optional(),
+      }),
+      endDate: Joi.date().when('client_id', {
+        is: undefined,
+        then: Joi.date().required().messages(messages.endDate),
+        otherwise: Joi.optional(),
+      }),
+      payRate: Joi.number().when('client_id', {
+        is: undefined,
+        then: Joi.number().required().messages(messages.payRate),
+        otherwise: Joi.optional(),
+      }),
     });
   }
 
@@ -71,6 +108,7 @@ export default class UserValidation {
       middleName: Joi.string(),
       phone: Joi.string().messages(messages.phone),
       address: Joi.object(),
+      record: Joi.object(),
     });
   }
 }

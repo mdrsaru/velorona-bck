@@ -43,7 +43,7 @@ export default class UserRepository extends BaseRepository<User> implements IUse
       const client_id = args.client_id;
       const address = args?.address;
       const roles = args.roles;
-
+      const record = args.record;
       const errors: string[] = [];
 
       if (isNil(email) || !isString(email)) {
@@ -105,6 +105,7 @@ export default class UserRepository extends BaseRepository<User> implements IUse
         client_id,
         address,
         roles: existingRoles,
+        record,
       });
 
       return user;
@@ -123,8 +124,9 @@ export default class UserRepository extends BaseRepository<User> implements IUse
       const phone = args.phone;
       const address = args?.address;
       const password = args?.password;
+      const record = args?.record;
 
-      const found = await this.repo.findOne(id, { relations: ['address'] });
+      const found = await this.repo.findOne(id, { relations: ['address', 'record'] });
 
       if (!found) {
         throw new apiError.NotFoundError({
@@ -147,6 +149,7 @@ export default class UserRepository extends BaseRepository<User> implements IUse
           ...address,
         },
         password: hashedPassword,
+        record,
       });
 
       const user = await this.repo.save(update);
