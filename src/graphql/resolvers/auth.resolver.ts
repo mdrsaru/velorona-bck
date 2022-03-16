@@ -140,4 +140,22 @@ export class AuthResolver {
       this.errorService.throwError({ err, name: this.name, operation, logError: true });
     }
   }
+
+  @Mutation((returns) => Boolean)
+  @UseMiddleware(authenticate)
+  async Logout(@Ctx() ctx: any): Promise<boolean> {
+    const operation = 'Logout';
+    try {
+      const cookie = ctx.req?.cookies || {};
+
+      const refreshToken = cookie[constants.refreshTokenCookieName];
+      if (refreshToken) {
+        let result = await this.authService.logout(refreshToken);
+      }
+
+      return true;
+    } catch (err) {
+      return true;
+    }
+  }
 }

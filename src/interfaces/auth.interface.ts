@@ -35,6 +35,7 @@ export interface IAuthService {
   forgotPassword(args: IForgotPasswordInput): Promise<IForgotPasswordResponse>;
   resetPassword(args: IResetPasswordInput): Promise<IResetPasswordResponse>;
   renewAccessToken(refreshToken: string): Promise<ILoginResponse>;
+  logout(refreshToken: string): Promise<boolean>;
 }
 
 export interface IUserAuth {

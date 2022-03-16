@@ -220,7 +220,7 @@ export default class AuthService implements IAuthService {
         tokenLife: constants.accessTokenLife,
       });
 
-      const roles = await this.roleRepository.getAll({ id: payload.roles });
+      const roles = await this.roleRepository.getAll({ query: { id: payload.roles } });
 
       return {
         id: payload.id,
@@ -231,5 +231,15 @@ export default class AuthService implements IAuthService {
     } catch (err) {
       throw err;
     }
+  };
+
+  logout = async (refreshToken: string): Promise<boolean> => {
+    const operation = 'logout';
+
+    return this.userTokenService
+      .deleteByToken({
+        token: refreshToken,
+      })
+      .then((data) => (data ? true : false));
   };
 }
