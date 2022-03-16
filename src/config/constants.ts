@@ -79,11 +79,9 @@ export default {
   port: process.env.PORT,
   baseUrl: process.env.BASE_URL,
   appName: process.env.APP_NAME || 'Vellorum_API',
-  refreshTokenKey: process.env.REFRESH_TOKEN_SECRET_KEY || 'refreshSecretKey',
   refreshTokenCookieName: process.env.REFRESH_TOKEN_COOKIE_NAME || 'refreshToken',
   saltRounds: process.env.SALT_ROUNDS || 10,
   verificationEmailTokenExpiration: process.env.VERIFICATION_EMAIL_EXPIRATION || '1d',
-  authTokenExpiration: process.env.AUTH_TOKEN_EXPIRATION || '15m',
   refreshTokenExpiration: process.env.REFRESH_TOKEN_EXPIRATION || '7d',
   forgotPasswordTokenExpiration: process.env.FORGOT_PASSWORD_TOKEN_EXPIRATION || '1hr',
   log: {

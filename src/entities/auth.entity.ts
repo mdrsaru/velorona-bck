@@ -12,7 +12,7 @@ export class LoginResponse {
   token: string;
 
   @Field()
-  refreshToken: UserToken;
+  refreshToken: string;
 
   @Field((type) => [Role])
   roles: Role[];
