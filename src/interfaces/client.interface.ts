@@ -7,6 +7,7 @@ export interface IClient {
   id: string;
   name: string;
   status: ClientStatus;
+  clientCode: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -21,7 +22,9 @@ export interface IClientUpdate {
   name: IClient['name'];
   status: IClient['status'];
 }
-
+export interface IClientCodeInput {
+  clientCode: string;
+}
 export interface IClientRepository {
   getAllAndCount(args: IPagingArgs): Promise<IGetAllAndCountResult<Client>>;
   getAll(args: any): Promise<Client[]>;
@@ -29,6 +32,7 @@ export interface IClientRepository {
   create(args: IClientCreate): Promise<Client>;
   update(args: IClientUpdate): Promise<Client>;
   remove(args: IEntityRemove): Promise<Client>;
+  getByClientCode(args: IClientCodeInput): Promise<Client[]>;
 }
 
 export interface IClientService {
