@@ -6,7 +6,6 @@ import Paging from '../utils/paging';
 import { TYPES } from '../types';
 import { IPagingArgs, IPaginationData } from '../interfaces/paging.interface';
 import { IEntityRemove, IEntityID } from '../interfaces/common.interface';
-
 @injectable()
 export default class ClientService implements IClientService {
   private clientRepository: IClientRepository;
@@ -36,7 +35,6 @@ export default class ClientService implements IClientService {
     try {
       const name = args.name;
       const status = args.status;
-
       const client = await this.clientRepository.create({
         name,
         status,
