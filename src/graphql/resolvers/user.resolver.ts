@@ -73,7 +73,15 @@ export class UserResolver {
         state: args.address.state,
         zipcode: args.address.zipcode,
       };
+      const startDate = args?.record?.startDate;
+      const endDate = args?.record?.endDate;
+      const payRate = args?.record?.payRate;
 
+      const record = {
+        startDate: startDate,
+        endDate: endDate,
+        payRate: payRate,
+      };
       const schema = UserValidation.create();
       await this.joiService.validate({
         schema,
@@ -87,9 +95,11 @@ export class UserResolver {
           client_id,
           address,
           roles,
+          startDate,
+          endDate,
+          payRate,
         },
       });
-
       let user: User = await this.userService.create({
         email,
         password,
@@ -101,6 +111,7 @@ export class UserResolver {
         client_id,
         address,
         roles,
+        record,
       });
 
       return user;
@@ -130,6 +141,11 @@ export class UserResolver {
         zipcode: args.address.zipcode,
       };
 
+      const record = {
+        startDate: args.record.startDate,
+        endDate: args.record.endDate,
+        payRate: args.record.payRate,
+      };
       const schema = UserValidation.update();
       await this.joiService.validate({
         schema,
@@ -140,6 +156,7 @@ export class UserResolver {
           middleName,
           phone,
           address,
+          record,
         },
       });
 
@@ -151,6 +168,7 @@ export class UserResolver {
         status,
         phone,
         address,
+        record,
       });
 
       return user;

@@ -8,6 +8,7 @@ import { PagingInput, PagingResult } from './common.entity';
 import Role from './role.entity';
 import UserToken from './user-token.entity';
 import Address, { AddressCreateInput, AddressUpdateInput } from './address.entity';
+import UserRecord, { UserRecordCreateInput, UserRecordUpdateInput } from './user-record.entity';
 
 registerEnumType(UserStatus, {
   name: 'UserStatus',
@@ -79,6 +80,12 @@ export default class User extends Base {
   @Field(() => UserToken, { nullable: true })
   @OneToMany(() => UserToken, (token) => token.user)
   tokens: UserToken[];
+
+  @Field(() => UserRecord)
+  @OneToOne(() => UserRecord, (record) => record.user, {
+    cascade: true,
+  })
+  record: UserRecord;
 }
 
 @ObjectType()
@@ -121,6 +128,9 @@ export class UserCreateInput {
 
   @Field((type) => [String])
   roles: string[];
+
+  @Field((type) => UserRecordCreateInput, { nullable: true })
+  record: UserRecordCreateInput;
 }
 
 @InputType()
@@ -148,6 +158,9 @@ export class UserUpdateInput {
 
   @Field((type) => AddressUpdateInput, { nullable: true })
   address: AddressUpdateInput;
+
+  @Field((type) => UserRecordUpdateInput, { nullable: true })
+  record: UserRecordUpdateInput;
 }
 
 @InputType()

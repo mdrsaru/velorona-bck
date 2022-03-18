@@ -4,6 +4,7 @@ import User from '../entities/user.entity';
 import Role from '../entities/role.entity';
 import { UserStatus } from '../config/constants';
 import { IAddress, IAddressCreateInput, IAddressUpdateInput } from './address.interface';
+import { IUserRecord, IUserRecordCreateInput, IUserRecordUpdateInput } from './user-record.interface';
 
 export interface IUser {
   id: string;
@@ -16,6 +17,7 @@ export interface IUser {
   status: UserStatus;
   address?: IAddress;
   roles: Role[];
+  record?: IUserRecord;
   createdAt: string;
   updatedAt: string;
 }
@@ -36,6 +38,7 @@ export interface IUserCreate {
   roles: string[];
   client_id?: string;
   address?: IAddressCreateInput;
+  record?: IUserRecordCreateInput;
 }
 
 export interface IUserUpdate {
@@ -47,6 +50,7 @@ export interface IUserUpdate {
   status?: IUser['status'];
   address?: IAddressUpdateInput;
   password?: string;
+  record?: IUserRecordUpdateInput;
 }
 
 export interface IUserRepository {
