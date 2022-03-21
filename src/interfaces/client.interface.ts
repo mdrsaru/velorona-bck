@@ -32,7 +32,7 @@ export interface IClientRepository {
   create(args: IClientCreate): Promise<Client>;
   update(args: IClientUpdate): Promise<Client>;
   remove(args: IEntityRemove): Promise<Client>;
-  getByClientCode(args: IClientCodeInput): Promise<Client[]>;
+  getByClientCode(args: IClientCodeInput): Promise<Client | undefined>;
 }
 
 export interface IClientService {

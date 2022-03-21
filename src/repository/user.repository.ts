@@ -4,7 +4,7 @@ import isNil from 'lodash/isNil';
 import isString from 'lodash/isString';
 import isArray from 'lodash/isArray';
 import { injectable, inject } from 'inversify';
-import { getRepository } from 'typeorm';
+import { getRepository, IsNull } from 'typeorm';
 
 import { TYPES } from '../types';
 import strings from '../config/strings';
@@ -14,26 +14,37 @@ import BaseRepository from './base.repository';
 import * as apiError from '../utils/api-error';
 
 import { IHashService } from '../interfaces/common.interface';
-import { IUser, IUserCreate, IUserUpdate, IUserRepository } from '../interfaces/user.interface';
+import {
+  IUser,
+  IUserCreate,
+  IUserUpdate,
+  IUserRepository,
+  IEmailQuery,
+  IEmailClientQuery,
+} from '../interfaces/user.interface';
 import { IRoleRepository } from '../interfaces/role.interface';
+import { IClientRepository } from '../interfaces/client.interface';
 
 @injectable()
 export default class UserRepository extends BaseRepository<User> implements IUserRepository {
   private hashService: IHashService;
   private roleRepository: IRoleRepository;
+  private clientRepository: IClientRepository;
 
   constructor(
     @inject(TYPES.HashService) _hashService: IHashService,
-    @inject(TYPES.RoleRepository) _roleRepository: IRoleRepository
+    @inject(TYPES.RoleRepository) _roleRepository: IRoleRepository,
+    @inject(TYPES.ClientRepository) _clientRepository: IClientRepository
   ) {
     super(getRepository(User));
     this.hashService = _hashService;
     this.roleRepository = _roleRepository;
+    this.clientRepository = _clientRepository;
   }
 
   create = async (args: IUserCreate): Promise<User> => {
     try {
-      const email = args.email;
+      const email = args.email?.toLowerCase()?.trim();
       const password = args.password;
       const phone = args.phone;
       const firstName = args.firstName;
@@ -160,11 +171,38 @@ export default class UserRepository extends BaseRepository<User> implements IUse
     }
   };
 
-  getByEmail = async (args: any = {}): Promise<User | undefined> => {
+  getByEmailAndNoClient = async (args: IEmailQuery): Promise<User | undefined> => {
     try {
+      const user = await this.repo.findOne({
+        where: {
+          email: args.email,
+          client_id: IsNull(),
+        },
+        relations: args?.relations ?? [],
+      });
+
+      return user;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  getByEmailAndClientCode = async (args: IEmailClientQuery): Promise<User | undefined> => {
+    try {
+      const clientCode = args.clientCode;
+      const email = args.email;
+
+      const client = await this.clientRepository.getByClientCode({ clientCode });
+      if (!client) {
+        throw new apiError.NotFoundError({
+          details: [strings.clientNotFound],
+        });
+      }
+
       const user = await this.repo.findOne(
         {
-          email: args.email,
+          email,
+          client_id: client.id,
         },
         {
           relations: args?.relations ?? [],

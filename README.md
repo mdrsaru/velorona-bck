@@ -51,6 +51,9 @@ To run the tests inside docker container and watch
 $ docker-compose --env-file [path-to-env-file] -p tests run --rm app yarn test --watchAll
 ```
 
+To seed the database, first get the app container id: `docker ps`, then run:
+`$ docker exec 'container_id' yarn db:seed`
+
 ## Other available scripts
 
 #### `npm run prettier:fix`

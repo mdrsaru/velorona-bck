@@ -22,8 +22,14 @@ export interface IUser {
   updatedAt: string;
 }
 
-export interface IEmailInput {
+export interface IEmailQuery {
   email: string;
+  relations?: string[];
+}
+
+export interface IEmailClientQuery {
+  email: string;
+  clientCode: string;
   relations?: string[];
 }
 
@@ -60,7 +66,14 @@ export interface IUserRepository {
   create(args: IUserCreate): Promise<User>;
   update(args: IUserUpdate): Promise<User>;
   remove(args: IEntityRemove): Promise<User>;
-  getByEmail(args: IEmailInput): Promise<User | undefined>;
+  /**
+   * Gets user by email and client with null values
+   */
+  getByEmailAndNoClient(args: IEmailQuery): Promise<User | undefined>;
+  /**
+   * Gets user by email with the provided client
+   */
+  getByEmailAndClientCode(args: IEmailClientQuery): Promise<User | undefined>;
 }
 
 export interface IUserService {
