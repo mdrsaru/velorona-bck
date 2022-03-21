@@ -22,4 +22,7 @@ export default {
   startDate: 'Start Date required',
   endDate: 'End Date required',
   payRate: 'PayRate required',
+  clientNotFound: 'Client not found',
+  clientCodeExists: 'Client code already exists',
+  pleaseLoginWithClient: 'Please login with your respective client',
 };

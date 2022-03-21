@@ -5,6 +5,7 @@ import { IEntityID } from './common.interface';
 export interface ILoginInput {
   email: string;
   password: string;
+  clientCode?: string;
 }
 
 export interface IForgotPasswordInput {

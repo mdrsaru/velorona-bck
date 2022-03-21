@@ -2,6 +2,7 @@ import { Field, InputType, ObjectType, Root } from 'type-graphql';
 
 import Role from '../entities/role.entity';
 import UserToken from './user-token.entity';
+import Client from '../entities/client.entity';
 
 @ObjectType()
 export class LoginResponse {
@@ -16,6 +17,9 @@ export class LoginResponse {
 
   @Field((type) => [Role])
   roles: Role[];
+
+  @Field((type) => Client, { nullable: true })
+  client: Client;
 }
 
 @ObjectType()
@@ -37,6 +41,9 @@ export class LoginInput {
 
   @Field()
   password: string;
+
+  @Field({ nullable: true })
+  clientCode: string;
 }
 
 @InputType()

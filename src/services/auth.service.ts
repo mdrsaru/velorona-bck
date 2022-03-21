@@ -1,9 +1,11 @@
 import { inject, injectable } from 'inversify';
 
 import { TYPES } from '../types';
-import constants, { TokenType } from '../config/constants';
+import constants, { TokenType, Role as RoleEnum } from '../config/constants';
 import { NotAuthenticatedError } from '../utils/api-error';
 import strings from '../config/strings';
+import User from '../entities/user.entity';
+import * as apiError from '../utils/api-error';
 
 import {
   IAuthService,
@@ -18,9 +20,6 @@ import { IEmailService, IEntityID, IHashService, ITokenService, ILogger } from '
 import { IUserRepository } from '../interfaces/user.interface';
 import { IUserTokenService } from '../interfaces/user-token.interface';
 import { IRoleRepository } from '../interfaces/role.interface';
-
-import User from '../entities/user.entity';
-import * as apiError from '../utils/api-error';
 
 @injectable()
 export default class AuthService implements IAuthService {
@@ -53,12 +52,51 @@ export default class AuthService implements IAuthService {
 
   login = async (args: ILoginInput): Promise<ILoginResponse> => {
     try {
-      const email = args.email;
+      const email = args.email?.toLowerCase()?.trim();
       const password = args.password;
-      let user = await this.userRepository.getByEmail({
-        email,
-        relations: ['roles'],
-      });
+      const clientCode = args.clientCode;
+
+      let user: User | undefined;
+
+      if (clientCode) {
+        user = await this.userRepository.getByEmailAndClientCode({
+          email,
+          clientCode,
+          relations: ['roles', 'client'],
+        });
+      } else {
+        user = await this.userRepository.getByEmailAndNoClient({
+          email,
+          relations: ['roles', 'client'],
+        });
+
+        // check if the user is associated to client(fallback check)
+        if (user?.client) {
+          throw new apiError.ValidationError({
+            details: [strings.pleaseLoginWithClient],
+          });
+        }
+
+        // System admin
+        const adminObj = {
+          [RoleEnum.SuperAdmin]: true,
+        };
+
+        // Check if the user trying to login has system admin roles.
+        const admins = [];
+        const _roles = user?.roles ?? [];
+        for (let role of _roles) {
+          if (role.name in adminObj) {
+            admins.push(role);
+          }
+        }
+
+        if (!admins.length) {
+          throw new NotAuthenticatedError({
+            details: [strings.emailPasswordNotCorrect],
+          });
+        }
+      }
 
       if (!user) {
         throw new NotAuthenticatedError({
@@ -106,45 +144,9 @@ export default class AuthService implements IAuthService {
   };
 
   forgotPassword = async (args: IForgotPasswordInput): Promise<IForgotPasswordResponse> => {
-    try {
-      const email = args.email;
-      const baseUrl = constants.frontendUrl + '/reset-password/?token=';
-      let user = await this.userRepository.getByEmail({ email });
-
-      if (!user) {
-        throw new NotAuthenticatedError({ details: ["User doesn't exist"] });
-      }
-
-      const payload = {
-        id: user?.id,
-      };
-
-      const accessTokenData = {
-        payload: payload,
-        tokenSecret: constants.accessTokenSecret,
-        tokenLife: constants.accessTokenLife,
-      };
-
-      const token = await this.tokenService.generateToken(accessTokenData);
-      const mailSubject = constants.changePassword.changePasswordSubject;
-      const mailBody = constants.changePassword.changePasswordBody;
-
-      let emailData = {
-        email: user.email,
-        token: token,
-        mailSubject,
-        mailBody,
-        baseUrl,
-      };
-
-      this.emailService.sendEmail(emailData);
-
-      return {
-        token: token,
-      };
-    } catch (err) {
-      throw err;
-    }
+    throw new apiError.NotImplementedError({
+      details: ['Not implemented'],
+    });
   };
 
   resetPassword = async (args: IResetPasswordInput): Promise<IResetPasswordResponse> => {

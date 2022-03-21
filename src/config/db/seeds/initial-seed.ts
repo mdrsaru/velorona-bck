@@ -3,7 +3,8 @@ import { Connection } from 'typeorm';
 
 import User from '../../../entities/user.entity';
 import Role from '../../../entities/role.entity';
-import { Role as RoleEnum } from '../../../config/constants';
+import Client from '../../../entities/client.entity';
+import { Role as RoleEnum, ClientStatus } from '../../../config/constants';
 
 const roles = [
   {
@@ -46,9 +47,18 @@ const users = [
   },
 ];
 
+const clients = [
+  {
+    name: 'Vellorum',
+    status: ClientStatus.Active,
+    clientCode: 'vellorum',
+  },
+];
+
 export default class InitialDatabaseSeed implements Seeder {
   public async run(factory: Factory, connection: Connection): Promise<void> {
     let createdRoles: any = [];
+    let createdClients: Client[] = [];
 
     for (let role of roles) {
       const createdRole = await factory(Role)().create({
@@ -58,10 +68,24 @@ export default class InitialDatabaseSeed implements Seeder {
       createdRoles.push(createdRole);
     }
 
-    for (let [index, user] of users.entries()) {
+    for (let client of clients) {
+      const newClient = await factory(Client)().create(client);
+
+      createdClients.push(newClient);
+    }
+
+    // admin
+    await factory(User)().create({
+      roles: [createdRoles[0]],
+      email: users[0].email,
+    });
+
+    //clients
+    for (let i = 1; i < users.length; i++) {
       await factory(User)().create({
-        roles: [createdRoles[index]],
-        email: user.email,
+        roles: [createdRoles[i]],
+        email: users[i].email,
+        client_id: createdClients[0]?.id,
       });
     }
   }
