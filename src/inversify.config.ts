@@ -7,9 +7,10 @@ import role from './config/inversify/role';
 import user from './config/inversify/user';
 import auth from './config/inversify/auth';
 import userToken from './config/inversify/user-token';
+import media from './config/inversify/media';
 
 const container = new Container({ skipBaseClassChecks: true });
 
-container.load(app, logger, graphql, hash, token, email, error, joi, client, role, user, auth, userToken);
+container.load(app, logger, graphql, hash, token, email, error, joi, client, role, user, auth, userToken, media);
 
 export default container;

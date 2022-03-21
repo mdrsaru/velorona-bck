@@ -48,6 +48,7 @@ export const entities = {
   addresses: 'addresses',
   userTokens: 'user_tokens',
   user_record: 'user_record',
+  media: 'media',
 };
 
 export enum ClientStatus {
@@ -108,4 +109,7 @@ export default {
     changePasswordSubject: process.env.CHANGEPASSWORD_SUBJECT || 'Change your password',
     changePasswordBody: process.env.CHANGEPASSWORD_BODY || 'Here is the link',
   },
+  mediaDestination: './uploads',
+  fileSize: 10000000,
+  mediaUrl: process.env.MEDIA_URL || 'http://localhost:8080/media',
 };
