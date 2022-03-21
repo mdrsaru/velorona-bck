@@ -6,6 +6,7 @@ build
 docs
 .idea
 .vscode
+uploads/
 
 coverage
 build

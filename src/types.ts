@@ -38,12 +38,19 @@ const USER_TOKEN = {
   UserTokenController: Symbol('UserTokenController'),
 };
 
+const MEDIA = {
+  MediaController: Symbol('MediaController'),
+  MediaService: Symbol('MediaService'),
+  MediaRepository: Symbol('MediaRepository'),
+};
+
 const TYPES = {
   ...COMMON,
   ...CLIENT,
   ...USER,
   ...AUTH,
   ...USER_TOKEN,
+  ...MEDIA,
 };
 
 export { TYPES };
