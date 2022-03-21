@@ -1,5 +1,6 @@
 import User from '../entities/user.entity';
 import Role from '../entities/role.entity';
+import Client from '../entities/client.entity';
 import { IEntityID } from './common.interface';
 
 export interface ILoginInput {
@@ -21,6 +22,7 @@ export interface ILoginResponse {
   token: string;
   roles: Role[];
   refreshToken: string;
+  client?: Client;
 }
 
 export interface IForgotPasswordResponse {

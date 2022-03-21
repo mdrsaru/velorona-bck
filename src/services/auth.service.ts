@@ -137,6 +137,7 @@ export default class AuthService implements IAuthService {
         token: token,
         roles: user.roles,
         refreshToken: userToken.token,
+        client: user.client,
       };
     } catch (err) {
       throw err;
@@ -222,13 +223,17 @@ export default class AuthService implements IAuthService {
         tokenLife: constants.accessTokenLife,
       });
 
-      const roles = await this.roleRepository.getAll({ query: { id: payload.roles } });
+      const user = await this.userRepository.getById({
+        id: decoded.id,
+        relations: ['roles', 'client'],
+      });
 
       return {
         id: payload.id,
         token: newAccessToken,
         refreshToken,
-        roles,
+        roles: user?.roles ?? [],
+        client: user?.client,
       };
     } catch (err) {
       throw err;

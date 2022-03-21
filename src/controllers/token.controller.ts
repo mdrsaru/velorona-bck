@@ -34,6 +34,7 @@ export default class TokenController {
             accessToken: tokenResult.token,
             _id: tokenResult.id,
             roles: tokenResult.roles,
+            client: tokenResult.client,
           },
         });
       } catch (err) {

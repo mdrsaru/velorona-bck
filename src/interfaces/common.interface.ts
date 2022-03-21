@@ -4,6 +4,7 @@ import { IPagingArgs, IGetAllAndCountResult, IGetOptions } from './paging.interf
 
 export interface IEntityID {
   id: string;
+  relations?: string[];
 }
 
 export interface IEntityRemove extends IEntityID {}
