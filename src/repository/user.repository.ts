@@ -136,8 +136,9 @@ export default class UserRepository extends BaseRepository<User> implements IUse
       const address = args?.address;
       const password = args?.password;
       const record = args?.record;
+      const avatar_id = args?.avatar_id;
 
-      const found = await this.repo.findOne(id, { relations: ['address', 'record'] });
+      const found = await this.repo.findOne(id, { relations: ['address', 'record', 'avatar'] });
 
       if (!found) {
         throw new apiError.NotFoundError({
@@ -161,6 +162,7 @@ export default class UserRepository extends BaseRepository<User> implements IUse
         },
         password: hashedPassword,
         record,
+        avatar_id,
       });
 
       const user = await this.repo.save(update);

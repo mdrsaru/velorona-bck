@@ -5,7 +5,7 @@ import { TYPES } from '../types';
 import User from '../entities/user.entity';
 import { IPagingArgs, IPaginationData } from '../interfaces/paging.interface';
 import { IEntityRemove, IEntityID } from '../interfaces/common.interface';
-import { IUserRepository } from '../interfaces/user.interface';
+import { IChangeProfilePictureInput, IUserRepository } from '../interfaces/user.interface';
 import { IUserCreate, IUserUpdate, IUserService } from '../interfaces/user.interface';
 
 @injectable()
@@ -105,6 +105,18 @@ export default class UserService implements IUserService {
     try {
       const id = args.id;
       return await this.userRepository.getById({ id });
+    } catch (err) {
+      throw err;
+    }
+  };
+  changeProfilePicture = async (args: IChangeProfilePictureInput): Promise<User> => {
+    try {
+      const id = args.id;
+      const avatar_id = args.avatar_id;
+      return await this.userRepository.update({
+        id,
+        avatar_id,
+      });
     } catch (err) {
       throw err;
     }

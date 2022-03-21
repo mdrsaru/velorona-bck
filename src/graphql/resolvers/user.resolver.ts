@@ -10,7 +10,13 @@ import { canCreateSystemAdmin } from '../middlewares/user';
 import authorize from '../middlewares/authorize';
 import UserValidation from '../../validation/user.validation';
 import { PagingInput, DeleteInput, MessageResponse } from '../../entities/common.entity';
-import User, { UserPagingResult, UserCreateInput, UserUpdateInput, UserQueryInput } from '../../entities/user.entity';
+import User, {
+  UserPagingResult,
+  UserCreateInput,
+  UserUpdateInput,
+  UserQueryInput,
+  ChangeProfilePictureInput,
+} from '../../entities/user.entity';
 
 import { IPaginationData } from '../../interfaces/paging.interface';
 import { IUserService } from '../../interfaces/user.interface';
@@ -174,6 +180,24 @@ export class UserResolver {
       return user;
     } catch (err) {
       this.errorService.throwError({ err, name: this.name, operation, logError: true });
+    }
+  }
+
+  @Mutation((returns) => User)
+  @UseMiddleware(authenticate)
+  async ChangeProfilePicture(@Arg('input') args: ChangeProfilePictureInput, @Ctx() ctx: IGraphqlContext) {
+    const operation = 'Change Profile Picture';
+
+    try {
+      const id = args.id;
+      const avatar_id = args.avatar_id;
+      let user: User = await this.userService.changeProfilePicture({
+        id,
+        avatar_id,
+      });
+      return user;
+    } catch (err) {
+      throw err;
     }
   }
 
