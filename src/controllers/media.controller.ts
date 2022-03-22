@@ -1,8 +1,13 @@
 import { inject, injectable } from 'inversify';
-import { Request, Response, NextFunction } from 'express';
+import { Express, Request, Response, NextFunction } from 'express';
+import { Multer } from 'multer';
 
 import { TYPES } from '../types';
 import { IMediaService } from '../interfaces/media.interface';
+
+interface IFileRequest extends Request {
+  file: Express.Multer.File;
+}
 
 @injectable()
 export default class MediaController {
@@ -14,6 +19,7 @@ export default class MediaController {
 
   uploadImage = async (req: Request, res: Response, next: NextFunction) => {
     try {
+      const _req = req as IFileRequest;
       let createdMedia = await this.mediaService.upload({ file: req.file });
       return res.status(200).send({
         message: 'OK',
