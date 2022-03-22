@@ -7,6 +7,7 @@ import container from '../../inversify.config';
 import User from '../../entities/user.entity';
 import Role from '../../entities/role.entity';
 import { IUserRepository } from '../../interfaces/user.interface';
+import { IMediaRepository } from '../../interfaces/media.interface';
 
 const batchUsersByClientIdFn = async (ids: readonly string[]) => {
   const userRepo: IUserRepository = container.get(TYPES.UserRepository);
@@ -40,5 +41,19 @@ const batchRolesByUserIdFn = async (ids: readonly string[]) => {
   return ids.map((userId: string) => roleObj[userId] ?? []);
 };
 
+const batchAvatarsByIdFn = async (ids: readonly string[]) => {
+  const mediaRepo: IMediaRepository = container.get(TYPES.MediaRepository);
+  const query = { id: ids };
+  const media = await mediaRepo.getAll({ query });
+  const mediaObj: any = {};
+
+  media.forEach((media: any) => {
+    mediaObj[media.id] = media;
+  });
+
+  return ids.map((id) => mediaObj[id]);
+};
+
 export const usersByClientIdLoader = () => new Dataloader(batchUsersByClientIdFn);
 export const rolesByUserIdLoader = () => new Dataloader(batchRolesByUserIdFn);
+export const avatarByIdLoader = () => new Dataloader(batchAvatarsByIdFn);

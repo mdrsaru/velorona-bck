@@ -22,6 +22,7 @@ import { IPaginationData } from '../../interfaces/paging.interface';
 import { IUserService } from '../../interfaces/user.interface';
 import { IGraphqlContext } from '../../interfaces/graphql.interface';
 import { IErrorService, IJoiService } from '../../interfaces/common.interface';
+import Media from '../../entities/media.entity';
 
 @injectable()
 @Resolver((of) => User)
@@ -213,5 +214,13 @@ export class UserResolver {
   @FieldResolver()
   roles(@Root() root: User, @Ctx() ctx: IGraphqlContext) {
     return ctx.loaders.rolesByUserIdLoader.load(root.id);
+  }
+
+  @FieldResolver()
+  async avatar(@Root() root: User, @Ctx() ctx: IGraphqlContext) {
+    if (root.avatar_id) {
+      return await ctx.loaders.avatarByIdLoader.load(root.avatar_id);
+    }
+    return null;
   }
 }

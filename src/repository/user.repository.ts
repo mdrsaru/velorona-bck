@@ -138,7 +138,7 @@ export default class UserRepository extends BaseRepository<User> implements IUse
       const record = args?.record;
       const avatar_id = args?.avatar_id;
 
-      const found = await this.repo.findOne(id, { relations: ['address', 'record', 'avatar'] });
+      const found = await this.repo.findOne(id, { relations: ['address', 'record'] });
 
       if (!found) {
         throw new apiError.NotFoundError({

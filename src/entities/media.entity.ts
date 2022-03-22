@@ -18,7 +18,4 @@ export default class Media extends Base {
   @Field()
   @Column()
   url: string;
-
-  @OneToOne(() => User, (user) => user.avatar)
-  user: User;
 }

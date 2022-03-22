@@ -53,10 +53,7 @@ export default class User extends Base {
   avatar_id: string;
 
   @Field(() => Media, { nullable: true })
-  @OneToOne(() => Media, (media) => media.user, {
-    cascade: true,
-    nullable: true,
-  })
+  @OneToOne(() => Media, { nullable: true, cascade: true })
   @JoinColumn()
   avatar: Media;
 
