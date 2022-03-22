@@ -76,6 +76,9 @@ export class ClientUpdateInput {
 export class ClientQuery {
   @Field({ nullable: true })
   id: string;
+
+  @Field({ nullable: true })
+  clientCode: string;
 }
 
 @InputType()
