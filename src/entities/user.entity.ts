@@ -9,6 +9,7 @@ import Role from './role.entity';
 import UserToken from './user-token.entity';
 import Address, { AddressCreateInput, AddressUpdateInput } from './address.entity';
 import UserRecord, { UserRecordCreateInput, UserRecordUpdateInput } from './user-record.entity';
+import Media from './media.entity';
 
 registerEnumType(UserStatus, {
   name: 'UserStatus',
@@ -46,6 +47,15 @@ export default class User extends Base {
     enum: UserStatus,
   })
   status: UserStatus;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  avatar_id: string;
+
+  @Field(() => Media, { nullable: true })
+  @OneToOne(() => Media, { nullable: true, cascade: true })
+  @JoinColumn()
+  avatar: Media;
 
   @Field(() => Client, { nullable: true })
   @ManyToOne(() => Client, (client) => client.users)
@@ -167,6 +177,15 @@ export class UserUpdateInput {
 export class UserQuery {
   @Field({ nullable: true })
   id: string;
+}
+
+@InputType()
+export class ChangeProfilePictureInput {
+  @Field()
+  id: string;
+
+  @Field()
+  avatar_id: string;
 }
 
 @InputType()

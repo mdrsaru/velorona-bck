@@ -47,6 +47,11 @@ export interface IUserCreate {
   record?: IUserRecordCreateInput;
 }
 
+export interface IChangeProfilePictureInput {
+  id: string;
+  avatar_id: string;
+}
+
 export interface IUserUpdate {
   id: string;
   firstName?: IUser['firstName'];
@@ -56,6 +61,7 @@ export interface IUserUpdate {
   status?: IUser['status'];
   address?: IAddressUpdateInput;
   password?: string;
+  avatar_id?: string;
   record?: IUserRecordUpdateInput;
 }
 
@@ -82,4 +88,5 @@ export interface IUserService {
   update(args: IUserUpdate): Promise<User>;
   remove(args: IEntityRemove): Promise<User>;
   getById(args: IEntityID): Promise<User | undefined>;
+  changeProfilePicture(args: IChangeProfilePictureInput): Promise<User>;
 }

@@ -1,7 +1,8 @@
 import { Field, ObjectType } from 'type-graphql';
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, OneToOne } from 'typeorm';
 import { entities } from '../config/constants';
 import { Base } from './base.entity';
+import User from './user.entity';
 
 @Entity({ name: entities.media })
 @ObjectType()

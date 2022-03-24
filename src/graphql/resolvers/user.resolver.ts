@@ -10,12 +10,19 @@ import { canCreateSystemAdmin } from '../middlewares/user';
 import authorize from '../middlewares/authorize';
 import UserValidation from '../../validation/user.validation';
 import { PagingInput, DeleteInput, MessageResponse } from '../../entities/common.entity';
-import User, { UserPagingResult, UserCreateInput, UserUpdateInput, UserQueryInput } from '../../entities/user.entity';
+import User, {
+  UserPagingResult,
+  UserCreateInput,
+  UserUpdateInput,
+  UserQueryInput,
+  ChangeProfilePictureInput,
+} from '../../entities/user.entity';
 
 import { IPaginationData } from '../../interfaces/paging.interface';
 import { IUserService } from '../../interfaces/user.interface';
 import { IGraphqlContext } from '../../interfaces/graphql.interface';
 import { IErrorService, IJoiService } from '../../interfaces/common.interface';
+import Media from '../../entities/media.entity';
 
 @injectable()
 @Resolver((of) => User)
@@ -177,6 +184,24 @@ export class UserResolver {
     }
   }
 
+  @Mutation((returns) => User)
+  @UseMiddleware(authenticate)
+  async ChangeProfilePicture(@Arg('input') args: ChangeProfilePictureInput, @Ctx() ctx: IGraphqlContext) {
+    const operation = 'Change Profile Picture';
+
+    try {
+      const id = args.id;
+      const avatar_id = args.avatar_id;
+      let user: User = await this.userService.changeProfilePicture({
+        id,
+        avatar_id,
+      });
+      return user;
+    } catch (err) {
+      throw err;
+    }
+  }
+
   @FieldResolver()
   client(@Root() root: User, @Ctx() ctx: IGraphqlContext) {
     if (root.client_id) {
@@ -189,5 +214,13 @@ export class UserResolver {
   @FieldResolver()
   roles(@Root() root: User, @Ctx() ctx: IGraphqlContext) {
     return ctx.loaders.rolesByUserIdLoader.load(root.id);
+  }
+
+  @FieldResolver()
+  async avatar(@Root() root: User, @Ctx() ctx: IGraphqlContext) {
+    if (root.avatar_id) {
+      return await ctx.loaders.avatarByIdLoader.load(root.avatar_id);
+    }
+    return null;
   }
 }
