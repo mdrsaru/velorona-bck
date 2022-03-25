@@ -33,4 +33,8 @@ export default {
   canOnlyInviteToOwnClient: 'User can only invite to its own workspace',
   canOnlyViewOwnClient: 'User can only view its own client invitations',
   recordRequired: 'Record is required',
+  nameRequired: 'Name required',
+  managerIdRequired: 'Manager Id required',
+  clientIdRequired: 'Client Id required',
+  statusRequired: 'Status Required',
 };

@@ -19,6 +19,7 @@ import auth from './config/inversify/auth';
 import userToken from './config/inversify/user-token';
 import media from './config/inversify/media';
 import invitation from './config/inversify/invitation';
+import task from './config/inversify/task';
 
 const container = new Container({ skipBaseClassChecks: true });
 
@@ -38,7 +39,8 @@ container.load(
   userToken,
   media,
   invitation,
-  handlebars
+  handlebars,
+  task
 );
 
 export default container;

@@ -14,6 +14,12 @@ const AUTH = {
   AuthService: Symbol('AuthService'),
 };
 
+const TASK = {
+  TaskRepository: Symbol('TaskRepository'),
+  TaskService: Symbol('TaskService'),
+  TaskController: Symbol('TaskController'),
+};
+
 const COMMON = {
   AppService: Symbol('AppService'),
   AppController: Symbol('AppController'),
@@ -58,6 +64,7 @@ const TYPES = {
   ...USER_TOKEN,
   ...MEDIA,
   ...INVITATION,
+  ...TASK,
 };
 
 export { TYPES };

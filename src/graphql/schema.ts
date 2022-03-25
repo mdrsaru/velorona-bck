@@ -6,6 +6,7 @@ import { ClientResolver } from './resolvers/client.resolver';
 import { RoleResolver } from './resolvers/role.resolver';
 import { UserResolver } from './resolvers/user.resolver';
 import { InvitationResolver } from './resolvers/invitation.resolver';
+import { TaskResolver } from './resolvers/task.resolver';
 
 export default buildSchema({
   resolvers: [
@@ -14,6 +15,7 @@ export default buildSchema({
     UserResolver,
     AuthResolver,
     InvitationResolver,
+    TaskResolver,
   ],
   container,
   validate: false,
