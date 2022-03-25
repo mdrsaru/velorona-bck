@@ -32,6 +32,7 @@ import UserRecord, {
   UserRecordUpdateInput,
 } from './user-record.entity';
 import { entities, UserStatus } from '../config/constants';
+import Task from './task.entity';
 
 registerEnumType(UserStatus, {
   name: 'UserStatus',
@@ -121,6 +122,10 @@ export default class User extends Base {
     cascade: true,
   })
   record: UserRecord;
+
+  @Field(() => Task, { nullable: true })
+  @OneToMany(() => Task, (task) => task.user)
+  task: Task[];
 }
 
 @ObjectType()

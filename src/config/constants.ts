@@ -52,6 +52,7 @@ export const entities = {
   user_record: 'user_record',
   media: 'media',
   invitation: 'invitation',
+  tasks: 'tasks',
 };
 
 export enum ClientStatus {
@@ -81,6 +82,11 @@ export enum TokenType {
 export enum InvitationStatus {
   Pending = 'Pending',
   Approved = 'Approved',
+}
+
+export enum TaskStatus {
+  Active = 'Active',
+  Inactive = 'Inactive',
 }
 
 export const emailSetting = {

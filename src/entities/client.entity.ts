@@ -19,6 +19,7 @@ import { Base } from './base.entity';
 import User from './user.entity';
 import { entities, ClientStatus } from '../config/constants';
 import { PagingResult, PagingInput } from './common.entity';
+import Task from './task.entity';
 
 registerEnumType(ClientStatus, {
   name: 'ClientStatus',
@@ -46,6 +47,10 @@ export default class Client extends Base {
   @Field(() => [User])
   @OneToMany(() => User, (user) => user.client)
   users: User[];
+
+  @Field(() => Task, { nullable: true })
+  @OneToMany(() => Task, (task) => task.client)
+  task: Task[];
 }
 
 @ObjectType()
