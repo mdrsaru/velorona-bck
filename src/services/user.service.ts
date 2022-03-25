@@ -107,19 +107,12 @@ export default class UserService implements IUserService {
         });
       }
 
-      console.log(emailBody, 'body');
       const userHtml = this.handlebarsService.compile({
         template: emailBody,
         data: {
           clientCode: client?.clientCode ?? '',
           password,
         },
-      });
-      console.log({
-        to: user.email,
-        from: emailSetting.fromEmail,
-        subject: emailSetting.newUser.subject,
-        html: userHtml,
       });
 
       // send email asynchronously

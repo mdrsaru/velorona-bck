@@ -161,14 +161,7 @@ export class UserResolver {
       const status = args.status;
       const phone = args.phone;
       const record = args.record;
-
-      const address = {
-        streetAddress: args.address.streetAddress,
-        aptOrSuite: args.address.aptOrSuite,
-        city: args.address.city,
-        state: args.address.state,
-        zipcode: args.address.zipcode,
-      };
+      const address = args.address;
 
       const schema = UserValidation.update();
       await this.joiService.validate({
