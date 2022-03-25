@@ -39,7 +39,7 @@ export default class Task extends Base {
 
   @ManyToOne(() => User, (user) => user.task)
   @JoinColumn({ name: 'manager_id' })
-  user: User;
+  manager: User;
 
   @ManyToOne(() => Client, (client) => client.task)
   @JoinColumn({ name: 'client_id' })
@@ -100,7 +100,10 @@ export class TaskQuery {
   id: string;
 
   @Field((type) => TaskStatus, { nullable: true })
-  name: TaskStatus;
+  status: TaskStatus;
+
+  @Field({ nullable: true })
+  client_id: string;
 }
 @InputType()
 export class TaskQueryInput {
