@@ -77,24 +77,15 @@ export interface IEmailBasicArgs {
   subject: string;
   data?: any;
   cc?: string;
+  html?: string;
+  text?: string;
+  templateId?: string;
 }
 
-export interface IEmailHtmlArgs extends IEmailBasicArgs {
-  html: string;
-}
-
-export interface IEmailTextArgs extends IEmailBasicArgs {
-  text: string;
-}
-
-export interface IEmailTemplateArgs extends IEmailBasicArgs {
-  templateId: string;
-}
-
-export type EmailArgs = IEmailHtmlArg | IEmailTextArgs | IEmailTemplateArgs;
+export interface IEmailArgs extends IEmailBasicArgs {}
 
 export interface IEmailService {
-  sendEmail(args: EmailArgs): Promise<any>;
+  sendEmail(args: IEmailArgs): Promise<any>;
 }
 // app
 export interface IAppService {

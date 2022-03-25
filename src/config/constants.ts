@@ -90,10 +90,10 @@ export enum TaskStatus {
 }
 
 export const emailSetting = {
-  testMask: process.env.EMAIL_TEST_MASK,
-  fromEmail: process.env.EMAIL_FROM_EMAIL,
-  fromName: process.env.EMAIL_FROM_NAME,
-  sendGridApi: process.env.SENDGRID_API,
+  testMask: process.env.EMAIL_TEST_MASK as string,
+  fromEmail: process.env.EMAIL_FROM_EMAIL as string,
+  fromName: process.env.EMAIL_FROM_NAME as string,
+  sendGridApi: process.env.SENDGRID_API as string,
   emailEnabled: process.env.EMAIL_ENABLED === 'true',
   newInvitation: {
     subject: process.env.NEW_INVITATION_EMAIL_SUBJECT || '',
