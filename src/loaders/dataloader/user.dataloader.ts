@@ -54,6 +54,7 @@ const batchAvatarsByIdFn = async (ids: readonly string[]) => {
   return ids.map((id) => mediaObj[id]);
 };
 
-export const usersByClientIdLoader = () => new Dataloader(batchUsersByClientIdFn);
+export const usersByClientIdLoader = () =>
+  new Dataloader(batchUsersByClientIdFn);
 export const rolesByUserIdLoader = () => new Dataloader(batchRolesByUserIdFn);
 export const avatarByIdLoader = () => new Dataloader(batchAvatarsByIdFn);

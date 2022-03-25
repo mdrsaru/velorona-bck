@@ -6,7 +6,9 @@ import TokenController from '../controllers/token.controller';
 
 const _router = () => {
   const router = Router();
-  const tokenController: TokenController = container.get<TokenController>(TYPES.UserTokenController);
+  const tokenController: TokenController = container.get<TokenController>(
+    TYPES.UserTokenController
+  );
 
   router.post('/refresh', tokenController.renewAccessToken);
   return router;

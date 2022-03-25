@@ -1,4 +1,8 @@
-import { IPagingArgs, IPagingResult, IPagingResultArgs } from '../interfaces/paging.interface';
+import {
+  IPagingArgs,
+  IPagingResult,
+  IPagingResultArgs,
+} from '../interfaces/paging.interface';
 
 export default class Paging {
   static createPagingPayload(args: any): IPagingArgs {

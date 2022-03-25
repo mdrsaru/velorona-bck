@@ -3,7 +3,11 @@ import Joi from 'joi';
 import jwt from 'jsonwebtoken';
 
 import { TYPES } from '../types';
-import { IErrorService, IErrorArgs, ILogger } from '../interfaces/common.interface';
+import {
+  IErrorService,
+  IErrorArgs,
+  ILogger,
+} from '../interfaces/common.interface';
 import { CustomError, AppError, ValidationError } from '../utils/api-error';
 
 @injectable()

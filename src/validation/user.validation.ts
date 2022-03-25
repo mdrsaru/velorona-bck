@@ -16,12 +16,6 @@ const messages = {
     'any.required': strings.emailRequired,
     'string.email': strings.emailNotValid,
   },
-  password: {
-    'string.base': strings.passwordRequired,
-    'string.empty': strings.passwordRequired,
-    'string.name': strings.passwordRequired,
-    'any.required': strings.passwordRequired,
-  },
   firstName: {
     'string.base': strings.firstNameRequired,
     'string.empty': strings.firstNameRequired,
@@ -48,25 +42,32 @@ const messages = {
     'any.message': strings.rolesRequired,
   },
   startDate: {
-    'string.base': strings.startDate,
-    'string.empty': strings.startDate,
-    'string.name': strings.startDate,
-    'any.required': strings.startDate,
-    'any.message': strings.startDate,
+    'string.base': strings.startDateRequired,
+    'string.empty': strings.startDateRequired,
+    'string.name': strings.startDateRequired,
+    'any.required': strings.startDateRequired,
+    'any.message': strings.startDateRequired,
   },
   endDate: {
-    'string.base': strings.endDate,
-    'string.empty': strings.endDate,
-    'string.name': strings.endDate,
-    'any.required': strings.endDate,
-    'any.message': strings.endDate,
+    'string.base': strings.endDateRequired,
+    'string.empty': strings.endDateRequired,
+    'string.name': strings.endDateRequired,
+    'any.required': strings.endDateRequired,
+    'any.message': strings.endDateRequired,
   },
   payRate: {
-    'string.base': strings.payRate,
-    'string.empty': strings.payRate,
-    'string.name': strings.payRate,
-    'any.required': strings.payRate,
-    'any.message': strings.payRate,
+    'string.base': strings.payRateRequired,
+    'string.empty': strings.payRateRequired,
+    'string.name': strings.payRateRequired,
+    'any.required': strings.payRateRequired,
+    'any.message': strings.payRateRequired,
+  },
+  record: {
+    'string.base': strings.recordRequired,
+    'string.empty': strings.recordRequired,
+    'string.name': strings.recordRequired,
+    'any.required': strings.recordRequired,
+    'any.message': strings.recordRequired,
   },
 };
 
@@ -74,7 +75,6 @@ export default class UserValidation {
   static create() {
     return Joi.object({
       email: Joi.string().email().required().messages(messages.firstName),
-      password: Joi.string().required().messages(messages.firstName),
       firstName: Joi.string().required().messages(messages.firstName),
       lastName: Joi.string().required().messages(messages.lastName),
       middleName: Joi.string(),
@@ -82,21 +82,21 @@ export default class UserValidation {
       client_id: Joi.string(),
       address: Joi.object(),
       roles: Joi.array().items(Joi.string().required()).required(),
-      startDate: Joi.date().when('client_id', {
-        is: undefined,
-        then: Joi.date().required().messages(messages.startDate),
-        otherwise: Joi.optional(),
-      }),
-      endDate: Joi.date().when('client_id', {
-        is: undefined,
-        then: Joi.date().required().messages(messages.endDate),
-        otherwise: Joi.optional(),
-      }),
-      payRate: Joi.number().when('client_id', {
-        is: undefined,
-        then: Joi.number().required().messages(messages.payRate),
-        otherwise: Joi.optional(),
-      }),
+      record: Joi.object({
+        startDate: Joi.date(),
+        endDate: Joi.date(),
+        payRate: Joi.number(),
+      })
+        .when('client_id', {
+          is: undefined,
+          then: Joi.object({
+            startDate: Joi.date().required().messages(messages.startDate),
+            endDate: Joi.date().required().messages(messages.endDate),
+            payRate: Joi.number().required().messages(messages.payRate),
+          }).required(),
+          otherwise: Joi.optional(),
+        })
+        .messages(messages.record),
     });
   }
 
@@ -108,7 +108,11 @@ export default class UserValidation {
       middleName: Joi.string(),
       phone: Joi.string().messages(messages.phone),
       address: Joi.object(),
-      record: Joi.object(),
+      record: Joi.object({
+        startDate: Joi.date(),
+        endDate: Joi.date(),
+        payDate: Joi.number(),
+      }),
     });
   }
 }

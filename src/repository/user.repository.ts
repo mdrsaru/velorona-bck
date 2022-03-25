@@ -16,7 +16,7 @@ import * as apiError from '../utils/api-error';
 import { IHashService } from '../interfaces/common.interface';
 import {
   IUser,
-  IUserCreate,
+  IUserCreateRepo,
   IUserUpdate,
   IUserRepository,
   IEmailQuery,
@@ -26,7 +26,10 @@ import { IRoleRepository } from '../interfaces/role.interface';
 import { IClientRepository } from '../interfaces/client.interface';
 
 @injectable()
-export default class UserRepository extends BaseRepository<User> implements IUserRepository {
+export default class UserRepository
+  extends BaseRepository<User>
+  implements IUserRepository
+{
   private hashService: IHashService;
   private roleRepository: IRoleRepository;
   private clientRepository: IClientRepository;
@@ -42,7 +45,7 @@ export default class UserRepository extends BaseRepository<User> implements IUse
     this.clientRepository = _clientRepository;
   }
 
-  create = async (args: IUserCreate): Promise<User> => {
+  create = async (args: IUserCreateRepo): Promise<User> => {
     try {
       const email = args.email?.toLowerCase()?.trim();
       const password = args.password;
@@ -103,7 +106,10 @@ export default class UserRepository extends BaseRepository<User> implements IUse
         });
       }
 
-      const hashedPassword = await this.hashService.hash(password, config.saltRounds);
+      const hashedPassword = await this.hashService.hash(
+        password,
+        config.saltRounds
+      );
 
       const user = await this.repo.save({
         email,
@@ -138,7 +144,9 @@ export default class UserRepository extends BaseRepository<User> implements IUse
       const record = args?.record;
       const avatar_id = args?.avatar_id;
 
-      const found = await this.repo.findOne(id, { relations: ['address', 'record'] });
+      const found = await this.repo.findOne(id, {
+        relations: ['address', 'record'],
+      });
 
       if (!found) {
         throw new apiError.NotFoundError({
@@ -147,7 +155,10 @@ export default class UserRepository extends BaseRepository<User> implements IUse
       }
       let hashedPassword;
       if (password) {
-        hashedPassword = await this.hashService.hash(password, config.saltRounds);
+        hashedPassword = await this.hashService.hash(
+          password,
+          config.saltRounds
+        );
       }
       const update = merge(found, {
         id,
@@ -173,7 +184,9 @@ export default class UserRepository extends BaseRepository<User> implements IUse
     }
   };
 
-  getByEmailAndNoClient = async (args: IEmailQuery): Promise<User | undefined> => {
+  getByEmailAndNoClient = async (
+    args: IEmailQuery
+  ): Promise<User | undefined> => {
     try {
       const user = await this.repo.findOne({
         where: {
@@ -189,12 +202,16 @@ export default class UserRepository extends BaseRepository<User> implements IUse
     }
   };
 
-  getByEmailAndClientCode = async (args: IEmailClientQuery): Promise<User | undefined> => {
+  getByEmailAndClientCode = async (
+    args: IEmailClientQuery
+  ): Promise<User | undefined> => {
     try {
       const clientCode = args.clientCode;
       const email = args.email;
 
-      const client = await this.clientRepository.getByClientCode({ clientCode });
+      const client = await this.clientRepository.getByClientCode({
+        clientCode,
+      });
       if (!client) {
         throw new apiError.NotFoundError({
           details: [strings.clientNotFound],

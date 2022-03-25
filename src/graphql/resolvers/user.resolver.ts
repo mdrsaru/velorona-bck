@@ -1,5 +1,14 @@
 import { inject, injectable } from 'inversify';
-import { Resolver, Query, Ctx, Arg, Mutation, UseMiddleware, FieldResolver, Root } from 'type-graphql';
+import {
+  Resolver,
+  Query,
+  Ctx,
+  Arg,
+  Mutation,
+  UseMiddleware,
+  FieldResolver,
+  Root,
+} from 'type-graphql';
 
 import { TYPES } from '../../types';
 import { Role as RoleEnum } from '../../config/constants';
@@ -9,7 +18,11 @@ import authenticate from '../middlewares/authenticate';
 import { canCreateSystemAdmin } from '../middlewares/user';
 import authorize from '../middlewares/authorize';
 import UserValidation from '../../validation/user.validation';
-import { PagingInput, DeleteInput, MessageResponse } from '../../entities/common.entity';
+import {
+  PagingInput,
+  DeleteInput,
+  MessageResponse,
+} from '../../entities/common.entity';
 import User, {
   UserPagingResult,
   UserCreateInput,
@@ -46,26 +59,39 @@ export class UserResolver {
 
   @Query((returns) => UserPagingResult)
   @UseMiddleware(authenticate)
-  async User(@Arg('input', { nullable: true }) args: UserQueryInput, @Ctx() ctx: any): Promise<IPaginationData<User>> {
+  async User(
+    @Arg('input', { nullable: true }) args: UserQueryInput,
+    @Ctx() ctx: any
+  ): Promise<IPaginationData<User>> {
     const operation = 'User';
 
     try {
       const pagingArgs = Paging.createPagingPayload(args);
-      let result: IPaginationData<User> = await this.userService.getAllAndCount(pagingArgs);
+      let result: IPaginationData<User> = await this.userService.getAllAndCount(
+        pagingArgs
+      );
       return result;
     } catch (err) {
-      this.errorService.throwError({ err, name: this.name, operation, logError: true });
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
     }
   }
 
   @Mutation((returns) => User)
-  @UseMiddleware(authenticate, authorize(RoleEnum.ClientAdmin, RoleEnum.SuperAdmin), canCreateSystemAdmin)
+  @UseMiddleware(
+    authenticate,
+    authorize(RoleEnum.ClientAdmin, RoleEnum.SuperAdmin),
+    canCreateSystemAdmin
+  )
   async UserCreate(@Arg('input') args: UserCreateInput): Promise<User> {
     const operation = 'UserCreate';
 
     try {
       const email = args.email;
-      const password = args.password;
       const firstName = args.firstName;
       const lastName = args.lastName;
       const middleName = args.middleName;
@@ -73,6 +99,7 @@ export class UserResolver {
       const status = args.status;
       const client_id = args.client_id;
       const roles = args.roles;
+      const record = args.record;
       const address = {
         streetAddress: args.address.streetAddress,
         aptOrSuite: args.address.aptOrSuite,
@@ -80,21 +107,12 @@ export class UserResolver {
         state: args.address.state,
         zipcode: args.address.zipcode,
       };
-      const startDate = args?.record?.startDate;
-      const endDate = args?.record?.endDate;
-      const payRate = args?.record?.payRate;
 
-      const record = {
-        startDate: startDate,
-        endDate: endDate,
-        payRate: payRate,
-      };
       const schema = UserValidation.create();
       await this.joiService.validate({
         schema,
         input: {
           email,
-          password,
           firstName,
           lastName,
           middleName,
@@ -102,14 +120,12 @@ export class UserResolver {
           client_id,
           address,
           roles,
-          startDate,
-          endDate,
-          payRate,
+          record,
         },
       });
-      let user: User = await this.userService.create({
+
+      const user: User = await this.userService.create({
         email,
-        password,
         firstName,
         lastName,
         middleName,
@@ -123,7 +139,12 @@ export class UserResolver {
 
       return user;
     } catch (err) {
-      this.errorService.throwError({ err, name: this.name, operation, logError: true });
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
     }
   }
 
@@ -139,6 +160,7 @@ export class UserResolver {
       const middleName = args.middleName;
       const status = args.status;
       const phone = args.phone;
+      const record = args.record;
 
       const address = {
         streetAddress: args.address.streetAddress,
@@ -148,11 +170,6 @@ export class UserResolver {
         zipcode: args.address.zipcode,
       };
 
-      const record = {
-        startDate: args.record.startDate,
-        endDate: args.record.endDate,
-        payRate: args.record.payRate,
-      };
       const schema = UserValidation.update();
       await this.joiService.validate({
         schema,
@@ -180,13 +197,21 @@ export class UserResolver {
 
       return user;
     } catch (err) {
-      this.errorService.throwError({ err, name: this.name, operation, logError: true });
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
     }
   }
 
   @Mutation((returns) => User)
   @UseMiddleware(authenticate)
-  async ChangeProfilePicture(@Arg('input') args: ChangeProfilePictureInput, @Ctx() ctx: IGraphqlContext) {
+  async ChangeProfilePicture(
+    @Arg('input') args: ChangeProfilePictureInput,
+    @Ctx() ctx: IGraphqlContext
+  ) {
     const operation = 'Change Profile Picture';
 
     try {
@@ -200,6 +225,12 @@ export class UserResolver {
     } catch (err) {
       throw err;
     }
+  }
+
+  @FieldResolver()
+  fullName(@Root() root: User) {
+    const middleName = root.middleName ? ` ${root.middleName}` : '';
+    return `${root.firstName}${middleName} ${root.lastName}`;
   }
 
   @FieldResolver()

@@ -16,7 +16,13 @@ import {
   IResetPasswordResponse,
   IForgotPasswordResponse,
 } from '../interfaces/auth.interface';
-import { IEmailService, IEntityID, IHashService, ITokenService, ILogger } from '../interfaces/common.interface';
+import {
+  IEmailService,
+  IEntityID,
+  IHashService,
+  ITokenService,
+  ILogger,
+} from '../interfaces/common.interface';
 import { IUserRepository } from '../interfaces/user.interface';
 import { IUserTokenService } from '../interfaces/user-token.interface';
 import { IRoleRepository } from '../interfaces/role.interface';
@@ -106,7 +112,10 @@ export default class AuthService implements IAuthService {
 
       const userPassword: any = user.password;
 
-      let isPasswordCorrect = await this.hashService.compare(password, userPassword);
+      let isPasswordCorrect = await this.hashService.compare(
+        password,
+        userPassword
+      );
       if (!isPasswordCorrect) {
         throw new NotAuthenticatedError({
           details: [strings.emailPasswordNotCorrect],
@@ -144,13 +153,17 @@ export default class AuthService implements IAuthService {
     }
   };
 
-  forgotPassword = async (args: IForgotPasswordInput): Promise<IForgotPasswordResponse> => {
+  forgotPassword = async (
+    args: IForgotPasswordInput
+  ): Promise<IForgotPasswordResponse> => {
     throw new apiError.NotImplementedError({
       details: ['Not implemented'],
     });
   };
 
-  resetPassword = async (args: IResetPasswordInput): Promise<IResetPasswordResponse> => {
+  resetPassword = async (
+    args: IResetPasswordInput
+  ): Promise<IResetPasswordResponse> => {
     try {
       const token = await this.tokenService.extractToken(args.token);
       const password = args.password;

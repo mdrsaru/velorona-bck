@@ -1,6 +1,11 @@
 import { injectable, inject } from 'inversify';
 
-import { IClientCreate, IClientUpdate, IClientRepository, IClientService } from '../interfaces/client.interface';
+import {
+  IClientCreate,
+  IClientUpdate,
+  IClientRepository,
+  IClientService,
+} from '../interfaces/client.interface';
 import Client from '../entities/client.entity';
 import Paging from '../utils/paging';
 import { TYPES } from '../types';
@@ -9,11 +14,15 @@ import { IEntityRemove, IEntityID } from '../interfaces/common.interface';
 @injectable()
 export default class ClientService implements IClientService {
   private clientRepository: IClientRepository;
-  constructor(@inject(TYPES.ClientRepository) clientRepository: IClientRepository) {
+  constructor(
+    @inject(TYPES.ClientRepository) clientRepository: IClientRepository
+  ) {
     this.clientRepository = clientRepository;
   }
 
-  getAllAndCount = async (args: IPagingArgs): Promise<IPaginationData<Client>> => {
+  getAllAndCount = async (
+    args: IPagingArgs
+  ): Promise<IPaginationData<Client>> => {
     try {
       const { rows, count } = await this.clientRepository.getAllAndCount(args);
 

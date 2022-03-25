@@ -4,29 +4,27 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from '../types';
 import config from '../config/constants';
 import container from '../inversify.config';
+import User from '../entities/user.entity';
 import * as clientLoader from '../loaders/dataloader/client.dataloader';
 import * as userLoader from '../loaders/dataloader/user.dataloader';
 
 import { IGraphql, IGraphqlContext } from '../interfaces/graphql.interface';
 import { ITokenService, ILogger } from '../interfaces/common.interface';
 import { IUserAuth } from '../interfaces/auth.interface';
-import { IRoleRepository } from '../interfaces/role.interface';
+import { IUserRepository } from '../interfaces/user.interface';
 
 @injectable()
 export default class GraphqlService implements IGraphql {
   private name = 'GraphqlService';
   private tokenService: ITokenService;
   private logger: ILogger;
-  private roleRepository: IRoleRepository;
 
   constructor(
     @inject(TYPES.TokenService) _tokenService: ITokenService,
     @inject(TYPES.LoggerFactory) loggerFactory: (name: string) => ILogger
-    //@inject(TYPES.RoleRepository) _roleRepository: IRoleRepository,
   ) {
     this.tokenService = _tokenService;
     this.logger = loggerFactory(this.name);
-    //this.roleRepository = _roleRepository;
   }
 
   formatError(err: any) {
@@ -46,10 +44,10 @@ export default class GraphqlService implements IGraphql {
   }
 
   setContext = async (args: any): Promise<IGraphqlContext> => {
-    const roleRepository = container.get<IRoleRepository>(TYPES.RoleRepository); // could not inject as connection is needed
+    const userRepository = container.get<IUserRepository>(TYPES.UserRepository); // could not inject as connection is needed
     const operation = 'setContext';
     const { req, res } = args;
-    let user: IUserAuth | undefined;
+    let user: User | undefined;
 
     try {
       let token = await this.tokenService.extractToken(req.headers);
@@ -59,13 +57,10 @@ export default class GraphqlService implements IGraphql {
           secretKey: config.accessTokenSecret,
         });
 
-        const roles = decoded?.roles ?? [];
-        const userRoles = await roleRepository.getAll({ query: { id: roles } });
-
-        user = {
+        user = await userRepository.getById({
           id: decoded.id,
-          roles: userRoles,
-        };
+          relations: ['roles', 'client'],
+        });
       }
     } catch (err: any) {
       this.logger.info({

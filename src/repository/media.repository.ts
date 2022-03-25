@@ -6,7 +6,10 @@ import BaseRepository from './base.repository';
 
 import config from '../config/constants';
 @injectable()
-export default class MediaRepository extends BaseRepository<Media> implements IMediaRepository {
+export default class MediaRepository
+  extends BaseRepository<Media>
+  implements IMediaRepository
+{
   constructor() {
     super(getRepository(Media));
   }

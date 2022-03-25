@@ -20,7 +20,8 @@ export default class UserTokenService implements IUserTokenService {
   private errorService: IErrorService;
 
   constructor(
-    @inject(TYPES.UserTokenRepository) userTokenRepository: IUserTokenRepository,
+    @inject(TYPES.UserTokenRepository)
+    userTokenRepository: IUserTokenRepository,
     @inject(TYPES.TokenService) tokenService: ITokenService,
     @inject(TYPES.ErrorService) errorService: IErrorService
   ) {

@@ -7,7 +7,9 @@ export default class MediaService implements IMediaService {
   private name = 'MediaService';
   private mediaRepository: IMediaRepository;
 
-  constructor(@inject(TYPES.MediaRepository) mediaRepository: IMediaRepository) {
+  constructor(
+    @inject(TYPES.MediaRepository) mediaRepository: IMediaRepository
+  ) {
     this.mediaRepository = mediaRepository;
   }
 

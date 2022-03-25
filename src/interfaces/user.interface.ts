@@ -1,10 +1,22 @@
-import { IPagingArgs, IGetAllAndCountResult, IPaginationData } from './paging.interface';
+import {
+  IPagingArgs,
+  IGetAllAndCountResult,
+  IPaginationData,
+} from './paging.interface';
 import { IEntityRemove, IEntityID } from './common.interface';
 import User from '../entities/user.entity';
 import Role from '../entities/role.entity';
 import { UserStatus } from '../config/constants';
-import { IAddress, IAddressCreateInput, IAddressUpdateInput } from './address.interface';
-import { IUserRecord, IUserRecordCreateInput, IUserRecordUpdateInput } from './user-record.interface';
+import {
+  IAddress,
+  IAddressCreateInput,
+  IAddressUpdateInput,
+} from './address.interface';
+import {
+  IUserRecord,
+  IUserRecordCreateInput,
+  IUserRecordUpdateInput,
+} from './user-record.interface';
 
 export interface IUser {
   id: string;
@@ -35,7 +47,6 @@ export interface IEmailClientQuery {
 
 export interface IUserCreate {
   email: IUser['email'];
-  password: IUser['password'];
   firstName: IUser['firstName'];
   lastName: IUser['lastName'];
   middleName?: IUser['middleName'];
@@ -45,6 +56,10 @@ export interface IUserCreate {
   client_id?: string;
   address?: IAddressCreateInput;
   record?: IUserRecordCreateInput;
+}
+
+export interface IUserCreateRepo extends IUserCreate {
+  password: IUser['password'];
 }
 
 export interface IChangeProfilePictureInput {
@@ -69,7 +84,7 @@ export interface IUserRepository {
   getAllAndCount(args: IPagingArgs): Promise<IGetAllAndCountResult<User>>;
   getAll(args: any): Promise<User[]>;
   getById(args: IEntityID): Promise<User | undefined>;
-  create(args: IUserCreate): Promise<User>;
+  create(args: IUserCreateRepo): Promise<User>;
   update(args: IUserUpdate): Promise<User>;
   remove(args: IEntityRemove): Promise<User>;
   /**

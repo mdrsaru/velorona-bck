@@ -22,7 +22,10 @@ import {
 import { IRoleRepository } from '../interfaces/role.interface';
 
 @injectable()
-export default class UserTokenRepository extends BaseRepository<UserToken> implements IUserTokenRepository {
+export default class UserTokenRepository
+  extends BaseRepository<UserToken>
+  implements IUserTokenRepository
+{
   constructor() {
     super(getRepository(UserToken));
   }
@@ -71,7 +74,9 @@ export default class UserTokenRepository extends BaseRepository<UserToken> imple
     return this.repo.findOne({ where: { token } });
   }
 
-  deleteByToken = async (args: IUserTokenDeleteByToken): Promise<UserToken | undefined> => {
+  deleteByToken = async (
+    args: IUserTokenDeleteByToken
+  ): Promise<UserToken | undefined> => {
     try {
       const token = args.token;
       const found = await this.repo.findOne({ where: { token } });

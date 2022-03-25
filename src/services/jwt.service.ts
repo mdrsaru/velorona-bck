@@ -1,7 +1,11 @@
 import { injectable } from 'inversify';
 import jwt from 'jsonwebtoken';
 
-import { ITokenService, ITokenVerificationInput, ITokenArgs } from '../interfaces/common.interface';
+import {
+  ITokenService,
+  ITokenVerificationInput,
+  ITokenArgs,
+} from '../interfaces/common.interface';
 
 @injectable()
 export default class TokenService implements ITokenService {

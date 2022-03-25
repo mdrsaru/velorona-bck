@@ -1,4 +1,9 @@
-import { MiddlewareInterface, ResolverData, NextFn, MiddlewareFn } from 'type-graphql';
+import {
+  MiddlewareInterface,
+  ResolverData,
+  NextFn,
+  MiddlewareFn,
+} from 'type-graphql';
 
 import { TYPES } from '../../types';
 import { Role as RoleEnum } from '../../config/constants';
@@ -12,10 +17,13 @@ import { IGraphqlContext } from '../../interfaces/graphql.interface';
 
 const authorize = (...roles: string[]): MiddlewareFn => {
   return async ({ context }: any, next: NextFn) => {
-    const userRolesObj = context?.user?.roles?.reduce((acc: any, current: any) => {
-      acc[current.name] = current;
-      return acc;
-    }, {});
+    const userRolesObj = context?.user?.roles?.reduce(
+      (acc: any, current: any) => {
+        acc[current.name] = current;
+        return acc;
+      },
+      {}
+    );
 
     let hasAccess = false;
     for (let role of roles) {
@@ -26,7 +34,7 @@ const authorize = (...roles: string[]): MiddlewareFn => {
     }
     if (!hasAccess) {
       throw new apiError.ForbiddenError({
-        details: [strings.notAllowedToCreateAdmin],
+        details: [strings.notAllowedToPerformAction],
       });
     }
 

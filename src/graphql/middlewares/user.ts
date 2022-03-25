@@ -13,7 +13,10 @@ import { IGraphqlContext } from '../../interfaces/graphql.interface';
 
 const name = 'user.middleware';
 
-export const canCreateSystemAdmin: MiddlewareFn<IGraphqlContext> = async ({ context, args }, next: NextFn) => {
+export const canCreateSystemAdmin: MiddlewareFn<IGraphqlContext> = async (
+  { context, args },
+  next: NextFn
+) => {
   const operation = 'canCreateSystemAdmin';
   const errorService = container.get<IErrorService>(TYPES.ErrorService);
   const roleRepo = container.get<IRoleRepository>(TYPES.RoleRepository);
