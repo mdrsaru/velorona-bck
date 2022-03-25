@@ -13,7 +13,7 @@ export default class MediaRepository extends BaseRepository<Media> implements IM
 
   upload = async (args: IMediaUpload): Promise<Media> => {
     try {
-      const url = config.mediaUrl + args.file.filename;
+      const url = config.baseUrl + '/uploads/' + args.file.filename;
       const name = args.file.filename;
       const media = await this.repo.save({
         name,

@@ -21,6 +21,8 @@ const app: Application = express();
   });
 
   app.use('/v1', express.static(`${__dirname}/../public`));
+  app.use('/uploads', express.static(`${__dirname}/../public/uploads`));
+
   corsLoader({ app });
   graphqlLoader({ app, schema });
   expressLoader({ app });
