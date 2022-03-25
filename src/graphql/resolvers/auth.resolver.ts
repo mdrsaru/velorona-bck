@@ -54,7 +54,12 @@ export class AuthResolver {
       });
       return res;
     } catch (err) {
-      this.errorService.throwError({ err, name: this.name, operation, logError: true });
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
     }
   }
 
@@ -88,11 +93,20 @@ export class AuthResolver {
         httpOnly: true,
       };
 
-      ctx.res.cookie(constants.refreshTokenCookieName, loginResponse.refreshToken, options);
+      ctx.res.cookie(
+        constants.refreshTokenCookieName,
+        loginResponse.refreshToken,
+        options
+      );
 
       return loginResponse;
     } catch (err) {
-      this.errorService.throwError({ err, name: this.name, operation, logError: true });
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
     }
   }
 
@@ -116,12 +130,20 @@ export class AuthResolver {
       });
       return res;
     } catch (err) {
-      this.errorService.throwError({ err, name: this.name, operation, logError: true });
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
     }
   }
 
   @Mutation((returns) => ResetPasswordResponse)
-  async ResetPassword(@Arg('input') args: ResetPasswordInput, @Ctx() ctx: IGraphqlContext) {
+  async ResetPassword(
+    @Arg('input') args: ResetPasswordInput,
+    @Ctx() ctx: IGraphqlContext
+  ) {
     const operation = 'ResetPassword';
     try {
       const token = ctx.req.headers;
@@ -140,7 +162,12 @@ export class AuthResolver {
       });
       return res;
     } catch (err) {
-      this.errorService.throwError({ err, name: this.name, operation, logError: true });
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
     }
   }
 

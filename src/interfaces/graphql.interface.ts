@@ -17,7 +17,7 @@ export interface IDataloader {
 export interface IGraphqlContext {
   req: Request;
   res: Response;
-  user: IUserAuth | undefined;
+  user: User | undefined;
   loaders: IDataloader;
 }
 

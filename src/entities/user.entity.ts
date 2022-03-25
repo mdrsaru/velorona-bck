@@ -1,15 +1,37 @@
-import { Entity, Column, ManyToOne, JoinColumn, ManyToMany, JoinTable, OneToOne, RelationId, OneToMany } from 'typeorm';
-import { ObjectType, Field, ID, InputType, registerEnumType } from 'type-graphql';
+import {
+  Entity,
+  Column,
+  ManyToOne,
+  JoinColumn,
+  ManyToMany,
+  JoinTable,
+  OneToOne,
+  RelationId,
+  OneToMany,
+} from 'typeorm';
+import {
+  ObjectType,
+  Field,
+  ID,
+  InputType,
+  registerEnumType,
+} from 'type-graphql';
 
-import { Base } from './base.entity';
 import Client from './client.entity';
-import { entities, UserStatus } from '../config/constants';
-import { PagingInput, PagingResult } from './common.entity';
 import Role from './role.entity';
 import UserToken from './user-token.entity';
-import Address, { AddressCreateInput, AddressUpdateInput } from './address.entity';
-import UserRecord, { UserRecordCreateInput, UserRecordUpdateInput } from './user-record.entity';
 import Media from './media.entity';
+import { Base } from './base.entity';
+import { PagingInput, PagingResult } from './common.entity';
+import Address, {
+  AddressCreateInput,
+  AddressUpdateInput,
+} from './address.entity';
+import UserRecord, {
+  UserRecordCreateInput,
+  UserRecordUpdateInput,
+} from './user-record.entity';
+import { entities, UserStatus } from '../config/constants';
 
 registerEnumType(UserStatus, {
   name: 'UserStatus',
@@ -40,6 +62,9 @@ export default class User extends Base {
   @Field()
   @Column({ length: 25 })
   lastName: string;
+
+  @Field()
+  fullName: string;
 
   @Field((type) => UserStatus)
   @Column({
@@ -111,9 +136,6 @@ export class UserPagingResult {
 export class UserCreateInput {
   @Field()
   email: string;
-
-  @Field()
-  password: string;
 
   @Field()
   phone: string;

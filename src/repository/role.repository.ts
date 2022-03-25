@@ -2,13 +2,20 @@ import { injectable } from 'inversify';
 import { getRepository, Repository } from 'typeorm';
 
 import Role from '../entities/role.entity';
-import { IRoleCreate, IRoleRepository, IRoleUpdate } from '../interfaces/role.interface';
+import {
+  IRoleCreate,
+  IRoleRepository,
+  IRoleUpdate,
+} from '../interfaces/role.interface';
 import BaseRepository from './base.repository';
 import { NotFoundError } from '../utils/api-error';
 import { merge } from 'lodash';
 
 @injectable()
-export default class RoleRepository extends BaseRepository<Role> implements IRoleRepository {
+export default class RoleRepository
+  extends BaseRepository<Role>
+  implements IRoleRepository
+{
   constructor() {
     super(getRepository(Role));
   }

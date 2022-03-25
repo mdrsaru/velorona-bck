@@ -1,5 +1,14 @@
 import { inject, injectable } from 'inversify';
-import { Resolver, Query, Ctx, Arg, Mutation, UseMiddleware, FieldResolver, Root } from 'type-graphql';
+import {
+  Resolver,
+  Query,
+  Ctx,
+  Arg,
+  Mutation,
+  UseMiddleware,
+  FieldResolver,
+  Root,
+} from 'type-graphql';
 
 import { TYPES } from '../../types';
 import Paging from '../../utils/paging';
@@ -15,7 +24,11 @@ import {
   ClientCreateInput,
   ClientUpdateInput,
 } from '../../entities/client.entity';
-import { PagingInput, DeleteInput, MessageResponse } from '../../entities/common.entity';
+import {
+  PagingInput,
+  DeleteInput,
+  MessageResponse,
+} from '../../entities/common.entity';
 
 import { IPaginationData } from '../../interfaces/paging.interface';
 import { IClient, IClientService } from '../../interfaces/client.interface';
@@ -50,16 +63,25 @@ export class ClientResolver {
 
     try {
       const pagingArgs = Paging.createPagingPayload(args);
-      let result: IPaginationData<Client> = await this.clientService.getAllAndCount(pagingArgs);
+      let result: IPaginationData<Client> =
+        await this.clientService.getAllAndCount(pagingArgs);
       return result;
     } catch (err) {
-      this.errorService.throwError({ err, name: this.name, operation, logError: true });
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
     }
   }
 
   @Mutation((returns) => Client)
   @UseMiddleware(authenticate, authorize(RoleEnum.SuperAdmin))
-  async ClientCreate(@Arg('input') args: ClientCreateInput, @Ctx() ctx: any): Promise<Client> {
+  async ClientCreate(
+    @Arg('input') args: ClientCreateInput,
+    @Ctx() ctx: any
+  ): Promise<Client> {
     const operation = 'ClientCreate';
 
     try {
@@ -82,13 +104,21 @@ export class ClientResolver {
 
       return client;
     } catch (err) {
-      this.errorService.throwError({ err, name: this.name, operation, logError: true });
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
     }
   }
 
   @Mutation((returns) => Client)
   @UseMiddleware(authenticate, authorize(RoleEnum.SuperAdmin))
-  async ClientUpdate(@Arg('input') args: ClientUpdateInput, @Ctx() ctx: any): Promise<Client> {
+  async ClientUpdate(
+    @Arg('input') args: ClientUpdateInput,
+    @Ctx() ctx: any
+  ): Promise<Client> {
     const operation = 'ClientUpdate';
 
     try {
@@ -114,13 +144,21 @@ export class ClientResolver {
 
       return client;
     } catch (err) {
-      this.errorService.throwError({ err, name: this.name, operation, logError: false });
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: false,
+      });
     }
   }
 
   @Mutation((returns) => Client)
   @UseMiddleware(authenticate, authorize(RoleEnum.SuperAdmin))
-  async ClientDelete(@Arg('input') args: DeleteInput, @Ctx() ctx: any): Promise<Client> {
+  async ClientDelete(
+    @Arg('input') args: DeleteInput,
+    @Ctx() ctx: any
+  ): Promise<Client> {
     const operation = 'ClientDelete';
 
     try {
@@ -130,7 +168,12 @@ export class ClientResolver {
 
       return client;
     } catch (err) {
-      this.errorService.throwError({ err, name: this.name, operation, logError: false });
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: false,
+      });
     }
   }
 

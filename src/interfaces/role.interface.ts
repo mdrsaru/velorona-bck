@@ -1,6 +1,10 @@
 import Role from '../entities/role.entity';
 import { IEntityID, IEntityRemove } from './common.interface';
-import { IGetAllAndCountResult, IPaginationData, IPagingArgs } from './paging.interface';
+import {
+  IGetAllAndCountResult,
+  IPaginationData,
+  IPagingArgs,
+} from './paging.interface';
 import { Role as RoleEnum } from '../config/constants';
 
 export interface IRole {

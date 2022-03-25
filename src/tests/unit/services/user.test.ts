@@ -5,7 +5,12 @@ import strings from '../../../config/strings';
 import { UserStatus } from '../../../config/constants';
 import UserService from '../../../services/user.service';
 import UserRepository from '../../mock/user.repository';
-import { IUserRepository, IUserService, IUserCreate, IUserUpdate } from '../../../interfaces/user.interface';
+import {
+  IUserRepository,
+  IUserService,
+  IUserCreate,
+  IUserUpdate,
+} from '../../../interfaces/user.interface';
 import { users } from '../../mock/data';
 import * as apiError from '../../../utils/api-error';
 
@@ -28,7 +33,7 @@ describe('User Service', () => {
     it('should return users with pagination', async () => {
       const _users = await userService.getAllAndCount({});
 
-      expect(users).toBeDefined();
+      expect(_users).toBeDefined();
       expect(_users.data.length).toBe(users.length);
     });
   });
@@ -38,7 +43,7 @@ describe('User Service', () => {
       const args: IUserCreate = {
         firstName: 'User',
         lastName: 'Name',
-        email: 'test@test.com',
+        email: 'admin@admin.com',
         password: 'password',
         phone: '9841273487',
         status: UserStatus.Active,

@@ -11,7 +11,10 @@ import config from '../config/constants';
 let storage = multer.diskStorage({
   destination: config.mediaDestination,
   filename: (req: Request, file: any, cb: any) => {
-    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+    cb(
+      null,
+      file.fieldname + '-' + Date.now() + path.extname(file.originalname)
+    );
   },
 });
 
@@ -39,7 +42,9 @@ export const upload = multer({
 
 const _router = () => {
   const router = Router();
-  const mediaController: MediaController = container.get<MediaController>(TYPES.MediaController);
+  const mediaController: MediaController = container.get<MediaController>(
+    TYPES.MediaController
+  );
 
   router.post('/upload', upload, mediaController.uploadImage);
   return router;

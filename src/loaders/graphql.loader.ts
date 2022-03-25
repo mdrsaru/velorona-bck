@@ -14,7 +14,13 @@ import constants from '../config/constants';
 
 let graphqlService: IGraphql = container.get<IGraphql>(TYPES.GraphqlService);
 
-export default async ({ app, schema }: { app: Application; schema: any }): Promise<void> => {
+export default async ({
+  app,
+  schema,
+}: {
+  app: Application;
+  schema: any;
+}): Promise<void> => {
   const apollo = new ApolloServer({
     schema: applyMiddleware(await schema),
     formatError: graphqlService.formatError,

@@ -18,7 +18,10 @@ import {
 } from '../interfaces/client.interface';
 
 @injectable()
-export default class ClientRepository extends BaseRepository<Client> implements IClientRepository {
+export default class ClientRepository
+  extends BaseRepository<Client>
+  implements IClientRepository
+{
   constructor() {
     super(getRepository(Client));
   }
@@ -30,7 +33,10 @@ export default class ClientRepository extends BaseRepository<Client> implements 
 
       let clientName = name.substr(0, 5)?.toLowerCase();
       const length = 10 - clientName.length;
-      const randomNumber = crypto.randomBytes(length).toString('hex').slice(0, length);
+      const randomNumber = crypto
+        .randomBytes(length)
+        .toString('hex')
+        .slice(0, length);
 
       const clientCode: string = clientName + randomNumber;
       const found = await this.repo.find({ clientCode });
@@ -79,7 +85,9 @@ export default class ClientRepository extends BaseRepository<Client> implements 
     }
   };
 
-  getByClientCode = async (args: IClientCodeInput): Promise<Client | undefined> => {
+  getByClientCode = async (
+    args: IClientCodeInput
+  ): Promise<Client | undefined> => {
     try {
       const clientCode = args.clientCode;
       const client = await this.repo.findOne({ clientCode: clientCode });

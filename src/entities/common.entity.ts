@@ -11,7 +11,10 @@ export class PagingInput {
   @Field((type) => Int, { nullable: true, description: 'Number to skip' })
   skip: number;
 
-  @Field((type) => Int, { nullable: true, description: 'Limit - max number of entities that should be taken' })
+  @Field((type) => Int, {
+    nullable: true,
+    description: 'Limit - max number of entities that should be taken',
+  })
   take: number;
 
   @Field((type) => [String], { nullable: true, description: 'Sort order' })
@@ -20,7 +23,9 @@ export class PagingInput {
 
 @ObjectType()
 export class PagingResult {
-  @Field((type) => Int, { description: 'Total number of entities with the provided filter/query' })
+  @Field((type) => Int, {
+    description: 'Total number of entities with the provided filter/query',
+  })
   total: number;
 
   @Field((type) => Int)

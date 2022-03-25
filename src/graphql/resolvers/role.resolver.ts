@@ -1,5 +1,12 @@
 import { inject, injectable } from 'inversify';
-import { Arg, Ctx, Mutation, Query, Resolver, UseMiddleware } from 'type-graphql';
+import {
+  Arg,
+  Ctx,
+  Mutation,
+  Query,
+  Resolver,
+  UseMiddleware,
+} from 'type-graphql';
 
 import { TYPES } from '../../types';
 import Paging from '../../utils/paging';
@@ -8,7 +15,12 @@ import authorize from '../middlewares/authorize';
 import { Role as RoleEnum } from '../../config/constants';
 import RoleValidation from '../../validation/role.validation';
 import { DeleteInput } from '../../entities/common.entity';
-import Role, { RoleCreateInput, RolePagingResult, RoleQueryInput, RoleUpdateInput } from '../../entities/role.entity';
+import Role, {
+  RoleCreateInput,
+  RolePagingResult,
+  RoleQueryInput,
+  RoleUpdateInput,
+} from '../../entities/role.entity';
 
 import { IPaginationData } from '../../interfaces/paging.interface';
 import { IErrorService, IJoiService } from '../../interfaces/common.interface';
@@ -34,21 +46,34 @@ export class RoleResolver {
 
   @Query((returns) => RolePagingResult)
   @UseMiddleware(authenticate)
-  async Role(@Arg('input', { nullable: true }) args: RoleQueryInput, @Ctx() ctx: any): Promise<IPaginationData<Role>> {
+  async Role(
+    @Arg('input', { nullable: true }) args: RoleQueryInput,
+    @Ctx() ctx: any
+  ): Promise<IPaginationData<Role>> {
     const operation = 'Roles';
 
     try {
       const pagingArgs = Paging.createPagingPayload(args);
-      let result: IPaginationData<Role> = await this.roleService.getAllAndCount(pagingArgs);
+      let result: IPaginationData<Role> = await this.roleService.getAllAndCount(
+        pagingArgs
+      );
       return result;
     } catch (err) {
-      this.errorService.throwError({ err, name: this.name, operation, logError: true });
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
     }
   }
 
   @Mutation((returns) => Role)
   @UseMiddleware(authenticate, authorize(RoleEnum.SuperAdmin))
-  async RoleCreate(@Arg('input') args: RoleCreateInput, @Ctx() ctx: any): Promise<Role> {
+  async RoleCreate(
+    @Arg('input') args: RoleCreateInput,
+    @Ctx() ctx: any
+  ): Promise<Role> {
     const operation = 'RoleCreate';
     try {
       const name = args.name;
@@ -68,13 +93,21 @@ export class RoleResolver {
       });
       return role;
     } catch (err) {
-      this.errorService.throwError({ err, name: this.name, operation, logError: false });
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: false,
+      });
     }
   }
 
   @Mutation((returns) => Role)
   @UseMiddleware(authenticate, authorize(RoleEnum.SuperAdmin))
-  async RoleUpdate(@Arg('input') args: RoleUpdateInput, @Ctx() ctx: any): Promise<IRole> {
+  async RoleUpdate(
+    @Arg('input') args: RoleUpdateInput,
+    @Ctx() ctx: any
+  ): Promise<IRole> {
     const operation = 'RoleUpdate';
 
     try {
@@ -100,13 +133,21 @@ export class RoleResolver {
 
       return role;
     } catch (err) {
-      this.errorService.throwError({ err, name: this.name, operation, logError: false });
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: false,
+      });
     }
   }
 
   @Mutation((returns) => Role)
   @UseMiddleware(authenticate, authorize(RoleEnum.SuperAdmin))
-  async RoleDelete(@Arg('input') args: DeleteInput, @Ctx() ctx: any): Promise<Role> {
+  async RoleDelete(
+    @Arg('input') args: DeleteInput,
+    @Ctx() ctx: any
+  ): Promise<Role> {
     const operation = 'RoleDelete';
 
     try {
@@ -115,7 +156,12 @@ export class RoleResolver {
 
       return role;
     } catch (err) {
-      this.errorService.throwError({ err, name: this.name, operation, logError: false });
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: false,
+      });
     }
   }
 }

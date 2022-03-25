@@ -20,13 +20,19 @@ export default class TokenController {
     this.logger = loggerFactory('TokenController');
   }
 
-  renewAccessToken = async (req: Request, res: Response, next: NextFunction) => {
+  renewAccessToken = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
     const cookie: any = req.cookies || {};
     const refreshToken: string = cookie[config.refreshTokenCookieName];
     let newAccessToken: string = '';
     if (refreshToken) {
       try {
-        const tokenResult = await this.authService.renewAccessToken(refreshToken);
+        const tokenResult = await this.authService.renewAccessToken(
+          refreshToken
+        );
 
         return res.status(200).send({
           message: 'Token refresh successful',
@@ -46,7 +52,10 @@ export default class TokenController {
         next(err);
       }
     } else {
-      this.logger.info({ message: 'Refresh token not provided', operation: 'renewAccessToken' });
+      this.logger.info({
+        message: 'Refresh token not provided',
+        operation: 'renewAccessToken',
+      });
       return res.status(400).send({ message: 'Invalid Token' });
     }
   };

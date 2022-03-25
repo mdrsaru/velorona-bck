@@ -1,8 +1,18 @@
 import { inject, injectable } from 'inversify';
 import Role from '../entities/role.entity';
-import { IEntityID, IEntityRemove, IErrorService, ILogger } from '../interfaces/common.interface';
+import {
+  IEntityID,
+  IEntityRemove,
+  IErrorService,
+  ILogger,
+} from '../interfaces/common.interface';
 import { IPaginationData, IPagingArgs } from '../interfaces/paging.interface';
-import { IRoleCreate, IRoleRepository, IRoleService, IRoleUpdate } from '../interfaces/role.interface';
+import {
+  IRoleCreate,
+  IRoleRepository,
+  IRoleService,
+  IRoleUpdate,
+} from '../interfaces/role.interface';
 import { TYPES } from '../types';
 import Paging from '../utils/paging';
 
@@ -22,7 +32,9 @@ export default class RoleService implements IRoleService {
     this.logger = loggerFactory(this.name);
   }
 
-  getAllAndCount = async (args: IPagingArgs): Promise<IPaginationData<Role>> => {
+  getAllAndCount = async (
+    args: IPagingArgs
+  ): Promise<IPaginationData<Role>> => {
     try {
       const { rows, count } = await this.roleRepository.getAllAndCount(args);
 

@@ -94,9 +94,9 @@ export default class WinstonLogger implements ILogger {
 
   consoleFormatter() {
     let formatter = printf((info) => {
-      return `${colors.grey(info.timestamp)} - ${info.name ? `${colors.magenta(info.name)} - ` : ''}${info.level}: ${
-        info.message
-      } ${
+      return `${colors.grey(info.timestamp)} - ${
+        info.name ? `${colors.magenta(info.name)} - ` : ''
+      }${info.level}: ${info.message} ${
         info.data
           ? isError(info.data)
             ? `\n${colors.yellow(util.inspect(info.data, false, null, true))}`

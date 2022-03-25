@@ -7,7 +7,13 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
-import { ObjectType, Field, ID, InputType, registerEnumType } from 'type-graphql';
+import {
+  ObjectType,
+  Field,
+  ID,
+  InputType,
+  registerEnumType,
+} from 'type-graphql';
 
 import { Base } from './base.entity';
 import User from './user.entity';

@@ -1,7 +1,11 @@
 import { injectable, inject } from 'inversify';
 
 import { TYPES } from '../types';
-import { IErrorService, IValidationInput, IJoiService } from '../interfaces/common.interface';
+import {
+  IErrorService,
+  IValidationInput,
+  IJoiService,
+} from '../interfaces/common.interface';
 
 @injectable()
 export default class JoiService implements IJoiService {

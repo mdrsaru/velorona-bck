@@ -1,4 +1,8 @@
-import { IPagingArgs, IGetAllAndCountResult, IPaginationData } from './paging.interface';
+import {
+  IPagingArgs,
+  IGetAllAndCountResult,
+  IPaginationData,
+} from './paging.interface';
 import { IEntityRemove, IEntityID } from './common.interface';
 import Client from '../entities/client.entity';
 import { ClientStatus } from '../config/constants';

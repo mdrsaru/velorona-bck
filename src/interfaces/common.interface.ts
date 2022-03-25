@@ -1,6 +1,10 @@
 import { ResetPasswordResponse } from '../entities/auth.entity';
 import { CustomError } from '../utils/api-error';
-import { IPagingArgs, IGetAllAndCountResult, IGetOptions } from './paging.interface';
+import {
+  IPagingArgs,
+  IGetAllAndCountResult,
+  IGetOptions,
+} from './paging.interface';
 
 export interface IEntityID {
   id: string;
@@ -67,8 +71,30 @@ export interface ITokenService {
   extractToken(args: any): string;
 }
 
+export interface IEmailBasicArgs {
+  to: string;
+  from: string;
+  subject: string;
+  data?: any;
+  cc?: string;
+}
+
+export interface IEmailHtmlArgs extends IEmailBasicArgs {
+  html: string;
+}
+
+export interface IEmailTextArgs extends IEmailBasicArgs {
+  text: string;
+}
+
+export interface IEmailTemplateArgs extends IEmailBasicArgs {
+  templateId: string;
+}
+
+export type EmailArgs = IEmailHtmlArg | IEmailTextArgs | IEmailTemplateArgs;
+
 export interface IEmailService {
-  sendEmail(args: any): Promise<any>;
+  sendEmail(args: EmailArgs): Promise<any>;
 }
 // app
 export interface IAppService {
@@ -91,4 +117,13 @@ export interface ITokenArgs {
   tokenLife: string;
   tokenSecret: string;
   payload: any;
+}
+
+export interface ITemplateArgs {
+  template: string;
+  data: any;
+}
+
+export interface ITemplateService {
+  compile(args: ITemplateArgs): string;
 }

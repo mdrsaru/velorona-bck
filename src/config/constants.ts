@@ -37,7 +37,9 @@ export const databaseSetting = {
   host: process.env.POSTGRES_DATABASE_HOST as string,
   dialect: process.env.POSTGRES_DATABASE_DIALECT as string,
   port: parseInt((process.env.POSTGRES_DATABASE_PORT as string) || '5432'),
-  synchronize: ['local', 'development', 'dev'].includes(env) ? process.env.DATABASE_SYNCHRONIZE == 'true' : false,
+  synchronize: ['local', 'development', 'dev'].includes(env)
+    ? process.env.DATABASE_SYNCHRONIZE == 'true'
+    : false,
   logging: ['local', 'development', 'dev'].includes(env),
 };
 
@@ -49,6 +51,7 @@ export const entities = {
   userTokens: 'user_tokens',
   user_record: 'user_record',
   media: 'media',
+  invitation: 'invitation',
 };
 
 export enum ClientStatus {
@@ -75,17 +78,42 @@ export enum TokenType {
   refresh = 'refresh',
 }
 
+export enum InvitationStatus {
+  Pending = 'Pending',
+  Approved = 'Approved',
+}
+
+export const emailSetting = {
+  testMask: process.env.EMAIL_TEST_MASK,
+  fromEmail: process.env.EMAIL_FROM_EMAIL,
+  fromName: process.env.EMAIL_FROM_NAME,
+  sendGridApi: process.env.SENDGRID_API,
+  emailEnabled: process.env.EMAIL_ENABLED === 'true',
+  newInvitation: {
+    subject: process.env.NEW_INVITATION_EMAIL_SUBJECT || '',
+    body: process.env.NEW_INVITATION_EMAIL_BODY || '',
+  },
+  newUser: {
+    subject: process.env.NEW_USER_EMAIL_SUBJECT || '',
+    adminBody: process.env.NEW_ADMIN_USER_EMAIL_BODY || '',
+    clientBody: process.env.NEW_CLIENT_USER_EMAIL_BODY || '',
+  },
+};
+
 export default {
   env,
   origins,
   port: process.env.PORT,
   baseUrl: process.env.BASE_URL,
   appName: process.env.APP_NAME || 'Vellorum_API',
-  refreshTokenCookieName: process.env.REFRESH_TOKEN_COOKIE_NAME || 'refreshToken',
+  refreshTokenCookieName:
+    process.env.REFRESH_TOKEN_COOKIE_NAME || 'refreshToken',
   saltRounds: process.env.SALT_ROUNDS || 10,
-  verificationEmailTokenExpiration: process.env.VERIFICATION_EMAIL_EXPIRATION || '1d',
+  verificationEmailTokenExpiration:
+    process.env.VERIFICATION_EMAIL_EXPIRATION || '1d',
   refreshTokenExpiration: process.env.REFRESH_TOKEN_EXPIRATION || '7d',
-  forgotPasswordTokenExpiration: process.env.FORGOT_PASSWORD_TOKEN_EXPIRATION || '1hr',
+  forgotPasswordTokenExpiration:
+    process.env.FORGOT_PASSWORD_TOKEN_EXPIRATION || '1hr',
   log: {
     fileLogLevel: process.env.FILE_LOG_LEVEL,
     dirname: process.env.LOG_DIRNAME || '.logs',
@@ -106,7 +134,8 @@ export default {
   refreshTokenLife: process.env.REFRESH_TOKEN_LIFE || '7d',
   frontendUrl: process.env.FRONT_END_URL || 'http://localhost:3000',
   changePassword: {
-    changePasswordSubject: process.env.CHANGEPASSWORD_SUBJECT || 'Change your password',
+    changePasswordSubject:
+      process.env.CHANGEPASSWORD_SUBJECT || 'Change your password',
     changePasswordBody: process.env.CHANGEPASSWORD_BODY || 'Here is the link',
   },
   mediaDestination: './public/uploads',

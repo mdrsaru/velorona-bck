@@ -30,6 +30,7 @@ const COMMON = {
   RoleRepository: Symbol('RoleRepository'),
   AddressService: Symbol('AddressService'),
   AddressRepository: Symbol('AddressRepository'),
+  HandlebarsService: Symbol('HandlebarsService'),
 };
 
 const USER_TOKEN = {
@@ -44,6 +45,11 @@ const MEDIA = {
   MediaRepository: Symbol('MediaRepository'),
 };
 
+const INVITATION = {
+  InvitationService: Symbol('InvitationService'),
+  InvitationRepository: Symbol('InvitationRepository'),
+};
+
 const TYPES = {
   ...COMMON,
   ...CLIENT,
@@ -51,6 +57,7 @@ const TYPES = {
   ...AUTH,
   ...USER_TOKEN,
   ...MEDIA,
+  ...INVITATION,
 };
 
 export { TYPES };
