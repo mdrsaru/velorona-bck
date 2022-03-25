@@ -109,7 +109,6 @@ export default {
     changePasswordSubject: process.env.CHANGEPASSWORD_SUBJECT || 'Change your password',
     changePasswordBody: process.env.CHANGEPASSWORD_BODY || 'Here is the link',
   },
-  mediaDestination: './uploads',
+  mediaDestination: './public/uploads',
   fileSize: 10000000,
-  mediaUrl: process.env.MEDIA_URL || 'http://localhost:8080/media',
 };
