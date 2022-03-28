@@ -38,4 +38,7 @@ export default {
   managerIdRequired: 'Manager Id required',
   clientIdRequired: 'Client Id required',
   statusRequired: 'Status Required',
+  invitationNotFound: 'Invitation not found',
+  roleRequired: 'Role required',
+  invitationExpired: 'Invitation expired',
 };

@@ -1,7 +1,7 @@
-import { Entity, Column, ManyToOne } from 'typeorm';
+import { Entity, Column, ManyToOne, Index, JoinColumn } from 'typeorm';
 import { ObjectType, Field, InputType, registerEnumType } from 'type-graphql';
 
-import { entities, InvitationStatus } from '../config/constants';
+import { entities, InvitationStatus, Role as RoleEnum } from '../config/constants';
 import { Base } from './base.entity';
 import User from './user.entity';
 import Client from './client.entity';
@@ -11,19 +11,26 @@ registerEnumType(InvitationStatus, {
   name: 'InvitationStatus',
 });
 
+registerEnumType(RoleEnum, {
+  name: 'Role',
+});
+
 @ObjectType()
 @Entity({ name: entities.invitation })
 export default class Invitation extends Base {
+  @Index()
   @Field()
   @Column()
   email: string;
 
+  @Index()
   @Field()
   @Column()
   client_id: string;
 
   @Field((type) => Client)
   @ManyToOne(() => Client)
+  @JoinColumn({ name: 'client_id' })
   client: Client;
 
   @Field()
@@ -32,11 +39,24 @@ export default class Invitation extends Base {
 
   @Field((type) => User)
   @ManyToOne(() => User)
+  @JoinColumn({ name: 'inviter_id' })
   inviter: User;
+
+  @Index()
+  @Field()
+  @Column({ unique: true })
+  token: string;
 
   @Field()
   @Column()
-  token: string;
+  expiresIn: Date;
+
+  @Field((type) => RoleEnum)
+  @Column({
+    type: 'enum',
+    enum: RoleEnum,
+  })
+  role: RoleEnum;
 
   @Field((type) => InvitationStatus)
   @Column({
@@ -60,8 +80,17 @@ export class InvitationCreateInput {
   @Field()
   email: string;
 
+  @Field((type) => RoleEnum)
+  role: RoleEnum;
+
   @Field()
   client_id: string;
+}
+
+@InputType()
+export class InvitationRenewInput {
+  @Field()
+  id: string;
 }
 
 @InputType()
@@ -71,6 +100,9 @@ export class InvitationQuery {
 
   @Field()
   client_id: string;
+
+  @Field((type) => RoleEnum)
+  role: string;
 
   @Field({ nullable: true })
   inviter_id: string;

@@ -3,6 +3,8 @@ import { Field, InputType, ObjectType, Root } from 'type-graphql';
 import Role from '../entities/role.entity';
 import UserToken from './user-token.entity';
 import Client from '../entities/client.entity';
+import { AddressCreateInput } from '../entities/address.entity';
+import { UserRecordCreateInput } from '../entities/user-record.entity';
 
 @ObjectType()
 export class LoginResponse {
@@ -59,4 +61,37 @@ export class ResetPasswordInput {
 
   @Field()
   password: string;
+}
+
+@InputType()
+export class InvitationRegisterInput {
+  @Field()
+  token: string;
+
+  @Field()
+  password: string;
+
+  @Field()
+  firstName: string;
+
+  @Field()
+  lastName: string;
+
+  @Field({ nullable: true })
+  middleName: string;
+
+  @Field()
+  phone: string;
+
+  @Field((type) => AddressCreateInput)
+  address: AddressCreateInput;
+
+  @Field((type) => UserRecordCreateInput)
+  record: UserRecordCreateInput;
+}
+
+@ObjectType()
+export class InvitationRegisterResponse {
+  @Field()
+  id: string;
 }

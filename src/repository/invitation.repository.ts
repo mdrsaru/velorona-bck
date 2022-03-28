@@ -1,6 +1,8 @@
 import merge from 'lodash/merge';
+import isDate from 'lodash/isDate';
 import Util from 'util';
 import crypto from 'crypto';
+import ms from 'ms';
 
 import isNil from 'lodash/isNil';
 import isString from 'lodash/isString';
@@ -15,20 +17,18 @@ import Invitation from '../entities/invitation.entity';
 import BaseRepository from './base.repository';
 import * as apiError from '../utils/api-error';
 
-import { IHashService } from '../interfaces/common.interface';
+import { IHashService, ISingleEntityQuery } from '../interfaces/common.interface';
 import {
   IInvitation,
-  IInvitationCreate,
+  IInvitationCreateInput,
+  IInvitationUpdateInput,
   IInvitationRepository,
 } from '../interfaces/invitation.interface';
 import { IClientRepository } from '../interfaces/client.interface';
 import { IUserRepository } from '../interfaces/user.interface';
 
 @injectable()
-export default class InvitationRepository
-  extends BaseRepository<Invitation>
-  implements IInvitationRepository
-{
+export default class InvitationRepository extends BaseRepository<Invitation> implements IInvitationRepository {
   private hashService: IHashService;
   private clientRepository: IClientRepository;
   private userRepository: IUserRepository;
@@ -44,11 +44,27 @@ export default class InvitationRepository
     this.userRepository = _userRepository;
   }
 
-  create = async (args: IInvitationCreate): Promise<Invitation> => {
+  getSingleEntity = async (args: ISingleEntityQuery): Promise<Invitation | undefined> => {
+    try {
+      const query = args.query;
+
+      const row = await this.repo.findOne({
+        where: args.query,
+        relations: args?.relations ?? [],
+      });
+
+      return row;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  create = async (args: IInvitationCreateInput): Promise<Invitation> => {
     try {
       const email = args.email?.toLowerCase()?.trim();
       const inviter_id = args.inviter_id;
       const client_id = args.client_id;
+      const role = args.role;
 
       const errors: string[] = [];
 
@@ -60,6 +76,9 @@ export default class InvitationRepository
       }
       if (isNil(client_id) || !isString(client_id)) {
         errors.push(strings.clientRequired);
+      }
+      if (isNil(role) || !isString(role)) {
+        errors.push(strings.roleRequired);
       }
 
       const foundUserInClient = await this.userRepository.getAll({
@@ -81,13 +100,53 @@ export default class InvitationRepository
       }
 
       const token = await generateToken();
+      const expiresIn = new Date(Date.now() + ms(config.invitationExpiresIn));
       const invitation = await this.repo.save({
         email,
         client_id,
         inviter_id,
         token,
+        role,
+        expiresIn,
         status: InvitationStatus.Pending,
       });
+
+      return invitation;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  update = async (args: IInvitationUpdateInput): Promise<Invitation> => {
+    try {
+      const id = args.id;
+      const status = args.status;
+      const expiresIn = args.expiresIn;
+
+      const errors: string[] = [];
+
+      if (isNil(id) || !isString(id)) {
+        errors.push(strings.idRequired);
+      }
+
+      if (!isNil(expiresIn) && !isDate(expiresIn)) {
+        errors.push(strings.expiresInNotValid);
+      }
+
+      const found = await this.repo.findOne(id);
+
+      if (!found) {
+        throw new apiError.NotFoundError({
+          details: [strings.invitationNotFound],
+        });
+      }
+
+      const update = merge(found, {
+        status,
+        expiresIn,
+      });
+
+      const invitation = await this.repo.save(update);
 
       return invitation;
     } catch (err) {
