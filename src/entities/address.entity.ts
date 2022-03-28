@@ -12,19 +12,19 @@ export default class Address extends Base {
   @Column()
   streetAddress: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({ nullable: true })
   aptOrSuite: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({ nullable: true })
   city: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({ nullable: true })
   state: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({ nullable: true })
   zipcode: string;
 

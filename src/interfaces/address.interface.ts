@@ -1,3 +1,5 @@
+import Address from '../entities/address.entity';
+
 export interface IAddress {
   id: string;
   streetAddress: string;
@@ -22,4 +24,8 @@ export interface IAddressUpdateInput {
   city?: string;
   state?: string;
   zipcode?: string;
+}
+
+export interface IAddressRepository {
+  getAll(args: any): Promise<Address[]>;
 }
