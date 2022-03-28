@@ -47,10 +47,6 @@ export default class Client extends Base {
   @Field(() => [User])
   @OneToMany(() => User, (user) => user.client)
   users: User[];
-
-  @Field(() => Task, { nullable: true })
-  @OneToMany(() => Task, (task) => task.client)
-  task: Task[];
 }
 
 @ObjectType()

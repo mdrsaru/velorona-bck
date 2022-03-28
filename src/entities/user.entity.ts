@@ -124,8 +124,8 @@ export default class User extends Base {
   record: UserRecord;
 
   @Field(() => Task, { nullable: true })
-  @OneToMany(() => Task, (task) => task.user)
-  task: Task[];
+  @OneToMany(() => Task, (task) => task.manager)
+  tasks: Task[];
 }
 
 @ObjectType()
