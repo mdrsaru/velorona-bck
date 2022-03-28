@@ -7,6 +7,7 @@ import {
   Resolver,
   UseMiddleware,
 } from 'type-graphql';
+
 import { DeleteInput } from '../../entities/common.entity';
 import Task, {
   TaskCreateInput,
@@ -14,14 +15,20 @@ import Task, {
   TaskQueryInput,
   TaskUpdateInput,
 } from '../../entities/task.entity';
+
+import { TYPES } from '../../types';
+import Paging from '../../utils/paging';
+import { Role as RoleEnum } from '../../config/constants';
+
+import authenticate from '../middlewares/authenticate';
+import { canCreateTask, canViewTask } from '../middlewares/task';
+
+import TaskValidation from '../../validation/task.validation';
+
 import { IErrorService, IJoiService } from '../../interfaces/common.interface';
 import { IPaginationData } from '../../interfaces/paging.interface';
 import { ITaskService } from '../../interfaces/task.interface';
-import { TYPES } from '../../types';
-import Paging from '../../utils/paging';
-import TaskValidation from '../../validation/task.validation';
-import authenticate from '../middlewares/authenticate';
-
+import authorize from '../middlewares/authorize';
 @injectable()
 @Resolver()
 export class TaskResolver {
@@ -41,7 +48,7 @@ export class TaskResolver {
   }
 
   @Query((returns) => TaskPagingResult)
-  @UseMiddleware(authenticate)
+  @UseMiddleware(authenticate, canViewTask)
   async Task(
     @Arg('input', { nullable: true }) args: TaskQueryInput,
     @Ctx() ctx: any
@@ -65,7 +72,11 @@ export class TaskResolver {
   }
 
   @Mutation((returns) => Task)
-  @UseMiddleware(authenticate)
+  @UseMiddleware(
+    authenticate,
+    authorize(RoleEnum.ClientAdmin, RoleEnum.SuperAdmin),
+    canCreateTask
+  )
   async TaskCreate(
     @Arg('input') args: TaskCreateInput,
     @Ctx() ctx: any

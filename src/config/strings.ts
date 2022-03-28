@@ -32,6 +32,7 @@ export default {
   notAllowedToPerformAction: 'User is not allowed to perform the action',
   canOnlyInviteToOwnClient: 'User can only invite to its own workspace',
   canOnlyViewOwnClient: 'User can only view its own client invitations',
+  canOnlyCreateOnOwnClient: 'User can only create on its own workspace',
   recordRequired: 'Record is required',
   nameRequired: 'Name required',
   managerIdRequired: 'Manager Id required',
