@@ -102,7 +102,7 @@ export class TaskQuery {
   @Field((type) => TaskStatus, { nullable: true })
   status: TaskStatus;
 
-  @Field({ nullable: true })
+  @Field()
   client_id: string;
 }
 @InputType()
