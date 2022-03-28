@@ -1,7 +1,7 @@
 import { inject, injectable } from 'inversify';
 
 import { TYPES } from '../types';
-import constants, { TokenType, Role as RoleEnum } from '../config/constants';
+import constants, { TokenType, Role as RoleEnum, UserStatus, InvitationStatus } from '../config/constants';
 import { NotAuthenticatedError } from '../utils/api-error';
 import strings from '../config/strings';
 import User from '../entities/user.entity';
@@ -15,17 +15,14 @@ import {
   ILoginResponse,
   IResetPasswordResponse,
   IForgotPasswordResponse,
+  IInvitationRegisterInput,
+  IInvitationRegisterResponse,
 } from '../interfaces/auth.interface';
-import {
-  IEmailService,
-  IEntityID,
-  IHashService,
-  ITokenService,
-  ILogger,
-} from '../interfaces/common.interface';
+import { IEmailService, IEntityID, IHashService, ITokenService, ILogger } from '../interfaces/common.interface';
 import { IUserRepository } from '../interfaces/user.interface';
 import { IUserTokenService } from '../interfaces/user-token.interface';
 import { IRoleRepository } from '../interfaces/role.interface';
+import { IInvitationRepository } from '../interfaces/invitation.interface';
 
 @injectable()
 export default class AuthService implements IAuthService {
@@ -36,6 +33,7 @@ export default class AuthService implements IAuthService {
   private emailService: IEmailService;
   private userTokenService: IUserTokenService;
   private roleRepository: IRoleRepository;
+  private invitationRepository: IInvitationRepository;
   private logger: ILogger;
 
   constructor(
@@ -45,7 +43,8 @@ export default class AuthService implements IAuthService {
     @inject(TYPES.EmailService) _emailService: IEmailService,
     @inject(TYPES.UserTokenService) userTokenService: IUserTokenService,
     @inject(TYPES.LoggerFactory) loggerFactory: (name: string) => ILogger,
-    @inject(TYPES.RoleRepository) _roleRepository: IRoleRepository
+    @inject(TYPES.RoleRepository) _roleRepository: IRoleRepository,
+    @inject(TYPES.InvitationRepository) _invitationRepository: IInvitationRepository
   ) {
     this.userRepository = _userRepository;
     this.hashService = _hashService;
@@ -54,6 +53,7 @@ export default class AuthService implements IAuthService {
     this.userTokenService = userTokenService;
     this.logger = loggerFactory(this.name);
     this.roleRepository = _roleRepository;
+    this.invitationRepository = _invitationRepository;
   }
 
   login = async (args: ILoginInput): Promise<ILoginResponse> => {
@@ -112,10 +112,7 @@ export default class AuthService implements IAuthService {
 
       const userPassword: any = user.password;
 
-      let isPasswordCorrect = await this.hashService.compare(
-        password,
-        userPassword
-      );
+      let isPasswordCorrect = await this.hashService.compare(password, userPassword);
       if (!isPasswordCorrect) {
         throw new NotAuthenticatedError({
           details: [strings.emailPasswordNotCorrect],
@@ -153,17 +150,13 @@ export default class AuthService implements IAuthService {
     }
   };
 
-  forgotPassword = async (
-    args: IForgotPasswordInput
-  ): Promise<IForgotPasswordResponse> => {
+  forgotPassword = async (args: IForgotPasswordInput): Promise<IForgotPasswordResponse> => {
     throw new apiError.NotImplementedError({
       details: ['Not implemented'],
     });
   };
 
-  resetPassword = async (
-    args: IResetPasswordInput
-  ): Promise<IResetPasswordResponse> => {
+  resetPassword = async (args: IResetPasswordInput): Promise<IResetPasswordResponse> => {
     try {
       const token = await this.tokenService.extractToken(args.token);
       const password = args.password;
@@ -261,5 +254,85 @@ export default class AuthService implements IAuthService {
         token: refreshToken,
       })
       .then((data) => (data ? true : false));
+  };
+
+  registerWithInvitation = async (args: IInvitationRegisterInput): Promise<IInvitationRegisterResponse> => {
+    const operation = 'registerWithInvitation';
+
+    try {
+      const token = args.token;
+      const password = args.password;
+      const firstName = args.firstName;
+      const lastName = args.lastName;
+      const middleName = args.middleName;
+      const phone = args.phone;
+      const address = args.address;
+      const record = args.record;
+      const status = UserStatus.Active;
+
+      const invitation = await this.invitationRepository.getSingleEntity({
+        query: { token },
+      });
+
+      if (!invitation) {
+        throw new apiError.NotFoundError({
+          details: [strings.invitationNotFound],
+        });
+      }
+
+      const role = invitation.role;
+      const email = invitation.email;
+      const client_id = invitation.client_id;
+      const expiresIn = invitation.expiresIn;
+
+      if (new Date() > expiresIn) {
+        throw new apiError.ValidationError({
+          details: [strings.invitationExpired],
+        });
+      }
+
+      if (!client_id) {
+        throw new apiError.ValidationError({
+          details: [strings.clientNotFound],
+        });
+      }
+
+      const roles = await this.roleRepository.getAll({
+        query: {
+          name: role,
+        },
+      });
+
+      const user = await this.userRepository.create({
+        email,
+        password,
+        firstName,
+        lastName,
+        middleName,
+        phone,
+        status,
+        address,
+        record,
+        client_id,
+        roles: roles.map((r) => r.id),
+      });
+
+      await this.invitationRepository.update({
+        id: invitation.id,
+        status: InvitationStatus.Approved,
+      });
+
+      this.logger.info({
+        operation,
+        message: 'Invitation approved',
+        data: { id: invitation.id, client_id, email },
+      });
+
+      return {
+        id: user.id,
+      };
+    } catch (err) {
+      throw err;
+    }
   };
 }
