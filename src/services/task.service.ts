@@ -1,17 +1,8 @@
 import { inject, injectable } from 'inversify';
 import Task from '../entities/task.entity';
-import {
-  IEntityRemove,
-  IErrorService,
-  ILogger,
-} from '../interfaces/common.interface';
+import { IEntityRemove, IErrorService, ILogger } from '../interfaces/common.interface';
 import { IPaginationData, IPagingArgs } from '../interfaces/paging.interface';
-import {
-  ITaskCreateInput,
-  ITaskRepository,
-  ITaskService,
-  ITaskUpdateInput,
-} from '../interfaces/task.interface';
+import { ITaskCreateInput, ITaskRepository, ITaskService, ITaskUpdateInput } from '../interfaces/task.interface';
 import { TYPES } from '../types';
 import Paging from '../utils/paging';
 
@@ -31,9 +22,7 @@ export default class TaskService implements ITaskService {
     this.logger = loggerFactory(this.name);
   }
 
-  getAllAndCount = async (
-    args: IPagingArgs
-  ): Promise<IPaginationData<Task>> => {
+  getAllAndCount = async (args: IPagingArgs): Promise<IPaginationData<Task>> => {
     try {
       const { rows, count } = await this.taskRepository.getAllAndCount(args);
 
@@ -57,7 +46,7 @@ export default class TaskService implements ITaskService {
     const status = args.status;
     const is_archived = args.is_archived;
     const manager_id = args.manager_id;
-    const client_id = args.client_id;
+    const company_id = args.company_id;
 
     try {
       let task = await this.taskRepository.create({
@@ -65,7 +54,7 @@ export default class TaskService implements ITaskService {
         status,
         is_archived,
         manager_id,
-        client_id,
+        company_id,
       });
       return task;
     } catch (err) {
@@ -85,7 +74,7 @@ export default class TaskService implements ITaskService {
     const status = args?.status;
     const is_archived = args?.is_archived;
     const manager_id = args?.manager_id;
-    const client_id = args?.client_id;
+    const company_id = args?.company_id;
 
     try {
       let task = await this.taskRepository.update({
@@ -94,7 +83,7 @@ export default class TaskService implements ITaskService {
         status,
         is_archived,
         manager_id,
-        client_id,
+        company_id,
       });
       return task;
     } catch (err) {

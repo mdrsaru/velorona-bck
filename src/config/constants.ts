@@ -43,32 +43,30 @@ export const databaseSetting = {
 
 export const entities = {
   users: 'users',
-  clients: 'clients',
+  companies: 'companies',
   roles: 'roles',
   addresses: 'addresses',
   userTokens: 'user_tokens',
   userRecord: 'user_record',
   media: 'media',
-  invitation: 'invitation',
+  invitations: 'invitations',
   tasks: 'tasks',
   taskAssignment: 'task_assignment',
 };
 
-export enum ClientStatus {
+export enum CompanyStatus {
   Active = 'Active',
   Inactive = 'Inactive',
-  Archived = 'Archived',
 }
 
 export enum UserStatus {
   Active = 'Active',
   Inactive = 'Inactive',
-  Archived = 'Archived',
 }
 
 export enum Role {
   SuperAdmin = 'SuperAdmin',
-  ClientAdmin = 'ClientAdmin',
+  CompanyAdmin = 'CompanyAdmin',
   Employee = 'Employee',
   TaskManager = 'TaskManager',
   Vendor = 'Vendor',
@@ -101,7 +99,7 @@ export const emailSetting = {
   newUser: {
     subject: process.env.NEW_USER_EMAIL_SUBJECT || '',
     adminBody: process.env.NEW_ADMIN_USER_EMAIL_BODY || '',
-    clientBody: process.env.NEW_CLIENT_USER_EMAIL_BODY || '',
+    companyBody: process.env.NEW_COMPANY_USER_EMAIL_BODY || '',
   },
 };
 

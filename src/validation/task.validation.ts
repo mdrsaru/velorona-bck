@@ -22,10 +22,10 @@ const messages = {
     'string.empty': strings.managerIdRequired,
     'any.required': strings.managerIdRequired,
   },
-  client_id: {
-    'string.base': strings.clientIdRequired,
-    'string.empty': strings.clientIdRequired,
-    'any.required': strings.clientIdRequired,
+  company_id: {
+    'string.base': strings.companyIdRequired,
+    'string.empty': strings.companyIdRequired,
+    'any.required': strings.companyIdRequired,
   },
 };
 
@@ -36,7 +36,7 @@ export default class TaskValidation {
       status: Joi.string().required().messages(messages.status),
       is_archived: Joi.boolean().required(),
       manager_id: Joi.string().required().messages(messages.manager_id),
-      client_id: Joi.string().required().messages(messages.client_id),
+      company_id: Joi.string().required().messages(messages.company_id),
     });
   }
   static update() {
@@ -46,7 +46,7 @@ export default class TaskValidation {
       is_archived: Joi.boolean(),
       status: Joi.string(),
       manager_id: Joi.string(),
-      client_id: Joi.string(),
+      company_id: Joi.string(),
     });
   }
 }

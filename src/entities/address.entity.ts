@@ -9,11 +9,11 @@ import User from './user.entity';
 @ObjectType()
 export default class Address extends Base {
   @Field()
-  @Column()
+  @Column({ name: 'street_address' })
   streetAddress: string;
 
   @Field({ nullable: true })
-  @Column({ nullable: true })
+  @Column({ nullable: true, name: 'apt_or_suite' })
   aptOrSuite: string;
 
   @Field({ nullable: true })

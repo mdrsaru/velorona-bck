@@ -4,7 +4,7 @@ import { ObjectType, Field, InputType, registerEnumType } from 'type-graphql';
 import { entities, InvitationStatus, Role as RoleEnum } from '../config/constants';
 import { Base } from './base.entity';
 import User from './user.entity';
-import Client from './client.entity';
+import Company from './company.entity';
 import { PagingInput, PagingResult } from './common.entity';
 
 registerEnumType(InvitationStatus, {
@@ -16,7 +16,7 @@ registerEnumType(RoleEnum, {
 });
 
 @ObjectType()
-@Entity({ name: entities.invitation })
+@Entity({ name: entities.invitations })
 export default class Invitation extends Base {
   @Index()
   @Field()
@@ -26,12 +26,12 @@ export default class Invitation extends Base {
   @Index()
   @Field()
   @Column()
-  client_id: string;
+  company_id: string;
 
-  @Field((type) => Client)
-  @ManyToOne(() => Client)
-  @JoinColumn({ name: 'client_id' })
-  client: Client;
+  @Field((type) => Company)
+  @ManyToOne(() => Company)
+  @JoinColumn({ name: 'company_id' })
+  company: Company;
 
   @Field()
   @Column()
@@ -48,7 +48,7 @@ export default class Invitation extends Base {
   token: string;
 
   @Field()
-  @Column()
+  @Column({ name: 'expires_in' })
   expiresIn: Date;
 
   @Field((type) => RoleEnum)
@@ -84,7 +84,7 @@ export class InvitationCreateInput {
   role: RoleEnum;
 
   @Field()
-  client_id: string;
+  company_id: string;
 }
 
 @InputType()
@@ -99,9 +99,9 @@ export class InvitationQuery {
   id: string;
 
   @Field()
-  client_id: string;
+  company_id: string;
 
-  @Field((type) => RoleEnum)
+  @Field((type) => RoleEnum, { nullable: true })
   role: string;
 
   @Field({ nullable: true })

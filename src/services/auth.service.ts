@@ -60,26 +60,32 @@ export default class AuthService implements IAuthService {
     try {
       const email = args.email?.toLowerCase()?.trim();
       const password = args.password;
-      const clientCode = args.clientCode;
+      const companyCode = args.companyCode;
 
       let user: User | undefined;
 
-      if (clientCode) {
-        user = await this.userRepository.getByEmailAndClientCode({
+      if (companyCode) {
+        user = await this.userRepository.getByEmailAndCompanyCode({
           email,
-          clientCode,
-          relations: ['roles', 'client'],
-        });
-      } else {
-        user = await this.userRepository.getByEmailAndNoClient({
-          email,
-          relations: ['roles', 'client'],
+          companyCode,
+          relations: ['roles', 'company'],
         });
 
-        // check if the user is associated to client(fallback check)
-        if (user?.client) {
+        if (user?.company?.isArchived) {
+          throw new apiError.NotAuthenticatedError({
+            details: [strings.companyArchived],
+          });
+        }
+      } else {
+        user = await this.userRepository.getByEmailAndNoCompany({
+          email,
+          relations: ['roles', 'company'],
+        });
+
+        // check if the user is associated to company(fallback check)
+        if (user?.company) {
           throw new apiError.ValidationError({
-            details: [strings.pleaseLoginWithClient],
+            details: [strings.pleaseLoginWithCompany],
           });
         }
 
@@ -107,6 +113,15 @@ export default class AuthService implements IAuthService {
       if (!user) {
         throw new NotAuthenticatedError({
           details: [strings.emailPasswordNotCorrect],
+        });
+      }
+
+      if (user.isArchived) {
+        throw new NotAuthenticatedError({
+          details: [strings.emailPasswordNotCorrect],
+          data: {
+            isArchived: true,
+          },
         });
       }
 
@@ -143,7 +158,7 @@ export default class AuthService implements IAuthService {
         token: token,
         roles: user.roles,
         refreshToken: userToken.token,
-        client: user.client,
+        company: user.company,
       };
     } catch (err) {
       throw err;
@@ -231,7 +246,7 @@ export default class AuthService implements IAuthService {
 
       const user = await this.userRepository.getById({
         id: decoded.id,
-        relations: ['roles', 'client'],
+        relations: ['roles', 'company'],
       });
 
       return {
@@ -239,7 +254,7 @@ export default class AuthService implements IAuthService {
         token: newAccessToken,
         refreshToken,
         roles: user?.roles ?? [],
-        client: user?.client,
+        company: user?.company,
       };
     } catch (err) {
       throw err;
@@ -282,7 +297,7 @@ export default class AuthService implements IAuthService {
 
       const role = invitation.role;
       const email = invitation.email;
-      const client_id = invitation.client_id;
+      const company_id = invitation.company_id;
       const expiresIn = invitation.expiresIn;
 
       if (new Date() > expiresIn) {
@@ -291,9 +306,9 @@ export default class AuthService implements IAuthService {
         });
       }
 
-      if (!client_id) {
+      if (!company_id) {
         throw new apiError.ValidationError({
-          details: [strings.clientNotFound],
+          details: [strings.companyNotFound],
         });
       }
 
@@ -313,7 +328,7 @@ export default class AuthService implements IAuthService {
         status,
         address,
         record,
-        client_id,
+        company_id,
         roles: roles.map((r) => r.id),
       });
 
@@ -325,7 +340,7 @@ export default class AuthService implements IAuthService {
       this.logger.info({
         operation,
         message: 'Invitation approved',
-        data: { id: invitation.id, client_id, email },
+        data: { id: invitation.id, company_id, email },
       });
 
       return {

@@ -1,11 +1,5 @@
 import { string } from 'joi';
-import {
-  Field,
-  ID,
-  InputType,
-  ObjectType,
-  registerEnumType,
-} from 'type-graphql';
+import { Field, ID, InputType, ObjectType, registerEnumType } from 'type-graphql';
 import { Column, Entity, ManyToOne, JoinColumn, Index } from 'typeorm';
 
 import User from './user.entity';
@@ -24,6 +18,7 @@ export default class UserToken extends Base {
   @Column({
     type: 'enum',
     enum: TokenType,
+    name: 'token_type',
   })
   tokenType: TokenType;
 

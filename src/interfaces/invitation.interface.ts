@@ -1,5 +1,5 @@
 import User from '../entities/user.entity';
-import Client from '../entities/client.entity';
+import Company from '../entities/company.entity';
 import Invitation from '../entities/invitation.entity';
 import { InvitationStatus, Role as RoleEnum } from '../config/constants';
 import { ISingleEntityQuery } from './common.interface';
@@ -10,7 +10,7 @@ import { IEntityRemove, IEntityID } from './common.interface';
 export interface IInvitation {
   id: string;
   email: string;
-  client_id: string;
+  company_id: string;
   inviter_id: string;
   token: string;
   role: RoleEnum;
@@ -22,7 +22,7 @@ export interface IInvitation {
 
 export interface IInvitationCreateInput {
   email: IInvitation['email'];
-  client_id: IInvitation['client_id'];
+  company_id: IInvitation['company_id'];
   inviter_id: IInvitation['inviter_id'];
   role: IInvitation['role'];
 }

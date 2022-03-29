@@ -1,11 +1,5 @@
 import { string } from 'joi';
-import {
-  Field,
-  ID,
-  InputType,
-  ObjectType,
-  registerEnumType,
-} from 'type-graphql';
+import { Field, ID, InputType, ObjectType, registerEnumType } from 'type-graphql';
 import {
   BaseEntity,
   Column,
@@ -34,7 +28,7 @@ export default class Role extends Base {
   @Column({
     type: 'enum',
     enum: RoleEnum,
-    default: RoleEnum.ClientAdmin,
+    default: RoleEnum.CompanyAdmin,
   })
   name: RoleEnum;
 

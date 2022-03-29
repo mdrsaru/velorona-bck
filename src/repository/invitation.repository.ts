@@ -24,23 +24,23 @@ import {
   IInvitationUpdateInput,
   IInvitationRepository,
 } from '../interfaces/invitation.interface';
-import { IClientRepository } from '../interfaces/client.interface';
+import { ICompanyRepository } from '../interfaces/company.interface';
 import { IUserRepository } from '../interfaces/user.interface';
 
 @injectable()
 export default class InvitationRepository extends BaseRepository<Invitation> implements IInvitationRepository {
   private hashService: IHashService;
-  private clientRepository: IClientRepository;
+  private companyRepository: ICompanyRepository;
   private userRepository: IUserRepository;
 
   constructor(
     @inject(TYPES.HashService) _hashService: IHashService,
-    @inject(TYPES.ClientRepository) _clientRepository: IClientRepository,
+    @inject(TYPES.CompanyRepository) _companyRepository: ICompanyRepository,
     @inject(TYPES.UserRepository) _userRepository: IUserRepository
   ) {
     super(getRepository(Invitation));
     this.hashService = _hashService;
-    this.clientRepository = _clientRepository;
+    this.companyRepository = _companyRepository;
     this.userRepository = _userRepository;
   }
 
@@ -63,7 +63,7 @@ export default class InvitationRepository extends BaseRepository<Invitation> imp
     try {
       const email = args.email?.toLowerCase()?.trim();
       const inviter_id = args.inviter_id;
-      const client_id = args.client_id;
+      const company_id = args.company_id;
       const role = args.role;
 
       const errors: string[] = [];
@@ -74,24 +74,24 @@ export default class InvitationRepository extends BaseRepository<Invitation> imp
       if (isNil(inviter_id) || !isString(inviter_id)) {
         errors.push(strings.inviterRequired);
       }
-      if (isNil(client_id) || !isString(client_id)) {
-        errors.push(strings.clientRequired);
+      if (isNil(company_id) || !isString(company_id)) {
+        errors.push(strings.companyRequired);
       }
       if (isNil(role) || !isString(role)) {
         errors.push(strings.roleRequired);
       }
 
-      const foundUserInClient = await this.userRepository.getAll({
-        query: { email, client_id },
+      const foundUserInCompany = await this.userRepository.getAll({
+        query: { email, company_id },
       });
 
-      if (foundUserInClient.length) {
+      if (foundUserInCompany.length) {
         throw new apiError.ConflictError({
-          details: [strings.userAlreadyExistsInClient],
+          details: [strings.userAlreadyExistsInCompany],
         });
       }
 
-      const found = await this.repo.count({ where: { email, client_id } });
+      const found = await this.repo.count({ where: { email, company_id } });
 
       if (found) {
         throw new apiError.ConflictError({
@@ -103,7 +103,7 @@ export default class InvitationRepository extends BaseRepository<Invitation> imp
       const expiresIn = new Date(Date.now() + ms(config.invitationExpiresIn));
       const invitation = await this.repo.save({
         email,
-        client_id,
+        company_id,
         inviter_id,
         token,
         role,

@@ -13,20 +13,17 @@ import { IGraphqlContext } from '../../interfaces/graphql.interface';
 
 const name = 'user.middleware';
 
-export const canCreateInvitation: MiddlewareFn<IGraphqlContext> = async (
-  { context, args },
-  next: NextFn
-) => {
+export const canCreateInvitation: MiddlewareFn<IGraphqlContext> = async ({ context, args }, next: NextFn) => {
   const operation = 'canCreateInvitation';
   const errorService = container.get<IErrorService>(TYPES.ErrorService);
 
   try {
     const roles = context.user?.roles ?? [];
-    const hasClientAccess = context?.user?.client?.id !== args.input?.client_id;
+    const hasCompanyAccess = context?.user?.company?.id !== args.input?.company_id;
 
-    if (!isSuperAdmin({ roles }) && hasClientAccess) {
+    if (!isSuperAdmin({ roles }) && hasCompanyAccess) {
       throw new apiError.ForbiddenError({
-        details: [strings.canOnlyViewOwnClient],
+        details: [strings.canOnlyViewOwnCompany],
       });
     }
 
@@ -41,20 +38,17 @@ export const canCreateInvitation: MiddlewareFn<IGraphqlContext> = async (
   }
 };
 
-export const canViewInvitation: MiddlewareFn<IGraphqlContext> = async (
-  { context, args },
-  next: NextFn
-) => {
+export const canViewInvitation: MiddlewareFn<IGraphqlContext> = async ({ context, args }, next: NextFn) => {
   const operation = 'canViewInvitation';
   const errorService = container.get<IErrorService>(TYPES.ErrorService);
 
   try {
     const roles = context.user?.roles ?? [];
-    const hasClientAccess = context?.user?.client?.id !== args.input?.client_id;
+    const hasCompanyAccess = context?.user?.company?.id !== args.input?.company_id;
 
-    if (!isSuperAdmin({ roles }) && hasClientAccess) {
+    if (!isSuperAdmin({ roles }) && hasCompanyAccess) {
       throw new apiError.ForbiddenError({
-        details: [strings.canOnlyViewOwnClient],
+        details: [strings.canOnlyViewOwnCompany],
       });
     }
 

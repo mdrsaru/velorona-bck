@@ -1,11 +1,7 @@
 import { TaskStatus } from '../config/constants';
 import Task from '../entities/task.entity';
 import { IEntityID, IEntityRemove } from './common.interface';
-import {
-  IGetAllAndCountResult,
-  IPaginationData,
-  IPagingArgs,
-} from './paging.interface';
+import { IGetAllAndCountResult, IPaginationData, IPagingArgs } from './paging.interface';
 
 export interface ITask {
   id: string;
@@ -19,7 +15,7 @@ export interface ITaskCreateInput {
   status: TaskStatus;
   is_archived: boolean;
   manager_id: string;
-  client_id: string;
+  company_id: string;
 }
 
 export interface ITaskUpdateInput {
@@ -28,7 +24,7 @@ export interface ITaskUpdateInput {
   status?: TaskStatus | undefined;
   is_archived?: boolean | undefined;
   manager_id?: string | undefined;
-  client_id?: string | undefined;
+  company_id?: string | undefined;
 }
 export interface ITaskService {
   getAllAndCount(filters?: any): Promise<IPaginationData<Task>>;

@@ -1,7 +1,7 @@
-const CLIENT = {
-  ClientRepository: Symbol('ClientRepository'),
-  ClientService: Symbol('ClientService'),
-  ClientController: Symbol('ClientController'),
+const COMPANY = {
+  CompanyRepository: Symbol('CompanyRepository'),
+  CompanyService: Symbol('CompanyService'),
+  CompanyController: Symbol('CompanyController'),
 };
 
 const USER = {
@@ -65,7 +65,7 @@ const INVITATION = {
 
 const TYPES = {
   ...COMMON,
-  ...CLIENT,
+  ...COMPANY,
   ...USER,
   ...AUTH,
   ...USER_TOKEN,

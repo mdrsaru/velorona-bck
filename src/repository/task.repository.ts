@@ -2,19 +2,12 @@ import { injectable } from 'inversify';
 import { merge } from 'lodash';
 import { getRepository } from 'typeorm';
 import Task from '../entities/task.entity';
-import {
-  ITaskCreateInput,
-  ITaskRepository,
-  ITaskUpdateInput,
-} from '../interfaces/task.interface';
+import { ITaskCreateInput, ITaskRepository, ITaskUpdateInput } from '../interfaces/task.interface';
 import { NotFoundError } from '../utils/api-error';
 import BaseRepository from './base.repository';
 
 @injectable()
-export default class TaskRepository
-  extends BaseRepository<Task>
-  implements ITaskRepository
-{
+export default class TaskRepository extends BaseRepository<Task> implements ITaskRepository {
   constructor() {
     super(getRepository(Task));
   }
@@ -25,14 +18,14 @@ export default class TaskRepository
       const status = args.status;
       const is_archived = args.is_archived;
       const manager_id = args.manager_id;
-      const client_id = args.client_id;
+      const company_id = args.company_id;
 
       const task = this.repo.save({
         name,
         status,
         is_archived,
         manager_id,
-        client_id,
+        company_id,
       });
       return task;
     } catch (err) {
@@ -47,7 +40,7 @@ export default class TaskRepository
       const status = args.status;
       const is_archived = args.is_archived;
       const manager_id = args.manager_id;
-      const client_id = args.client_id;
+      const company_id = args.company_id;
 
       const found = await this.getById({ id });
       if (!found) {
@@ -61,7 +54,7 @@ export default class TaskRepository
         status,
         is_archived,
         manager_id,
-        client_id,
+        company_id,
       });
       let task = await this.repo.save(update);
 

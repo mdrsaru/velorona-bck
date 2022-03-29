@@ -3,7 +3,7 @@ import { Resolver, Query, Ctx, Arg, Mutation, UseMiddleware, FieldResolver, Root
 
 import { TYPES } from '../../types';
 import { Role as RoleEnum } from '../../config/constants';
-import Client from '../../entities/client.entity';
+import Company from '../../entities/company.entity';
 import Paging from '../../utils/paging';
 import authenticate from '../middlewares/authenticate';
 import { canCreateSystemAdmin } from '../middlewares/user';
@@ -31,7 +31,7 @@ export class UserResolver {
   private userService: IUserService;
   private joiService: IJoiService;
   private errorService: IErrorService;
-  private clientLoader: any;
+  private companyLoader: any;
   private loader: any;
 
   constructor(
@@ -64,7 +64,7 @@ export class UserResolver {
   }
 
   @Mutation((returns) => User)
-  @UseMiddleware(authenticate, authorize(RoleEnum.ClientAdmin, RoleEnum.SuperAdmin), canCreateSystemAdmin)
+  @UseMiddleware(authenticate, authorize(RoleEnum.CompanyAdmin, RoleEnum.SuperAdmin), canCreateSystemAdmin)
   async UserCreate(@Arg('input') args: UserCreateInput): Promise<User> {
     const operation = 'UserCreate';
 
@@ -75,7 +75,7 @@ export class UserResolver {
       const middleName = args.middleName;
       const phone = args.phone;
       const status = args.status;
-      const client_id = args.client_id;
+      const company_id = args.company_id;
       const roles = args.roles;
       const record = args.record;
       const address = {
@@ -95,7 +95,7 @@ export class UserResolver {
           lastName,
           middleName,
           phone,
-          client_id,
+          company_id,
           address,
           roles,
           record,
@@ -109,7 +109,7 @@ export class UserResolver {
         middleName,
         status,
         phone,
-        client_id,
+        company_id,
         address,
         roles,
         record,
@@ -202,9 +202,9 @@ export class UserResolver {
   }
 
   @FieldResolver()
-  client(@Root() root: User, @Ctx() ctx: IGraphqlContext) {
-    if (root.client_id) {
-      return ctx.loaders.clientByIdLoader.load(root.client_id);
+  company(@Root() root: User, @Ctx() ctx: IGraphqlContext) {
+    if (root.company_id) {
+      return ctx.loaders.companyByIdLoader.load(root.company_id);
     }
 
     return null;

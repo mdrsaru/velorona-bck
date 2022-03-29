@@ -3,8 +3,8 @@ import { Connection } from 'typeorm';
 
 import User from '../../../entities/user.entity';
 import Role from '../../../entities/role.entity';
-import Client from '../../../entities/client.entity';
-import { Role as RoleEnum, ClientStatus } from '../../../config/constants';
+import Company from '../../../entities/company.entity';
+import { Role as RoleEnum, CompanyStatus } from '../../../config/constants';
 
 const roles = [
   {
@@ -12,8 +12,8 @@ const roles = [
     description: 'Super admin',
   },
   {
-    name: RoleEnum.ClientAdmin,
-    description: 'Client admin',
+    name: RoleEnum.CompanyAdmin,
+    description: 'Company admin',
   },
   {
     name: RoleEnum.Employee,
@@ -34,7 +34,7 @@ const users = [
     email: 'admin@admin.com',
   },
   {
-    email: 'client@admin.com',
+    email: 'company@admin.com',
   },
   {
     email: 'employee@user.com',
@@ -47,18 +47,18 @@ const users = [
   },
 ];
 
-const clients = [
+const companys = [
   {
     name: 'Vellorum',
-    status: ClientStatus.Active,
-    clientCode: 'vellorum',
+    status: CompanyStatus.Active,
+    companyCode: 'vellorum',
   },
 ];
 
 export default class InitialDatabaseSeed implements Seeder {
   public async run(factory: Factory, connection: Connection): Promise<void> {
     let createdRoles: any = [];
-    let createdClients: Client[] = [];
+    let createdCompanys: Company[] = [];
 
     for (let role of roles) {
       const createdRole = await factory(Role)().create({
@@ -68,10 +68,10 @@ export default class InitialDatabaseSeed implements Seeder {
       createdRoles.push(createdRole);
     }
 
-    for (let client of clients) {
-      const newClient = await factory(Client)().create(client);
+    for (let company of companys) {
+      const newCompany = await factory(Company)().create(company);
 
-      createdClients.push(newClient);
+      createdCompanys.push(newCompany);
     }
 
     // admin
@@ -80,12 +80,12 @@ export default class InitialDatabaseSeed implements Seeder {
       email: users[0].email,
     });
 
-    //clients
+    //companys
     for (let i = 1; i < users.length; i++) {
       await factory(User)().create({
         roles: [createdRoles[i]],
         email: users[i].email,
-        client_id: createdClients[0]?.id,
+        company_id: createdCompanys[0]?.id,
       });
     }
   }

@@ -72,7 +72,7 @@ export class AuthResolver {
     try {
       const email = args.email;
       const password = args.password;
-      const clientCode = args?.clientCode;
+      const companyCode = args?.companyCode;
 
       const schema = AuthValidation.login();
       await this.joiService.validate({
@@ -80,14 +80,14 @@ export class AuthResolver {
         input: {
           email,
           password,
-          clientCode,
+          companyCode,
         },
       });
 
       const loginResponse = await this.authService.login({
         email,
         password,
-        clientCode,
+        companyCode,
       });
 
       const options: CookieOptions = {

@@ -3,54 +3,39 @@ import { injectable, inject } from 'inversify';
 import Paging from '../utils/paging';
 import { TYPES } from '../types';
 import User from '../entities/user.entity';
-import Client from '../entities/client.entity';
+import Company from '../entities/company.entity';
 import { generateRandomStrings } from '../utils/strings';
 import constants, { emailSetting } from '../config/constants';
 
 import { IPagingArgs, IPaginationData } from '../interfaces/paging.interface';
-import {
-  IEntityRemove,
-  IEntityID,
-  ITemplateService,
-  IEmailService,
-  ILogger,
-} from '../interfaces/common.interface';
-import {
-  IChangeProfilePictureInput,
-  IUserRepository,
-} from '../interfaces/user.interface';
-import {
-  IUserCreate,
-  IUserUpdate,
-  IUserService,
-} from '../interfaces/user.interface';
-import { IClientRepository } from '../interfaces/client.interface';
+import { IEntityRemove, IEntityID, ITemplateService, IEmailService, ILogger } from '../interfaces/common.interface';
+import { IChangeProfilePictureInput, IUserRepository } from '../interfaces/user.interface';
+import { IUserCreate, IUserUpdate, IUserService } from '../interfaces/user.interface';
+import { ICompanyRepository } from '../interfaces/company.interface';
 
 @injectable()
 export default class UserService implements IUserService {
   private userRepository: IUserRepository;
-  private clientRepository: IClientRepository;
+  private companyRepository: ICompanyRepository;
   private handlebarsService: ITemplateService;
   private emailService: IEmailService;
   private logger: ILogger;
 
   constructor(
     @inject(TYPES.UserRepository) _userRepository: IUserRepository,
-    @inject(TYPES.ClientRepository) _clientRepository: IClientRepository,
+    @inject(TYPES.CompanyRepository) _companyRepository: ICompanyRepository,
     @inject(TYPES.HandlebarsService) _handlebarsService: ITemplateService,
     @inject(TYPES.EmailService) _emailService: IEmailService,
     @inject(TYPES.LoggerFactory) loggerFactory: (name: string) => ILogger
   ) {
     this.userRepository = _userRepository;
-    this.clientRepository = _clientRepository;
+    this.companyRepository = _companyRepository;
     this.handlebarsService = _handlebarsService;
     this.emailService = _emailService;
     this.logger = loggerFactory('UserService');
   }
 
-  getAllAndCount = async (
-    args: IPagingArgs
-  ): Promise<IPaginationData<User>> => {
+  getAllAndCount = async (args: IPagingArgs): Promise<IPaginationData<User>> => {
     try {
       const { rows, count } = await this.userRepository.getAllAndCount(args);
 
@@ -78,7 +63,7 @@ export default class UserService implements IUserService {
       const middleName = args.middleName;
       const status = args.status;
       const phone = args.phone;
-      const client_id = args.client_id;
+      const company_id = args.company_id;
       const address = args?.address;
       const roles = args.roles;
       const record = args?.record;
@@ -92,25 +77,25 @@ export default class UserService implements IUserService {
         middleName,
         status,
         phone,
-        client_id,
+        company_id,
         address,
         roles,
         record,
       });
 
       let emailBody: string = emailSetting.newUser.adminBody;
-      let client: Client | undefined;
-      if (client_id) {
-        emailBody = emailSetting.newUser.clientBody;
-        client = await this.clientRepository.getById({
-          id: client_id,
+      let company: Company | undefined;
+      if (company_id) {
+        emailBody = emailSetting.newUser.companyBody;
+        company = await this.companyRepository.getById({
+          id: company_id,
         });
       }
 
       const userHtml = this.handlebarsService.compile({
         template: emailBody,
         data: {
-          clientCode: client?.clientCode ?? '',
+          companyCode: company?.companyCode ?? '',
           password,
         },
       });
@@ -186,9 +171,7 @@ export default class UserService implements IUserService {
       throw err;
     }
   };
-  changeProfilePicture = async (
-    args: IChangeProfilePictureInput
-  ): Promise<User> => {
+  changeProfilePicture = async (args: IChangeProfilePictureInput): Promise<User> => {
     try {
       const id = args.id;
       const avatar_id = args.avatar_id;

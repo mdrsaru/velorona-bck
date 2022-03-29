@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import { Container, interfaces } from 'inversify';
 
 import { app, logger, graphql, hash, error, joi, token, email, handlebars } from './config/inversify/common';
-import client from './config/inversify/client';
+import company from './config/inversify/company';
 import role from './config/inversify/role';
 import user from './config/inversify/user';
 import auth from './config/inversify/auth';
@@ -25,7 +25,7 @@ container.load(
   email,
   error,
   joi,
-  client,
+  company,
   role,
   user,
   auth,
