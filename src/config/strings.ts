@@ -41,4 +41,7 @@ export default {
   taskIdRequired: 'Task Id required',
   EmployeeIdRequired: 'Employee Id required',
   taskNotFound: 'Task not found',
+  invitationNotFound: 'Invitation not found',
+  roleRequired: 'Role required',
+  invitationExpired: 'Invitation expired',
 };

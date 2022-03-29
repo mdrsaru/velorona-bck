@@ -42,6 +42,7 @@ const COMMON = {
   RoleRepository: Symbol('RoleRepository'),
   AddressService: Symbol('AddressService'),
   AddressRepository: Symbol('AddressRepository'),
+  UserRecordRepository: Symbol('UserRecordRepository'),
   HandlebarsService: Symbol('HandlebarsService'),
 };
 

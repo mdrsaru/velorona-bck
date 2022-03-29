@@ -1,21 +1,5 @@
-import {
-  Entity,
-  Column,
-  ManyToOne,
-  JoinColumn,
-  ManyToMany,
-  JoinTable,
-  OneToOne,
-  RelationId,
-  OneToMany,
-} from 'typeorm';
-import {
-  ObjectType,
-  Field,
-  ID,
-  InputType,
-  registerEnumType,
-} from 'type-graphql';
+import { Entity, Column, ManyToOne, JoinColumn, ManyToMany, JoinTable, OneToOne, RelationId, OneToMany } from 'typeorm';
+import { ObjectType, Field, ID, InputType, registerEnumType } from 'type-graphql';
 
 import Client from './client.entity';
 import Role from './role.entity';
@@ -23,14 +7,8 @@ import UserToken from './user-token.entity';
 import Media from './media.entity';
 import { Base } from './base.entity';
 import { PagingInput, PagingResult } from './common.entity';
-import Address, {
-  AddressCreateInput,
-  AddressUpdateInput,
-} from './address.entity';
-import UserRecord, {
-  UserRecordCreateInput,
-  UserRecordUpdateInput,
-} from './user-record.entity';
+import Address, { AddressCreateInput, AddressUpdateInput } from './address.entity';
+import UserRecord, { UserRecordCreateInput, UserRecordUpdateInput } from './user-record.entity';
 import { entities, UserStatus } from '../config/constants';
 import Task from './task.entity';
 import TaskAssignment from './task-assignment.entity';
@@ -118,7 +96,7 @@ export default class User extends Base {
   @OneToMany(() => UserToken, (token) => token.user)
   tokens: UserToken[];
 
-  @Field(() => UserRecord)
+  @Field(() => UserRecord, { nullable: true })
   @OneToOne(() => UserRecord, (record) => record.user, {
     cascade: true,
   })

@@ -1,8 +1,6 @@
 import { inject, injectable } from 'inversify';
 import { Arg, Ctx, Mutation, Resolver, UseMiddleware } from 'type-graphql';
-import TaskAssignment, {
-  AssignTaskCreateInput,
-} from '../../entities/task-assignment.entity';
+import TaskAssignment, { AssignTaskCreateInput } from '../../entities/task-assignment.entity';
 import { IErrorService, IJoiService } from '../../interfaces/common.interface';
 import { ITaskAssignmentService } from '../../interfaces/task-assignment.interface';
 import { TYPES } from '../../types';
@@ -30,10 +28,7 @@ export class TaskAssignmentResolver {
 
   @Mutation((returns) => TaskAssignment)
   @UseMiddleware(authenticate)
-  async AssignTask(
-    @Arg('input') args: AssignTaskCreateInput,
-    @Ctx() ctx: any
-  ): Promise<TaskAssignment> {
+  async AssignTask(@Arg('input') args: AssignTaskCreateInput, @Ctx() ctx: any): Promise<TaskAssignment> {
     const operation = 'TaskCreate';
     try {
       const employee_id = args.employee_id;
@@ -46,14 +41,12 @@ export class TaskAssignmentResolver {
           task_id,
         },
       });
-      console.log(args);
       let task: TaskAssignment = await this.taskAssignmentService.assignTask({
         employee_id,
         task_id,
       });
       return task;
     } catch (err) {
-      console.log(err, 'err');
       this.errorService.throwError({
         err,
         name: this.name,

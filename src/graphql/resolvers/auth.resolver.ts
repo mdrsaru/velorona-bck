@@ -10,6 +10,8 @@ import {
   LoginResponse,
   ResetPasswordInput,
   ResetPasswordResponse,
+  InvitationRegisterInput,
+  InvitationRegisterResponse,
 } from '../../entities/auth.entity';
 import User from '../../entities/user.entity';
 
@@ -93,11 +95,7 @@ export class AuthResolver {
         httpOnly: true,
       };
 
-      ctx.res.cookie(
-        constants.refreshTokenCookieName,
-        loginResponse.refreshToken,
-        options
-      );
+      ctx.res.cookie(constants.refreshTokenCookieName, loginResponse.refreshToken, options);
 
       return loginResponse;
     } catch (err) {
@@ -140,10 +138,7 @@ export class AuthResolver {
   }
 
   @Mutation((returns) => ResetPasswordResponse)
-  async ResetPassword(
-    @Arg('input') args: ResetPasswordInput,
-    @Ctx() ctx: IGraphqlContext
-  ) {
+  async ResetPassword(@Arg('input') args: ResetPasswordInput, @Ctx() ctx: IGraphqlContext) {
     const operation = 'ResetPassword';
     try {
       const token = ctx.req.headers;
@@ -186,6 +181,59 @@ export class AuthResolver {
       return true;
     } catch (err) {
       return true;
+    }
+  }
+
+  @Mutation((returns) => InvitationRegisterResponse)
+  async RegisterWithInvitation(
+    @Ctx() ctx: any,
+    @Arg('input') args: InvitationRegisterInput
+  ): Promise<InvitationRegisterResponse> {
+    const operation = 'RegisterWithInvitation';
+    try {
+      const token = args.token;
+      const password = args.password;
+      const firstName = args.firstName;
+      const lastName = args.lastName;
+      const middleName = args.middleName;
+      const phone = args.phone;
+      const address = args.address;
+      const record = args.record;
+
+      const schema = AuthValidation.registerWithInvitation();
+      await this.joiService.validate({
+        schema,
+        input: {
+          token,
+          password,
+          firstName,
+          lastName,
+          middleName,
+          phone,
+          address,
+          record,
+        },
+      });
+
+      const registeredResponse = await this.authService.registerWithInvitation({
+        token,
+        password,
+        firstName,
+        lastName,
+        middleName,
+        phone,
+        address,
+        record,
+      });
+
+      return registeredResponse;
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
     }
   }
 }

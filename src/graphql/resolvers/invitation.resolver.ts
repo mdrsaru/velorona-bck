@@ -1,14 +1,5 @@
 import { inject, injectable } from 'inversify';
-import {
-  Resolver,
-  Query,
-  Ctx,
-  Arg,
-  Mutation,
-  UseMiddleware,
-  FieldResolver,
-  Root,
-} from 'type-graphql';
+import { Resolver, Query, Ctx, Arg, Mutation, UseMiddleware, FieldResolver, Root } from 'type-graphql';
 
 import { TYPES } from '../../types';
 import { Role as RoleEnum } from '../../config/constants';
@@ -18,15 +9,12 @@ import authenticate from '../middlewares/authenticate';
 import authorize from '../middlewares/authorize';
 import { canCreateInvitation } from '../middlewares/invitation';
 import InvitationValidation from '../../validation/invitation.validation';
-import {
-  PagingInput,
-  DeleteInput,
-  MessageResponse,
-} from '../../entities/common.entity';
+import { PagingInput, DeleteInput, MessageResponse } from '../../entities/common.entity';
 
 import Invitation, {
   InvitationPagingResult,
   InvitationCreateInput,
+  InvitationRenewInput,
   InvitationQueryInput,
 } from '../../entities/invitation.entity';
 import { IPaginationData } from '../../interfaces/paging.interface';
@@ -56,16 +44,12 @@ export class InvitationResolver {
 
   @Query((returns) => InvitationPagingResult)
   @UseMiddleware(authenticate)
-  async Invitation(
-    @Arg('input') args: InvitationQueryInput,
-    @Ctx() ctx: any
-  ): Promise<IPaginationData<Invitation>> {
+  async Invitation(@Arg('input') args: InvitationQueryInput, @Ctx() ctx: any): Promise<IPaginationData<Invitation>> {
     const operation = 'Invitation';
 
     try {
       const pagingArgs = Paging.createPagingPayload(args);
-      let result: IPaginationData<Invitation> =
-        await this.invitationService.getAllAndCount(pagingArgs);
+      let result: IPaginationData<Invitation> = await this.invitationService.getAllAndCount(pagingArgs);
       return result;
     } catch (err) {
       this.errorService.throwError({
@@ -78,20 +62,14 @@ export class InvitationResolver {
   }
 
   @Mutation((returns) => Invitation)
-  @UseMiddleware(
-    authenticate,
-    authorize(RoleEnum.ClientAdmin, RoleEnum.SuperAdmin),
-    canCreateInvitation
-  )
-  async InvitationCreate(
-    @Arg('input') args: InvitationCreateInput,
-    @Ctx() ctx: IGraphqlContext
-  ): Promise<Invitation> {
+  @UseMiddleware(authenticate, authorize(RoleEnum.ClientAdmin, RoleEnum.SuperAdmin), canCreateInvitation)
+  async InvitationCreate(@Arg('input') args: InvitationCreateInput, @Ctx() ctx: IGraphqlContext): Promise<Invitation> {
     const operation = 'InvitationCreate';
 
     try {
       const email = args.email;
       const client_id = args.client_id;
+      const role = args.role;
       const inviter_id = ctx?.user?.id as string;
 
       const schema = InvitationValidation.create();
@@ -101,6 +79,7 @@ export class InvitationResolver {
           email,
           inviter_id,
           client_id,
+          role,
         },
       });
 
@@ -108,6 +87,30 @@ export class InvitationResolver {
         email,
         inviter_id,
         client_id,
+        role,
+      });
+
+      return invitation;
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
+    }
+  }
+
+  @Mutation((returns) => Invitation)
+  @UseMiddleware(authenticate, authorize(RoleEnum.ClientAdmin, RoleEnum.SuperAdmin))
+  async InvitationRenew(@Arg('input') args: InvitationRenewInput): Promise<Invitation> {
+    const operation = 'InvitationRenew';
+
+    try {
+      const id = args.id;
+
+      let invitation: Invitation = await this.invitationService.renewInvitation({
+        id,
       });
 
       return invitation;

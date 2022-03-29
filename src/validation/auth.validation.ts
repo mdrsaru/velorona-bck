@@ -31,6 +31,7 @@ export default class AuthValidation {
       clientCode: Joi.string(),
     });
   }
+
   static forgotPassword() {
     return Joi.object({
       email: Joi.string().required().messages(messages.email),
@@ -40,6 +41,29 @@ export default class AuthValidation {
     return Joi.object({
       token: Joi.object().required().messages(messages.token),
       password: Joi.string().required().messages(messages.password),
+    });
+  }
+
+  static registerWithInvitation() {
+    return Joi.object({
+      token: Joi.string().required().messages(messages.token),
+      password: Joi.string().required().messages(messages.password),
+      firstName: Joi.string().required(),
+      lastName: Joi.string().required(),
+      middleName: Joi.string(),
+      phone: Joi.string().required(),
+      record: Joi.object({
+        startDate: Joi.date().required(),
+        endDate: Joi.date().required(),
+        payRate: Joi.number().required(),
+      }).required(),
+      address: Joi.object({
+        streetAddress: Joi.string().required(),
+        aptOrSuite: Joi.string(),
+        city: Joi.string(),
+        state: Joi.string(),
+        zipcode: Joi.string(),
+      }).required(),
     });
   }
 }

@@ -1,17 +1,7 @@
 import 'reflect-metadata';
 import { Container, interfaces } from 'inversify';
 
-import {
-  app,
-  logger,
-  graphql,
-  hash,
-  error,
-  joi,
-  token,
-  email,
-  handlebars,
-} from './config/inversify/common';
+import { app, logger, graphql, hash, error, joi, token, email, handlebars } from './config/inversify/common';
 import client from './config/inversify/client';
 import role from './config/inversify/role';
 import user from './config/inversify/user';
@@ -21,6 +11,8 @@ import media from './config/inversify/media';
 import invitation from './config/inversify/invitation';
 import task from './config/inversify/task';
 import taskAssignment from './config/inversify/task-assignment';
+import address from './config/inversify/address';
+import userRecord from './config/inversify/user-record';
 
 const container = new Container({ skipBaseClassChecks: true });
 
@@ -42,7 +34,9 @@ container.load(
   invitation,
   handlebars,
   task,
-  taskAssignment
+  taskAssignment,
+  address,
+  userRecord
 );
 
 export default container;

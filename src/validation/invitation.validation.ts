@@ -22,6 +22,12 @@ const messages = {
     'string.name': strings.inviterRequired,
     'any.required': strings.inviterRequired,
   },
+  role: {
+    'string.base': strings.roleRequired,
+    'string.empty': strings.roleRequired,
+    'string.name': strings.roleRequired,
+    'any.required': strings.roleRequired,
+  },
 };
 
 export default class InvitationValidation {
@@ -30,6 +36,7 @@ export default class InvitationValidation {
       email: Joi.string().email().required().messages(messages.email),
       client_id: Joi.string().required().messages(messages.client),
       inviter_id: Joi.string().required().messages(messages.inviter),
+      role: Joi.string().required().messages(messages.role),
     });
   }
 }

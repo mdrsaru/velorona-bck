@@ -15,7 +15,7 @@ registerEnumType(TaskStatus, {
 @ObjectType()
 export default class Task extends Base {
   @Field()
-  @Column({ nullable: true })
+  @Column()
   name: string;
 
   @Field((type) => TaskStatus)

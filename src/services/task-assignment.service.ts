@@ -6,10 +6,7 @@ import {
   ITaskAssignmentRepository,
   ITaskAssignmentService,
 } from '../interfaces/task-assignment.interface';
-import {
-  ITaskCreateInput,
-  ITaskRepository,
-} from '../interfaces/task.interface';
+import { ITaskCreateInput, ITaskRepository } from '../interfaces/task.interface';
 import { IUserRepository } from '../interfaces/user.interface';
 import { TYPES } from '../types';
 import { ForbiddenError, NotAuthenticatedError } from '../utils/api-error';
@@ -46,17 +43,14 @@ export default class TaskAssignmentService implements ITaskAssignmentService {
       const task_id = args.task_id;
 
       const user = await this.userRepository.getById({ id: employee_id });
-      const task = await this.userRepository.getById({ id: task_id });
-      console.log(user, task);
+      const task = await this.taskRepository.getById({ id: task_id });
+      console.log(task);
       if (!user) {
-        console.log('not usrer');
         throw new ForbiddenError({
           details: [strings.userNotFound],
         });
       }
       if (!task) {
-        console.log('not task');
-        console.log(strings.taskNotFound);
         throw new ForbiddenError({
           details: [strings.taskNotFound],
         });

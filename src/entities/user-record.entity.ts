@@ -6,18 +6,18 @@ import User from './user.entity';
 import { Base } from './base.entity';
 import { entities } from '../config/constants';
 
-@Entity({ name: entities.user_record })
+@Entity({ name: entities.userRecord })
 @ObjectType()
 export default class UserRecord extends Base {
-  @Field()
+  @Field({ nullable: true })
   @Column()
   startDate: Date;
 
-  @Field()
+  @Field({ nullable: true })
   @Column()
   endDate: Date;
 
-  @Field()
+  @Field({ nullable: true })
   @Column()
   payRate: number;
 

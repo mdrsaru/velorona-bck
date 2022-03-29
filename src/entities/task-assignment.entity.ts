@@ -6,7 +6,7 @@ import { Base } from './base.entity';
 import Task from './task.entity';
 import User from './user.entity';
 
-@Entity({ name: entities.task_assignment })
+@Entity({ name: entities.taskAssignment })
 @ObjectType()
 export default class TaskAssignment extends Base {
   @Field()

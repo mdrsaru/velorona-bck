@@ -1,10 +1,6 @@
 import { ResetPasswordResponse } from '../entities/auth.entity';
 import { CustomError } from '../utils/api-error';
-import {
-  IPagingArgs,
-  IGetAllAndCountResult,
-  IGetOptions,
-} from './paging.interface';
+import { IPagingArgs, IGetAllAndCountResult, IGetOptions } from './paging.interface';
 
 export interface IEntityID {
   id: string;
@@ -117,4 +113,9 @@ export interface ITemplateArgs {
 
 export interface ITemplateService {
   compile(args: ITemplateArgs): string;
+}
+
+export interface ISingleEntityQuery {
+  query: any;
+  relations?: string[];
 }

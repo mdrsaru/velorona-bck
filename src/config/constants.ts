@@ -37,9 +37,7 @@ export const databaseSetting = {
   host: process.env.POSTGRES_DATABASE_HOST as string,
   dialect: process.env.POSTGRES_DATABASE_DIALECT as string,
   port: parseInt((process.env.POSTGRES_DATABASE_PORT as string) || '5432'),
-  synchronize: ['local', 'development', 'dev'].includes(env)
-    ? process.env.DATABASE_SYNCHRONIZE == 'true'
-    : false,
+  synchronize: ['local', 'development', 'dev'].includes(env) ? process.env.DATABASE_SYNCHRONIZE == 'true' : false,
   logging: ['local', 'development', 'dev'].includes(env),
 };
 
@@ -49,11 +47,11 @@ export const entities = {
   roles: 'roles',
   addresses: 'addresses',
   userTokens: 'user_tokens',
-  user_record: 'user_record',
+  userRecord: 'user_record',
   media: 'media',
   invitation: 'invitation',
   tasks: 'tasks',
-  task_assignment: 'task_assignment',
+  taskAssignment: 'task_assignment',
 };
 
 export enum ClientStatus {
@@ -113,14 +111,12 @@ export default {
   port: process.env.PORT,
   baseUrl: process.env.BASE_URL,
   appName: process.env.APP_NAME || 'Vellorum_API',
-  refreshTokenCookieName:
-    process.env.REFRESH_TOKEN_COOKIE_NAME || 'refreshToken',
+  invitationExpiresIn: '2 days',
+  refreshTokenCookieName: process.env.REFRESH_TOKEN_COOKIE_NAME || 'refreshToken',
   saltRounds: process.env.SALT_ROUNDS || 10,
-  verificationEmailTokenExpiration:
-    process.env.VERIFICATION_EMAIL_EXPIRATION || '1d',
+  verificationEmailTokenExpiration: process.env.VERIFICATION_EMAIL_EXPIRATION || '1d',
   refreshTokenExpiration: process.env.REFRESH_TOKEN_EXPIRATION || '7d',
-  forgotPasswordTokenExpiration:
-    process.env.FORGOT_PASSWORD_TOKEN_EXPIRATION || '1hr',
+  forgotPasswordTokenExpiration: process.env.FORGOT_PASSWORD_TOKEN_EXPIRATION || '1hr',
   log: {
     fileLogLevel: process.env.FILE_LOG_LEVEL,
     dirname: process.env.LOG_DIRNAME || '.logs',
@@ -141,8 +137,7 @@ export default {
   refreshTokenLife: process.env.REFRESH_TOKEN_LIFE || '7d',
   frontendUrl: process.env.FRONT_END_URL || 'http://localhost:3000',
   changePassword: {
-    changePasswordSubject:
-      process.env.CHANGEPASSWORD_SUBJECT || 'Change your password',
+    changePasswordSubject: process.env.CHANGEPASSWORD_SUBJECT || 'Change your password',
     changePasswordBody: process.env.CHANGEPASSWORD_BODY || 'Here is the link',
   },
   mediaDestination: './public/uploads',
