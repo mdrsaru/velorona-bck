@@ -38,4 +38,7 @@ export default {
   managerIdRequired: 'Manager Id required',
   clientIdRequired: 'Client Id required',
   statusRequired: 'Status Required',
+  taskIdRequired: 'Task Id required',
+  EmployeeIdRequired: 'Employee Id required',
+  taskNotFound: 'Task not found',
 };

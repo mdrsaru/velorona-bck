@@ -53,6 +53,7 @@ export const entities = {
   media: 'media',
   invitation: 'invitation',
   tasks: 'tasks',
+  task_assignment: 'task_assignment',
 };
 
 export enum ClientStatus {

@@ -7,6 +7,7 @@ import { RoleResolver } from './resolvers/role.resolver';
 import { UserResolver } from './resolvers/user.resolver';
 import { InvitationResolver } from './resolvers/invitation.resolver';
 import { TaskResolver } from './resolvers/task.resolver';
+import { TaskAssignmentResolver } from './resolvers/task-assignment.resolver';
 
 export default buildSchema({
   resolvers: [
@@ -16,6 +17,7 @@ export default buildSchema({
     AuthResolver,
     InvitationResolver,
     TaskResolver,
+    TaskAssignmentResolver,
   ],
   container,
   validate: false,

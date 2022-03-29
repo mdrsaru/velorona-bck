@@ -33,6 +33,7 @@ import UserRecord, {
 } from './user-record.entity';
 import { entities, UserStatus } from '../config/constants';
 import Task from './task.entity';
+import TaskAssignment from './task-assignment.entity';
 
 registerEnumType(UserStatus, {
   name: 'UserStatus',
@@ -126,6 +127,10 @@ export default class User extends Base {
   @Field(() => Task, { nullable: true })
   @OneToMany(() => Task, (task) => task.manager)
   tasks: Task[];
+
+  @Field(() => TaskAssignment, { nullable: true })
+  @OneToMany(() => TaskAssignment, (taskAssignment) => taskAssignment.employee)
+  taskAssignments: TaskAssignment[];
 }
 
 @ObjectType()

@@ -20,6 +20,12 @@ const TASK = {
   TaskController: Symbol('TaskController'),
 };
 
+const TASK_ASSIGNMENT = {
+  TaskAssignmentRepository: Symbol('TaskAssignmentRepository'),
+  TaskAssignmentService: Symbol('TaskAssignmentService'),
+  TaskAssignmentController: Symbol('TaskAssignmentController'),
+};
+
 const COMMON = {
   AppService: Symbol('AppService'),
   AppController: Symbol('AppController'),
@@ -65,6 +71,7 @@ const TYPES = {
   ...MEDIA,
   ...INVITATION,
   ...TASK,
+  ...TASK_ASSIGNMENT,
 };
 
 export { TYPES };
