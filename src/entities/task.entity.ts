@@ -1,9 +1,10 @@
 import { Field, InputType, ObjectType, registerEnumType } from 'type-graphql';
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { entities, TaskStatus } from '../config/constants';
 import { Base } from './base.entity';
 import Client from './client.entity';
 import { PagingInput, PagingResult } from './common.entity';
+import TaskAssignment from './task-assignment.entity';
 import User from './user.entity';
 
 registerEnumType(TaskStatus, {
@@ -44,6 +45,10 @@ export default class Task extends Base {
   @ManyToOne(() => Client)
   @JoinColumn({ name: 'client_id' })
   client: Client;
+
+  @Field(() => TaskAssignment)
+  @OneToMany(() => TaskAssignment, (taskAssignment) => taskAssignment.task)
+  taskAssignment: TaskAssignment[];
 }
 
 @InputType()

@@ -57,9 +57,7 @@ const batchAvatarsByIdFn = async (ids: readonly string[]) => {
 };
 
 const batchAddressByUserIdFn = async (ids: readonly string[]) => {
-  const addressRepo: IAddressRepository = container.get(
-    TYPES.AddressRepository
-  );
+  const addressRepo: IAddressRepository = container.get(TYPES.AddressRepository);
   const query = { user_id: ids };
   const address = await addressRepo.getAll({ query });
   const addressObj: any = {};
@@ -71,9 +69,7 @@ const batchAddressByUserIdFn = async (ids: readonly string[]) => {
 };
 
 const batchRecordByUserIdFn = async (ids: readonly string[]) => {
-  const recordRepo: IUserRecordRepository = container.get(
-    TYPES.UserRecordRepository
-  );
+  const recordRepo: IUserRecordRepository = container.get(TYPES.UserRecordRepository);
   const query = { user_id: ids };
   const record = await recordRepo.getAll({ query });
   const recordObj: any = {};
@@ -84,10 +80,8 @@ const batchRecordByUserIdFn = async (ids: readonly string[]) => {
   return ids.map((id) => recordObj[id]);
 };
 
-export const usersByClientIdLoader = () =>
-  new Dataloader(batchUsersByClientIdFn);
+export const usersByClientIdLoader = () => new Dataloader(batchUsersByClientIdFn);
 export const rolesByUserIdLoader = () => new Dataloader(batchRolesByUserIdFn);
 export const avatarByIdLoader = () => new Dataloader(batchAvatarsByIdFn);
-export const addressByUserIdLoader = () =>
-  new Dataloader(batchAddressByUserIdFn);
+export const addressByUserIdLoader = () => new Dataloader(batchAddressByUserIdFn);
 export const recordByUserIdLoader = () => new Dataloader(batchRecordByUserIdFn);

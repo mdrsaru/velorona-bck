@@ -47,10 +47,11 @@ export const entities = {
   roles: 'roles',
   addresses: 'addresses',
   userTokens: 'user_tokens',
-  user_record: 'user_record',
+  userRecord: 'user_record',
   media: 'media',
   invitation: 'invitation',
   tasks: 'tasks',
+  taskAssignment: 'task_assignment',
 };
 
 export enum ClientStatus {

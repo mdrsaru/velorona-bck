@@ -1,21 +1,5 @@
-import {
-  Entity,
-  Column,
-  ManyToOne,
-  JoinColumn,
-  ManyToMany,
-  JoinTable,
-  OneToOne,
-  RelationId,
-  OneToMany,
-} from 'typeorm';
-import {
-  ObjectType,
-  Field,
-  ID,
-  InputType,
-  registerEnumType,
-} from 'type-graphql';
+import { Entity, Column, ManyToOne, JoinColumn, ManyToMany, JoinTable, OneToOne, RelationId, OneToMany } from 'typeorm';
+import { ObjectType, Field, ID, InputType, registerEnumType } from 'type-graphql';
 
 import Client from './client.entity';
 import Role from './role.entity';
@@ -23,16 +7,11 @@ import UserToken from './user-token.entity';
 import Media from './media.entity';
 import { Base } from './base.entity';
 import { PagingInput, PagingResult } from './common.entity';
-import Address, {
-  AddressCreateInput,
-  AddressUpdateInput,
-} from './address.entity';
-import UserRecord, {
-  UserRecordCreateInput,
-  UserRecordUpdateInput,
-} from './user-record.entity';
+import Address, { AddressCreateInput, AddressUpdateInput } from './address.entity';
+import UserRecord, { UserRecordCreateInput, UserRecordUpdateInput } from './user-record.entity';
 import { entities, UserStatus } from '../config/constants';
 import Task from './task.entity';
+import TaskAssignment from './task-assignment.entity';
 
 registerEnumType(UserStatus, {
   name: 'UserStatus',
@@ -126,6 +105,10 @@ export default class User extends Base {
   @Field(() => Task, { nullable: true })
   @OneToMany(() => Task, (task) => task.manager)
   tasks: Task[];
+
+  @Field(() => TaskAssignment, { nullable: true })
+  @OneToMany(() => TaskAssignment, (taskAssignment) => taskAssignment.employee)
+  taskAssignments: TaskAssignment[];
 }
 
 @ObjectType()

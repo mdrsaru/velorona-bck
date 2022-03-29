@@ -1,14 +1,5 @@
 import { inject, injectable } from 'inversify';
-import {
-  Resolver,
-  Query,
-  Ctx,
-  Arg,
-  Mutation,
-  UseMiddleware,
-  FieldResolver,
-  Root,
-} from 'type-graphql';
+import { Resolver, Query, Ctx, Arg, Mutation, UseMiddleware, FieldResolver, Root } from 'type-graphql';
 
 import { TYPES } from '../../types';
 import { Role as RoleEnum } from '../../config/constants';
@@ -18,11 +9,7 @@ import authenticate from '../middlewares/authenticate';
 import { canCreateSystemAdmin } from '../middlewares/user';
 import authorize from '../middlewares/authorize';
 import UserValidation from '../../validation/user.validation';
-import {
-  PagingInput,
-  DeleteInput,
-  MessageResponse,
-} from '../../entities/common.entity';
+import { PagingInput, DeleteInput, MessageResponse } from '../../entities/common.entity';
 import User, {
   UserPagingResult,
   UserCreateInput,
@@ -59,17 +46,12 @@ export class UserResolver {
 
   @Query((returns) => UserPagingResult)
   @UseMiddleware(authenticate)
-  async User(
-    @Arg('input', { nullable: true }) args: UserQueryInput,
-    @Ctx() ctx: any
-  ): Promise<IPaginationData<User>> {
+  async User(@Arg('input', { nullable: true }) args: UserQueryInput, @Ctx() ctx: any): Promise<IPaginationData<User>> {
     const operation = 'User';
 
     try {
       const pagingArgs = Paging.createPagingPayload(args);
-      let result: IPaginationData<User> = await this.userService.getAllAndCount(
-        pagingArgs
-      );
+      let result: IPaginationData<User> = await this.userService.getAllAndCount(pagingArgs);
       return result;
     } catch (err) {
       this.errorService.throwError({
@@ -82,11 +64,7 @@ export class UserResolver {
   }
 
   @Mutation((returns) => User)
-  @UseMiddleware(
-    authenticate,
-    authorize(RoleEnum.ClientAdmin, RoleEnum.SuperAdmin),
-    canCreateSystemAdmin
-  )
+  @UseMiddleware(authenticate, authorize(RoleEnum.ClientAdmin, RoleEnum.SuperAdmin), canCreateSystemAdmin)
   async UserCreate(@Arg('input') args: UserCreateInput): Promise<User> {
     const operation = 'UserCreate';
 
@@ -201,10 +179,7 @@ export class UserResolver {
 
   @Mutation((returns) => User)
   @UseMiddleware(authenticate)
-  async ChangeProfilePicture(
-    @Arg('input') args: ChangeProfilePictureInput,
-    @Ctx() ctx: IGraphqlContext
-  ) {
+  async ChangeProfilePicture(@Arg('input') args: ChangeProfilePictureInput, @Ctx() ctx: IGraphqlContext) {
     const operation = 'Change Profile Picture';
 
     try {
