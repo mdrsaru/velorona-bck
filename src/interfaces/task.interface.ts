@@ -1,11 +1,7 @@
 import { TaskStatus } from '../config/constants';
 import Task from '../entities/task.entity';
 import { IEntityID, IEntityRemove } from './common.interface';
-import {
-  IGetAllAndCountResult,
-  IPaginationData,
-  IPagingArgs,
-} from './paging.interface';
+import { IGetAllAndCountResult, IPaginationData, IPagingArgs } from './paging.interface';
 
 export interface ITask {
   id: string;
@@ -13,7 +9,6 @@ export interface ITask {
   status: TaskStatus;
   is_archived: boolean;
 }
-
 export interface ITaskCreateInput {
   name: string;
   status: TaskStatus;

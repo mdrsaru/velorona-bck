@@ -1,18 +1,12 @@
 import { inject, injectable } from 'inversify';
+import strings from '../config/strings';
 import Task from '../entities/task.entity';
-import {
-  IEntityRemove,
-  IErrorService,
-  ILogger,
-} from '../interfaces/common.interface';
+import { IEntityRemove, IErrorService, ILogger } from '../interfaces/common.interface';
 import { IPaginationData, IPagingArgs } from '../interfaces/paging.interface';
-import {
-  ITaskCreateInput,
-  ITaskRepository,
-  ITaskService,
-  ITaskUpdateInput,
-} from '../interfaces/task.interface';
+import { ITaskAssignmentRepository } from '../interfaces/task-assignment.interface';
+import { ITaskCreateInput, ITaskRepository, ITaskService, ITaskUpdateInput } from '../interfaces/task.interface';
 import { TYPES } from '../types';
+import { ForbiddenError } from '../utils/api-error';
 import Paging from '../utils/paging';
 
 @injectable()
@@ -21,19 +15,21 @@ export default class TaskService implements ITaskService {
   private taskRepository: ITaskRepository;
   private logger: ILogger;
   private errorService: IErrorService;
+  private taskAssigmentRepository: ITaskAssignmentRepository;
 
   constructor(
     @inject(TYPES.TaskRepository) taskRepository: ITaskRepository,
     @inject(TYPES.LoggerFactory) loggerFactory: (name: string) => ILogger,
-    @inject(TYPES.ErrorService) errorService: IErrorService
+    @inject(TYPES.ErrorService) errorService: IErrorService,
+    @inject(TYPES.TaskAssignmentRepository)
+    taskAssignmentRepository: ITaskAssignmentRepository
   ) {
     this.taskRepository = taskRepository;
     this.logger = loggerFactory(this.name);
+    this.taskAssigmentRepository = taskAssignmentRepository;
   }
 
-  getAllAndCount = async (
-    args: IPagingArgs
-  ): Promise<IPaginationData<Task>> => {
+  getAllAndCount = async (args: IPagingArgs): Promise<IPaginationData<Task>> => {
     try {
       const { rows, count } = await this.taskRepository.getAllAndCount(args);
 
@@ -87,6 +83,11 @@ export default class TaskService implements ITaskService {
     const manager_id = args?.manager_id;
     const client_id = args?.client_id;
 
+    const taskAssignment = await this.taskAssigmentRepository.getByTaskId({ task_id: id });
+
+    if (taskAssignment.employee_id !== null) {
+      throw new ForbiddenError({ details: [strings.taskNotFound] });
+    }
     try {
       let task = await this.taskRepository.update({
         id,

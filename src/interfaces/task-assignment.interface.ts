@@ -1,10 +1,6 @@
 import Role from '../entities/role.entity';
 import { IEntityID, IEntityRemove } from './common.interface';
-import {
-  IGetAllAndCountResult,
-  IPaginationData,
-  IPagingArgs,
-} from './paging.interface';
+import { IGetAllAndCountResult, IPaginationData, IPagingArgs } from './paging.interface';
 import { Role as RoleEnum } from '../config/constants';
 import TaskAssignment from '../entities/task-assignment.entity';
 
@@ -24,8 +20,12 @@ export interface ITaskAssignmentUpdate {
   task_id: ITaskAssignment['task_id'];
 }
 
+export interface ITaskQuery {
+  task_id: string;
+}
 export interface ITaskAssignmentRepository {
   create(args: ITaskAssignmentCreate): Promise<TaskAssignment>;
+  getByTaskId(args: ITaskQuery): Promise<TaskAssignment>;
 }
 
 export interface ITaskAssignmentService {

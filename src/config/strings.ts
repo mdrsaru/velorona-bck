@@ -44,4 +44,5 @@ export default {
   invitationNotFound: 'Invitation not found',
   roleRequired: 'Role required',
   invitationExpired: 'Invitation expired',
+  alreadyAssigned: 'Assigned task couldn`t change status',
 };
