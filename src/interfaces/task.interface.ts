@@ -14,7 +14,7 @@ export interface ITaskCreateInput {
   status: TaskStatus;
   is_archived: boolean;
   manager_id: string;
-  client_id: string;
+  company_id: string;
 }
 
 export interface ITaskUpdateInput {
@@ -23,7 +23,7 @@ export interface ITaskUpdateInput {
   status?: TaskStatus | undefined;
   is_archived?: boolean | undefined;
   manager_id?: string | undefined;
-  client_id?: string | undefined;
+  company_id?: string | undefined;
 }
 export interface ITaskService {
   getAllAndCount(filters?: any): Promise<IPaginationData<Task>>;

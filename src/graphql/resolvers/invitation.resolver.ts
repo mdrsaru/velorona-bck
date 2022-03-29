@@ -3,7 +3,7 @@ import { Resolver, Query, Ctx, Arg, Mutation, UseMiddleware, FieldResolver, Root
 
 import { TYPES } from '../../types';
 import { Role as RoleEnum } from '../../config/constants';
-import Client from '../../entities/client.entity';
+import Company from '../../entities/company.entity';
 import Paging from '../../utils/paging';
 import authenticate from '../middlewares/authenticate';
 import authorize from '../middlewares/authorize';
@@ -29,7 +29,7 @@ export class InvitationResolver {
   private invitationService: IInvitationService;
   private joiService: IJoiService;
   private errorService: IErrorService;
-  private clientLoader: any;
+  private companyLoader: any;
   private loader: any;
 
   constructor(
@@ -62,13 +62,13 @@ export class InvitationResolver {
   }
 
   @Mutation((returns) => Invitation)
-  @UseMiddleware(authenticate, authorize(RoleEnum.ClientAdmin, RoleEnum.SuperAdmin), canCreateInvitation)
+  @UseMiddleware(authenticate, authorize(RoleEnum.CompanyAdmin, RoleEnum.SuperAdmin), canCreateInvitation)
   async InvitationCreate(@Arg('input') args: InvitationCreateInput, @Ctx() ctx: IGraphqlContext): Promise<Invitation> {
     const operation = 'InvitationCreate';
 
     try {
       const email = args.email;
-      const client_id = args.client_id;
+      const company_id = args.company_id;
       const role = args.role;
       const inviter_id = ctx?.user?.id as string;
 
@@ -78,7 +78,7 @@ export class InvitationResolver {
         input: {
           email,
           inviter_id,
-          client_id,
+          company_id,
           role,
         },
       });
@@ -86,7 +86,7 @@ export class InvitationResolver {
       let invitation: Invitation = await this.invitationService.create({
         email,
         inviter_id,
-        client_id,
+        company_id,
         role,
       });
 
@@ -102,7 +102,7 @@ export class InvitationResolver {
   }
 
   @Mutation((returns) => Invitation)
-  @UseMiddleware(authenticate, authorize(RoleEnum.ClientAdmin, RoleEnum.SuperAdmin))
+  @UseMiddleware(authenticate, authorize(RoleEnum.CompanyAdmin, RoleEnum.SuperAdmin))
   async InvitationRenew(@Arg('input') args: InvitationRenewInput): Promise<Invitation> {
     const operation = 'InvitationRenew';
 
@@ -125,9 +125,18 @@ export class InvitationResolver {
   }
 
   @FieldResolver()
-  client(@Root() root: Invitation, @Ctx() ctx: IGraphqlContext) {
-    if (root.client_id) {
-      return ctx.loaders.clientByIdLoader.load(root.client_id);
+  company(@Root() root: Invitation, @Ctx() ctx: IGraphqlContext) {
+    if (root.company_id) {
+      return ctx.loaders.companyByIdLoader.load(root.company_id);
+    }
+
+    return null;
+  }
+
+  @FieldResolver()
+  inviter(@Root() root: Invitation, @Ctx() ctx: IGraphqlContext) {
+    if (root.inviter_id) {
+      return ctx.loaders.usersByIdLoader.load(root.inviter_id);
     }
 
     return null;

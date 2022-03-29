@@ -2,7 +2,7 @@ import { Field, InputType, ObjectType, registerEnumType } from 'type-graphql';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { entities, TaskStatus } from '../config/constants';
 import { Base } from './base.entity';
-import Client from './client.entity';
+import Company from './company.entity';
 import { PagingInput, PagingResult } from './common.entity';
 import TaskAssignment from './task-assignment.entity';
 import User from './user.entity';
@@ -40,11 +40,11 @@ export default class Task extends Base {
 
   @Field()
   @Column()
-  client_id: string;
+  company_id: string;
 
-  @ManyToOne(() => Client)
-  @JoinColumn({ name: 'client_id' })
-  client: Client;
+  @ManyToOne(() => Company)
+  @JoinColumn({ name: 'company_id' })
+  company: Company;
 
   @Field(() => TaskAssignment)
   @OneToMany(() => TaskAssignment, (taskAssignment) => taskAssignment.task)
@@ -66,7 +66,7 @@ export class TaskCreateInput {
   manager_id: string;
 
   @Field()
-  client_id: string;
+  company_id: string;
 }
 
 @InputType()
@@ -87,7 +87,7 @@ export class TaskUpdateInput {
   manager_id: string;
 
   @Field({ nullable: true })
-  client_id: string;
+  company_id: string;
 }
 
 @ObjectType()
@@ -95,8 +95,8 @@ export class TaskPagingResult {
   @Field()
   paging: PagingResult;
 
-  @Field(() => [Client])
-  data: Client[];
+  @Field(() => [Company])
+  data: Company[];
 }
 
 @InputType()
@@ -108,7 +108,7 @@ export class TaskQuery {
   status: TaskStatus;
 
   @Field()
-  client_id: string;
+  company_id: string;
 }
 @InputType()
 export class TaskQueryInput {

@@ -1,7 +1,7 @@
 import { Entity, Column, ManyToOne, JoinColumn, ManyToMany, JoinTable, OneToOne, RelationId, OneToMany } from 'typeorm';
 import { ObjectType, Field, ID, InputType, registerEnumType } from 'type-graphql';
 
-import Client from './client.entity';
+import Company from './company.entity';
 import Role from './role.entity';
 import UserToken from './user-token.entity';
 import Media from './media.entity';
@@ -32,15 +32,15 @@ export default class User extends Base {
   phone: string;
 
   @Field()
-  @Column({ length: 25, nullable: true })
+  @Column({ length: 25, name: 'first_name' })
   firstName: string;
 
   @Field({ nullable: true })
-  @Column({ length: 25, nullable: true })
+  @Column({ length: 25, nullable: true, name: 'middle_name' })
   middleName: string;
 
   @Field()
-  @Column({ length: 25 })
+  @Column({ length: 25, name: 'last_name' })
   lastName: string;
 
   @Field()
@@ -53,19 +53,27 @@ export default class User extends Base {
   })
   status: UserStatus;
 
+  @Field()
+  @Column({ name: 'is_archived', default: false })
+  isArchived: boolean;
+
   @Field({ nullable: true })
   @Column({ nullable: true })
   avatar_id: string;
 
   @Field(() => Media, { nullable: true })
   @OneToOne(() => Media, { nullable: true, cascade: true })
-  @JoinColumn()
+  @JoinColumn({ name: 'avatar_id' })
   avatar: Media;
 
-  @Field(() => Client, { nullable: true })
-  @ManyToOne(() => Client, (client) => client.users)
-  @JoinColumn({ name: 'client_id' })
-  client: Client;
+  @Field(() => Company, { nullable: true })
+  @ManyToOne(() => Company, (company) => company.users)
+  @JoinColumn({ name: 'company_id' })
+  company: Company;
+
+  @Field()
+  @Column({ nullable: true })
+  company_id: string;
 
   @Field((type) => [Role])
   @ManyToMany(() => Role)
@@ -81,10 +89,6 @@ export default class User extends Base {
     },
   })
   roles: Role[];
-
-  @Field()
-  @Column({ nullable: true })
-  client_id: string;
 
   @Field(() => Address)
   @OneToOne(() => Address, (address) => address.user, {
@@ -141,7 +145,7 @@ export class UserCreateInput {
   status: UserStatus;
 
   @Field({ nullable: true })
-  client_id: string;
+  company_id: string;
 
   @Field((type) => AddressCreateInput)
   address: AddressCreateInput;

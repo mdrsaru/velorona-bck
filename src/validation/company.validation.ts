@@ -2,7 +2,7 @@ import { injectable } from 'inversify';
 import Joi from 'joi';
 
 import { ValidationError, NotImplementedError } from '../utils/api-error';
-import { IClientCreate } from '../interfaces/client.interface';
+import { ICompanyCreate } from '../interfaces/company.interface';
 
 const idRequired = 'id required';
 const nameRequired = 'Name required';
@@ -28,11 +28,12 @@ const messages = {
   },
 };
 
-export default class ClientValidation {
+export default class CompanyValidation {
   static create() {
     return Joi.object({
       name: Joi.string().required().messages(messages.name),
       status: Joi.string().required().messages(messages.status),
+      isArchived: Joi.boolean(),
     });
   }
 
@@ -41,6 +42,7 @@ export default class ClientValidation {
       id: Joi.string().required().messages(messages.id),
       name: Joi.string().messages(messages.name),
       status: Joi.string().messages(messages.status),
+      isArchived: Joi.boolean(),
     });
   }
 }

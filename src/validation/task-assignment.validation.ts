@@ -13,9 +13,9 @@ const messages = {
     'any.required': strings.managerIdRequired,
   },
   task_id: {
-    'string.base': strings.clientIdRequired,
-    'string.empty': strings.clientIdRequired,
-    'any.required': strings.clientIdRequired,
+    'string.base': strings.companyIdRequired,
+    'string.empty': strings.companyIdRequired,
+    'any.required': strings.companyIdRequired,
   },
 };
 

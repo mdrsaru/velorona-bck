@@ -1,20 +1,8 @@
 import { inject, injectable } from 'inversify';
-import {
-  Arg,
-  Ctx,
-  Mutation,
-  Query,
-  Resolver,
-  UseMiddleware,
-} from 'type-graphql';
+import { Arg, Ctx, Mutation, Query, Resolver, UseMiddleware } from 'type-graphql';
 
 import { DeleteInput } from '../../entities/common.entity';
-import Task, {
-  TaskCreateInput,
-  TaskPagingResult,
-  TaskQueryInput,
-  TaskUpdateInput,
-} from '../../entities/task.entity';
+import Task, { TaskCreateInput, TaskPagingResult, TaskQueryInput, TaskUpdateInput } from '../../entities/task.entity';
 
 import { TYPES } from '../../types';
 import Paging from '../../utils/paging';
@@ -49,17 +37,12 @@ export class TaskResolver {
 
   @Query((returns) => TaskPagingResult)
   @UseMiddleware(authenticate, canViewTask)
-  async Task(
-    @Arg('input', { nullable: true }) args: TaskQueryInput,
-    @Ctx() ctx: any
-  ): Promise<IPaginationData<Task>> {
+  async Task(@Arg('input', { nullable: true }) args: TaskQueryInput, @Ctx() ctx: any): Promise<IPaginationData<Task>> {
     const operation = 'Tasks';
 
     try {
       const pagingArgs = Paging.createPagingPayload(args);
-      let result: IPaginationData<Task> = await this.taskService.getAllAndCount(
-        pagingArgs
-      );
+      let result: IPaginationData<Task> = await this.taskService.getAllAndCount(pagingArgs);
       return result;
     } catch (err) {
       this.errorService.throwError({
@@ -72,22 +55,15 @@ export class TaskResolver {
   }
 
   @Mutation((returns) => Task)
-  @UseMiddleware(
-    authenticate,
-    authorize(RoleEnum.ClientAdmin, RoleEnum.SuperAdmin),
-    canCreateTask
-  )
-  async TaskCreate(
-    @Arg('input') args: TaskCreateInput,
-    @Ctx() ctx: any
-  ): Promise<Task> {
+  @UseMiddleware(authenticate, authorize(RoleEnum.CompanyAdmin, RoleEnum.SuperAdmin), canCreateTask)
+  async TaskCreate(@Arg('input') args: TaskCreateInput, @Ctx() ctx: any): Promise<Task> {
     const operation = 'TaskCreate';
     try {
       const name = args.name;
       const status = args.status;
       const is_archived = args.is_archived;
       const manager_id = args.manager_id;
-      const client_id = args.client_id;
+      const company_id = args.company_id;
 
       const schema = TaskValidation.create();
       await this.joiService.validate({
@@ -97,7 +73,7 @@ export class TaskResolver {
           status,
           is_archived,
           manager_id,
-          client_id,
+          company_id,
         },
       });
       let task: Task = await this.taskService.create({
@@ -105,7 +81,7 @@ export class TaskResolver {
         status,
         is_archived,
         manager_id,
-        client_id,
+        company_id,
       });
       return task;
     } catch (err) {
@@ -120,10 +96,7 @@ export class TaskResolver {
 
   @Mutation((returns) => Task)
   @UseMiddleware(authenticate)
-  async TaskUpdate(
-    @Arg('input') args: TaskUpdateInput,
-    @Ctx() ctx: any
-  ): Promise<Task> {
+  async TaskUpdate(@Arg('input') args: TaskUpdateInput, @Ctx() ctx: any): Promise<Task> {
     const operation = 'TaskUpdate';
 
     try {
@@ -132,7 +105,7 @@ export class TaskResolver {
       const status = args.status;
       const is_archived = args.is_archived;
       const manager_id = args.manager_id;
-      const client_id = args.client_id;
+      const company_id = args.company_id;
 
       const schema = TaskValidation.update();
       await this.joiService.validate({
@@ -143,7 +116,7 @@ export class TaskResolver {
           status,
           is_archived,
           manager_id,
-          client_id,
+          company_id,
         },
       });
 
@@ -153,7 +126,7 @@ export class TaskResolver {
         status,
         is_archived,
         manager_id,
-        client_id,
+        company_id,
       });
 
       return Task;
@@ -169,10 +142,7 @@ export class TaskResolver {
 
   @Mutation((returns) => Task)
   @UseMiddleware(authenticate)
-  async TaskDelete(
-    @Arg('input') args: DeleteInput,
-    @Ctx() ctx: any
-  ): Promise<Task> {
+  async TaskDelete(@Arg('input') args: DeleteInput, @Ctx() ctx: any): Promise<Task> {
     const operation = 'TaskDelete';
 
     try {

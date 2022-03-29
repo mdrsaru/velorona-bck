@@ -11,18 +11,18 @@ import { IMediaRepository } from '../../interfaces/media.interface';
 import { IAddressRepository } from '../../interfaces/address.interface';
 import { IUserRecordRepository } from '../../interfaces/user-record.interface';
 
-const batchUsersByClientIdFn = async (ids: readonly string[]) => {
+const batchUsersByCompanyIdFn = async (ids: readonly string[]) => {
   const userRepo: IUserRepository = container.get(TYPES.UserRepository);
-  const query = { client_id: ids };
+  const query = { company_id: ids };
   const users = await userRepo.getAll({ query });
 
-  const userObj: { [clientId: string]: User[] } = {};
+  const userObj: { [companyId: string]: User[] } = {};
 
   users.forEach((user: User) => {
-    if (user.client_id in userObj) {
-      userObj[user.client_id].push(user);
+    if (user.company_id in userObj) {
+      userObj[user.company_id].push(user);
     } else {
-      userObj[user.client_id] = [user];
+      userObj[user.company_id] = [user];
     }
   });
 
@@ -80,8 +80,22 @@ const batchRecordByUserIdFn = async (ids: readonly string[]) => {
   return ids.map((id) => recordObj[id]);
 };
 
-export const usersByClientIdLoader = () => new Dataloader(batchUsersByClientIdFn);
+const batchUsersByIdFn = async (ids: readonly string[]) => {
+  const userRepo: IUserRepository = container.get(TYPES.UserRepository);
+  const query = { id: ids };
+  const users: User[] = await userRepo.getAll({ query });
+  const userObj: any = {};
+
+  users.forEach((user: User) => {
+    userObj[user.id] = user;
+  });
+
+  return ids.map((id) => userObj[id]);
+};
+
+export const usersByCompanyIdLoader = () => new Dataloader(batchUsersByCompanyIdFn);
 export const rolesByUserIdLoader = () => new Dataloader(batchRolesByUserIdFn);
 export const avatarByIdLoader = () => new Dataloader(batchAvatarsByIdFn);
 export const addressByUserIdLoader = () => new Dataloader(batchAddressByUserIdFn);
 export const recordByUserIdLoader = () => new Dataloader(batchRecordByUserIdFn);
+export const usersByIdLoader = () => new Dataloader(batchUsersByIdFn);

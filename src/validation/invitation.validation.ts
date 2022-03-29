@@ -10,11 +10,11 @@ const messages = {
     'any.required': strings.emailRequired,
     'string.email': strings.emailNotValid,
   },
-  client: {
-    'string.base': strings.clientRequired,
-    'string.empty': strings.clientRequired,
-    'string.name': strings.clientRequired,
-    'any.required': strings.clientRequired,
+  company: {
+    'string.base': strings.companyRequired,
+    'string.empty': strings.companyRequired,
+    'string.name': strings.companyRequired,
+    'any.required': strings.companyRequired,
   },
   inviter: {
     'string.base': strings.inviterRequired,
@@ -34,7 +34,7 @@ export default class InvitationValidation {
   static create() {
     return Joi.object({
       email: Joi.string().email().required().messages(messages.email),
-      client_id: Joi.string().required().messages(messages.client),
+      company_id: Joi.string().required().messages(messages.company),
       inviter_id: Joi.string().required().messages(messages.inviter),
       role: Joi.string().required().messages(messages.role),
     });

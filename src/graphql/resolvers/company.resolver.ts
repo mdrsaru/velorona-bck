@@ -1,70 +1,57 @@
 import { inject, injectable } from 'inversify';
-import {
-  Resolver,
-  Query,
-  Ctx,
-  Arg,
-  Mutation,
-  UseMiddleware,
-  FieldResolver,
-  Root,
-} from 'type-graphql';
+import { Resolver, Query, Ctx, Arg, Mutation, UseMiddleware, FieldResolver, Root } from 'type-graphql';
 
 import { TYPES } from '../../types';
 import Paging from '../../utils/paging';
 import User from '../../entities/user.entity';
-import Client from '../../entities/client.entity';
+import Company from '../../entities/company.entity';
 import { Role as RoleEnum } from '../../config/constants';
-import ClientValidation from '../../validation/client.validation';
+import CompanyValidation from '../../validation/company.validation';
 import authenticate from '../middlewares/authenticate';
 import authorize from '../middlewares/authorize';
 import {
-  ClientPagingResult,
-  ClientQueryInput,
-  ClientCreateInput,
-  ClientUpdateInput,
-} from '../../entities/client.entity';
-import {
-  PagingInput,
-  DeleteInput,
-  MessageResponse,
-} from '../../entities/common.entity';
+  CompanyPagingResult,
+  CompanyQueryInput,
+  CompanyCreateInput,
+  CompanyUpdateInput,
+} from '../../entities/company.entity';
+import { PagingInput, DeleteInput, MessageResponse } from '../../entities/common.entity';
 
 import { IPaginationData } from '../../interfaces/paging.interface';
-import { IClient, IClientService } from '../../interfaces/client.interface';
+import { ICompany, ICompanyService } from '../../interfaces/company.interface';
 import { IErrorService, IJoiService } from '../../interfaces/common.interface';
 import { IGraphqlContext } from '../../interfaces/graphql.interface';
 
 @injectable()
-@Resolver((of) => Client)
-export class ClientResolver {
-  private name = 'ClientResolver';
-  private clientService: IClientService;
+@Resolver((of) => Company)
+export class CompanyResolver {
+  private name = 'CompanyResolver';
+  private companyService: ICompanyService;
   private joiService: IJoiService;
   private errorService: IErrorService;
 
   constructor(
-    @inject(TYPES.ClientService) clientService: IClientService,
+    @inject(TYPES.CompanyService) companyService: ICompanyService,
     @inject(TYPES.JoiService) joiService: IJoiService,
     @inject(TYPES.ErrorService) errorService: IErrorService
   ) {
-    this.clientService = clientService;
+    this.companyService = companyService;
     this.joiService = joiService;
     this.errorService = errorService;
   }
 
-  @Query((returns) => ClientPagingResult)
+  @Query((returns) => CompanyPagingResult)
   @UseMiddleware(authenticate)
-  async Client(
-    @Arg('input', { nullable: true }) args: ClientQueryInput,
+  async Company(
+    @Arg('input', { nullable: true }) args: CompanyQueryInput,
     @Ctx() ctx: any
-  ): Promise<IPaginationData<Client>> {
-    const operation = 'Clients';
+  ): Promise<IPaginationData<Company>> {
+    const operation = 'Companys';
 
     try {
       const pagingArgs = Paging.createPagingPayload(args);
-      let result: IPaginationData<Client> =
-        await this.clientService.getAllAndCount(pagingArgs);
+      let result: IPaginationData<Company> = await this.companyService.getAllAndCount(pagingArgs);
+
       return result;
     } catch (err) {
       this.errorService.throwError({
@@ -76,33 +63,33 @@ export class ClientResolver {
     }
   }
 
-  @Mutation((returns) => Client)
+  @Mutation((returns) => Company)
   @UseMiddleware(authenticate, authorize(RoleEnum.SuperAdmin))
-  async ClientCreate(
-    @Arg('input') args: ClientCreateInput,
-    @Ctx() ctx: any
-  ): Promise<Client> {
-    const operation = 'ClientCreate';
+  async CompanyCreate(@Arg('input') args: CompanyCreateInput, @Ctx() ctx: any): Promise<Company> {
+    const operation = 'CompanyCreate';
 
     try {
       const name = args.name;
       const status = args.status;
+      const isArchived = args?.isArchived;
 
-      const schema = ClientValidation.create();
+      const schema = CompanyValidation.create();
       await this.joiService.validate({
         schema,
         input: {
           name,
           status,
+          isArchived,
         },
       });
 
-      let client: Client = await this.clientService.create({
+      let company: Company = await this.companyService.create({
         name,
         status,
+        isArchived,
       });
 
-      return client;
+      return company;
     } catch (err) {
       this.errorService.throwError({
         err,
@@ -113,36 +100,36 @@ export class ClientResolver {
     }
   }
 
-  @Mutation((returns) => Client)
+  @Mutation((returns) => Company)
   @UseMiddleware(authenticate, authorize(RoleEnum.SuperAdmin))
-  async ClientUpdate(
-    @Arg('input') args: ClientUpdateInput,
-    @Ctx() ctx: any
-  ): Promise<Client> {
-    const operation = 'ClientUpdate';
+  async CompanyUpdate(@Arg('input') args: CompanyUpdateInput, @Ctx() ctx: any): Promise<Company> {
+    const operation = 'CompanyUpdate';
 
     try {
       const id = args.id;
       const name = args.name;
       const status = args.status;
+      const isArchived = args?.isArchived;
 
-      const schema = ClientValidation.update();
+      const schema = CompanyValidation.update();
       await this.joiService.validate({
         schema,
         input: {
           id,
           name,
           status,
+          isArchived,
         },
       });
 
-      let client: Client = await this.clientService.update({
+      let company: Company = await this.companyService.update({
         id,
         name,
         status,
+        isArchived,
       });
 
-      return client;
+      return company;
     } catch (err) {
       this.errorService.throwError({
         err,
@@ -153,20 +140,17 @@ export class ClientResolver {
     }
   }
 
-  @Mutation((returns) => Client)
+  @Mutation((returns) => Company)
   @UseMiddleware(authenticate, authorize(RoleEnum.SuperAdmin))
-  async ClientDelete(
-    @Arg('input') args: DeleteInput,
-    @Ctx() ctx: any
-  ): Promise<Client> {
-    const operation = 'ClientDelete';
+  async CompanyDelete(@Arg('input') args: DeleteInput, @Ctx() ctx: any): Promise<Company> {
+    const operation = 'CompanyDelete';
 
     try {
       const id = args.id;
 
-      let client: Client = await this.clientService.remove({ id });
+      let company: Company = await this.companyService.remove({ id });
 
-      return client;
+      return company;
     } catch (err) {
       this.errorService.throwError({
         err,
@@ -178,7 +162,7 @@ export class ClientResolver {
   }
 
   @FieldResolver()
-  users(@Root() root: Client, @Ctx() ctx: IGraphqlContext) {
-    return ctx.loaders.usersByClientIdLoader.load(root.id);
+  users(@Root() root: Company, @Ctx() ctx: IGraphqlContext) {
+    return ctx.loaders.usersByCompanyIdLoader.load(root.id);
   }
 }

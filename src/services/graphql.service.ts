@@ -5,7 +5,7 @@ import { TYPES } from '../types';
 import config from '../config/constants';
 import container from '../inversify.config';
 import User from '../entities/user.entity';
-import * as clientLoader from '../loaders/dataloader/client.dataloader';
+import * as companyLoader from '../loaders/dataloader/company.dataloader';
 import * as userLoader from '../loaders/dataloader/user.dataloader';
 
 import { IGraphql, IGraphqlContext } from '../interfaces/graphql.interface';
@@ -59,7 +59,7 @@ export default class GraphqlService implements IGraphql {
 
         user = await userRepository.getById({
           id: decoded.id,
-          relations: ['roles', 'client'],
+          relations: ['roles', 'company'],
         });
       }
     } catch (err: any) {
@@ -75,12 +75,13 @@ export default class GraphqlService implements IGraphql {
       res,
       user,
       loaders: {
-        clientByIdLoader: clientLoader.clientByIdLoader(),
-        usersByClientIdLoader: userLoader.usersByClientIdLoader(),
+        companyByIdLoader: companyLoader.companyByIdLoader(),
+        usersByCompanyIdLoader: userLoader.usersByCompanyIdLoader(),
         rolesByUserIdLoader: userLoader.rolesByUserIdLoader(),
         avatarByIdLoader: userLoader.avatarByIdLoader(),
         addressByUserIdLoader: userLoader.addressByUserIdLoader(),
         recordByUserIdLoader: userLoader.recordByUserIdLoader(),
+        usersByIdLoader: userLoader.usersByIdLoader(),
       },
     };
   };

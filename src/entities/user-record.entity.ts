@@ -10,15 +10,15 @@ import { entities } from '../config/constants';
 @ObjectType()
 export default class UserRecord extends Base {
   @Field({ nullable: true })
-  @Column()
+  @Column({ name: 'start_date' })
   startDate: Date;
 
   @Field({ nullable: true })
-  @Column()
+  @Column({ name: 'end_date' })
   endDate: Date;
 
   @Field({ nullable: true })
-  @Column()
+  @Column({ name: 'pay_rate' })
   payRate: number;
 
   @Field()

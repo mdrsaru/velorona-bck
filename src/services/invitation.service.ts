@@ -48,12 +48,12 @@ export default class InvitationService implements IInvitationService {
     try {
       const email = args.email;
       const inviter_id = args.inviter_id;
-      const client_id = args.client_id;
+      const company_id = args.company_id;
       const role = args.role;
 
       const invitation = await this.invitationRepository.create({
         email,
-        client_id,
+        company_id,
         inviter_id,
         role,
       });

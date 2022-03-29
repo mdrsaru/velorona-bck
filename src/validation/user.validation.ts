@@ -79,7 +79,7 @@ export default class UserValidation {
       lastName: Joi.string().required().messages(messages.lastName),
       middleName: Joi.string(),
       phone: Joi.string().required().messages(messages.phone),
-      client_id: Joi.string(),
+      company_id: Joi.string(),
       address: Joi.object(),
       roles: Joi.array().items(Joi.string().required()).required(),
       record: Joi.object({
@@ -87,7 +87,7 @@ export default class UserValidation {
         endDate: Joi.date(),
         payRate: Joi.number(),
       })
-        .when('client_id', {
+        .when('company_id', {
           is: undefined,
           then: Joi.object({
             startDate: Joi.date().required().messages(messages.startDate),
@@ -111,7 +111,7 @@ export default class UserValidation {
       record: Joi.object({
         startDate: Joi.date(),
         endDate: Joi.date(),
-        payDate: Joi.number(),
+        payRate: Joi.number(),
       }),
     });
   }

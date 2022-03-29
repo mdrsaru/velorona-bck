@@ -1,6 +1,6 @@
 import User from '../entities/user.entity';
 import Role from '../entities/role.entity';
-import Client from '../entities/client.entity';
+import Company from '../entities/company.entity';
 import { IEntityID } from './common.interface';
 import { IAddressCreateInput } from './address.interface';
 import { IUserRecordCreateInput } from './user-record.interface';
@@ -9,7 +9,7 @@ import { IUser } from './user.interface';
 export interface ILoginInput {
   email: string;
   password: string;
-  clientCode?: string;
+  companyCode?: string;
 }
 
 export interface IForgotPasswordInput {
@@ -25,7 +25,7 @@ export interface ILoginResponse {
   token: string;
   roles: Role[];
   refreshToken: string;
-  client?: Client;
+  company?: Company;
 }
 
 export interface IForgotPasswordResponse {

@@ -20,29 +20,26 @@ import {
   IUserUpdate,
   IUserRepository,
   IEmailQuery,
-  IEmailClientQuery,
+  IEmailCompanyQuery,
 } from '../interfaces/user.interface';
 import { IRoleRepository } from '../interfaces/role.interface';
-import { IClientRepository } from '../interfaces/client.interface';
+import { ICompanyRepository } from '../interfaces/company.interface';
 
 @injectable()
-export default class UserRepository
-  extends BaseRepository<User>
-  implements IUserRepository
-{
+export default class UserRepository extends BaseRepository<User> implements IUserRepository {
   private hashService: IHashService;
   private roleRepository: IRoleRepository;
-  private clientRepository: IClientRepository;
+  private companyRepository: ICompanyRepository;
 
   constructor(
     @inject(TYPES.HashService) _hashService: IHashService,
     @inject(TYPES.RoleRepository) _roleRepository: IRoleRepository,
-    @inject(TYPES.ClientRepository) _clientRepository: IClientRepository
+    @inject(TYPES.CompanyRepository) _companyRepository: ICompanyRepository
   ) {
     super(getRepository(User));
     this.hashService = _hashService;
     this.roleRepository = _roleRepository;
-    this.clientRepository = _clientRepository;
+    this.companyRepository = _companyRepository;
   }
 
   create = async (args: IUserCreateRepo): Promise<User> => {
@@ -54,10 +51,12 @@ export default class UserRepository
       const lastName = args.lastName;
       const middleName = args.middleName;
       const status = args.status;
-      const client_id = args.client_id;
+      const company_id = args.company_id;
       const address = args?.address;
       const roles = args.roles;
       const record = args.record;
+      const isArchived = args?.isArchived ?? false;
+
       const errors: string[] = [];
 
       if (isNil(email) || !isString(email)) {
@@ -80,9 +79,9 @@ export default class UserRepository
       }
 
       let found;
-      if (client_id) {
-        // Get users related to clients
-        found = await this.repo.findOne({ where: { email, client_id } });
+      if (company_id) {
+        // Get users related to companys
+        found = await this.repo.findOne({ where: { email, company_id } });
       } else {
         // Super Admin
         found = await this.repo.findOne({ where: { email } });
@@ -106,10 +105,7 @@ export default class UserRepository
         });
       }
 
-      const hashedPassword = await this.hashService.hash(
-        password,
-        config.saltRounds
-      );
+      const hashedPassword = await this.hashService.hash(password, config.saltRounds);
 
       const user = await this.repo.save({
         email,
@@ -119,10 +115,11 @@ export default class UserRepository
         middleName,
         status,
         phone,
-        client_id,
+        company_id,
         address,
         roles: existingRoles,
         record,
+        isArchived,
       });
 
       return user;
@@ -153,12 +150,10 @@ export default class UserRepository
           details: [strings.userNotFound],
         });
       }
+
       let hashedPassword;
       if (password) {
-        hashedPassword = await this.hashService.hash(
-          password,
-          config.saltRounds
-        );
+        hashedPassword = await this.hashService.hash(password, config.saltRounds);
       }
       const update = merge(found, {
         id,
@@ -184,14 +179,12 @@ export default class UserRepository
     }
   };
 
-  getByEmailAndNoClient = async (
-    args: IEmailQuery
-  ): Promise<User | undefined> => {
+  getByEmailAndNoCompany = async (args: IEmailQuery): Promise<User | undefined> => {
     try {
       const user = await this.repo.findOne({
         where: {
           email: args.email,
-          client_id: IsNull(),
+          company_id: IsNull(),
         },
         relations: args?.relations ?? [],
       });
@@ -202,26 +195,24 @@ export default class UserRepository
     }
   };
 
-  getByEmailAndClientCode = async (
-    args: IEmailClientQuery
-  ): Promise<User | undefined> => {
+  getByEmailAndCompanyCode = async (args: IEmailCompanyQuery): Promise<User | undefined> => {
     try {
-      const clientCode = args.clientCode;
+      const companyCode = args.companyCode;
       const email = args.email;
 
-      const client = await this.clientRepository.getByClientCode({
-        clientCode,
+      const company = await this.companyRepository.getByCompanyCode({
+        companyCode,
       });
-      if (!client) {
+      if (!company) {
         throw new apiError.NotFoundError({
-          details: [strings.clientNotFound],
+          details: [strings.companyNotFound],
         });
       }
 
       const user = await this.repo.findOne(
         {
           email,
-          client_id: client.id,
+          company_id: company.id,
         },
         {
           relations: args?.relations ?? [],

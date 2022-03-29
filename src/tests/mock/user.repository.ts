@@ -7,32 +7,19 @@ import config from '../../config/constants';
 import strings from '../../config/strings';
 import User from '../../entities/user.entity';
 import { IEntityID, IEntityRemove } from '../../interfaces/common.interface';
-import {
-  IUser,
-  IUserCreate,
-  IUserUpdate,
-  IEmailQuery,
-  IEmailClientQuery,
-} from '../../interfaces/user.interface';
-import {
-  IPaginationData,
-  IPagingArgs,
-  IGetAllAndCountResult,
-} from '../../interfaces/paging.interface';
+import { IUser, IUserCreate, IUserUpdate, IEmailQuery, IEmailCompanyQuery } from '../../interfaces/user.interface';
+import { IPaginationData, IPagingArgs, IGetAllAndCountResult } from '../../interfaces/paging.interface';
 import { users } from './data';
 import Paging from '../../utils/paging';
 import { ConflictError, NotFoundError } from '../../utils/api-error';
 
 function generateUuid() {
   var dt = new Date().getTime();
-  var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(
-    /[xy]/g,
-    function (c) {
-      var r = (dt + Math.random() * 16) % 16 | 0;
-      dt = Math.floor(dt / 16);
-      return (c == 'x' ? r : (r & 0x3) | 0x8).toString(16);
-    }
-  );
+  var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+    var r = (dt + Math.random() * 16) % 16 | 0;
+    dt = Math.floor(dt / 16);
+    return (c == 'x' ? r : (r & 0x3) | 0x8).toString(16);
+  });
   return uuid;
 }
 
@@ -40,9 +27,7 @@ const date = '2022-03-08T08:01:04.776Z';
 
 @injectable()
 export default class UserRepository implements IUserRepository {
-  getAllAndCount = (
-    args: IPagingArgs
-  ): Promise<IGetAllAndCountResult<User>> => {
+  getAllAndCount = (args: IPagingArgs): Promise<IGetAllAndCountResult<User>> => {
     return Promise.resolve({
       count: users.length,
       rows: users as User[],
@@ -107,13 +92,11 @@ export default class UserRepository implements IUserRepository {
     throw new Error('not implemented');
   };
 
-  getByEmailAndNoClient = (args: IEmailQuery): Promise<User | undefined> => {
+  getByEmailAndNoCompany = (args: IEmailQuery): Promise<User | undefined> => {
     throw new Error('not implemented');
   };
 
-  getByEmailAndClientCode = (
-    args: IEmailClientQuery
-  ): Promise<User | undefined> => {
+  getByEmailAndCompanyCode = (args: IEmailCompanyQuery): Promise<User | undefined> => {
     throw new Error('not implemented');
   };
 }

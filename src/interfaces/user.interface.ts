@@ -1,22 +1,10 @@
-import {
-  IPagingArgs,
-  IGetAllAndCountResult,
-  IPaginationData,
-} from './paging.interface';
+import { IPagingArgs, IGetAllAndCountResult, IPaginationData } from './paging.interface';
 import { IEntityRemove, IEntityID } from './common.interface';
 import User from '../entities/user.entity';
 import Role from '../entities/role.entity';
 import { UserStatus } from '../config/constants';
-import {
-  IAddress,
-  IAddressCreateInput,
-  IAddressUpdateInput,
-} from './address.interface';
-import {
-  IUserRecord,
-  IUserRecordCreateInput,
-  IUserRecordUpdateInput,
-} from './user-record.interface';
+import { IAddress, IAddressCreateInput, IAddressUpdateInput } from './address.interface';
+import { IUserRecord, IUserRecordCreateInput, IUserRecordUpdateInput } from './user-record.interface';
 
 export interface IUser {
   id: string;
@@ -30,6 +18,7 @@ export interface IUser {
   address?: IAddress;
   roles: Role[];
   record?: IUserRecord;
+  isArchived: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -39,9 +28,9 @@ export interface IEmailQuery {
   relations?: string[];
 }
 
-export interface IEmailClientQuery {
+export interface IEmailCompanyQuery {
   email: string;
-  clientCode: string;
+  companyCode: string;
   relations?: string[];
 }
 
@@ -53,13 +42,14 @@ export interface IUserCreate {
   phone: IUser['phone'];
   status: IUser['status'];
   roles: string[];
-  client_id?: string;
+  company_id?: string;
   address?: IAddressCreateInput;
   record?: IUserRecordCreateInput;
 }
 
 export interface IUserCreateRepo extends IUserCreate {
   password: IUser['password'];
+  isArchived?: IUser['isArchived'];
 }
 
 export interface IChangeProfilePictureInput {
@@ -88,13 +78,13 @@ export interface IUserRepository {
   update(args: IUserUpdate): Promise<User>;
   remove(args: IEntityRemove): Promise<User>;
   /**
-   * Gets user by email and client with null values
+   * Gets user by email and company with null values
    */
-  getByEmailAndNoClient(args: IEmailQuery): Promise<User | undefined>;
+  getByEmailAndNoCompany(args: IEmailQuery): Promise<User | undefined>;
   /**
-   * Gets user by email with the provided client
+   * Gets user by email with the provided company
    */
-  getByEmailAndClientCode(args: IEmailClientQuery): Promise<User | undefined>;
+  getByEmailAndCompanyCode(args: IEmailCompanyQuery): Promise<User | undefined>;
 }
 
 export interface IUserService {

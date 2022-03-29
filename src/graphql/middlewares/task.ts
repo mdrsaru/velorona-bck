@@ -10,20 +10,17 @@ import * as apiError from '../../utils/api-error';
 
 const name = 'task.middleware';
 
-export const canCreateTask: MiddlewareFn<IGraphqlContext> = async (
-  { context, args },
-  next: NextFn
-) => {
+export const canCreateTask: MiddlewareFn<IGraphqlContext> = async ({ context, args }, next: NextFn) => {
   const operation = 'canCreateTask';
   const errorService = container.get<IErrorService>(TYPES.ErrorService);
 
   try {
     const roles = context.user?.roles ?? [];
-    const hasClientAccess = context?.user?.client?.id !== args.input?.client_id;
+    const hasCompanyAccess = context?.user?.company?.id !== args.input?.company_id;
 
-    if (!isSuperAdmin({ roles }) && hasClientAccess) {
+    if (!isSuperAdmin({ roles }) && hasCompanyAccess) {
       throw new apiError.ForbiddenError({
-        details: [strings.canOnlyCreateOnOwnClient],
+        details: [strings.canOnlyCreateOnOwnCompany],
       });
     }
 
@@ -38,20 +35,17 @@ export const canCreateTask: MiddlewareFn<IGraphqlContext> = async (
   }
 };
 
-export const canViewTask: MiddlewareFn<IGraphqlContext> = async (
-  { context, args },
-  next: NextFn
-) => {
+export const canViewTask: MiddlewareFn<IGraphqlContext> = async ({ context, args }, next: NextFn) => {
   const operation = 'canViewTask';
   const errorService = container.get<IErrorService>(TYPES.ErrorService);
 
   try {
     const roles = context.user?.roles ?? [];
-    const hasClientAccess = context?.user?.client?.id !== args.input?.client_id;
+    const hasCompanyAccess = context?.user?.company?.id !== args.input?.company_id;
 
-    if (!isSuperAdmin({ roles }) && hasClientAccess) {
+    if (!isSuperAdmin({ roles }) && hasCompanyAccess) {
       throw new apiError.ForbiddenError({
-        details: [strings.canOnlyViewOwnClient],
+        details: [strings.canOnlyViewOwnCompany],
       });
     }
 
