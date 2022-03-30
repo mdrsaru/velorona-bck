@@ -13,16 +13,13 @@ import { IGraphqlContext } from '../../interfaces/graphql.interface';
 
 const name = 'user.middleware';
 
-export const canCreateSystemAdmin: MiddlewareFn<IGraphqlContext> = async (
-  { context, args },
-  next: NextFn
-) => {
+export const canCreateSystemAdmin: MiddlewareFn<IGraphqlContext> = async ({ context, args }, next: NextFn) => {
   const operation = 'canCreateSystemAdmin';
   const errorService = container.get<IErrorService>(TYPES.ErrorService);
   const roleRepo = container.get<IRoleRepository>(TYPES.RoleRepository);
 
   try {
-    const roles = await roleRepo.getAll({ query: { id: args.input.roles } });
+    const roles = context.user?.roles ?? [];
     const superAdmin = find(roles, { name: RoleEnum.SuperAdmin });
 
     // If user is trying to create super admin

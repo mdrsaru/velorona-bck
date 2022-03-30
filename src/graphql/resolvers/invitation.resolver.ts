@@ -7,7 +7,7 @@ import Company from '../../entities/company.entity';
 import Paging from '../../utils/paging';
 import authenticate from '../middlewares/authenticate';
 import authorize from '../middlewares/authorize';
-import { canCreateInvitation } from '../middlewares/invitation';
+import { checkCompanyAccess } from '../middlewares/company';
 import InvitationValidation from '../../validation/invitation.validation';
 import { PagingInput, DeleteInput, MessageResponse } from '../../entities/common.entity';
 
@@ -43,7 +43,7 @@ export class InvitationResolver {
   }
 
   @Query((returns) => InvitationPagingResult)
-  @UseMiddleware(authenticate)
+  @UseMiddleware(authenticate, authorize(RoleEnum.CompanyAdmin, RoleEnum.SuperAdmin), checkCompanyAccess)
   async Invitation(@Arg('input') args: InvitationQueryInput, @Ctx() ctx: any): Promise<IPaginationData<Invitation>> {
     const operation = 'Invitation';
 
@@ -62,7 +62,7 @@ export class InvitationResolver {
   }
 
   @Mutation((returns) => Invitation)
-  @UseMiddleware(authenticate, authorize(RoleEnum.CompanyAdmin, RoleEnum.SuperAdmin), canCreateInvitation)
+  @UseMiddleware(authenticate, authorize(RoleEnum.CompanyAdmin, RoleEnum.SuperAdmin), checkCompanyAccess)
   async InvitationCreate(@Arg('input') args: InvitationCreateInput, @Ctx() ctx: IGraphqlContext): Promise<Invitation> {
     const operation = 'InvitationCreate';
 
@@ -102,7 +102,7 @@ export class InvitationResolver {
   }
 
   @Mutation((returns) => Invitation)
-  @UseMiddleware(authenticate, authorize(RoleEnum.CompanyAdmin, RoleEnum.SuperAdmin))
+  @UseMiddleware(authenticate, authorize(RoleEnum.CompanyAdmin, RoleEnum.SuperAdmin), checkCompanyAccess)
   async InvitationRenew(@Arg('input') args: InvitationRenewInput): Promise<Invitation> {
     const operation = 'InvitationRenew';
 

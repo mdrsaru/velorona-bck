@@ -7,6 +7,7 @@ import Company from '../../entities/company.entity';
 import Paging from '../../utils/paging';
 import authenticate from '../middlewares/authenticate';
 import { canCreateSystemAdmin } from '../middlewares/user';
+import { checkCompanyAccess } from '../middlewares/company';
 import authorize from '../middlewares/authorize';
 import UserValidation from '../../validation/user.validation';
 import { PagingInput, DeleteInput, MessageResponse } from '../../entities/common.entity';
@@ -64,7 +65,12 @@ export class UserResolver {
   }
 
   @Mutation((returns) => User)
-  @UseMiddleware(authenticate, authorize(RoleEnum.CompanyAdmin, RoleEnum.SuperAdmin), canCreateSystemAdmin)
+  @UseMiddleware(
+    authenticate,
+    authorize(RoleEnum.CompanyAdmin, RoleEnum.SuperAdmin),
+    canCreateSystemAdmin,
+    checkCompanyAccess
+  )
   async UserCreate(@Arg('input') args: UserCreateInput): Promise<User> {
     const operation = 'UserCreate';
 

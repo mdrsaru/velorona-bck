@@ -29,7 +29,7 @@ export default {
   inviterRequired: 'Inviter required',
   companyRequired: 'Company required',
   userAlreadyExistsInCompany: 'User already exists',
-  notAllowedToPerformAction: 'User is not allowed to perform the action',
+  notAllowedToPerformAction: 'User is not allowed to perform the action or view the resource',
   canOnlyInviteToOwnCompany: 'User can only invite to its own workspace',
   canOnlyViewOwnCompany: 'User can only view its own company invitations',
   canOnlyCreateOnOwnCompany: 'User can only create on its own workspace',
@@ -45,5 +45,6 @@ export default {
   roleRequired: 'Role required',
   invitationExpired: 'Invitation expired',
   alreadyAssigned: 'Assigned task couldn`t change status',
+  invitationAlreadyApproved: 'Invitation already approved',
   companyArchived: 'Company is archived',
 };
