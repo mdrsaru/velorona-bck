@@ -91,6 +91,9 @@ export class InvitationCreateInput {
 export class InvitationRenewInput {
   @Field()
   id: string;
+
+  @Field()
+  company_id: string;
 }
 
 @InputType()

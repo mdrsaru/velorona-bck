@@ -141,6 +141,12 @@ export default class InvitationRepository extends BaseRepository<Invitation> imp
         });
       }
 
+      if (expiresIn && found.status === InvitationStatus.Approved) {
+        throw new apiError.ValidationError({
+          details: [strings.invitationAlreadyApproved],
+        });
+      }
+
       const update = merge(found, {
         status,
         expiresIn,
