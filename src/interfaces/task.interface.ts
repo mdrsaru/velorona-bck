@@ -46,4 +46,5 @@ export interface ITaskRepository {
   update(args: ITaskUpdateInput): Promise<Task>;
   remove(args: IEntityRemove): Promise<Task>;
   assignTask(args: IAssignTask): Promise<Task>;
+  getAssignedTask(args: IEntityID): Promise<Task | undefined>;
 }

@@ -48,4 +48,6 @@ export default {
   invitationAlreadyApproved: 'Invitation already approved',
   companyArchived: 'Company is archived',
   endDateMustBeValidDate: 'End date must be a valid date that occurs after the start date',
+  notAllowedToChangeStatus: 'Assigned task is not allowed to change status',
+  archievedTask: 'Task is archieved',
 };
