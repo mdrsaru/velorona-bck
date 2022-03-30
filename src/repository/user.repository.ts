@@ -1,4 +1,5 @@
 import merge from 'lodash/merge';
+import isDate from 'lodash/isDate';
 
 import isNil from 'lodash/isNil';
 import isString from 'lodash/isString';
@@ -78,6 +79,16 @@ export default class UserRepository extends BaseRepository<User> implements IUse
         errors.push(strings.rolesRequired);
       }
 
+      if (record?.startDate && record?.endDate && record.endDate <= record.startDate) {
+        errors.push(strings.endDateMustBeValidDate);
+      }
+
+      if (errors.length) {
+        throw new apiError.ValidationError({
+          details: errors,
+        });
+      }
+
       let found;
       if (company_id) {
         // Get users related to companys
@@ -136,9 +147,9 @@ export default class UserRepository extends BaseRepository<User> implements IUse
       const middleName = args.middleName;
       const status = args.status;
       const phone = args.phone;
-      const address = args?.address;
+      const address = args?.address ?? {};
       const password = args?.password;
-      const record = args?.record;
+      const record = args?.record ?? {};
       const avatar_id = args?.avatar_id;
 
       const found = await this.repo.findOne(id, {
@@ -155,6 +166,7 @@ export default class UserRepository extends BaseRepository<User> implements IUse
       if (password) {
         hashedPassword = await this.hashService.hash(password, config.saltRounds);
       }
+
       const update = merge(found, {
         id,
         firstName,
@@ -162,13 +174,16 @@ export default class UserRepository extends BaseRepository<User> implements IUse
         middleName,
         status,
         phone,
+        avatar_id,
+        password: hashedPassword,
         address: {
           ...(found.address ?? {}),
           ...address,
         },
-        password: hashedPassword,
-        record,
-        avatar_id,
+        record: {
+          ...(found?.record ?? {}),
+          ...record,
+        },
       });
 
       const user = await this.repo.save(update);

@@ -47,4 +47,5 @@ export default {
   alreadyAssigned: 'Assigned task couldn`t change status',
   invitationAlreadyApproved: 'Invitation already approved',
   companyArchived: 'Company is archived',
+  endDateMustBeValidDate: 'End date must be a valid date that occurs after the start date',
 };

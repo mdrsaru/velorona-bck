@@ -105,14 +105,6 @@ export default class User extends Base {
   })
   record: UserRecord;
 
-  // @Field(() => Task, { nullable: true })
-  // @OneToMany(() => Task, (task) => task.manager)
-  // tasks: Task[];
-
-  // @Field(() => TaskAssignment, { nullable: true })
-  // @OneToMany(() => TaskAssignment, (taskAssignment) => taskAssignment.employee)
-  // taskAssignments: TaskAssignment[];
-
   @ManyToMany(() => Task)
   assignedTasks: Task[];
 }

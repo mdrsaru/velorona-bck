@@ -84,15 +84,15 @@ export default class UserValidation {
       roles: Joi.array().items(Joi.string().required()).required(),
       record: Joi.object({
         startDate: Joi.date(),
-        endDate: Joi.date(),
+        endDate: Joi.date().min(Joi.ref('startDate')).required().messages(messages.endDate),
         payRate: Joi.number(),
       })
         .when('company_id', {
           is: undefined,
           then: Joi.object({
-            startDate: Joi.date().required().messages(messages.startDate),
-            endDate: Joi.date().required().messages(messages.endDate),
-            payRate: Joi.number().required().messages(messages.payRate),
+            startDate: Joi.date().required().error(new Error(strings.startDateRequired)),
+            endDate: Joi.date().min(Joi.ref('startDate')).required().messages(messages.endDate),
+            payRate: Joi.number().required().error(new Error(strings.payRateRequired)),
           }).required(),
           otherwise: Joi.optional(),
         })
@@ -110,7 +110,7 @@ export default class UserValidation {
       address: Joi.object(),
       record: Joi.object({
         startDate: Joi.date(),
-        endDate: Joi.date(),
+        endDate: Joi.date().min(Joi.ref('startDate')).error(new Error(strings.endDateMustBeValidDate)),
         payRate: Joi.number(),
       }),
     });
