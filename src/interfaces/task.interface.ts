@@ -7,13 +7,12 @@ export interface ITask {
   id: string;
   name: string;
   status: TaskStatus;
-  is_archived: boolean;
+  isArchived: boolean;
 }
-
 export interface ITaskCreateInput {
   name: string;
   status: TaskStatus;
-  is_archived: boolean;
+  isArchived: boolean;
   manager_id: string;
   company_id: string;
 }
@@ -22,15 +21,21 @@ export interface ITaskUpdateInput {
   id: string;
   name?: string | undefined;
   status?: TaskStatus | undefined;
-  is_archived?: boolean | undefined;
+  isArchived?: boolean | undefined;
   manager_id?: string | undefined;
   company_id?: string | undefined;
+}
+
+export interface IAssignTask {
+  employee_id: string[];
+  task_id: string;
 }
 export interface ITaskService {
   getAllAndCount(filters?: any): Promise<IPaginationData<Task>>;
   create(args: ITaskCreateInput): Promise<Task>;
   update(args: ITaskUpdateInput): Promise<Task>;
   remove(args: IEntityRemove): Promise<Task>;
+  assignTask(args: IAssignTask): Promise<Task>;
 }
 
 export interface ITaskRepository {
@@ -40,4 +45,5 @@ export interface ITaskRepository {
   create(args: ITaskCreateInput): Promise<Task>;
   update(args: ITaskUpdateInput): Promise<Task>;
   remove(args: IEntityRemove): Promise<Task>;
+  assignTask(args: IAssignTask): Promise<Task>;
 }

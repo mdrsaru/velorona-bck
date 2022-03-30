@@ -1,9 +1,18 @@
 import { inject, injectable } from 'inversify';
+import strings from '../config/strings';
 import Task from '../entities/task.entity';
 import { IEntityRemove, IErrorService, ILogger } from '../interfaces/common.interface';
 import { IPaginationData, IPagingArgs } from '../interfaces/paging.interface';
-import { ITaskCreateInput, ITaskRepository, ITaskService, ITaskUpdateInput } from '../interfaces/task.interface';
+import {
+  IAssignTask,
+  ITaskCreateInput,
+  ITaskRepository,
+  ITaskService,
+  ITaskUpdateInput,
+} from '../interfaces/task.interface';
+import { IUserRepository } from '../interfaces/user.interface';
 import { TYPES } from '../types';
+import { ForbiddenError } from '../utils/api-error';
 import Paging from '../utils/paging';
 
 @injectable()
@@ -16,10 +25,12 @@ export default class TaskService implements ITaskService {
   constructor(
     @inject(TYPES.TaskRepository) taskRepository: ITaskRepository,
     @inject(TYPES.LoggerFactory) loggerFactory: (name: string) => ILogger,
-    @inject(TYPES.ErrorService) errorService: IErrorService
+    @inject(TYPES.ErrorService) errorService: IErrorService,
+    @inject(TYPES.UserRepository) _userRepository: IUserRepository
   ) {
     this.taskRepository = taskRepository;
     this.logger = loggerFactory(this.name);
+    this.errorService = errorService;
   }
 
   getAllAndCount = async (args: IPagingArgs): Promise<IPaginationData<Task>> => {
@@ -44,7 +55,7 @@ export default class TaskService implements ITaskService {
     const operation = 'create';
     const name = args.name;
     const status = args.status;
-    const is_archived = args.is_archived;
+    const isArchived = args.isArchived;
     const manager_id = args.manager_id;
     const company_id = args.company_id;
 
@@ -52,7 +63,7 @@ export default class TaskService implements ITaskService {
       let task = await this.taskRepository.create({
         name,
         status,
-        is_archived,
+        isArchived,
         manager_id,
         company_id,
       });
@@ -72,7 +83,7 @@ export default class TaskService implements ITaskService {
     const id = args?.id;
     const name = args?.name;
     const status = args?.status;
-    const is_archived = args?.is_archived;
+    const isArchived = args?.isArchived;
     const manager_id = args?.manager_id;
     const company_id = args?.company_id;
 
@@ -81,7 +92,7 @@ export default class TaskService implements ITaskService {
         id,
         name,
         status,
-        is_archived,
+        isArchived,
         manager_id,
         company_id,
       });
@@ -104,6 +115,28 @@ export default class TaskService implements ITaskService {
       return role;
     } catch (err) {
       throw err;
+    }
+  };
+
+  assignTask = async (args: IAssignTask) => {
+    const operation = 'assign';
+    try {
+      const employee_id = args.employee_id;
+      const task_id = args.task_id;
+
+      let taskAssignment = await this.taskRepository.assignTask({
+        employee_id,
+        task_id,
+      });
+
+      return taskAssignment;
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        operation,
+        name: this.name,
+        logError: true,
+      });
     }
   };
 }

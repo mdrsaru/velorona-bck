@@ -1,29 +1,34 @@
-import { injectable } from 'inversify';
+import { inject, injectable } from 'inversify';
 import { merge } from 'lodash';
 import { getRepository } from 'typeorm';
+import strings from '../config/strings';
 import Task from '../entities/task.entity';
-import { ITaskCreateInput, ITaskRepository, ITaskUpdateInput } from '../interfaces/task.interface';
-import { NotFoundError } from '../utils/api-error';
+import { IAssignTask, ITaskCreateInput, ITaskRepository, ITaskUpdateInput } from '../interfaces/task.interface';
+import { IUserRepository } from '../interfaces/user.interface';
+import { TYPES } from '../types';
+import { NotFoundError, ValidationError } from '../utils/api-error';
 import BaseRepository from './base.repository';
 
 @injectable()
 export default class TaskRepository extends BaseRepository<Task> implements ITaskRepository {
-  constructor() {
+  private userRepository: IUserRepository;
+  constructor(@inject(TYPES.UserRepository) userRepository: IUserRepository) {
     super(getRepository(Task));
+    this.userRepository = userRepository;
   }
 
   create(args: ITaskCreateInput): Promise<Task> {
     try {
       const name = args.name;
       const status = args.status;
-      const is_archived = args.is_archived;
+      const isArchived = args.isArchived;
       const manager_id = args.manager_id;
       const company_id = args.company_id;
 
       const task = this.repo.save({
         name,
         status,
-        is_archived,
+        isArchived,
         manager_id,
         company_id,
       });
@@ -38,7 +43,7 @@ export default class TaskRepository extends BaseRepository<Task> implements ITas
       const id = args?.id;
       const name = args.name;
       const status = args.status;
-      const is_archived = args.is_archived;
+      const isArchived = args.isArchived;
       const manager_id = args.manager_id;
       const company_id = args.company_id;
 
@@ -52,7 +57,7 @@ export default class TaskRepository extends BaseRepository<Task> implements ITas
         id,
         name,
         status,
-        is_archived,
+        isArchived,
         manager_id,
         company_id,
       });
@@ -63,4 +68,39 @@ export default class TaskRepository extends BaseRepository<Task> implements ITas
       throw err;
     }
   };
+
+  async assignTask(args: IAssignTask): Promise<Task> {
+    try {
+      const employee_id = args.employee_id;
+      const id = args.task_id;
+
+      const found = await this.getById({ id });
+      if (!found) {
+        throw new NotFoundError({
+          details: [strings.taskNotFound],
+        });
+      }
+
+      const existingUsers = await this.userRepository.getAll({
+        query: {
+          id: employee_id,
+        },
+      });
+
+      if (existingUsers?.length !== employee_id.length) {
+        throw new ValidationError({
+          details: [strings.userNotFound],
+        });
+      }
+      const update = merge(found, {
+        id,
+        users: existingUsers,
+      });
+
+      let task = await this.repo.save(update);
+      return task;
+    } catch (err) {
+      throw err;
+    }
+  }
 }

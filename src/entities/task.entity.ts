@@ -1,10 +1,9 @@
 import { Field, InputType, ObjectType, registerEnumType } from 'type-graphql';
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany } from 'typeorm';
 import { entities, TaskStatus } from '../config/constants';
 import { Base } from './base.entity';
 import Company from './company.entity';
 import { PagingInput, PagingResult } from './common.entity';
-import TaskAssignment from './task-assignment.entity';
 import User from './user.entity';
 
 registerEnumType(TaskStatus, {
@@ -28,13 +27,13 @@ export default class Task extends Base {
 
   @Field()
   @Column()
-  is_archived: boolean;
+  isArchived: boolean;
 
   @Field()
   @Column()
   manager_id: string;
 
-  @ManyToOne(() => User, (user) => user.tasks)
+  @ManyToOne(() => User)
   @JoinColumn({ name: 'manager_id' })
   manager: User;
 
@@ -46,9 +45,20 @@ export default class Task extends Base {
   @JoinColumn({ name: 'company_id' })
   company: Company;
 
-  @Field(() => TaskAssignment)
-  @OneToMany(() => TaskAssignment, (taskAssignment) => taskAssignment.task)
-  taskAssignment: TaskAssignment[];
+  @ManyToMany(() => User)
+  @JoinTable({
+    name: 'task_assignment',
+    joinColumn: {
+      name: 'task_id',
+      referencedColumnName: 'id',
+    },
+
+    inverseJoinColumn: {
+      name: 'employee_id',
+      referencedColumnName: 'id',
+    },
+  })
+  users: User[];
 }
 
 @InputType()
@@ -60,7 +70,7 @@ export class TaskCreateInput {
   status: TaskStatus;
 
   @Field()
-  is_archived: boolean;
+  isArchived: boolean;
 
   @Field()
   manager_id: string;
@@ -81,7 +91,7 @@ export class TaskUpdateInput {
   status: TaskStatus;
 
   @Field({ nullable: true })
-  is_archived: boolean;
+  isArchived: boolean;
 
   @Field({ nullable: true })
   manager_id: string;
@@ -117,4 +127,13 @@ export class TaskQueryInput {
 
   @Field({ nullable: true })
   query: TaskQuery;
+}
+
+@InputType()
+export class AssignTaskCreateInput {
+  @Field(() => [String])
+  employee_id: string[];
+
+  @Field()
+  task_id: string;
 }

@@ -11,7 +11,6 @@ import Address, { AddressCreateInput, AddressUpdateInput } from './address.entit
 import UserRecord, { UserRecordCreateInput, UserRecordUpdateInput } from './user-record.entity';
 import { entities, UserStatus } from '../config/constants';
 import Task from './task.entity';
-import TaskAssignment from './task-assignment.entity';
 
 registerEnumType(UserStatus, {
   name: 'UserStatus',
@@ -106,13 +105,16 @@ export default class User extends Base {
   })
   record: UserRecord;
 
-  @Field(() => Task, { nullable: true })
-  @OneToMany(() => Task, (task) => task.manager)
-  tasks: Task[];
+  // @Field(() => Task, { nullable: true })
+  // @OneToMany(() => Task, (task) => task.manager)
+  // tasks: Task[];
 
-  @Field(() => TaskAssignment, { nullable: true })
-  @OneToMany(() => TaskAssignment, (taskAssignment) => taskAssignment.employee)
-  taskAssignments: TaskAssignment[];
+  // @Field(() => TaskAssignment, { nullable: true })
+  // @OneToMany(() => TaskAssignment, (taskAssignment) => taskAssignment.employee)
+  // taskAssignments: TaskAssignment[];
+
+  @ManyToMany(() => Task)
+  assignedTasks: Task[];
 }
 
 @ObjectType()
