@@ -10,7 +10,6 @@ import userToken from './config/inversify/user-token';
 import media from './config/inversify/media';
 import invitation from './config/inversify/invitation';
 import task from './config/inversify/task';
-import taskAssignment from './config/inversify/task-assignment';
 import address from './config/inversify/address';
 import userRecord from './config/inversify/user-record';
 
@@ -34,7 +33,6 @@ container.load(
   invitation,
   handlebars,
   task,
-  taskAssignment,
   address,
   userRecord
 );

@@ -2,7 +2,13 @@ import { inject, injectable } from 'inversify';
 import { Arg, Ctx, Mutation, Query, Resolver, UseMiddleware } from 'type-graphql';
 
 import { DeleteInput } from '../../entities/common.entity';
-import Task, { TaskCreateInput, TaskPagingResult, TaskQueryInput, TaskUpdateInput } from '../../entities/task.entity';
+import Task, {
+  AssignTaskCreateInput,
+  TaskCreateInput,
+  TaskPagingResult,
+  TaskQueryInput,
+  TaskUpdateInput,
+} from '../../entities/task.entity';
 
 import { TYPES } from '../../types';
 import Paging from '../../utils/paging';
@@ -61,7 +67,7 @@ export class TaskResolver {
     try {
       const name = args.name;
       const status = args.status;
-      const is_archived = args.is_archived;
+      const isArchived = args.isArchived;
       const manager_id = args.manager_id;
       const company_id = args.company_id;
 
@@ -71,7 +77,7 @@ export class TaskResolver {
         input: {
           name,
           status,
-          is_archived,
+          isArchived,
           manager_id,
           company_id,
         },
@@ -79,7 +85,7 @@ export class TaskResolver {
       let task: Task = await this.taskService.create({
         name,
         status,
-        is_archived,
+        isArchived,
         manager_id,
         company_id,
       });
@@ -103,7 +109,7 @@ export class TaskResolver {
       const id = args.id;
       const name = args.name;
       const status = args.status;
-      const is_archived = args.is_archived;
+      const isArchived = args.isArchived;
       const manager_id = args.manager_id;
       const company_id = args.company_id;
 
@@ -114,7 +120,7 @@ export class TaskResolver {
           id,
           name,
           status,
-          is_archived,
+          isArchived,
           manager_id,
           company_id,
         },
@@ -124,7 +130,7 @@ export class TaskResolver {
         id,
         name,
         status,
-        is_archived,
+        isArchived,
         manager_id,
         company_id,
       });
@@ -149,6 +155,36 @@ export class TaskResolver {
       const id = args.id;
       let task: Task = await this.taskService.remove({ id });
 
+      return task;
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: false,
+      });
+    }
+  }
+
+  @Mutation((returns) => Task)
+  @UseMiddleware(authenticate)
+  async AssignTask(@Arg('input') args: AssignTaskCreateInput, @Ctx() ctx: any): Promise<Task> {
+    const operation = 'TaskAssign';
+    try {
+      const employee_id = args.employee_id;
+      const task_id = args.task_id;
+      const schema = TaskValidation.assignTask();
+      await this.joiService.validate({
+        schema,
+        input: {
+          employee_id,
+          task_id,
+        },
+      });
+      let task: Task = await this.taskService.assignTask({
+        employee_id,
+        task_id,
+      });
       return task;
     } catch (err) {
       this.errorService.throwError({
