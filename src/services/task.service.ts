@@ -1,7 +1,7 @@
 import { inject, injectable } from 'inversify';
 import strings from '../config/strings';
 import Task from '../entities/task.entity';
-import { IEntityRemove, IErrorService, ILogger } from '../interfaces/common.interface';
+import { IEntityID, IEntityRemove, IErrorService, ILogger } from '../interfaces/common.interface';
 import { IPaginationData, IPagingArgs } from '../interfaces/paging.interface';
 import {
   IAssignTask,
@@ -130,6 +130,25 @@ export default class TaskService implements ITaskService {
       });
 
       return taskAssignment;
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        operation,
+        name: this.name,
+        logError: true,
+      });
+    }
+  };
+
+  getAssignedTaskById = async (args: IEntityID) => {
+    const operation = 'assign';
+    try {
+      const id = args.id;
+
+      let task = await this.taskRepository.getAssignedTaskById({
+        id: id,
+      });
+      return task;
     } catch (err) {
       this.errorService.throwError({
         err,

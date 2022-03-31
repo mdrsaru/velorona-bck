@@ -45,6 +45,7 @@ export default class Task extends Base {
   @JoinColumn({ name: 'company_id' })
   company: Company;
 
+  @Field(() => [User])
   @ManyToMany(() => User)
   @JoinTable({
     name: 'task_assignment',
@@ -136,4 +137,13 @@ export class AssignTaskCreateInput {
 
   @Field()
   task_id: string;
+}
+
+@InputType()
+export class GetAssignedTaskByIdCreateInput {
+  @Field()
+  id: string;
+
+  @Field()
+  company_id: string;
 }

@@ -1,5 +1,6 @@
 import { TaskStatus } from '../config/constants';
 import Task from '../entities/task.entity';
+import User from '../entities/user.entity';
 import { IEntityID, IEntityRemove } from './common.interface';
 import { IGetAllAndCountResult, IPaginationData, IPagingArgs } from './paging.interface';
 
@@ -8,6 +9,7 @@ export interface ITask {
   name: string;
   status: TaskStatus;
   isArchived: boolean;
+  users: [User];
 }
 export interface ITaskCreateInput {
   name: string;
@@ -36,6 +38,7 @@ export interface ITaskService {
   update(args: ITaskUpdateInput): Promise<Task>;
   remove(args: IEntityRemove): Promise<Task>;
   assignTask(args: IAssignTask): Promise<Task>;
+  getAssignedTaskById(args: IEntityID): Promise<Task>;
 }
 
 export interface ITaskRepository {
@@ -46,4 +49,5 @@ export interface ITaskRepository {
   update(args: ITaskUpdateInput): Promise<Task>;
   remove(args: IEntityRemove): Promise<Task>;
   assignTask(args: IAssignTask): Promise<Task>;
+  getAssignedTaskById(args: IEntityID): Promise<Task>;
 }

@@ -3,6 +3,7 @@ import { merge } from 'lodash';
 import { getRepository } from 'typeorm';
 import strings from '../config/strings';
 import Task from '../entities/task.entity';
+import { IEntityID } from '../interfaces/common.interface';
 import { IAssignTask, ITaskCreateInput, ITaskRepository, ITaskUpdateInput } from '../interfaces/task.interface';
 import { IUserRepository } from '../interfaces/user.interface';
 import { TYPES } from '../types';
@@ -98,6 +99,18 @@ export default class TaskRepository extends BaseRepository<Task> implements ITas
       });
 
       let task = await this.repo.save(update);
+      return task;
+    } catch (err) {
+      throw err;
+    }
+  }
+  async getAssignedTaskById(args: IEntityID): Promise<Task> {
+    try {
+      const id = args.id;
+
+      const task: any = await this.repo.findOne(id, {
+        relations: ['users'],
+      });
       return task;
     } catch (err) {
       throw err;
