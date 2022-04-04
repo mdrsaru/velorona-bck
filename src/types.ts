@@ -26,6 +26,12 @@ const TASK_ASSIGNMENT = {
   TaskAssignmentController: Symbol('TaskAssignmentController'),
 };
 
+const PROJECT = {
+  ProjectRepository: Symbol('ProjectRepository'),
+  ProjectService: Symbol('ProjectService'),
+  ProjectController: Symbol('ProjectController'),
+};
+
 const COMMON = {
   AppService: Symbol('AppService'),
   AppController: Symbol('AppController'),
@@ -73,6 +79,7 @@ const TYPES = {
   ...INVITATION,
   ...TASK,
   ...TASK_ASSIGNMENT,
+  ...PROJECT,
 };
 
 export { TYPES };

@@ -52,6 +52,7 @@ export const entities = {
   invitations: 'invitations',
   tasks: 'tasks',
   taskAssignment: 'task_assignment',
+  projects: 'projects',
 };
 
 export enum CompanyStatus {
@@ -69,7 +70,7 @@ export enum Role {
   CompanyAdmin = 'CompanyAdmin',
   Employee = 'Employee',
   TaskManager = 'TaskManager',
-  Vendor = 'Vendor',
+  Client = 'Client',
 }
 
 export enum TokenType {

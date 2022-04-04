@@ -1,0 +1,110 @@
+import { inject, injectable } from 'inversify';
+
+import { TYPES } from '../types';
+import Paging from '../utils/paging';
+import Project from '../entities/project.entity';
+
+import { IPaginationData, IPagingArgs } from '../interfaces/paging.interface';
+import { IEntityID, IEntityRemove, IErrorService, ILogger } from '../interfaces/common.interface';
+import {
+  IProjectCreateInput,
+  IProjectRepository,
+  IProjectService,
+  IProjectUpdateInput,
+} from '../interfaces/project.interface';
+
+@injectable()
+export default class ProjectService implements IProjectService {
+  private name = 'ProjectService';
+  private projectRepository: IProjectRepository;
+  private logger: ILogger;
+  private errorService: IErrorService;
+
+  constructor(
+    @inject(TYPES.ProjectRepository) _projectRepository: IProjectRepository,
+    @inject(TYPES.LoggerFactory) loggerFactory: (name: string) => ILogger,
+    @inject(TYPES.ErrorService) _errorService: IErrorService
+  ) {
+    this.projectRepository = _projectRepository;
+    this.logger = loggerFactory(this.name);
+    this.errorService = _errorService;
+  }
+
+  getAllAndCount = async (args: IPagingArgs): Promise<IPaginationData<Project>> => {
+    try {
+      const { rows, count } = await this.projectRepository.getAllAndCount(args);
+
+      const paging = Paging.getPagingResult({
+        ...args,
+        total: count,
+      });
+
+      return {
+        paging,
+        data: rows,
+      };
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  create = async (args: IProjectCreateInput) => {
+    const operation = 'create';
+    const name = args.name;
+    const client_id = args.client_id;
+    const company_id = args.company_id;
+
+    try {
+      const project = await this.projectRepository.create({
+        name,
+        client_id,
+        company_id,
+      });
+
+      return project;
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        operation,
+        name: this.name,
+        logError: true,
+      });
+    }
+  };
+
+  update = async (args: IProjectUpdateInput) => {
+    const operation = 'update';
+    const id = args?.id;
+    const name = args?.name;
+
+    try {
+      let project = await this.projectRepository.update({
+        id,
+        name,
+      });
+
+      return project;
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        operation,
+        name: this.name,
+        logError: true,
+      });
+    }
+  };
+
+  remove = async (args: IEntityRemove) => {
+    try {
+      const id = args.id;
+
+      const project = await this.projectRepository.remove({
+        id,
+      });
+
+      return project;
+    } catch (err) {
+      throw err;
+    }
+  };
+}

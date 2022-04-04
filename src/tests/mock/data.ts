@@ -1,13 +1,16 @@
 import find from 'lodash/find';
+import ms from 'ms';
 
 import { UserStatus, Role as RoleEnum, CompanyStatus, InvitationStatus } from '../../config/constants';
 import { IUser } from '../../interfaces/user.interface';
 import { ICompany } from '../../interfaces/company.interface';
 import { IInvitation } from '../../interfaces/invitation.interface';
+import { IProject } from '../../interfaces/project.interface';
 import User from '../../entities/user.entity';
 import Role from '../../entities/role.entity';
 import Company from '../../entities/company.entity';
 import Invitation from '../../entities/invitation.entity';
+import Project from '../../entities/project.entity';
 
 const role = new Role();
 role.name = RoleEnum.SuperAdmin;
@@ -16,6 +19,10 @@ role.id = '050c4350-2e1f-49b6-a3f4-849cf7478612';
 const employee = new Role();
 employee.name = RoleEnum.Employee;
 employee.id = 'aa993355-23a0-4e92-bbd4-89947531a130';
+
+const client = new Role();
+client.name = RoleEnum.Client;
+client.id = 'f0f3bb09-b597-4aca-82a6-d7bef629b69a';
 
 const _users: IUser[] = [
   {
@@ -27,7 +34,22 @@ const _users: IUser[] = [
     status: UserStatus.Active,
     phone: '98432871234',
     roles: [role],
-    company_id: null,
+    company_id: undefined,
+    isArchived: false,
+    createdAt: '2022-03-08T08:01:04.776Z',
+    updatedAt: '2022-03-08T08:01:04.776Z',
+  },
+  {
+    id: 'b97b91bd-03f1-450b-8b61-d8e033f8ac31',
+    email: 'client@user.com',
+    password: 'password',
+    firstName: 'John',
+    lastName: 'Doe',
+    status: UserStatus.Active,
+    phone: '98432871234',
+    roles: [client],
+    company_id: undefined,
+    isArchived: false,
     createdAt: '2022-03-08T08:01:04.776Z',
     updatedAt: '2022-03-08T08:01:04.776Z',
   },
@@ -39,6 +61,7 @@ const _companies: ICompany[] = [
     name: 'Vellorum',
     companyCode: 'vellorum',
     status: CompanyStatus.Active,
+    isArchived: false,
     createdAt: '2022-03-08T08:01:04.776Z',
     updatedAt: '2022-03-08T08:01:04.776Z',
   },
@@ -50,6 +73,7 @@ export let companies = _companies.map((company) => {
   _company.name = company.name;
   _company.companyCode = company.companyCode;
   _company.status = company.status;
+  _company.isArchived = company.isArchived;
   _company.createdAt = company.createdAt;
   _company.updatedAt = company.updatedAt;
   return _company;
@@ -63,6 +87,7 @@ export let users = _users.map((user) => {
   _user.lastName = user.lastName;
   _user.status = user.status;
   _user.company_id = user.company_id ?? null;
+  _user.isArchived = user.isArchived;
   _user.createdAt = user.createdAt;
   _user.updatedAt = user.updatedAt;
   return _user;
@@ -72,6 +97,8 @@ const _invitations: IInvitation[] = [
   {
     id: '38e99c9b-83e1-40ab-b0d1-768b6ef5b28f',
     email: 'invited@user.com',
+    role: RoleEnum.Employee,
+    expiresIn: new Date(Date() + ms('50m')),
     company_id: companies[0]?.id,
     inviter_id: users[0]?.id,
     status: InvitationStatus.Pending,
@@ -85,11 +112,36 @@ export let invitations = _invitations.map((inv) => {
   const invitation: any = new Invitation();
   invitation.id = inv.id;
   invitation.email = inv.email;
-  (invitation.company = find(_companies, { id: inv.company_id })),
-    (invitation.inviter = find(_users, { id: inv.inviter_id })),
-    (invitation.status = invitation.status);
+  invitation.company = find(_companies, { id: inv.company_id });
+  invitation.inviter = find(_users, { id: inv.inviter_id });
+  invitation.status = invitation.status;
   invitation.token = invitation.token;
+  invitation.role = invitation.role;
+  invitation.expiresIn = invitation.expiresIn;
   invitation.createdAt = invitation.createdAt;
-  invitation.createdAt = invitation.createdAt;
+
   return invitation;
+});
+
+const _projects: IProject[] = [
+  {
+    id: 'aed11edc-4c05-4731-8676-72e105eea64d',
+    name: 'Vellorum',
+    client_id: 'b97b91bd-03f1-450b-8b61-d8e033f8ac31',
+    company_id: 'ce351c02-3681-43df-9cdb-3a4f864dcb0b',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+];
+
+export let projects = _projects.map((project) => {
+  const _project: any = new Project();
+  _project.id = project.id;
+  _project.name = project.name;
+  _project.client_id = project.client_id;
+  _project.company_id = project.company_id;
+  _project.createdAt = project.createdAt;
+  _project.updatedAt = project.updatedAt;
+
+  return _project;
 });

@@ -60,6 +60,7 @@ export default class UserRepository implements IUserRepository {
       user.status = args.status;
       user.createdAt = new Date();
       user.updatedAt = new Date();
+      user.password = 'password';
 
       users.push(user);
 

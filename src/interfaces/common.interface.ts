@@ -92,6 +92,7 @@ export interface IBaseRepository<T> {
   getAllAndCount(args: IGetOptions): Promise<IGetAllAndCountResult<T>>;
   getAll(args: IGetOptions): Promise<T[]>;
   getById(args: IEntityID): Promise<T | undefined>;
+  getSingleEntity(args: ISingleEntityQuery): Promise<T | undefined>;
   remove(args: IEntityRemove): Promise<T>;
 }
 

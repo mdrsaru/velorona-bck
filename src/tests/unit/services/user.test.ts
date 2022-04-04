@@ -1,23 +1,25 @@
 import container from '../../../inversify.config';
 import { TYPES } from '../../../types';
 
+import { users } from '../../mock/data';
 import strings from '../../../config/strings';
+import * as apiError from '../../../utils/api-error';
 import { UserStatus } from '../../../config/constants';
 import UserService from '../../../services/user.service';
 import UserRepository from '../../mock/user.repository';
-import {
-  IUserRepository,
-  IUserService,
-  IUserCreate,
-  IUserUpdate,
-} from '../../../interfaces/user.interface';
-import { users } from '../../mock/data';
-import * as apiError from '../../../utils/api-error';
+import CompanyRepository from '../../mock/company.repository';
+import SendGridService from '../../mock/sendgrid.service';
+
+import { IUserRepository, IUserService, IUserCreate, IUserUpdate } from '../../../interfaces/user.interface';
+import { ICompanyRepository } from '../../../interfaces/company.interface';
+import { IEmailService } from '../../../interfaces/common.interface';
 
 describe('User Service', () => {
   let userService: IUserService;
   beforeAll(() => {
     container.rebind<IUserRepository>(TYPES.UserRepository).to(UserRepository);
+    container.rebind<IEmailService>(TYPES.EmailService).to(SendGridService);
+    container.rebind<ICompanyRepository>(TYPES.CompanyRepository).to(CompanyRepository);
     userService = container.get<UserService>(TYPES.UserService);
   });
 
@@ -44,7 +46,6 @@ describe('User Service', () => {
         firstName: 'User',
         lastName: 'Name',
         email: 'admin@admin.com',
-        password: 'password',
         phone: '9841273487',
         status: UserStatus.Active,
         roles: ['1', '2'],
@@ -66,7 +67,6 @@ describe('User Service', () => {
         firstName: 'User',
         lastName: 'Name',
         email: 'test1@test.com',
-        password: 'password',
         status: UserStatus.Active,
         phone: '9841273487',
         roles: ['1,', '2'],
@@ -103,7 +103,6 @@ describe('User Service', () => {
         firstName: 'User',
         lastName: 'Name',
         email: 'test2@test.com',
-        password: 'password',
         status: UserStatus.Active,
         phone: '98412783748',
         roles: ['1', '2'],
