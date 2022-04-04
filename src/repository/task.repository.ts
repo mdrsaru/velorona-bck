@@ -54,6 +54,7 @@ export default class TaskRepository extends BaseRepository<Task> implements ITas
           details: ['Task not found'],
         });
       }
+
       const update = merge(found, {
         id,
         name,

@@ -35,6 +35,7 @@ export default class TaskService implements ITaskService {
 
   getAllAndCount = async (args: IPagingArgs): Promise<IPaginationData<Task>> => {
     try {
+      args.query.isArchived = false;
       const { rows, count } = await this.taskRepository.getAllAndCount(args);
 
       const paging = Paging.getPagingResult({
@@ -88,6 +89,14 @@ export default class TaskService implements ITaskService {
     const company_id = args?.company_id;
 
     try {
+      if (status) {
+        let task: Task | undefined = await this.taskRepository.getAssignedTaskById({ id: id });
+        if (task?.users.length) {
+          throw new ForbiddenError({
+            details: [strings.notAllowedToChangeStatus],
+          });
+        }
+      }
       let task = await this.taskRepository.update({
         id,
         name,
@@ -124,12 +133,19 @@ export default class TaskService implements ITaskService {
       const employee_id = args.employee_id;
       const task_id = args.task_id;
 
-      let taskAssignment = await this.taskRepository.assignTask({
+      let res = await this.taskRepository.getById({ id: task_id });
+      if (res?.isArchived) {
+        throw new ForbiddenError({
+          details: [strings.archievedTask],
+        });
+      }
+
+      let task = await this.taskRepository.assignTask({
         employee_id,
         task_id,
       });
 
-      return taskAssignment;
+      return task;
     } catch (err) {
       this.errorService.throwError({
         err,
