@@ -53,8 +53,8 @@ export default class User extends Base {
   status: UserStatus;
 
   @Field()
-  @Column({ name: 'is_archived', default: false })
-  isArchived: boolean;
+  @Column({ name: 'archived', default: false })
+  archived: boolean;
 
   @Field({ nullable: true })
   @Column({ nullable: true })

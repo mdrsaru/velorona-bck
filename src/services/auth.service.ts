@@ -71,7 +71,7 @@ export default class AuthService implements IAuthService {
           relations: ['roles', 'company'],
         });
 
-        if (user?.company?.isArchived) {
+        if (user?.company?.archived) {
           throw new apiError.NotAuthenticatedError({
             details: [strings.companyArchived],
           });
@@ -116,11 +116,11 @@ export default class AuthService implements IAuthService {
         });
       }
 
-      if (user.isArchived) {
+      if (user.archived) {
         throw new NotAuthenticatedError({
           details: [strings.emailPasswordNotCorrect],
           data: {
-            isArchived: true,
+            archived: true,
           },
         });
       }

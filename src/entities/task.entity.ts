@@ -26,8 +26,8 @@ export default class Task extends Base {
   status: TaskStatus;
 
   @Field()
-  @Column()
-  isArchived: boolean;
+  @Column({ name: 'archived', default: false })
+  archived: boolean;
 
   @Field()
   @Column()
@@ -70,8 +70,8 @@ export class TaskCreateInput {
   @Field((type) => TaskStatus)
   status: TaskStatus;
 
-  @Field()
-  isArchived: boolean;
+  @Field({ nullable: true })
+  archived: boolean;
 
   @Field()
   manager_id: string;
@@ -92,7 +92,7 @@ export class TaskUpdateInput {
   status: TaskStatus;
 
   @Field({ nullable: true })
-  isArchived: boolean;
+  archived: boolean;
 
   @Field({ nullable: true })
   manager_id: string;

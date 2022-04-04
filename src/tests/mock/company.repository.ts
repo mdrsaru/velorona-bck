@@ -46,7 +46,7 @@ export default class CompanyRepository implements ICompanyRepository {
       company.name = args.name;
       company.companyCode = args.name + 'random';
       company.status = company.status;
-      company.isArchived = company.isArchived;
+      company.archived = company.archived;
       company.createdAt = company.createdAt;
       company.updatedAt = company.updatedAt;
 
@@ -73,7 +73,7 @@ export default class CompanyRepository implements ICompanyRepository {
       const update = merge(this.companies[foundIndex], {
         name: args.name,
         status: args.status,
-        isArchived: args.isArchived,
+        archived: args.archived,
       });
 
       this.companies[foundIndex] = update;

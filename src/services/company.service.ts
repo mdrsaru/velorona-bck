@@ -36,12 +36,12 @@ export default class CompanyService implements ICompanyService {
     try {
       const name = args.name;
       const status = args.status;
-      const isArchived = args?.isArchived;
+      const archived = args?.archived;
 
       const company = await this.companyRepository.create({
         name,
         status,
-        isArchived,
+        archived,
       });
 
       return company;
@@ -55,13 +55,13 @@ export default class CompanyService implements ICompanyService {
       const id = args.id;
       const name = args.name;
       const status = args.status;
-      const isArchived = args?.isArchived;
+      const archived = args?.archived;
 
       const company = await this.companyRepository.update({
         id,
         name,
         status,
-        isArchived,
+        archived,
       });
 
       return company;

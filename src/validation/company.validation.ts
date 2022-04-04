@@ -33,7 +33,7 @@ export default class CompanyValidation {
     return Joi.object({
       name: Joi.string().required().messages(messages.name),
       status: Joi.string().required().messages(messages.status),
-      isArchived: Joi.boolean(),
+      archived: Joi.boolean(),
     });
   }
 
@@ -42,7 +42,7 @@ export default class CompanyValidation {
       id: Joi.string().required().messages(messages.id),
       name: Joi.string().messages(messages.name),
       status: Joi.string().messages(messages.status),
-      isArchived: Joi.boolean(),
+      archived: Joi.boolean(),
     });
   }
 }

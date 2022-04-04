@@ -89,7 +89,7 @@ export class TaskResolver {
     try {
       const name = args.name;
       const status = args.status;
-      const isArchived = args.isArchived;
+      const archived = args.archived;
       const manager_id = args.manager_id;
       const company_id = args.company_id;
 
@@ -99,7 +99,7 @@ export class TaskResolver {
         input: {
           name,
           status,
-          isArchived,
+          archived,
           manager_id,
           company_id,
         },
@@ -107,7 +107,7 @@ export class TaskResolver {
       let task: Task = await this.taskService.create({
         name,
         status,
-        isArchived,
+        archived,
         manager_id,
         company_id,
       });
@@ -131,7 +131,7 @@ export class TaskResolver {
       const id = args.id;
       const name = args.name;
       const status = args.status;
-      const isArchived = args.isArchived;
+      const archived = args.archived;
       const manager_id = args.manager_id;
       const company_id = args.company_id;
 
@@ -142,7 +142,7 @@ export class TaskResolver {
           id,
           name,
           status,
-          isArchived,
+          archived,
           manager_id,
           company_id,
         },
@@ -152,7 +152,7 @@ export class TaskResolver {
         id,
         name,
         status,
-        isArchived,
+        archived,
         manager_id,
         company_id,
       });

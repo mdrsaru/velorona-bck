@@ -27,7 +27,7 @@ export default class CompanyRepository extends BaseRepository<Company> implement
     try {
       const name = args.name?.trim();
       const status = args.status;
-      const isArchived = args?.isArchived ?? false;
+      const archived = args?.archived ?? false;
 
       let companyName = name.substr(0, 5)?.toLowerCase();
       const length = 10 - companyName.length;
@@ -44,7 +44,7 @@ export default class CompanyRepository extends BaseRepository<Company> implement
         name,
         status,
         companyCode,
-        isArchived,
+        archived,
       });
 
       return company;
@@ -58,7 +58,7 @@ export default class CompanyRepository extends BaseRepository<Company> implement
       const id = args.id;
       const name = args.name;
       const status = args.status;
-      const isArchived = args?.isArchived;
+      const archived = args?.archived;
 
       const found = await this.getById({ id });
 
@@ -72,7 +72,7 @@ export default class CompanyRepository extends BaseRepository<Company> implement
         id,
         name,
         status,
-        isArchived,
+        archived,
       });
 
       const company = await this.repo.save(update);

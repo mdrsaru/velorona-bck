@@ -7,7 +7,7 @@ export interface ICompany {
   id: string;
   name: string;
   status: CompanyStatus;
-  isArchived: boolean;
+  archived: boolean;
   companyCode: string;
   createdAt: string;
   updatedAt: string;
@@ -16,14 +16,14 @@ export interface ICompany {
 export interface ICompanyCreate {
   name: ICompany['name'];
   status: ICompany['status'];
-  isArchived?: ICompany['isArchived'];
+  archived?: ICompany['archived'];
 }
 
 export interface ICompanyUpdate {
   id: string;
   name: ICompany['name'];
   status: ICompany['status'];
-  isArchived?: ICompany['isArchived'];
+  archived?: ICompany['archived'];
 }
 export interface ICompanyCodeInput {
   companyCode: string;

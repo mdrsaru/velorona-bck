@@ -35,7 +35,7 @@ export default class TaskService implements ITaskService {
 
   getAllAndCount = async (args: IPagingArgs): Promise<IPaginationData<Task>> => {
     try {
-      args.query.isArchived = false;
+      args.query.archived = false;
       const { rows, count } = await this.taskRepository.getAllAndCount(args);
 
       const paging = Paging.getPagingResult({
@@ -56,7 +56,7 @@ export default class TaskService implements ITaskService {
     const operation = 'create';
     const name = args.name;
     const status = args.status;
-    const isArchived = args.isArchived;
+    const archived = args.archived;
     const manager_id = args.manager_id;
     const company_id = args.company_id;
 
@@ -64,7 +64,7 @@ export default class TaskService implements ITaskService {
       let task = await this.taskRepository.create({
         name,
         status,
-        isArchived,
+        archived,
         manager_id,
         company_id,
       });
@@ -84,7 +84,7 @@ export default class TaskService implements ITaskService {
     const id = args?.id;
     const name = args?.name;
     const status = args?.status;
-    const isArchived = args?.isArchived;
+    const archived = args?.archived;
     const manager_id = args?.manager_id;
     const company_id = args?.company_id;
 
@@ -101,7 +101,7 @@ export default class TaskService implements ITaskService {
         id,
         name,
         status,
-        isArchived,
+        archived,
         manager_id,
         company_id,
       });
@@ -134,7 +134,7 @@ export default class TaskService implements ITaskService {
       const task_id = args.task_id;
 
       let res = await this.taskRepository.getById({ id: task_id });
-      if (res?.isArchived) {
+      if (res?.archived) {
         throw new ForbiddenError({
           details: [strings.archievedTask],
         });

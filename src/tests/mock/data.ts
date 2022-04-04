@@ -35,7 +35,7 @@ const _users: IUser[] = [
     phone: '98432871234',
     roles: [role],
     company_id: undefined,
-    isArchived: false,
+    archived: false,
     createdAt: '2022-03-08T08:01:04.776Z',
     updatedAt: '2022-03-08T08:01:04.776Z',
   },
@@ -49,7 +49,7 @@ const _users: IUser[] = [
     phone: '98432871234',
     roles: [client],
     company_id: undefined,
-    isArchived: false,
+    archived: false,
     createdAt: '2022-03-08T08:01:04.776Z',
     updatedAt: '2022-03-08T08:01:04.776Z',
   },
@@ -61,7 +61,7 @@ const _companies: ICompany[] = [
     name: 'Vellorum',
     companyCode: 'vellorum',
     status: CompanyStatus.Active,
-    isArchived: false,
+    archived: false,
     createdAt: '2022-03-08T08:01:04.776Z',
     updatedAt: '2022-03-08T08:01:04.776Z',
   },
@@ -73,7 +73,7 @@ export let companies = _companies.map((company) => {
   _company.name = company.name;
   _company.companyCode = company.companyCode;
   _company.status = company.status;
-  _company.isArchived = company.isArchived;
+  _company.archived = company.archived;
   _company.createdAt = company.createdAt;
   _company.updatedAt = company.updatedAt;
   return _company;
@@ -87,7 +87,7 @@ export let users = _users.map((user) => {
   _user.lastName = user.lastName;
   _user.status = user.status;
   _user.company_id = user.company_id ?? null;
-  _user.isArchived = user.isArchived;
+  _user.archived = user.archived;
   _user.createdAt = user.createdAt;
   _user.updatedAt = user.updatedAt;
   return _user;

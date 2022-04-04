@@ -22,14 +22,14 @@ export default class TaskRepository extends BaseRepository<Task> implements ITas
     try {
       const name = args.name;
       const status = args.status;
-      const isArchived = args.isArchived;
+      const archived = args.archived;
       const manager_id = args.manager_id;
       const company_id = args.company_id;
 
       const task = this.repo.save({
         name,
         status,
-        isArchived,
+        archived,
         manager_id,
         company_id,
       });
@@ -44,7 +44,7 @@ export default class TaskRepository extends BaseRepository<Task> implements ITas
       const id = args?.id;
       const name = args.name;
       const status = args.status;
-      const isArchived = args.isArchived;
+      const archived = args.archived;
       const manager_id = args.manager_id;
       const company_id = args.company_id;
 
@@ -59,7 +59,7 @@ export default class TaskRepository extends BaseRepository<Task> implements ITas
         id,
         name,
         status,
-        isArchived,
+        archived,
         manager_id,
         company_id,
       });

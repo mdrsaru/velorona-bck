@@ -71,7 +71,7 @@ export class CompanyResolver {
     try {
       const name = args.name;
       const status = args.status;
-      const isArchived = args?.isArchived;
+      const archived = args?.archived;
 
       const schema = CompanyValidation.create();
       await this.joiService.validate({
@@ -79,14 +79,14 @@ export class CompanyResolver {
         input: {
           name,
           status,
-          isArchived,
+          archived,
         },
       });
 
       let company: Company = await this.companyService.create({
         name,
         status,
-        isArchived,
+        archived,
       });
 
       return company;
@@ -109,7 +109,7 @@ export class CompanyResolver {
       const id = args.id;
       const name = args.name;
       const status = args.status;
-      const isArchived = args?.isArchived;
+      const archived = args?.archived;
 
       const schema = CompanyValidation.update();
       await this.joiService.validate({
@@ -118,7 +118,7 @@ export class CompanyResolver {
           id,
           name,
           status,
-          isArchived,
+          archived,
         },
       });
 
@@ -126,7 +126,7 @@ export class CompanyResolver {
         id,
         name,
         status,
-        isArchived,
+        archived,
       });
 
       return company;

@@ -19,7 +19,7 @@ export interface IUser {
   roles: Role[];
   record?: IUserRecord;
   company_id?: string;
-  isArchived: boolean;
+  archived: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -50,7 +50,7 @@ export interface IUserCreate {
 
 export interface IUserCreateRepo extends IUserCreate {
   password: IUser['password'];
-  isArchived?: IUser['isArchived'];
+  archived?: IUser['archived'];
 }
 
 export interface IChangeProfilePictureInput {

@@ -35,8 +35,8 @@ export default class Company extends Base {
   status: CompanyStatus;
 
   @Field()
-  @Column({ name: 'is_archived', default: false })
-  isArchived: boolean;
+  @Column({ name: 'archived', default: false })
+  archived: boolean;
 
   @Field()
   @Column({ unique: true, name: 'company_code' })
@@ -65,7 +65,7 @@ export class CompanyCreateInput {
   status: CompanyStatus;
 
   @Field({ nullable: true })
-  isArchived: boolean;
+  archived: boolean;
 }
 
 @InputType()
@@ -80,7 +80,7 @@ export class CompanyUpdateInput {
   status: CompanyStatus;
 
   @Field({ nullable: true })
-  isArchived: boolean;
+  archived: boolean;
 }
 
 @InputType()
@@ -92,7 +92,7 @@ export class CompanyQuery {
   companyCode: string;
 
   @Field({ nullable: true })
-  isArchived: boolean;
+  archived: boolean;
 }
 
 @InputType()

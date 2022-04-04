@@ -44,7 +44,7 @@ export default class TaskValidation {
     return Joi.object({
       name: Joi.string().required().messages(messages.name),
       status: Joi.string().required().messages(messages.status),
-      isArchived: Joi.boolean().required(),
+      archived: Joi.boolean().required(),
       manager_id: Joi.string().required().messages(messages.manager_id),
       company_id: Joi.string().required().messages(messages.company_id),
     });
@@ -53,7 +53,7 @@ export default class TaskValidation {
     return Joi.object({
       id: Joi.string().required().messages(messages.id),
       name: Joi.string(),
-      isArchived: Joi.boolean(),
+      archived: Joi.boolean(),
       status: Joi.string(),
       manager_id: Joi.string(),
       company_id: Joi.string(),

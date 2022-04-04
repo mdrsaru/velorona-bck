@@ -56,7 +56,7 @@ export default class UserRepository extends BaseRepository<User> implements IUse
       const address = args?.address;
       const roles = args.roles;
       const record = args.record;
-      const isArchived = args?.isArchived ?? false;
+      const archived = args?.archived ?? false;
 
       const errors: string[] = [];
 
@@ -130,7 +130,7 @@ export default class UserRepository extends BaseRepository<User> implements IUse
         address,
         roles: existingRoles,
         record,
-        isArchived,
+        archived,
       });
 
       return user;
