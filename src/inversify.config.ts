@@ -12,9 +12,11 @@ import invitation from './config/inversify/invitation';
 import task from './config/inversify/task';
 import address from './config/inversify/address';
 import userRecord from './config/inversify/user-record';
+import project from './config/inversify/project';
 
 const container = new Container({ skipBaseClassChecks: true });
 
+// prettier-ignore
 container.load(
   app,
   logger,
@@ -34,7 +36,8 @@ container.load(
   handlebars,
   task,
   address,
-  userRecord
+  userRecord,
+  project,
 );
 
 export default container;

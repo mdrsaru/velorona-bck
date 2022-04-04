@@ -37,7 +37,7 @@ export default class InvitationRepository implements IInvitationRepository {
     throw new Error('not implemented');
   };
 
-  create = (args: IInvitationCreate): Promise<Invitation> => {
+  create = (args: IInvitationCreateInput): Promise<Invitation> => {
     try {
       if (find(invitations, { email: args.email, company: { id: args.company_id } })) {
         throw new ConflictError({

@@ -24,8 +24,8 @@ const roles = [
     description: 'Task Manager',
   },
   {
-    name: RoleEnum.Vendor,
-    description: 'Vendor',
+    name: RoleEnum.Client,
+    description: 'Client',
   },
 ];
 
@@ -43,7 +43,7 @@ const users = [
     email: 'manager@user.com',
   },
   {
-    email: 'vendor@user.com',
+    email: 'client@user.com',
   },
 ];
 

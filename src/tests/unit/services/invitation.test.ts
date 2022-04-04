@@ -1,16 +1,24 @@
 import container from '../../../inversify.config';
 import { TYPES } from '../../../types';
 
+import { invitations } from '../../mock/data';
 import strings from '../../../config/strings';
 import * as apiError from '../../../utils/api-error';
 import InvitationRepository from '../../mock/invitation.repository';
-import { IInvitationRepository, IInvitationService, IInvitationCreate } from '../../../interfaces/invitation.interface';
-import { invitations } from '../../mock/data';
+import SendGridService from '../../mock/sendgrid.service';
+
+import {
+  IInvitationRepository,
+  IInvitationService,
+  IInvitationCreateInput,
+} from '../../../interfaces/invitation.interface';
+import { IEmailService } from '../../../interfaces/common.interface';
 
 describe('Invitation Service', () => {
   let invitationService: IInvitationService;
   beforeAll(() => {
     container.rebind<IInvitationRepository>(TYPES.InvitationRepository).to(InvitationRepository);
+    container.rebind<IEmailService>(TYPES.EmailService).to(SendGridService);
     invitationService = container.get<IInvitationService>(TYPES.InvitationService);
   });
 
@@ -29,11 +37,5 @@ describe('Invitation Service', () => {
       expect(_invitations).toBeDefined();
       expect(_invitations.data.length).toBe(invitations.length);
     });
-  });
-
-  describe('create', () => {
-    it('should throw conflict validation if the user is already invited to the same company', () => {});
-
-    it('should create a new invitation', () => {});
   });
 });

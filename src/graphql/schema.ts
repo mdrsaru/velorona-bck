@@ -7,9 +7,19 @@ import { RoleResolver } from './resolvers/role.resolver';
 import { UserResolver } from './resolvers/user.resolver';
 import { InvitationResolver } from './resolvers/invitation.resolver';
 import { TaskResolver } from './resolvers/task.resolver';
+import { ProjectResolver } from './resolvers/project.resolver';
 
 export default buildSchema({
-  resolvers: [CompanyResolver, RoleResolver, UserResolver, AuthResolver, InvitationResolver, TaskResolver],
   container,
   validate: false,
+  // prettier-ignore
+  resolvers: [
+    CompanyResolver,
+    RoleResolver,
+    UserResolver,
+    AuthResolver,
+    InvitationResolver,
+    TaskResolver,
+    ProjectResolver,
+  ],
 });

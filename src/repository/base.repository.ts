@@ -5,8 +5,8 @@ import { Repository, In } from 'typeorm';
 
 import strings from '../config/strings';
 import { IPagingArgs, IGetAllAndCountResult, IGetOptions } from '../interfaces/paging.interface';
-import { IBaseRepository, IEntityID, IEntityRemove } from '../interfaces/common.interface';
-import { NotFoundError } from '../utils/api-error';
+import { IBaseRepository, IEntityID, IEntityRemove, ISingleEntityQuery } from '../interfaces/common.interface';
+import { ValidationError, NotFoundError } from '../utils/api-error';
 
 export default class BaseRepository<T> implements IBaseRepository<T> {
   protected repo: Repository<T>;
@@ -65,6 +65,24 @@ export default class BaseRepository<T> implements IBaseRepository<T> {
   async getById(args: IEntityID): Promise<T | undefined> {
     try {
       const row = await this.repo.findOne(args.id, {
+        relations: args?.relations ?? [],
+      });
+      return row;
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async getSingleEntity(args: ISingleEntityQuery): Promise<T | undefined> {
+    try {
+      const query = args.query;
+      if (!query) {
+        throw new ValidationError({
+          details: ['Argument query is required'],
+        });
+      }
+      const row = await this.repo.findOne({
+        where: args.query,
         relations: args?.relations ?? [],
       });
       return row;

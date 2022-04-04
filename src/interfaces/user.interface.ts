@@ -18,6 +18,7 @@ export interface IUser {
   address?: IAddress;
   roles: Role[];
   record?: IUserRecord;
+  company_id?: string;
   isArchived: boolean;
   createdAt: string;
   updatedAt: string;

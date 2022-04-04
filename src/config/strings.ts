@@ -50,4 +50,8 @@ export default {
   endDateMustBeValidDate: 'End date must be a valid date that occurs after the start date',
   notAllowedToChangeStatus: 'Assigned task is not allowed to change status',
   archievedTask: 'Task is archieved',
+  clientRequired: 'Client required',
+  clientNotFound: 'Client not found',
+  providedUserNotClient: 'Provided user is not a client',
+  projectNotFound: 'Project not found',
 };
