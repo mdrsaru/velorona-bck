@@ -90,7 +90,7 @@ export default class TaskService implements ITaskService {
 
     try {
       if (status) {
-        let task: Task | undefined = await this.taskRepository.getAssignedTaskById({ id: id });
+        let task: Task | undefined = await this.taskRepository.getById({ id, relations: ['users'] });
         if (task?.users.length) {
           throw new ForbiddenError({
             details: [strings.notAllowedToChangeStatus],
@@ -156,15 +156,16 @@ export default class TaskService implements ITaskService {
     }
   };
 
-  getAssignedTaskById = async (args: IEntityID) => {
+  getAssignedUserById = async (args: IEntityID) => {
     const operation = 'assign';
     try {
       const id = args.id;
 
-      let task = await this.taskRepository.getAssignedTaskById({
-        id: id,
+      let task: any = await this.taskRepository.getById({
+        id,
+        relations: ['users'],
       });
-      return task;
+      return task.users;
     } catch (err) {
       this.errorService.throwError({
         err,

@@ -3,8 +3,8 @@ import { Arg, Ctx, FieldResolver, Mutation, Query, Resolver, Root, UseMiddleware
 
 import { DeleteInput } from '../../entities/common.entity';
 import Task, {
+  AssignedUserQueryInput,
   AssignTaskCreateInput,
-  GetAssignedTaskByIdCreateInput,
   TaskCreateInput,
   TaskPagingResult,
   TaskQueryInput,
@@ -25,6 +25,7 @@ import { IPaginationData } from '../../interfaces/paging.interface';
 import { ITaskService } from '../../interfaces/task.interface';
 import authorize from '../middlewares/authorize';
 import { checkCompanyAccess } from '../middlewares/company';
+import User from '../../entities/user.entity';
 @injectable()
 @Resolver()
 export class TaskResolver {
@@ -62,17 +63,14 @@ export class TaskResolver {
     }
   }
 
-  @Query((returns) => Task)
+  @Query((returns) => [User])
   @UseMiddleware(authenticate, checkCompanyAccess)
-  async GetAssignedTaskById(
-    @Arg('input', { nullable: true }) args: GetAssignedTaskByIdCreateInput,
-    @Ctx() ctx: any
-  ): Promise<Task> {
+  async AssignedUser(@Arg('input', { nullable: true }) args: AssignedUserQueryInput, @Ctx() ctx: any): Promise<User[]> {
     const operation = 'Tasks';
 
     try {
       const id = args.id;
-      let result = await this.taskService.getAssignedTaskById({ id: id });
+      let result = await this.taskService.getAssignedUserById({ id });
       return result;
     } catch (err) {
       this.errorService.throwError({

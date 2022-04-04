@@ -140,7 +140,7 @@ export class AssignTaskCreateInput {
 }
 
 @InputType()
-export class GetAssignedTaskByIdCreateInput {
+export class AssignedUserQueryInput {
   @Field()
   id: string;
 

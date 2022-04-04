@@ -56,7 +56,6 @@ export default class BaseRepository<T> implements IBaseRepository<T> {
         ...rest,
       });
 
-      console.log(rows, 'saru');
       return rows;
     } catch (err) {
       throw err;

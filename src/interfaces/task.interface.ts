@@ -38,7 +38,7 @@ export interface ITaskService {
   update(args: ITaskUpdateInput): Promise<Task>;
   remove(args: IEntityRemove): Promise<Task>;
   assignTask(args: IAssignTask): Promise<Task>;
-  getAssignedTaskById(args: IEntityID): Promise<Task>;
+  getAssignedUserById(args: IEntityID): Promise<User[]>;
 }
 
 export interface ITaskRepository {
@@ -49,5 +49,4 @@ export interface ITaskRepository {
   update(args: ITaskUpdateInput): Promise<Task>;
   remove(args: IEntityRemove): Promise<Task>;
   assignTask(args: IAssignTask): Promise<Task>;
-  getAssignedTaskById(args: IEntityID): Promise<Task>;
 }

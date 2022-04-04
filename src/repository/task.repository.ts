@@ -105,16 +105,4 @@ export default class TaskRepository extends BaseRepository<Task> implements ITas
       throw err;
     }
   }
-  async getAssignedTaskById(args: IEntityID): Promise<Task> {
-    try {
-      const id = args.id;
-
-      const task: any = await this.repo.findOne(id, {
-        relations: ['users'],
-      });
-      return task;
-    } catch (err) {
-      throw err;
-    }
-  }
 }
