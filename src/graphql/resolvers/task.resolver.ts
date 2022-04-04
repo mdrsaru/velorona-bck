@@ -1,8 +1,9 @@
 import { inject, injectable } from 'inversify';
-import { Arg, Ctx, Mutation, Query, Resolver, UseMiddleware } from 'type-graphql';
+import { Arg, Ctx, FieldResolver, Mutation, Query, Resolver, Root, UseMiddleware } from 'type-graphql';
 
 import { DeleteInput } from '../../entities/common.entity';
 import Task, {
+  AssignedUserQueryInput,
   AssignTaskCreateInput,
   TaskCreateInput,
   TaskPagingResult,
@@ -23,6 +24,8 @@ import { IErrorService, IJoiService } from '../../interfaces/common.interface';
 import { IPaginationData } from '../../interfaces/paging.interface';
 import { ITaskService } from '../../interfaces/task.interface';
 import authorize from '../middlewares/authorize';
+import { checkCompanyAccess } from '../middlewares/company';
+import User from '../../entities/user.entity';
 @injectable()
 @Resolver()
 export class TaskResolver {
@@ -49,6 +52,25 @@ export class TaskResolver {
     try {
       const pagingArgs = Paging.createPagingPayload(args);
       let result: IPaginationData<Task> = await this.taskService.getAllAndCount(pagingArgs);
+      return result;
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
+    }
+  }
+
+  @Query((returns) => [User])
+  @UseMiddleware(authenticate, checkCompanyAccess)
+  async AssignedUser(@Arg('input', { nullable: true }) args: AssignedUserQueryInput, @Ctx() ctx: any): Promise<User[]> {
+    const operation = 'Tasks';
+
+    try {
+      const id = args.id;
+      let result = await this.taskService.getAssignedUserById({ id });
       return result;
     } catch (err) {
       this.errorService.throwError({
