@@ -53,6 +53,7 @@ export const entities = {
   tasks: 'tasks',
   taskAssignment: 'task_assignment',
   projects: 'projects',
+  workschedule: 'workschedule',
 };
 
 export enum CompanyStatus {

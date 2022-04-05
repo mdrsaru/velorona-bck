@@ -26,6 +26,12 @@ const TASK_ASSIGNMENT = {
   TaskAssignmentController: Symbol('TaskAssignmentController'),
 };
 
+const WORKSCHEDULE = {
+  WorkscheduleRepository: Symbol('WorkscheduleRepository'),
+  WorkscheduleService: Symbol('WorkscheduleService'),
+  WorkscheduleController: Symbol('WorkscheduleController'),
+};
+
 const PROJECT = {
   ProjectRepository: Symbol('ProjectRepository'),
   ProjectService: Symbol('ProjectService'),
@@ -80,6 +86,7 @@ const TYPES = {
   ...TASK,
   ...TASK_ASSIGNMENT,
   ...PROJECT,
+  ...WORKSCHEDULE,
 };
 
 export { TYPES };

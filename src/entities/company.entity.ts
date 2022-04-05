@@ -14,6 +14,7 @@ import User from './user.entity';
 import { entities, CompanyStatus } from '../config/constants';
 import { PagingResult, PagingInput } from './common.entity';
 import Task from './task.entity';
+import Workschedule from './workschedule.entity';
 
 registerEnumType(CompanyStatus, {
   name: 'CompanyStatus',
@@ -45,6 +46,10 @@ export default class Company extends Base {
   @Field(() => [User])
   @OneToMany(() => User, (user) => user.company)
   users: User[];
+
+  @Field(() => Workschedule, { nullable: true })
+  @OneToMany(() => Workschedule, (workschedule) => workschedule.tasks)
+  workschedules: Workschedule[];
 }
 
 @ObjectType()
