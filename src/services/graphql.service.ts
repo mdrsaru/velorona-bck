@@ -7,6 +7,7 @@ import container from '../inversify.config';
 import User from '../entities/user.entity';
 import * as companyLoader from '../loaders/dataloader/company.dataloader';
 import * as userLoader from '../loaders/dataloader/user.dataloader';
+import * as workscheduleLoader from '../loaders/dataloader/workschedule.dataloader';
 
 import { IGraphql, IGraphqlContext } from '../interfaces/graphql.interface';
 import { ITokenService, ILogger } from '../interfaces/common.interface';
@@ -82,6 +83,7 @@ export default class GraphqlService implements IGraphql {
         addressByUserIdLoader: userLoader.addressByUserIdLoader(),
         recordByUserIdLoader: userLoader.recordByUserIdLoader(),
         usersByIdLoader: userLoader.usersByIdLoader(),
+        tasksByIdLoader: workscheduleLoader.tasksByIdLoader(),
       },
     };
   };

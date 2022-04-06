@@ -8,6 +8,7 @@ import { UserResolver } from './resolvers/user.resolver';
 import { InvitationResolver } from './resolvers/invitation.resolver';
 import { TaskResolver } from './resolvers/task.resolver';
 import { ProjectResolver } from './resolvers/project.resolver';
+import { WorkscheduleResolver } from './resolvers/workschedule.resolver';
 
 export default buildSchema({
   container,
@@ -21,5 +22,6 @@ export default buildSchema({
     InvitationResolver,
     TaskResolver,
     ProjectResolver,
+    WorkscheduleResolver,
   ],
 });
