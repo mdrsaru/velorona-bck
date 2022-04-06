@@ -11,6 +11,7 @@ import Address, { AddressCreateInput, AddressUpdateInput } from './address.entit
 import UserRecord, { UserRecordCreateInput, UserRecordUpdateInput } from './user-record.entity';
 import { entities, UserStatus } from '../config/constants';
 import Task from './task.entity';
+import Workschedule from './workschedule.entity';
 
 registerEnumType(UserStatus, {
   name: 'UserStatus',
@@ -107,6 +108,10 @@ export default class User extends Base {
 
   @ManyToMany(() => Task)
   assignedTasks: Task[];
+
+  @Field(() => Workschedule, { nullable: true })
+  @OneToMany(() => Workschedule, (workschedule) => workschedule.employee)
+  workschedules: Workschedule[];
 }
 
 @ObjectType()
@@ -185,6 +190,9 @@ export class UserUpdateInput {
 export class UserQuery {
   @Field({ nullable: true })
   id: string;
+
+  @Field({ nullable: true })
+  search: string;
 }
 
 @InputType()

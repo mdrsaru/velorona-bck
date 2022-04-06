@@ -4,10 +4,10 @@ import Dataloader from 'dataloader';
 import User from '../entities/user.entity';
 import Company from '../entities/company.entity';
 import Role from '../entities/role.entity';
-import { IUserAuth } from '../interfaces/auth.interface';
 import Media from '../entities/media.entity';
 import Address from '../entities/address.entity';
 import UserRecord from '../entities/user-record.entity';
+import Task from '../entities/task.entity';
 
 export interface IDataloader {
   companyByIdLoader: Dataloader<string, Company>;
@@ -17,6 +17,7 @@ export interface IDataloader {
   addressByUserIdLoader: Dataloader<string, Address>;
   recordByUserIdLoader: Dataloader<string, UserRecord>;
   usersByIdLoader: Dataloader<string, User>;
+  tasksByIdLoader: Dataloader<string, Task>;
 }
 
 export interface IGraphqlContext {

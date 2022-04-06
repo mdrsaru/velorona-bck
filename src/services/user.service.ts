@@ -53,6 +53,24 @@ export default class UserService implements IUserService {
     }
   };
 
+  searchClient = async (args: IPagingArgs): Promise<IPaginationData<User>> => {
+    try {
+      const { rows, count } = await this.userRepository.getAllAndCount(args);
+
+      const paging = Paging.getPagingResult({
+        ...args,
+        total: count,
+      });
+
+      return {
+        paging,
+        data: rows,
+      };
+    } catch (err) {
+      throw err;
+    }
+  };
+
   create = async (args: IUserCreate): Promise<User> => {
     const operation = 'create';
 

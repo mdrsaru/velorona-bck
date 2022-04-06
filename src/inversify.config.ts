@@ -13,6 +13,7 @@ import task from './config/inversify/task';
 import address from './config/inversify/address';
 import userRecord from './config/inversify/user-record';
 import project from './config/inversify/project';
+import workschedule from './config/inversify/workschedule';
 
 const container = new Container({ skipBaseClassChecks: true });
 
@@ -38,6 +39,7 @@ container.load(
   address,
   userRecord,
   project,
+  workschedule
 );
 
 export default container;

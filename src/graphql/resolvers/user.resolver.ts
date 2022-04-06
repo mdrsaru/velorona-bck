@@ -64,6 +64,28 @@ export class UserResolver {
     }
   }
 
+  @Query((returns) => UserPagingResult)
+  @UseMiddleware(authenticate)
+  async SearchClient(
+    @Arg('input', { nullable: true }) args: UserQueryInput,
+    @Ctx() ctx: any
+  ): Promise<IPaginationData<User>> {
+    const operation = 'User';
+
+    try {
+      const pagingArgs = Paging.createPagingPayload(args);
+      let result: IPaginationData<User> = await this.userService.searchClient(pagingArgs);
+      return result;
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
+    }
+  }
+
   @Mutation((returns) => User)
   @UseMiddleware(
     authenticate,

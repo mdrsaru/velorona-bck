@@ -54,4 +54,8 @@ export default {
   clientNotFound: 'Client not found',
   providedUserNotClient: 'Provided user is not a client',
   projectNotFound: 'Project not found',
+  dateRequired: 'Date required',
+  toRequired: 'To required',
+  fromRequired: 'From required',
+  workscheduleNotFound: 'Workschedule not found',
 };

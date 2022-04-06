@@ -5,7 +5,7 @@ import isNil from 'lodash/isNil';
 import isString from 'lodash/isString';
 import isArray from 'lodash/isArray';
 import { injectable, inject } from 'inversify';
-import { getRepository, IsNull } from 'typeorm';
+import { getRepository, In, IsNull, Like } from 'typeorm';
 
 import { TYPES } from '../types';
 import strings from '../config/strings';
@@ -25,6 +25,7 @@ import {
 } from '../interfaces/user.interface';
 import { IRoleRepository } from '../interfaces/role.interface';
 import { ICompanyRepository } from '../interfaces/company.interface';
+import { IGetAllAndCountResult, IGetOptions } from '../interfaces/paging.interface';
 
 @injectable()
 export default class UserRepository extends BaseRepository<User> implements IUserRepository {
@@ -42,6 +43,46 @@ export default class UserRepository extends BaseRepository<User> implements IUse
     this.roleRepository = _roleRepository;
     this.companyRepository = _companyRepository;
   }
+
+  getAllAndCount = async (args: IGetOptions): Promise<IGetAllAndCountResult<User>> => {
+    try {
+      let { query = {}, ...rest } = args;
+      let { search, ...where } = query;
+
+      for (let key in query) {
+        if (isArray(query[key])) {
+          query[key] = In(query[key]);
+        }
+      }
+
+      let _searchWhere: any = [];
+
+      if (search) {
+        _searchWhere = [
+          {
+            firstName: Like(`%${search}`),
+            ...where,
+          },
+          {
+            email: Like(`%${search}`),
+            ...where,
+          },
+        ];
+      }
+
+      let [rows, count] = await this.repo.findAndCount({
+        where: _searchWhere.length ? _searchWhere : where,
+        ...rest,
+      });
+
+      return {
+        count,
+        rows,
+      };
+    } catch (err) {
+      throw err;
+    }
+  };
 
   create = async (args: IUserCreateRepo): Promise<User> => {
     try {
