@@ -18,6 +18,7 @@ const TASK = {
   TaskRepository: Symbol('TaskRepository'),
   TaskService: Symbol('TaskService'),
   TaskController: Symbol('TaskController'),
+  TaskAssignmentRepository: Symbol('TaskAssignmentRepository'),
 };
 
 const TASK_ASSIGNMENT = {

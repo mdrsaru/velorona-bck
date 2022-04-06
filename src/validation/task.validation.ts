@@ -32,7 +32,7 @@ const messages = {
     'string.empty': strings.taskIdRequired,
     'any.required': strings.taskIdRequired,
   },
-  employee_id: {
+  user_id: {
     'string.base': strings.EmployeeIdRequired,
     'string.empty': strings.EmployeeIdRequired,
     'any.required': strings.EmployeeIdRequired,
@@ -44,7 +44,7 @@ export default class TaskValidation {
     return Joi.object({
       name: Joi.string().required().messages(messages.name),
       status: Joi.string().required().messages(messages.status),
-      archived: Joi.boolean().required(),
+      archived: Joi.boolean(),
       manager_id: Joi.string().required().messages(messages.manager_id),
       company_id: Joi.string().required().messages(messages.company_id),
     });
@@ -61,7 +61,7 @@ export default class TaskValidation {
   }
   static assignTask() {
     return Joi.object({
-      employee_id: Joi.array().required().messages(messages.employee_id),
+      user_id: Joi.array().required().messages(messages.user_id),
       task_id: Joi.string().required().messages(messages.task_id),
     });
   }

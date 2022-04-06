@@ -29,7 +29,7 @@ export interface ITaskUpdateInput {
 }
 
 export interface IAssignTask {
-  employee_id: string[];
+  user_id: string[];
   task_id: string;
 }
 
@@ -50,4 +50,17 @@ export interface ITaskRepository {
   update(args: ITaskUpdateInput): Promise<Task>;
   remove(args: IEntityRemove): Promise<Task>;
   assignTask(args: IAssignTask): Promise<Task>;
+}
+
+export interface ITaskAssignmentUserQuery {
+  user_id: string;
+}
+
+export interface ITaskAssignment {
+  user_id: string;
+  task_id: string;
+}
+
+export interface ITaskAssignmentRepository {
+  getTaskAssignmentByUser(args: ITaskAssignmentUserQuery): Promise<ITaskAssignment[]>;
 }

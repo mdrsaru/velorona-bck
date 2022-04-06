@@ -7,7 +7,7 @@ const messages = {
     'string.empty': strings.idRequired,
     'any.required': strings.idRequired,
   },
-  employee_id: {
+  user_id: {
     'string.base': strings.managerIdRequired,
     'string.empty': strings.managerIdRequired,
     'any.required': strings.managerIdRequired,
@@ -22,7 +22,7 @@ const messages = {
 export default class TaskAssignmentValidation {
   static assignTask() {
     return Joi.object({
-      employee_id: Joi.string().required().messages(messages.employee_id),
+      user_id: Joi.string().required().messages(messages.user_id),
       task_id: Joi.string().required().messages(messages.task_id),
     });
   }

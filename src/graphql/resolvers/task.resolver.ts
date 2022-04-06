@@ -4,7 +4,7 @@ import { Arg, Ctx, FieldResolver, Mutation, Query, Resolver, Root, UseMiddleware
 import { DeleteInput } from '../../entities/common.entity';
 import Task, {
   AssignedUserQueryInput,
-  AssignTaskCreateInput,
+  AssignTaskInput,
   TaskCreateInput,
   TaskPagingResult,
   TaskQueryInput,
@@ -13,19 +13,18 @@ import Task, {
 
 import { TYPES } from '../../types';
 import Paging from '../../utils/paging';
+import User from '../../entities/user.entity';
 import { Role as RoleEnum } from '../../config/constants';
-
+import TaskValidation from '../../validation/task.validation';
+import authorize from '../middlewares/authorize';
 import authenticate from '../middlewares/authenticate';
 import { canCreateTask, canViewTask } from '../middlewares/task';
-
-import TaskValidation from '../../validation/task.validation';
+import { checkCompanyAccess } from '../middlewares/company';
 
 import { IErrorService, IJoiService } from '../../interfaces/common.interface';
 import { IPaginationData } from '../../interfaces/paging.interface';
 import { ITaskService } from '../../interfaces/task.interface';
-import authorize from '../middlewares/authorize';
-import { checkCompanyAccess } from '../middlewares/company';
-import User from '../../entities/user.entity';
+
 @injectable()
 @Resolver()
 export class TaskResolver {
@@ -45,8 +44,8 @@ export class TaskResolver {
   }
 
   @Query((returns) => TaskPagingResult)
-  @UseMiddleware(authenticate, canViewTask)
-  async Task(@Arg('input', { nullable: true }) args: TaskQueryInput, @Ctx() ctx: any): Promise<IPaginationData<Task>> {
+  @UseMiddleware(authenticate, checkCompanyAccess)
+  async Task(@Arg('input') args: TaskQueryInput, @Ctx() ctx: any): Promise<IPaginationData<Task>> {
     const operation = 'Tasks';
 
     try {
@@ -190,21 +189,21 @@ export class TaskResolver {
 
   @Mutation((returns) => Task)
   @UseMiddleware(authenticate)
-  async AssignTask(@Arg('input') args: AssignTaskCreateInput, @Ctx() ctx: any): Promise<Task> {
+  async AssignTask(@Arg('input') args: AssignTaskInput, @Ctx() ctx: any): Promise<Task> {
     const operation = 'TaskAssign';
     try {
-      const employee_id = args.employee_id;
+      const user_id = args.user_id;
       const task_id = args.task_id;
       const schema = TaskValidation.assignTask();
       await this.joiService.validate({
         schema,
         input: {
-          employee_id,
+          user_id,
           task_id,
         },
       });
       let task: Task = await this.taskService.assignTask({
-        employee_id,
+        user_id,
         task_id,
       });
       return task;

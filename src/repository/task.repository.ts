@@ -1,6 +1,6 @@
 import { inject, injectable } from 'inversify';
 import { merge } from 'lodash';
-import { getRepository } from 'typeorm';
+import { getRepository, getManager } from 'typeorm';
 import strings from '../config/strings';
 import Task from '../entities/task.entity';
 import { IEntityID } from '../interfaces/common.interface';
@@ -20,7 +20,7 @@ export default class TaskRepository extends BaseRepository<Task> implements ITas
 
   create(args: ITaskCreateInput): Promise<Task> {
     try {
-      const name = args.name;
+      const name = args.name?.trim();
       const status = args.status;
       const archived = args.archived;
       const manager_id = args.manager_id;
@@ -42,7 +42,7 @@ export default class TaskRepository extends BaseRepository<Task> implements ITas
   update = async (args: ITaskUpdateInput): Promise<Task> => {
     try {
       const id = args?.id;
-      const name = args.name;
+      const name = args.name?.trim();
       const status = args.status;
       const archived = args.archived;
       const manager_id = args.manager_id;
@@ -73,7 +73,7 @@ export default class TaskRepository extends BaseRepository<Task> implements ITas
 
   async assignTask(args: IAssignTask): Promise<Task> {
     try {
-      const employee_id = args.employee_id;
+      const user_id = args.user_id;
       const id = args.task_id;
 
       const found = await this.getById({ id });
@@ -85,11 +85,11 @@ export default class TaskRepository extends BaseRepository<Task> implements ITas
 
       const existingUsers = await this.userRepository.getAll({
         query: {
-          id: employee_id,
+          id: user_id,
         },
       });
 
-      if (existingUsers?.length !== employee_id.length) {
+      if (existingUsers?.length !== user_id.length) {
         throw new ValidationError({
           details: [strings.userNotFound],
         });

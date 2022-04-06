@@ -1,6 +1,11 @@
 import { inject, injectable } from 'inversify';
+
+import { TYPES } from '../types';
 import strings from '../config/strings';
 import Task from '../entities/task.entity';
+import Paging from '../utils/paging';
+import { ForbiddenError } from '../utils/api-error';
+
 import { IEntityID, IEntityRemove, IErrorService, ILogger } from '../interfaces/common.interface';
 import { IPaginationData, IPagingArgs } from '../interfaces/paging.interface';
 import {
@@ -9,16 +14,15 @@ import {
   ITaskRepository,
   ITaskService,
   ITaskUpdateInput,
+  ITaskAssignmentRepository,
 } from '../interfaces/task.interface';
 import { IUserRepository } from '../interfaces/user.interface';
-import { TYPES } from '../types';
-import { ForbiddenError } from '../utils/api-error';
-import Paging from '../utils/paging';
 
 @injectable()
 export default class TaskService implements ITaskService {
   private name = 'TaskService';
   private taskRepository: ITaskRepository;
+  private taskAssignmentRepository: ITaskAssignmentRepository;
   private logger: ILogger;
   private errorService: IErrorService;
 
@@ -26,16 +30,29 @@ export default class TaskService implements ITaskService {
     @inject(TYPES.TaskRepository) taskRepository: ITaskRepository,
     @inject(TYPES.LoggerFactory) loggerFactory: (name: string) => ILogger,
     @inject(TYPES.ErrorService) errorService: IErrorService,
-    @inject(TYPES.UserRepository) _userRepository: IUserRepository
+    @inject(TYPES.UserRepository) _userRepository: IUserRepository,
+    @inject(TYPES.TaskAssignmentRepository) _taskAssignmentRepository: ITaskAssignmentRepository
   ) {
     this.taskRepository = taskRepository;
     this.logger = loggerFactory(this.name);
     this.errorService = errorService;
+    this.taskAssignmentRepository = _taskAssignmentRepository;
   }
 
   getAllAndCount = async (args: IPagingArgs): Promise<IPaginationData<Task>> => {
     try {
       args.query.archived = false;
+      if (args.query.user_id) {
+        const user_id = args.query.user_id;
+        delete args.query.user_id;
+
+        const taskAssignmentByUser = await this.taskAssignmentRepository.getTaskAssignmentByUser({
+          user_id,
+        });
+
+        args.query.id = taskAssignmentByUser.map((t) => t.task_id);
+      }
+
       const { rows, count } = await this.taskRepository.getAllAndCount(args);
 
       const paging = Paging.getPagingResult({
@@ -130,7 +147,7 @@ export default class TaskService implements ITaskService {
   assignTask = async (args: IAssignTask) => {
     const operation = 'assign';
     try {
-      const employee_id = args.employee_id;
+      const user_id = args.user_id;
       const task_id = args.task_id;
 
       let res = await this.taskRepository.getById({ id: task_id });
@@ -141,7 +158,7 @@ export default class TaskService implements ITaskService {
       }
 
       let task = await this.taskRepository.assignTask({
-        employee_id,
+        user_id,
         task_id,
       });
 

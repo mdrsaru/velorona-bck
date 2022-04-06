@@ -1,11 +1,13 @@
 import { Field, InputType, ObjectType, registerEnumType } from 'type-graphql';
 import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany } from 'typeorm';
-import { entities, TaskStatus } from '../config/constants';
+
 import { Base } from './base.entity';
-import Company from './company.entity';
-import { PagingInput, PagingResult } from './common.entity';
 import User from './user.entity';
+import Company from './company.entity';
 import Workschedule from './workschedule.entity';
+import { entities, TaskStatus } from '../config/constants';
+import { PagingInput, PagingResult } from './common.entity';
+import { taskAssignmentTable } from '../config/db/columns';
 
 registerEnumType(TaskStatus, {
   name: 'TaskStatus',
@@ -49,14 +51,14 @@ export default class Task extends Base {
   @Field(() => [User])
   @ManyToMany(() => User)
   @JoinTable({
-    name: 'task_assignment',
+    name: entities.taskAssignment,
     joinColumn: {
-      name: 'task_id',
+      name: taskAssignmentTable.task_id,
       referencedColumnName: 'id',
     },
 
     inverseJoinColumn: {
-      name: 'employee_id',
+      name: taskAssignmentTable.user_id,
       referencedColumnName: 'id',
     },
   })
@@ -111,8 +113,8 @@ export class TaskPagingResult {
   @Field()
   paging: PagingResult;
 
-  @Field(() => [Company])
-  data: Company[];
+  @Field(() => [Task])
+  data: Task[];
 }
 
 @InputType()
@@ -125,20 +127,24 @@ export class TaskQuery {
 
   @Field()
   company_id: string;
+
+  @Field({ nullable: true, description: 'Assigned user_id for the task' })
+  user_id: string;
 }
+
 @InputType()
 export class TaskQueryInput {
   @Field({ nullable: true })
   paging: PagingInput;
 
-  @Field({ nullable: true })
+  @Field()
   query: TaskQuery;
 }
 
 @InputType()
-export class AssignTaskCreateInput {
+export class AssignTaskInput {
   @Field(() => [String])
-  employee_id: string[];
+  user_id: string[];
 
   @Field()
   task_id: string;
