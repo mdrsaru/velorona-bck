@@ -33,12 +33,12 @@ export default class Workschedule extends Base {
 
   @Field()
   @Column()
-  employee_id: string;
+  user_id: string;
 
   @Field(() => User)
   @ManyToOne(() => User)
-  @JoinColumn({ name: 'employee_id' })
-  employee: User;
+  @JoinColumn({ name: 'user_id' })
+  user: User;
 
   @Field()
   @Column()
@@ -74,7 +74,7 @@ export class WorkscheduleCreateInput {
   task_id: string;
 
   @Field()
-  employee_id: string;
+  user_id: string;
 
   @Field()
   company_id: string;
@@ -98,7 +98,7 @@ export class WorkscheduleUpdateInput {
   task_id: string;
 
   @Field({ nullable: true })
-  employee_id: string;
+  user_id: string;
 
   @Field({ nullable: true })
   company_id: string;

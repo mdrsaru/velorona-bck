@@ -58,4 +58,5 @@ export default {
   toRequired: 'To required',
   fromRequired: 'From required',
   workscheduleNotFound: 'Workschedule not found',
+  UserIdRequired: 'User Id required',
 };

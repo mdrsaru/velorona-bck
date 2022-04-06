@@ -27,10 +27,10 @@ const messages = {
     'string.empty': strings.taskIdRequired,
     'any.required': strings.taskIdRequired,
   },
-  employee_id: {
-    'string.base': strings.EmployeeIdRequired,
-    'string.empty': strings.EmployeeIdRequired,
-    'any.required': strings.EmployeeIdRequired,
+  user_id: {
+    'string.base': strings.UserIdRequired,
+    'string.empty': strings.UserIdRequired,
+    'any.required': strings.UserIdRequired,
   },
   company_id: {
     'string.base': strings.companyRequired,
@@ -46,7 +46,7 @@ export default class WorkscheduleValidation {
       from: Joi.number().required().messages(messages.from),
       to: Joi.number().required().messages(messages.to),
       task_id: Joi.string().required().messages(messages.task_id),
-      employee_id: Joi.string().required().messages(messages.employee_id),
+      user_id: Joi.string().required().messages(messages.user_id),
       company_id: Joi.string().required().messages(messages.company_id),
     });
   }
@@ -57,7 +57,7 @@ export default class WorkscheduleValidation {
       from: Joi.number().messages(messages.from),
       to: Joi.number().messages(messages.to),
       task_id: Joi.string().messages(messages.task_id),
-      employee_id: Joi.string().messages(messages.employee_id),
+      user_id: Joi.string().messages(messages.user_id),
       company_id: Joi.string().messages(messages.company_id),
     });
   }

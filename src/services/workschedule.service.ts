@@ -55,7 +55,7 @@ export default class WorkscheduleService implements IWorkscheduleService {
     const from = args.from;
     const to = args.to;
     const task_id = args.task_id;
-    const employee_id = args.employee_id;
+    const user_id = args.user_id;
     const company_id = args.company_id;
 
     try {
@@ -64,7 +64,7 @@ export default class WorkscheduleService implements IWorkscheduleService {
         from,
         to,
         task_id,
-        employee_id,
+        user_id,
         company_id,
       });
 
@@ -86,7 +86,7 @@ export default class WorkscheduleService implements IWorkscheduleService {
     const from = args.from;
     const to = args.to;
     const task_id = args.task_id;
-    const employee_id = args.employee_id;
+    const user_id = args.user_id;
     const company_id = args.company_id;
 
     try {
@@ -96,7 +96,7 @@ export default class WorkscheduleService implements IWorkscheduleService {
         from,
         to,
         task_id,
-        employee_id,
+        user_id,
         company_id,
       });
 

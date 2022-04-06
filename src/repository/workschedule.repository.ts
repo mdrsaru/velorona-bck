@@ -43,7 +43,7 @@ export default class WorkscheduleRepository extends BaseRepository<Workschedule>
       const from = args.from;
       const to = args.to;
       const task_id = args.task_id;
-      const employee_id = args.employee_id;
+      const user_id = args.user_id;
       const company_id = args.company_id;
 
       const errors: string[] = [];
@@ -51,7 +51,7 @@ export default class WorkscheduleRepository extends BaseRepository<Workschedule>
       if (isNil(task_id) || !isString(task_id)) {
         errors.push(strings.taskIdRequired);
       }
-      if (isNil(employee_id) || !isString(employee_id)) {
+      if (isNil(user_id) || !isString(user_id)) {
         errors.push(strings.EmployeeIdRequired);
       }
       if (isNil(company_id) || !isString(company_id)) {
@@ -70,7 +70,7 @@ export default class WorkscheduleRepository extends BaseRepository<Workschedule>
           details: [strings.taskNotFound],
         });
       }
-      const employee = await this.userRepository.getById({ id: employee_id, relations: ['roles'] });
+      const employee = await this.userRepository.getById({ id: user_id, relations: ['roles'] });
       if (!employee) {
         throw new apiError.NotFoundError({
           details: [strings.userNotFound],
@@ -88,7 +88,7 @@ export default class WorkscheduleRepository extends BaseRepository<Workschedule>
         from,
         to,
         task_id,
-        employee_id,
+        user_id,
         company_id,
       });
 
@@ -105,7 +105,7 @@ export default class WorkscheduleRepository extends BaseRepository<Workschedule>
       const from = args.from;
       const to = args.to;
       const task_id = args.task_id;
-      const employee_id = args.employee_id;
+      const user_id = args.user_id;
       const company_id = args.company_id;
 
       const found = await this.getById({ id });
@@ -120,7 +120,7 @@ export default class WorkscheduleRepository extends BaseRepository<Workschedule>
         from,
         to,
         task_id,
-        employee_id,
+        user_id,
         company_id,
       });
 
