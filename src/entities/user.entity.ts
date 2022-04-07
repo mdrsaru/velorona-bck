@@ -176,6 +176,9 @@ export class UserUpdateInput {
   @Field({ nullable: true })
   lastName: string;
 
+  @Field({ nullable: true })
+  archived: boolean;
+
   @Field((type) => UserStatus, { nullable: true })
   status: UserStatus;
 

@@ -192,6 +192,7 @@ export default class UserRepository extends BaseRepository<User> implements IUse
       const password = args?.password;
       const record = args?.record ?? {};
       const avatar_id = args?.avatar_id;
+      const archived = args?.archived;
 
       const found = await this.repo.findOne(id, {
         relations: ['address', 'record'],
@@ -225,6 +226,7 @@ export default class UserRepository extends BaseRepository<User> implements IUse
           ...(found?.record ?? {}),
           ...record,
         },
+        archived,
       });
 
       const user = await this.repo.save(update);

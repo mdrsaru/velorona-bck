@@ -108,6 +108,7 @@ export default class UserValidation {
       middleName: Joi.string(),
       phone: Joi.string().messages(messages.phone),
       address: Joi.object(),
+      archived: Joi.boolean(),
       record: Joi.object({
         startDate: Joi.date(),
         endDate: Joi.date().min(Joi.ref('startDate')).error(new Error(strings.endDateMustBeValidDate)),

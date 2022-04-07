@@ -37,6 +37,7 @@ export default class UserService implements IUserService {
 
   getAllAndCount = async (args: IPagingArgs): Promise<IPaginationData<User>> => {
     try {
+      args.query.archived = false;
       const { rows, count } = await this.userRepository.getAllAndCount(args);
 
       const paging = Paging.getPagingResult({
@@ -158,6 +159,7 @@ export default class UserService implements IUserService {
       const address = args?.address;
       const password = args?.password;
       const record = args?.record;
+      const archived = args?.archived;
 
       const user = await this.userRepository.update({
         id,
@@ -169,6 +171,7 @@ export default class UserService implements IUserService {
         address,
         password,
         record,
+        archived,
       });
 
       return user;

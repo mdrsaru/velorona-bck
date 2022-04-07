@@ -125,6 +125,14 @@ export default class AuthService implements IAuthService {
         });
       }
 
+      if (user.status !== UserStatus.Active) {
+        throw new NotAuthenticatedError({
+          details: [strings.emailPasswordNotCorrect],
+          data: {
+            status: 'Inactive',
+          },
+        });
+      }
       const userPassword: any = user.password;
 
       let isPasswordCorrect = await this.hashService.compare(password, userPassword);

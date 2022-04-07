@@ -168,6 +168,7 @@ export class UserResolver {
       const phone = args.phone;
       const record = args.record;
       const address = args.address;
+      const archived = args.archived;
 
       const schema = UserValidation.update();
       await this.joiService.validate({
@@ -180,6 +181,7 @@ export class UserResolver {
           phone,
           address,
           record,
+          archived,
         },
       });
 
@@ -192,6 +194,7 @@ export class UserResolver {
         phone,
         address,
         record,
+        archived,
       });
 
       return user;

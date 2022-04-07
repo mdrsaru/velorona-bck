@@ -69,6 +69,7 @@ export interface IUserUpdate {
   password?: string;
   avatar_id?: string;
   record?: IUserRecordUpdateInput;
+  archived?: boolean;
 }
 
 export interface IUserRepository {
