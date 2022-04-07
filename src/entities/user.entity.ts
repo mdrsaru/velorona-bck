@@ -190,6 +190,9 @@ export class UserUpdateInput {
 export class UserQuery {
   @Field({ nullable: true })
   id: string;
+
+  @Field({ nullable: true })
+  search: string;
 }
 
 @InputType()

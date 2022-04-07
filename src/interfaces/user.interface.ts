@@ -95,4 +95,5 @@ export interface IUserService {
   remove(args: IEntityRemove): Promise<User>;
   getById(args: IEntityID): Promise<User | undefined>;
   changeProfilePicture(args: IChangeProfilePictureInput): Promise<User>;
+  searchClient(args: IPagingArgs): Promise<IPaginationData<User>>;
 }
