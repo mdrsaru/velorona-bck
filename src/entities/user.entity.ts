@@ -110,7 +110,7 @@ export default class User extends Base {
   assignedTasks: Task[];
 
   @Field(() => Workschedule, { nullable: true })
-  @OneToMany(() => Workschedule, (workschedule) => workschedule.employee)
+  @OneToMany(() => Workschedule, (workschedule) => workschedule.user)
   workschedules: Workschedule[];
 }
 

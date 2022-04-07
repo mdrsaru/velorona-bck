@@ -74,7 +74,7 @@ export class WorkscheduleResolver {
       const from = args.from;
       const to = args.to;
       const task_id = args.task_id;
-      const employee_id = args.employee_id;
+      const user_id = args.user_id;
       const company_id = args.company_id;
 
       const schema = WorkscheduleValidation.create();
@@ -85,7 +85,7 @@ export class WorkscheduleResolver {
           from,
           to,
           task_id,
-          employee_id,
+          user_id,
           company_id,
         },
       });
@@ -95,7 +95,7 @@ export class WorkscheduleResolver {
         from,
         to,
         task_id,
-        employee_id,
+        user_id,
         company_id,
       });
 
@@ -121,7 +121,7 @@ export class WorkscheduleResolver {
       const from = args.from;
       const to = args.to;
       const task_id = args.task_id;
-      const employee_id = args.employee_id;
+      const user_id = args.user_id;
       const company_id = args.company_id;
 
       const schema = WorkscheduleValidation.update();
@@ -133,7 +133,7 @@ export class WorkscheduleResolver {
           from,
           to,
           task_id,
-          employee_id,
+          user_id,
           company_id,
         },
       });
@@ -144,7 +144,7 @@ export class WorkscheduleResolver {
         from,
         to,
         task_id,
-        employee_id,
+        user_id,
         company_id,
       });
 
@@ -185,9 +185,9 @@ export class WorkscheduleResolver {
     }
   }
   @FieldResolver()
-  async employee(@Root() root: Workschedule, @Ctx() ctx: IGraphqlContext) {
-    if (root.employee_id) {
-      return await ctx.loaders.usersByIdLoader.load(root.employee_id);
+  async user(@Root() root: Workschedule, @Ctx() ctx: IGraphqlContext) {
+    if (root.user_id) {
+      return await ctx.loaders.usersByIdLoader.load(root.user_id);
     }
   }
   @FieldResolver()

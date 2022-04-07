@@ -11,7 +11,7 @@ export interface IWorkschedule {
   from: number;
   to: number;
   tasks: Task[];
-  employee: User[];
+  user: User[];
   company: Company[];
 }
 export interface IWorkscheduleCreateInput {
@@ -19,7 +19,7 @@ export interface IWorkscheduleCreateInput {
   from: number;
   to: number;
   task_id: string;
-  employee_id: string;
+  user_id: string;
   company_id: string;
 }
 
@@ -29,7 +29,7 @@ export interface IWorkscheduleUpdateInput {
   from?: number;
   to?: number;
   task_id?: string;
-  employee_id?: string;
+  user_id?: string;
   company_id?: string;
 }
 
