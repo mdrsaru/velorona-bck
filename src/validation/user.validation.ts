@@ -79,7 +79,7 @@ export default class UserValidation {
       lastName: Joi.string().required().messages(messages.lastName),
       middleName: Joi.string(),
       phone: Joi.string().required().messages(messages.phone),
-      company_id: Joi.string(),
+      company_id: Joi.string().required(),
       address: Joi.object(),
       roles: Joi.array().items(Joi.string().required()).required(),
       record: Joi.object({
@@ -87,16 +87,20 @@ export default class UserValidation {
         endDate: Joi.date().min(Joi.ref('startDate')).required().messages(messages.endDate),
         payRate: Joi.number(),
       })
-        .when('company_id', {
-          is: undefined,
-          then: Joi.object({
-            startDate: Joi.date().required().error(new Error(strings.startDateRequired)),
-            endDate: Joi.date().min(Joi.ref('startDate')).required().messages(messages.endDate),
-            payRate: Joi.number().required().error(new Error(strings.payRateRequired)),
-          }).required(),
-          otherwise: Joi.optional(),
-        })
+        .required()
         .messages(messages.record),
+    });
+  }
+
+  static userAdminCreate() {
+    return Joi.object({
+      email: Joi.string().email().required().messages(messages.firstName),
+      firstName: Joi.string().required().messages(messages.firstName),
+      lastName: Joi.string().required().messages(messages.lastName),
+      middleName: Joi.string(),
+      phone: Joi.string().required().messages(messages.phone),
+      address: Joi.object(),
+      roles: Joi.array().items(Joi.string().required()).required(),
     });
   }
 

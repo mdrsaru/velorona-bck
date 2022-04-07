@@ -147,7 +147,7 @@ export default class UserRepository extends BaseRepository<User> implements IUse
 
       const existingRoles = await this.roleRepository.getAll({
         query: {
-          id: roles,
+          name: roles,
         },
       });
 
