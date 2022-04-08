@@ -59,4 +59,6 @@ export default {
   fromRequired: 'From required',
   workscheduleNotFound: 'Workschedule not found',
   UserIdRequired: 'User Id required',
+  userTypeRequired: 'User type required',
+  tokenExpired: 'Token expired',
 };

@@ -9,6 +9,7 @@ import {
   IUserTokenDeleteByUserId,
   IUserTokenRepository,
   IUserTokenService,
+  IUserTokenDeleteByUserIdAndType,
 } from '../interfaces/user-token.interface';
 import { IErrorService, ITokenService } from '../interfaces/common.interface';
 
@@ -48,15 +49,10 @@ export default class UserTokenService implements IUserTokenService {
 
   create = async (args: IUserTokenCreate): Promise<UserToken> => {
     const operation = 'create';
-    try {
-      const token = await this.tokenService.generateToken({
-        payload: args.payload,
-        tokenLife: args.expiresIn,
-        tokenSecret: args.secretKey,
-      });
 
+    try {
       const userToken = await this.userTokenRepository.create({
-        token,
+        token: args.token,
         expiresIn: new Date(Date.now() + ms(args.expiresIn)),
         user_id: args.user_id,
         tokenType: args.tokenType,
@@ -79,5 +75,9 @@ export default class UserTokenService implements IUserTokenService {
 
   deleteByUserId(args: IUserTokenDeleteByUserId): Promise<boolean> {
     return this.userTokenRepository.deleteByUserId(args);
+  }
+
+  deleteByUserIdAndType(args: IUserTokenDeleteByUserIdAndType): Promise<boolean> {
+    return this.userTokenRepository.deleteByUserIdAndType(args);
   }
 }

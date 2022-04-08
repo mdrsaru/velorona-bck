@@ -1,5 +1,5 @@
 import { IPagingArgs, IGetAllAndCountResult, IPaginationData } from './paging.interface';
-import { IEntityRemove, IEntityID } from './common.interface';
+import { IEntityRemove, IEntityID, ISingleEntityQuery } from './common.interface';
 import User from '../entities/user.entity';
 import Role from '../entities/role.entity';
 import { UserStatus } from '../config/constants';
@@ -75,6 +75,7 @@ export interface IUserRepository {
   getAllAndCount(args: IPagingArgs): Promise<IGetAllAndCountResult<User>>;
   getAll(args: any): Promise<User[]>;
   getById(args: IEntityID): Promise<User | undefined>;
+  getSingleEntity(args: ISingleEntityQuery): Promise<User | undefined>;
   create(args: IUserCreateRepo): Promise<User>;
   update(args: IUserUpdate): Promise<User>;
   remove(args: IEntityRemove): Promise<User>;

@@ -24,6 +24,7 @@ export default class UserToken extends Base {
 
   @Field()
   @Column({ type: 'text' })
+  @Index()
   token: string;
 
   @Field()

@@ -5,7 +5,6 @@ import { CookieOptions } from 'express';
 
 import {
   ForgotPasswordInput,
-  ForgotPasswordResponse,
   LoginInput,
   LoginResponse,
   ResetPasswordInput,
@@ -108,25 +107,32 @@ export class AuthResolver {
     }
   }
 
-  @Mutation((returns) => ForgotPasswordResponse)
+  @Mutation((returns) => String)
   async ForgotPassword(@Arg('input') args: ForgotPasswordInput) {
-    const operation = 'ForgetPassword';
+    const operation = 'ForgotPassword';
 
     try {
       const email = args.email;
+      const userType = args.userType;
+      const companyCode = args.companyCode;
 
       const schema = AuthValidation.forgotPassword();
       await this.joiService.validate({
         schema,
         input: {
           email,
+          userType,
+          companyCode,
         },
       });
 
-      const res = await this.authService.forgotPassword({
+      const result = await this.authService.forgotPassword({
         email,
+        userType,
+        companyCode,
       });
-      return res;
+
+      return 'An email has been sent to reset your password.';
     } catch (err) {
       this.errorService.throwError({
         err,
@@ -137,12 +143,13 @@ export class AuthResolver {
     }
   }
 
-  @Mutation((returns) => ResetPasswordResponse)
+  @Mutation((returns) => String)
   async ResetPassword(@Arg('input') args: ResetPasswordInput, @Ctx() ctx: IGraphqlContext) {
     const operation = 'ResetPassword';
     try {
-      const token = ctx.req.headers;
+      const token = args.token;
       const password = args.password;
+
       const schema = AuthValidation.resetPassword();
       await this.joiService.validate({
         schema,
@@ -151,11 +158,13 @@ export class AuthResolver {
           password,
         },
       });
-      const res = await this.authService.resetPassword({
+
+      const result = await this.authService.resetPassword({
         token,
         password,
       });
-      return res;
+
+      return result.message;
     } catch (err) {
       this.errorService.throwError({
         err,

@@ -1,10 +1,15 @@
-import { Field, InputType, ObjectType, Root } from 'type-graphql';
+import { Field, InputType, ObjectType, Root, registerEnumType } from 'type-graphql';
 
 import Role from '../entities/role.entity';
 import UserToken from './user-token.entity';
 import Company from '../entities/company.entity';
+import { ForgotPasswordUserType } from '../config/constants';
 import { AddressCreateInput } from '../entities/address.entity';
 import { UserRecordCreateInput } from '../entities/user-record.entity';
+
+registerEnumType(ForgotPasswordUserType, {
+  name: 'ForgotPasswordUserType',
+});
 
 @ObjectType()
 export class LoginResponse {
@@ -22,12 +27,6 @@ export class LoginResponse {
 
   @Field((type) => Company, { nullable: true })
   company: Company;
-}
-
-@ObjectType()
-export class ForgotPasswordResponse {
-  @Field()
-  token: string;
 }
 
 @ObjectType()
@@ -52,11 +51,17 @@ export class LoginInput {
 export class ForgotPasswordInput {
   @Field()
   email: string;
+
+  @Field((type) => ForgotPasswordUserType)
+  userType: ForgotPasswordUserType;
+
+  @Field({ nullable: true })
+  companyCode: string;
 }
 
 @InputType()
 export class ResetPasswordInput {
-  @Field({ nullable: true })
+  @Field()
   token: string;
 
   @Field()

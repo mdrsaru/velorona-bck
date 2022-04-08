@@ -87,6 +87,7 @@ export enum AdminRole {
 
 export enum TokenType {
   refresh = 'refresh',
+  resetPassword = 'resetPassword',
 }
 
 export enum InvitationStatus {
@@ -97,6 +98,11 @@ export enum InvitationStatus {
 export enum TaskStatus {
   Active = 'Active',
   Inactive = 'Inactive',
+}
+
+export enum ForgotPasswordUserType {
+  Company = 'Company',
+  SystemAdmin = 'SystemAdmin',
 }
 
 export const emailSetting = {
@@ -114,6 +120,10 @@ export const emailSetting = {
     adminBody: process.env.NEW_ADMIN_USER_EMAIL_BODY || '',
     companyBody: process.env.NEW_COMPANY_USER_EMAIL_BODY || '',
   },
+  resetPassword: {
+    subject: process.env.RESET_PASSWORD_EMAIL_SUBJECT || '',
+    body: process.env.RESET_PASSWORD_EMAIL_BODY || '',
+  },
 };
 
 export default {
@@ -127,7 +137,7 @@ export default {
   saltRounds: process.env.SALT_ROUNDS || 10,
   verificationEmailTokenExpiration: process.env.VERIFICATION_EMAIL_EXPIRATION || '1d',
   refreshTokenExpiration: process.env.REFRESH_TOKEN_EXPIRATION || '7d',
-  forgotPasswordTokenExpiration: process.env.FORGOT_PASSWORD_TOKEN_EXPIRATION || '1hr',
+  forgotPasswordTokenExpiration: process.env.FORGOT_PASSWORD_TOKEN_EXPIRATION || '30m',
   log: {
     fileLogLevel: process.env.FILE_LOG_LEVEL,
     dirname: process.env.LOG_DIRNAME || '.logs',
@@ -147,10 +157,6 @@ export default {
   refreshTokenSecret: process.env.REFRESH_TOKEN_SECRET || 'refreshSecret',
   refreshTokenLife: process.env.REFRESH_TOKEN_LIFE || '7d',
   frontendUrl: process.env.FRONT_END_URL || 'http://localhost:3000',
-  changePassword: {
-    changePasswordSubject: process.env.CHANGEPASSWORD_SUBJECT || 'Change your password',
-    changePasswordBody: process.env.CHANGEPASSWORD_BODY || 'Here is the link',
-  },
   mediaDestination: './public/uploads',
   fileSize: 10000000,
 };
