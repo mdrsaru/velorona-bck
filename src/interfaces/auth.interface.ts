@@ -1,6 +1,8 @@
 import User from '../entities/user.entity';
 import Role from '../entities/role.entity';
 import Company from '../entities/company.entity';
+import { ForgotPasswordUserType } from '../config/constants';
+
 import { IEntityID } from './common.interface';
 import { IAddressCreateInput } from './address.interface';
 import { IUserRecordCreateInput } from './user-record.interface';
@@ -14,6 +16,8 @@ export interface ILoginInput {
 
 export interface IForgotPasswordInput {
   email: string;
+  userType: ForgotPasswordUserType;
+  companyCode: string;
 }
 
 export interface IResetPasswordInput {
@@ -29,7 +33,7 @@ export interface ILoginResponse {
 }
 
 export interface IForgotPasswordResponse {
-  token: string;
+  token: string | undefined;
 }
 
 export interface IResetPasswordResponse {

@@ -18,14 +18,12 @@ import {
   IUserTokenRepository,
   IUserTokenDeleteByToken,
   IUserTokenDeleteByUserId,
+  IUserTokenDeleteByUserIdAndType,
 } from '../interfaces/user-token.interface';
 import { IRoleRepository } from '../interfaces/role.interface';
 
 @injectable()
-export default class UserTokenRepository
-  extends BaseRepository<UserToken>
-  implements IUserTokenRepository
-{
+export default class UserTokenRepository extends BaseRepository<UserToken> implements IUserTokenRepository {
   constructor() {
     super(getRepository(UserToken));
   }
@@ -74,9 +72,7 @@ export default class UserTokenRepository
     return this.repo.findOne({ where: { token } });
   }
 
-  deleteByToken = async (
-    args: IUserTokenDeleteByToken
-  ): Promise<UserToken | undefined> => {
+  deleteByToken = async (args: IUserTokenDeleteByToken): Promise<UserToken | undefined> => {
     try {
       const token = args.token;
       const found = await this.repo.findOne({ where: { token } });
@@ -100,6 +96,33 @@ export default class UserTokenRepository
       const user_id = args.user_id;
 
       await this.repo.delete({ user_id });
+
+      return true;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  deleteByUserIdAndType = async (args: IUserTokenDeleteByUserIdAndType): Promise<boolean> => {
+    try {
+      const user_id = args.user_id;
+      const tokenType = args.tokenType;
+
+      const errors: string[] = [];
+      if (isNil(user_id) && !isString(user_id)) {
+        errors.push(strings.userIdRequired);
+      }
+      if (isNil(tokenType) && !isString(tokenType)) {
+        errors.push(strings.tokenTypeRequired);
+      }
+
+      if (errors.length) {
+        throw new apiError.ValidationError({
+          details: [strings.userIdRequired],
+        });
+      }
+
+      await this.repo.delete({ user_id, tokenType });
 
       return true;
     } catch (err) {
