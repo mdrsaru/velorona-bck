@@ -79,24 +79,40 @@ export default class UserValidation {
       lastName: Joi.string().required().messages(messages.lastName),
       middleName: Joi.string(),
       phone: Joi.string().required().messages(messages.phone),
-      company_id: Joi.string(),
-      address: Joi.object(),
+      company_id: Joi.string().required(),
+      address: Joi.object({
+        streetAddress: Joi.string().required(),
+        aptOrSuite: Joi.string(),
+        city: Joi.string(),
+        state: Joi.string(),
+        zipcode: Joi.string(),
+      }).required(),
       roles: Joi.array().items(Joi.string().required()).required(),
       record: Joi.object({
         startDate: Joi.date(),
         endDate: Joi.date().min(Joi.ref('startDate')).required().messages(messages.endDate),
         payRate: Joi.number(),
       })
-        .when('company_id', {
-          is: undefined,
-          then: Joi.object({
-            startDate: Joi.date().required().error(new Error(strings.startDateRequired)),
-            endDate: Joi.date().min(Joi.ref('startDate')).required().messages(messages.endDate),
-            payRate: Joi.number().required().error(new Error(strings.payRateRequired)),
-          }).required(),
-          otherwise: Joi.optional(),
-        })
+        .required()
         .messages(messages.record),
+    });
+  }
+
+  static createAdmin() {
+    return Joi.object({
+      email: Joi.string().email().required().messages(messages.firstName),
+      firstName: Joi.string().required().messages(messages.firstName),
+      lastName: Joi.string().required().messages(messages.lastName),
+      middleName: Joi.string(),
+      phone: Joi.string().required().messages(messages.phone),
+      address: Joi.object({
+        streetAddress: Joi.string().required(),
+        aptOrSuite: Joi.string(),
+        city: Joi.string(),
+        state: Joi.string(),
+        zipcode: Joi.string(),
+      }).required(),
+      roles: Joi.array().items(Joi.string().required()).required(),
     });
   }
 
@@ -107,7 +123,13 @@ export default class UserValidation {
       lastName: Joi.string().messages(messages.lastName),
       middleName: Joi.string(),
       phone: Joi.string().messages(messages.phone),
-      address: Joi.object(),
+      address: Joi.object({
+        streetAddress: Joi.string(),
+        aptOrSuite: Joi.string(),
+        city: Joi.string(),
+        state: Joi.string(),
+        zipcode: Joi.string(),
+      }),
       record: Joi.object({
         startDate: Joi.date(),
         endDate: Joi.date().min(Joi.ref('startDate')).error(new Error(strings.endDateMustBeValidDate)),

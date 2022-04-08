@@ -74,6 +74,17 @@ export enum Role {
   Client = 'Client',
 }
 
+export enum CompanyRole {
+  CompanyAdmin = 'CompanyAdmin',
+  Employee = 'Employee',
+  TaskManager = 'TaskManager',
+  Client = 'Client',
+}
+
+export enum AdminRole {
+  SuperAdmin = 'SuperAdmin',
+}
+
 export enum TokenType {
   refresh = 'refresh',
 }

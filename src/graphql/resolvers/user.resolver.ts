@@ -17,6 +17,7 @@ import User, {
   UserUpdateInput,
   UserQueryInput,
   ChangeProfilePictureInput,
+  UserAdminCreateInput,
 } from '../../entities/user.entity';
 
 import { IPaginationData } from '../../interfaces/paging.interface';
@@ -86,13 +87,8 @@ export class UserResolver {
     }
   }
 
-  @Mutation((returns) => User)
-  @UseMiddleware(
-    authenticate,
-    authorize(RoleEnum.CompanyAdmin, RoleEnum.SuperAdmin),
-    canCreateSystemAdmin,
-    checkCompanyAccess
-  )
+  @Mutation((returns) => User, { description: 'Create user related to company' })
+  @UseMiddleware(authenticate, authorize(RoleEnum.CompanyAdmin, RoleEnum.SuperAdmin), checkCompanyAccess)
   async UserCreate(@Arg('input') args: UserCreateInput): Promise<User> {
     const operation = 'UserCreate';
 
@@ -141,6 +137,63 @@ export class UserResolver {
         address,
         roles,
         record,
+      });
+
+      return user;
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
+    }
+  }
+
+  @Mutation((returns) => User)
+  @UseMiddleware(authenticate, authorize(RoleEnum.CompanyAdmin, RoleEnum.SuperAdmin), canCreateSystemAdmin)
+  async UserAdminCreate(@Arg('input') args: UserAdminCreateInput): Promise<User> {
+    const operation = 'UserAdminCreate';
+
+    try {
+      const email = args.email;
+      const firstName = args.firstName;
+      const lastName = args.lastName;
+      const middleName = args.middleName;
+      const phone = args.phone;
+      const status = args.status;
+      const roles = args.roles;
+      const address = {
+        streetAddress: args.address.streetAddress,
+        aptOrSuite: args.address.aptOrSuite,
+        city: args.address.city,
+        state: args.address.state,
+        zipcode: args.address.zipcode,
+      };
+
+      const schema = UserValidation.createAdmin();
+      await this.joiService.validate({
+        schema,
+        input: {
+          email,
+          firstName,
+          lastName,
+          middleName,
+          phone,
+          address,
+          roles,
+        },
+      });
+
+      const user: User = await this.userService.create({
+        email,
+        firstName,
+        lastName,
+        middleName,
+        status,
+        phone,
+        address,
+        roles,
       });
 
       return user;
