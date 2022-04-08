@@ -87,13 +87,8 @@ export class UserResolver {
     }
   }
 
-  @Mutation((returns) => User)
-  @UseMiddleware(
-    authenticate,
-    authorize(RoleEnum.CompanyAdmin, RoleEnum.SuperAdmin),
-    canCreateSystemAdmin,
-    checkCompanyAccess
-  )
+  @Mutation((returns) => User, { description: 'Create user related to company' })
+  @UseMiddleware(authenticate, authorize(RoleEnum.CompanyAdmin, RoleEnum.SuperAdmin), checkCompanyAccess)
   async UserCreate(@Arg('input') args: UserCreateInput): Promise<User> {
     const operation = 'UserCreate';
 
@@ -156,12 +151,7 @@ export class UserResolver {
   }
 
   @Mutation((returns) => User)
-  @UseMiddleware(
-    authenticate,
-    authorize(RoleEnum.CompanyAdmin, RoleEnum.SuperAdmin),
-    canCreateSystemAdmin,
-    checkCompanyAccess
-  )
+  @UseMiddleware(authenticate, authorize(RoleEnum.CompanyAdmin, RoleEnum.SuperAdmin), canCreateSystemAdmin)
   async UserAdminCreate(@Arg('input') args: UserAdminCreateInput): Promise<User> {
     const operation = 'UserAdminCreate';
 
@@ -181,7 +171,7 @@ export class UserResolver {
         zipcode: args.address.zipcode,
       };
 
-      const schema = UserValidation.userAdminCreate();
+      const schema = UserValidation.createAdmin();
       await this.joiService.validate({
         schema,
         input: {

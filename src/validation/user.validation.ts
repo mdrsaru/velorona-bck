@@ -80,7 +80,13 @@ export default class UserValidation {
       middleName: Joi.string(),
       phone: Joi.string().required().messages(messages.phone),
       company_id: Joi.string().required(),
-      address: Joi.object(),
+      address: Joi.object({
+        streetAddress: Joi.string().required(),
+        aptOrSuite: Joi.string(),
+        city: Joi.string(),
+        state: Joi.string(),
+        zipcode: Joi.string(),
+      }).required(),
       roles: Joi.array().items(Joi.string().required()).required(),
       record: Joi.object({
         startDate: Joi.date(),
@@ -92,14 +98,20 @@ export default class UserValidation {
     });
   }
 
-  static userAdminCreate() {
+  static createAdmin() {
     return Joi.object({
       email: Joi.string().email().required().messages(messages.firstName),
       firstName: Joi.string().required().messages(messages.firstName),
       lastName: Joi.string().required().messages(messages.lastName),
       middleName: Joi.string(),
       phone: Joi.string().required().messages(messages.phone),
-      address: Joi.object(),
+      address: Joi.object({
+        streetAddress: Joi.string().required(),
+        aptOrSuite: Joi.string(),
+        city: Joi.string(),
+        state: Joi.string(),
+        zipcode: Joi.string(),
+      }).required(),
       roles: Joi.array().items(Joi.string().required()).required(),
     });
   }
@@ -111,7 +123,13 @@ export default class UserValidation {
       lastName: Joi.string().messages(messages.lastName),
       middleName: Joi.string(),
       phone: Joi.string().messages(messages.phone),
-      address: Joi.object(),
+      address: Joi.object({
+        streetAddress: Joi.string(),
+        aptOrSuite: Joi.string(),
+        city: Joi.string(),
+        state: Joi.string(),
+        zipcode: Joi.string(),
+      }),
       record: Joi.object({
         startDate: Joi.date(),
         endDate: Joi.date().min(Joi.ref('startDate')).error(new Error(strings.endDateMustBeValidDate)),
