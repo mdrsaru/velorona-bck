@@ -1,16 +1,16 @@
 import merge from 'lodash/merge';
 import isDate from 'lodash/isDate';
-
 import isNil from 'lodash/isNil';
 import isString from 'lodash/isString';
 import isArray from 'lodash/isArray';
 import { injectable, inject } from 'inversify';
-import { getRepository, In, IsNull, Like } from 'typeorm';
+import { getRepository, In, IsNull, Like, ILike, SelectQueryBuilder, Raw } from 'typeorm';
 
 import { TYPES } from '../types';
 import strings from '../config/strings';
 import config from '../config/constants';
 import User from '../entities/user.entity';
+import Role from '../entities/role.entity';
 import BaseRepository from './base.repository';
 import * as apiError from '../utils/api-error';
 
@@ -46,8 +46,8 @@ export default class UserRepository extends BaseRepository<User> implements IUse
 
   getAllAndCount = async (args: IGetOptions): Promise<IGetAllAndCountResult<User>> => {
     try {
-      let { query = {}, ...rest } = args;
-      let { search, ...where } = query;
+      let { query = {}, relations = [], ...rest } = args;
+      let { role: roleName, search, ...where } = query;
 
       for (let key in query) {
         if (isArray(query[key])) {
@@ -60,18 +60,34 @@ export default class UserRepository extends BaseRepository<User> implements IUse
       if (search) {
         _searchWhere = [
           {
-            firstName: Like(`%${search}`),
+            firstName: ILike(`%${search}`),
             ...where,
           },
           {
-            email: Like(`%${search}`),
+            email: ILike(`%${search}`),
             ...where,
           },
         ];
       }
 
+      let role: Role | undefined;
+      if (roleName) {
+        relations.push('roles');
+        role = await this.roleRepository.getSingleEntity({ query: { name: roleName } });
+      }
+
+      // Using function based where query since it needs inner join where clause
+      const _where = (qb: SelectQueryBuilder<User>) => {
+        const a = qb.where(_searchWhere.length ? _searchWhere : where);
+
+        if (roleName) {
+          a.andWhere('role_id = :roleId', { roleId: role?.id ?? '' });
+        }
+      };
+
       let [rows, count] = await this.repo.findAndCount({
-        where: _searchWhere.length ? _searchWhere : where,
+        relations,
+        where: _where,
         ...rest,
       });
 

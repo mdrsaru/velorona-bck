@@ -9,9 +9,10 @@ import { Base } from './base.entity';
 import { PagingInput, PagingResult } from './common.entity';
 import Address, { AddressCreateInput, AddressUpdateInput } from './address.entity';
 import UserRecord, { UserRecordCreateInput, UserRecordUpdateInput } from './user-record.entity';
-import { AdminRole, CompanyRole, entities, UserStatus } from '../config/constants';
+import { AdminRole, CompanyRole, entities, UserStatus, Role as RoleEnum } from '../config/constants';
 import Task from './task.entity';
 import Workschedule from './workschedule.entity';
+import { userRolesTable } from '../config/db/columns';
 
 registerEnumType(UserStatus, {
   name: 'UserStatus',
@@ -24,6 +25,7 @@ registerEnumType(CompanyRole, {
 registerEnumType(AdminRole, {
   name: 'AdminRole',
 });
+
 @ObjectType()
 @Entity({ name: entities.users })
 export default class User extends Base {
@@ -85,13 +87,13 @@ export default class User extends Base {
   @Field((type) => [Role])
   @ManyToMany(() => Role)
   @JoinTable({
-    name: 'user_roles',
+    name: entities.userRoles,
     joinColumn: {
-      name: 'role_id',
+      name: userRolesTable.user_id,
       referencedColumnName: 'id',
     },
     inverseJoinColumn: {
-      name: 'user_id',
+      name: userRolesTable.role_id,
       referencedColumnName: 'id',
     },
   })
@@ -227,6 +229,9 @@ export class UserQuery {
 
   @Field({ nullable: true })
   search: string;
+
+  @Field((type) => RoleEnum, { nullable: true })
+  role: RoleEnum;
 }
 
 @InputType()

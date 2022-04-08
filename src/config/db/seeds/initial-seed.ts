@@ -75,7 +75,7 @@ export default class InitialDatabaseSeed implements Seeder {
     }
 
     // admin
-    await factory(User)().create({
+    let u = await factory(User)().create({
       roles: [createdRoles[0]],
       email: users[0].email,
     });
