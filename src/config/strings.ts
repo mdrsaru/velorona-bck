@@ -59,4 +59,7 @@ export default {
   fromRequired: 'From required',
   workscheduleNotFound: 'Workschedule not found',
   UserIdRequired: 'User Id required',
+  userTypeRequired: 'User type required',
+  tokenExpired: 'Token expired',
+  forgotPasswordMsg: 'If the email exists in our system, a token will be sent to reset your password.',
 };

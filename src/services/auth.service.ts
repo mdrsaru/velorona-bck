@@ -1,11 +1,19 @@
 import { inject, injectable } from 'inversify';
 
 import { TYPES } from '../types';
-import constants, { TokenType, Role as RoleEnum, UserStatus, InvitationStatus } from '../config/constants';
-import { NotAuthenticatedError } from '../utils/api-error';
+import constants, {
+  TokenType,
+  Role as RoleEnum,
+  UserStatus,
+  InvitationStatus,
+  ForgotPasswordUserType,
+  emailSetting,
+} from '../config/constants';
+import { NotAuthenticatedError, ValidationError } from '../utils/api-error';
 import strings from '../config/strings';
 import User from '../entities/user.entity';
 import * as apiError from '../utils/api-error';
+import { generateRandomToken } from '../utils/strings';
 
 import {
   IAuthService,
@@ -18,7 +26,14 @@ import {
   IInvitationRegisterInput,
   IInvitationRegisterResponse,
 } from '../interfaces/auth.interface';
-import { IEmailService, IEntityID, IHashService, ITokenService, ILogger } from '../interfaces/common.interface';
+import {
+  IEmailService,
+  IEntityID,
+  IHashService,
+  ITokenService,
+  ILogger,
+  ITemplateService,
+} from '../interfaces/common.interface';
 import { IUserRepository } from '../interfaces/user.interface';
 import { IUserTokenService } from '../interfaces/user-token.interface';
 import { IRoleRepository } from '../interfaces/role.interface';
@@ -34,6 +49,7 @@ export default class AuthService implements IAuthService {
   private userTokenService: IUserTokenService;
   private roleRepository: IRoleRepository;
   private invitationRepository: IInvitationRepository;
+  private handlebarsService: ITemplateService;
   private logger: ILogger;
 
   constructor(
@@ -44,7 +60,8 @@ export default class AuthService implements IAuthService {
     @inject(TYPES.UserTokenService) userTokenService: IUserTokenService,
     @inject(TYPES.LoggerFactory) loggerFactory: (name: string) => ILogger,
     @inject(TYPES.RoleRepository) _roleRepository: IRoleRepository,
-    @inject(TYPES.InvitationRepository) _invitationRepository: IInvitationRepository
+    @inject(TYPES.InvitationRepository) _invitationRepository: IInvitationRepository,
+    @inject(TYPES.HandlebarsService) _handlebarsService: ITemplateService
   ) {
     this.userRepository = _userRepository;
     this.hashService = _hashService;
@@ -54,6 +71,7 @@ export default class AuthService implements IAuthService {
     this.logger = loggerFactory(this.name);
     this.roleRepository = _roleRepository;
     this.invitationRepository = _invitationRepository;
+    this.handlebarsService = _handlebarsService;
   }
 
   login = async (args: ILoginInput): Promise<ILoginResponse> => {
@@ -153,9 +171,14 @@ export default class AuthService implements IAuthService {
         tokenLife: constants.accessTokenLife,
       });
 
-      let userToken = await this.userTokenService.create({
+      const refreshToken = await this.tokenService.generateToken({
         payload,
-        secretKey: constants.refreshTokenSecret,
+        tokenLife: constants.refreshTokenExpiration,
+        tokenSecret: constants.refreshTokenSecret,
+      });
+
+      let userToken = await this.userTokenService.create({
+        token: refreshToken,
         user_id: user.id,
         expiresIn: constants.refreshTokenExpiration,
         tokenType: TokenType?.refresh,
@@ -174,34 +197,126 @@ export default class AuthService implements IAuthService {
   };
 
   forgotPassword = async (args: IForgotPasswordInput): Promise<IForgotPasswordResponse> => {
-    throw new apiError.NotImplementedError({
-      details: ['Not implemented'],
-    });
+    const operation = 'forgotPassword';
+
+    try {
+      const email = args.email;
+      const userType = args.userType;
+      const companyCode = args.companyCode;
+
+      let user: User | undefined;
+      if (userType === ForgotPasswordUserType.Company) {
+        user = await this.userRepository.getByEmailAndCompanyCode({
+          companyCode,
+          email,
+        });
+      } else if (userType === ForgotPasswordUserType.SystemAdmin) {
+        user = await this.userRepository.getByEmailAndNoCompany({
+          email,
+        });
+      } else {
+        throw new apiError.ValidationError({
+          details: ['Invalid user type'],
+        });
+      }
+
+      if (!user || user.archived) {
+        return {
+          token: undefined,
+        };
+      }
+
+      // Clean the resetpassword token by userid
+      await this.userTokenService.deleteByUserIdAndType({
+        user_id: user.id,
+        tokenType: TokenType.resetPassword,
+      });
+
+      const token = await generateRandomToken();
+      await this.userTokenService.create({
+        token,
+        expiresIn: constants.forgotPasswordTokenExpiration,
+        tokenType: TokenType.resetPassword,
+        user_id: user.id,
+      });
+
+      let emailBody: string = emailSetting.resetPassword.body;
+      const resetPasswordHtml = this.handlebarsService.compile({
+        template: emailBody,
+        data: {
+          token,
+        },
+      });
+
+      // send email asynchronously
+      this.emailService
+        .sendEmail({
+          to: user.email,
+          from: emailSetting.fromEmail,
+          subject: emailSetting.resetPassword.subject,
+          html: resetPasswordHtml,
+        })
+        .then((response) => {
+          this.logger.info({
+            operation,
+            message: `Email response for ${user?.email}`,
+            data: response,
+          });
+        })
+        .catch((err) => {
+          this.logger.error({
+            operation,
+            message: 'Error sending user forgot password email',
+            data: err,
+          });
+        });
+
+      return {
+        token,
+      };
+    } catch (err) {
+      throw err;
+    }
   };
 
   resetPassword = async (args: IResetPasswordInput): Promise<IResetPasswordResponse> => {
     try {
-      const token = await this.tokenService.extractToken(args.token);
+      const token = args.token;
       const password = args.password;
-      const tokenData = {
-        token: token,
-        secretKey: constants.accessTokenSecret,
-      };
 
-      const result = await this.tokenService.verifyToken(tokenData);
+      const userToken = await this.userTokenService.getByToken(token);
 
-      if (result) {
-        const id = result.id;
+      if (!userToken || userToken.tokenType !== TokenType.resetPassword) {
+        throw new apiError.ValidationError({
+          details: [strings.tokenInvalid],
+        });
+      }
+
+      if (userToken) {
+        const id = userToken.user_id;
+
+        if (new Date() > userToken.expiresIn) {
+          throw new ValidationError({
+            details: [strings.tokenExpired],
+          });
+        }
+
         await this.userRepository.update({
           id,
           password: password,
+        });
+
+        // Clean the reset password token after successful reset
+        await this.userTokenService.deleteByUserIdAndType({
+          user_id: id,
+          tokenType: TokenType.resetPassword,
         });
 
         return {
           message: 'Password changed sucessfully',
         };
       } else {
-        throw new NotAuthenticatedError({ details: ['Invalid Token'] });
+        throw new NotAuthenticatedError({ details: [strings.tokenInvalid] });
       }
     } catch (err) {
       throw err;

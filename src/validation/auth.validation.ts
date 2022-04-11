@@ -21,6 +21,18 @@ const messages = {
     'string.name': strings.tokenRequired,
     'any.required': strings.tokenRequired,
   },
+  userType: {
+    'string.base': strings.userTypeRequired,
+    'string.empty': strings.userTypeRequired,
+    'string.name': strings.userTypeRequired,
+    'any.required': strings.userTypeRequired,
+  },
+  company: {
+    'string.base': strings.companyRequired,
+    'string.empty': strings.companyRequired,
+    'string.name': strings.companyRequired,
+    'any.required': strings.companyRequired,
+  },
 };
 
 export default class AuthValidation {
@@ -35,11 +47,13 @@ export default class AuthValidation {
   static forgotPassword() {
     return Joi.object({
       email: Joi.string().required().messages(messages.email),
+      userType: Joi.string().required().messages(messages.userType),
+      companyCode: Joi.string().messages(messages.company),
     });
   }
   static resetPassword() {
     return Joi.object({
-      token: Joi.object().required().messages(messages.token),
+      token: Joi.string().required().messages(messages.token),
       password: Joi.string().required().messages(messages.password),
     });
   }

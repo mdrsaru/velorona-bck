@@ -9,12 +9,21 @@ import { Base } from './base.entity';
 import { PagingInput, PagingResult } from './common.entity';
 import Address, { AddressCreateInput, AddressUpdateInput } from './address.entity';
 import UserRecord, { UserRecordCreateInput, UserRecordUpdateInput } from './user-record.entity';
-import { entities, UserStatus } from '../config/constants';
+import { AdminRole, CompanyRole, entities, UserStatus, Role as RoleEnum } from '../config/constants';
 import Task from './task.entity';
 import Workschedule from './workschedule.entity';
+import { userRolesTable } from '../config/db/columns';
 
 registerEnumType(UserStatus, {
   name: 'UserStatus',
+});
+
+registerEnumType(CompanyRole, {
+  name: 'CompanyRole',
+});
+
+registerEnumType(AdminRole, {
+  name: 'AdminRole',
 });
 
 @ObjectType()
@@ -78,13 +87,13 @@ export default class User extends Base {
   @Field((type) => [Role])
   @ManyToMany(() => Role)
   @JoinTable({
-    name: 'user_roles',
+    name: entities.userRoles,
     joinColumn: {
-      name: 'role_id',
+      name: userRolesTable.user_id,
       referencedColumnName: 'id',
     },
     inverseJoinColumn: {
-      name: 'user_id',
+      name: userRolesTable.role_id,
       referencedColumnName: 'id',
     },
   })
@@ -143,17 +152,56 @@ export class UserCreateInput {
   @Field((type) => UserStatus)
   status: UserStatus;
 
-  @Field({ nullable: true })
+  @Field()
   company_id: string;
 
   @Field((type) => AddressCreateInput)
   address: AddressCreateInput;
 
-  @Field((type) => [String])
-  roles: string[];
+  @Field((type) => [CompanyRole])
+  roles: CompanyRole[];
 
-  @Field((type) => UserRecordCreateInput, { nullable: true })
+  @Field((type) => UserRecordCreateInput)
   record: UserRecordCreateInput;
+}
+
+@InputType()
+export class UserAdminCreateInput {
+  @Field()
+  email: string;
+
+  @Field()
+  phone: string;
+
+  @Field()
+  firstName: string;
+
+  @Field({ nullable: true })
+  middleName: string;
+
+  @Field()
+  lastName: string;
+
+  @Field((type) => UserStatus)
+  status: UserStatus;
+
+  @Field((type) => AddressCreateInput)
+  address: AddressCreateInput;
+
+  @Field((type) => [AdminRole])
+  roles: AdminRole[];
+}
+
+@InputType()
+export class UserArchiveInput {
+  @Field()
+  id: string;
+
+  @Field()
+  archived: boolean;
+
+  @Field()
+  company_id: string;
 }
 
 @InputType()
@@ -176,9 +224,6 @@ export class UserUpdateInput {
   @Field({ nullable: true })
   lastName: string;
 
-  @Field({ nullable: true })
-  archived: boolean;
-
   @Field((type) => UserStatus, { nullable: true })
   status: UserStatus;
 
@@ -196,6 +241,9 @@ export class UserQuery {
 
   @Field({ nullable: true })
   search: string;
+
+  @Field((type) => RoleEnum, { nullable: true })
+  role: RoleEnum;
 }
 
 @InputType()
