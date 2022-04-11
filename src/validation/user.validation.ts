@@ -137,4 +137,11 @@ export default class UserValidation {
       }),
     });
   }
+
+  static archive() {
+    return Joi.object({
+      id: Joi.string().required().messages(messages.id),
+      archived: Joi.boolean().required(),
+    });
+  }
 }

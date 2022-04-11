@@ -193,6 +193,18 @@ export class UserAdminCreateInput {
 }
 
 @InputType()
+export class UserArchiveInput {
+  @Field()
+  id: string;
+
+  @Field()
+  archived: boolean;
+
+  @Field()
+  company_id: string;
+}
+
+@InputType()
 export class UserUpdateInput {
   @Field()
   id: string;

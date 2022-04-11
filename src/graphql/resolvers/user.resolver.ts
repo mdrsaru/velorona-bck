@@ -18,6 +18,7 @@ import User, {
   UserQueryInput,
   ChangeProfilePictureInput,
   UserAdminCreateInput,
+  UserArchiveInput,
 } from '../../entities/user.entity';
 
 import { IPaginationData } from '../../interfaces/paging.interface';
@@ -245,6 +246,40 @@ export class UserResolver {
         phone,
         address,
         record,
+      });
+
+      return user;
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
+    }
+  }
+
+  @Mutation((returns) => User)
+  @UseMiddleware(authenticate, authorize(RoleEnum.CompanyAdmin, RoleEnum.SuperAdmin), checkCompanyAccess)
+  async UserArchive(@Arg('input') args: UserArchiveInput): Promise<User> {
+    const operation = 'UserArchive';
+
+    try {
+      const id = args.id;
+      const archived = args.archived;
+
+      const schema = UserValidation.archive();
+      await this.joiService.validate({
+        schema,
+        input: {
+          id,
+          archived,
+        },
+      });
+
+      let user: User = await this.userService.userArchive({
+        id,
+        archived,
       });
 
       return user;

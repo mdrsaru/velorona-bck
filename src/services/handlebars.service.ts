@@ -4,10 +4,7 @@ import Handlebars from 'handlebars';
 import { TYPES } from '../types';
 import * as apiError from '../utils/api-error';
 
-import {
-  ITemplateArgs,
-  ITemplateService,
-} from '../interfaces/common.interface';
+import { ITemplateArgs, ITemplateService } from '../interfaces/common.interface';
 
 @injectable()
 export default class HandlebarsService implements ITemplateService {
@@ -17,7 +14,6 @@ export default class HandlebarsService implements ITemplateService {
       const data = args.data;
 
       const compiled = Handlebars.compile(template);
-
       return compiled(data);
     } catch (err) {
       throw err;
