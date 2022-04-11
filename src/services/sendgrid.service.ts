@@ -8,11 +8,7 @@ import strings from '../config/strings';
 import { emailSetting } from '../config/constants';
 import * as apiError from '../utils/api-error';
 
-import {
-  IEmailService,
-  IEmailArgs,
-  ILogger,
-} from '../interfaces/common.interface';
+import { IEmailService, IEmailArgs, ILogger } from '../interfaces/common.interface';
 
 sgMail.setApiKey(emailSetting.sendGridApi);
 
@@ -20,9 +16,7 @@ sgMail.setApiKey(emailSetting.sendGridApi);
 export default class SendGridService implements IEmailService {
   private logger: ILogger;
 
-  constructor(
-    @inject(TYPES.LoggerFactory) loggerFactory: (name: string) => ILogger
-  ) {
+  constructor(@inject(TYPES.LoggerFactory) loggerFactory: (name: string) => ILogger) {
     this.logger = loggerFactory('SendGridService');
   }
 
@@ -48,7 +42,7 @@ export default class SendGridService implements IEmailService {
         errors.push('Argument subject is required');
       }
 
-      if (!html && !text && templateId) {
+      if (!html && !text && !templateId) {
         throw new apiError.ValidationError({
           details: ['Either html or text or templateId is required'],
         });

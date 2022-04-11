@@ -132,7 +132,7 @@ export class AuthResolver {
         companyCode,
       });
 
-      return 'An email has been sent to reset your password.';
+      return 'An email has been sent to reset your password if the email exists in our system.';
     } catch (err) {
       this.errorService.throwError({
         err,
