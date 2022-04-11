@@ -55,6 +55,7 @@ export const entities = {
   projects: 'projects',
   workschedule: 'workschedule',
   userRoles: 'user_roles',
+  userClient: 'user_clients',
 };
 
 export enum CompanyStatus {
@@ -106,6 +107,10 @@ export enum ForgotPasswordUserType {
   SystemAdmin = 'SystemAdmin',
 }
 
+export enum UserClientStatus {
+  Active = 'Active',
+  Inactive = 'Inactive',
+}
 export const emailSetting = {
   testMask: process.env.EMAIL_TEST_MASK as string,
   fromEmail: process.env.EMAIL_FROM_EMAIL as string,

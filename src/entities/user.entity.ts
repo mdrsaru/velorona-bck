@@ -13,6 +13,7 @@ import { AdminRole, CompanyRole, entities, UserStatus, Role as RoleEnum } from '
 import Task from './task.entity';
 import Workschedule from './workschedule.entity';
 import { userRolesTable } from '../config/db/columns';
+import UserClient from './user-client.entity';
 
 registerEnumType(UserStatus, {
   name: 'UserStatus',
@@ -121,6 +122,24 @@ export default class User extends Base {
   @Field(() => Workschedule, { nullable: true })
   @OneToMany(() => Workschedule, (workschedule) => workschedule.user)
   workschedules: Workschedule[];
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  client_id: string;
+
+  @OneToMany(() => UserClient, (userClient) => userClient.user, {
+    cascade: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  userClients: UserClient[];
+
+  @OneToMany(() => UserClient, (userClient) => userClient.client, {
+    cascade: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  userClient: UserClient[];
 }
 
 @ObjectType()
@@ -163,6 +182,9 @@ export class UserCreateInput {
 
   @Field((type) => UserRecordCreateInput)
   record: UserRecordCreateInput;
+
+  @Field()
+  client_id: string;
 }
 
 @InputType()
@@ -190,6 +212,18 @@ export class UserAdminCreateInput {
 
   @Field((type) => [AdminRole])
   roles: AdminRole[];
+}
+
+@InputType()
+export class UserArchiveInput {
+  @Field()
+  id: string;
+
+  @Field()
+  archived: boolean;
+
+  @Field()
+  company_id: string;
 }
 
 @InputType()

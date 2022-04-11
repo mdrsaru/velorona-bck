@@ -46,6 +46,7 @@ export interface IUserCreate {
   company_id?: string;
   address?: IAddressCreateInput;
   record?: IUserRecordCreateInput;
+  client_id?: string;
 }
 
 export interface IUserCreateRepo extends IUserCreate {
@@ -69,6 +70,12 @@ export interface IUserUpdate {
   password?: string;
   avatar_id?: string;
   record?: IUserRecordUpdateInput;
+  archived?: boolean;
+}
+
+export interface IUserArchive {
+  id: string;
+  archived: boolean;
 }
 
 export interface IUserRepository {
@@ -93,6 +100,7 @@ export interface IUserService {
   getAllAndCount(args: IPagingArgs): Promise<IPaginationData<User>>;
   create(args: IUserCreate): Promise<User>;
   update(args: IUserUpdate): Promise<User>;
+  userArchive(args: IUserArchive): Promise<User>;
   remove(args: IEntityRemove): Promise<User>;
   getById(args: IEntityID): Promise<User | undefined>;
   changeProfilePicture(args: IChangeProfilePictureInput): Promise<User>;

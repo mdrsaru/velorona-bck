@@ -57,6 +57,7 @@ const COMMON = {
   AddressRepository: Symbol('AddressRepository'),
   UserRecordRepository: Symbol('UserRecordRepository'),
   HandlebarsService: Symbol('HandlebarsService'),
+  UserClientRepository: Symbol('UserClientRepository'),
 };
 
 const USER_TOKEN = {

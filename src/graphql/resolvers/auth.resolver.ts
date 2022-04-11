@@ -3,6 +3,8 @@ import { inject, injectable } from 'inversify';
 import { Arg, Ctx, Mutation, Query, UseMiddleware } from 'type-graphql';
 import { CookieOptions } from 'express';
 
+import User from '../../entities/user.entity';
+import strings from '../../config/strings';
 import {
   ForgotPasswordInput,
   LoginInput,
@@ -12,7 +14,6 @@ import {
   InvitationRegisterInput,
   InvitationRegisterResponse,
 } from '../../entities/auth.entity';
-import User from '../../entities/user.entity';
 
 import { TYPES } from '../../types';
 import constants from '../../config/constants';
@@ -132,7 +133,7 @@ export class AuthResolver {
         companyCode,
       });
 
-      return 'An email has been sent to reset your password if the email exists in our system.';
+      return strings.forgotPasswordMsg;
     } catch (err) {
       this.errorService.throwError({
         err,

@@ -26,22 +26,26 @@ import {
 import { IRoleRepository } from '../interfaces/role.interface';
 import { ICompanyRepository } from '../interfaces/company.interface';
 import { IGetAllAndCountResult, IGetOptions } from '../interfaces/paging.interface';
+import { IUserClientRepository } from '../interfaces/user-client.interface';
 
 @injectable()
 export default class UserRepository extends BaseRepository<User> implements IUserRepository {
   private hashService: IHashService;
   private roleRepository: IRoleRepository;
   private companyRepository: ICompanyRepository;
+  private userClientRepository: IUserClientRepository;
 
   constructor(
     @inject(TYPES.HashService) _hashService: IHashService,
     @inject(TYPES.RoleRepository) _roleRepository: IRoleRepository,
-    @inject(TYPES.CompanyRepository) _companyRepository: ICompanyRepository
+    @inject(TYPES.CompanyRepository) _companyRepository: ICompanyRepository,
+    @inject(TYPES.UserClientRepository) _userClientRepository: IUserClientRepository
   ) {
     super(getRepository(User));
     this.hashService = _hashService;
     this.roleRepository = _roleRepository;
     this.companyRepository = _companyRepository;
+    this.userClientRepository = _userClientRepository;
   }
 
   getAllAndCount = async (args: IGetOptions): Promise<IGetAllAndCountResult<User>> => {
@@ -114,6 +118,7 @@ export default class UserRepository extends BaseRepository<User> implements IUse
       const roles = args.roles;
       const record = args.record;
       const archived = args?.archived ?? false;
+      const client_id: any = args?.client_id;
 
       const errors: string[] = [];
 
@@ -166,13 +171,12 @@ export default class UserRepository extends BaseRepository<User> implements IUse
           name: roles,
         },
       });
-
-      if (existingRoles?.length !== roles.length) {
+      console.log(existingRoles?.length, roles?.length);
+      if (!existingRoles?.length) {
         throw new apiError.ValidationError({
           details: [strings.userCreateRoleNotFound],
         });
       }
-
       const hashedPassword = await this.hashService.hash(password, config.saltRounds);
 
       const user = await this.repo.save({
@@ -188,8 +192,13 @@ export default class UserRepository extends BaseRepository<User> implements IUse
         roles: existingRoles,
         record,
         archived,
+        client_id,
       });
 
+      await this.userClientRepository.create({
+        client_id,
+        user_id: user.id,
+      });
       return user;
     } catch (err) {
       throw err;
@@ -208,6 +217,7 @@ export default class UserRepository extends BaseRepository<User> implements IUse
       const password = args?.password;
       const record = args?.record ?? {};
       const avatar_id = args?.avatar_id;
+      const archived = args?.archived;
 
       const found = await this.repo.findOne(id, {
         relations: ['address', 'record'],
@@ -241,6 +251,7 @@ export default class UserRepository extends BaseRepository<User> implements IUse
           ...(found?.record ?? {}),
           ...record,
         },
+        archived,
       });
 
       const user = await this.repo.save(update);

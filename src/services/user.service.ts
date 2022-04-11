@@ -9,7 +9,7 @@ import constants, { emailSetting } from '../config/constants';
 
 import { IPagingArgs, IPaginationData } from '../interfaces/paging.interface';
 import { IEntityRemove, IEntityID, ITemplateService, IEmailService, ILogger } from '../interfaces/common.interface';
-import { IChangeProfilePictureInput, IUserRepository } from '../interfaces/user.interface';
+import { IChangeProfilePictureInput, IUserArchive, IUserRepository } from '../interfaces/user.interface';
 import { IUserCreate, IUserUpdate, IUserService } from '../interfaces/user.interface';
 import { ICompanyRepository } from '../interfaces/company.interface';
 
@@ -37,6 +37,7 @@ export default class UserService implements IUserService {
 
   getAllAndCount = async (args: IPagingArgs): Promise<IPaginationData<User>> => {
     try {
+      args.query.archived = false;
       const { rows, count } = await this.userRepository.getAllAndCount(args);
 
       const paging = Paging.getPagingResult({
@@ -86,6 +87,7 @@ export default class UserService implements IUserService {
       const roles = args.roles;
       const record = args?.record;
       const password = generateRandomStrings({ length: 8 });
+      const client_id = args?.client_id;
 
       const user = await this.userRepository.create({
         email,
@@ -99,6 +101,7 @@ export default class UserService implements IUserService {
         address,
         roles,
         record,
+        client_id,
       });
 
       let emailBody: string = emailSetting.newUser.adminBody;
@@ -158,6 +161,7 @@ export default class UserService implements IUserService {
       const address = args?.address;
       const password = args?.password;
       const record = args?.record;
+      const archived = args?.archived;
 
       const user = await this.userRepository.update({
         id,
@@ -169,6 +173,7 @@ export default class UserService implements IUserService {
         address,
         password,
         record,
+        archived,
       });
 
       return user;
@@ -177,6 +182,21 @@ export default class UserService implements IUserService {
     }
   };
 
+  userArchive = async (args: IUserArchive): Promise<User> => {
+    try {
+      const id = args.id;
+      const archived = args?.archived;
+
+      const user = await this.userRepository.update({
+        id,
+        archived,
+      });
+
+      return user;
+    } catch (err) {
+      throw err;
+    }
+  };
   remove = (args: IEntityRemove): Promise<User> => {
     throw new Error('not implemented');
   };

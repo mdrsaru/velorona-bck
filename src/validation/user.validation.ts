@@ -95,6 +95,7 @@ export default class UserValidation {
       })
         .required()
         .messages(messages.record),
+      client_id: Joi.string().required(),
     });
   }
 
@@ -135,6 +136,13 @@ export default class UserValidation {
         endDate: Joi.date().min(Joi.ref('startDate')).error(new Error(strings.endDateMustBeValidDate)),
         payRate: Joi.number(),
       }),
+    });
+  }
+
+  static archive() {
+    return Joi.object({
+      id: Joi.string().required().messages(messages.id),
+      archived: Joi.boolean().required(),
     });
   }
 }
