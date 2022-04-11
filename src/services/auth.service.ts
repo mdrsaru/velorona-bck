@@ -240,11 +240,12 @@ export default class AuthService implements IAuthService {
         user_id: user.id,
       });
 
-      let emailBody: string = emailSetting.resetPassword.body;
+      const emailBody: string = emailSetting.resetPassword.body;
+      const resetPasswordLink = `${constants.frontendUrl}/reset-password?token=${token}`;
       const resetPasswordHtml = this.handlebarsService.compile({
         template: emailBody,
         data: {
-          token,
+          resetPasswordLink,
         },
       });
 

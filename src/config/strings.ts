@@ -61,5 +61,5 @@ export default {
   UserIdRequired: 'User Id required',
   userTypeRequired: 'User type required',
   tokenExpired: 'Token expired',
-  forgotPasswordMsg: 'If the email exists in our system, a token will be sent to reset your password.',
+  forgotPasswordMsg: 'If the email exists in our system, a link will be sent to the email to reset your password.',
 };
