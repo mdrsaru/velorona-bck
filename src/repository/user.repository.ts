@@ -26,26 +26,22 @@ import {
 import { IRoleRepository } from '../interfaces/role.interface';
 import { ICompanyRepository } from '../interfaces/company.interface';
 import { IGetAllAndCountResult, IGetOptions } from '../interfaces/paging.interface';
-import { IUserClientRepository } from '../interfaces/user-client.interface';
 
 @injectable()
 export default class UserRepository extends BaseRepository<User> implements IUserRepository {
   private hashService: IHashService;
   private roleRepository: IRoleRepository;
   private companyRepository: ICompanyRepository;
-  private userClientRepository: IUserClientRepository;
 
   constructor(
     @inject(TYPES.HashService) _hashService: IHashService,
     @inject(TYPES.RoleRepository) _roleRepository: IRoleRepository,
-    @inject(TYPES.CompanyRepository) _companyRepository: ICompanyRepository,
-    @inject(TYPES.UserClientRepository) _userClientRepository: IUserClientRepository
+    @inject(TYPES.CompanyRepository) _companyRepository: ICompanyRepository
   ) {
     super(getRepository(User));
     this.hashService = _hashService;
     this.roleRepository = _roleRepository;
     this.companyRepository = _companyRepository;
-    this.userClientRepository = _userClientRepository;
   }
 
   getAllAndCount = async (args: IGetOptions): Promise<IGetAllAndCountResult<User>> => {
@@ -118,7 +114,6 @@ export default class UserRepository extends BaseRepository<User> implements IUse
       const roles = args.roles;
       const record = args.record;
       const archived = args?.archived ?? false;
-      const client_id: any = args?.client_id;
 
       const errors: string[] = [];
 
@@ -171,7 +166,6 @@ export default class UserRepository extends BaseRepository<User> implements IUse
           name: roles,
         },
       });
-      console.log(existingRoles?.length, roles?.length);
       if (!existingRoles?.length) {
         throw new apiError.ValidationError({
           details: [strings.userCreateRoleNotFound],
@@ -192,13 +186,8 @@ export default class UserRepository extends BaseRepository<User> implements IUse
         roles: existingRoles,
         record,
         archived,
-        client_id,
       });
 
-      await this.userClientRepository.create({
-        client_id,
-        user_id: user.id,
-      });
       return user;
     } catch (err) {
       throw err;

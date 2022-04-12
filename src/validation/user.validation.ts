@@ -95,7 +95,6 @@ export default class UserValidation {
       })
         .required()
         .messages(messages.record),
-      client_id: Joi.string().required(),
     });
   }
 

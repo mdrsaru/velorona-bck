@@ -103,7 +103,6 @@ export class UserResolver {
       const company_id = args.company_id;
       const roles = args.roles;
       const record = args.record;
-      const client_id = args.client_id;
       const address = {
         streetAddress: args.address.streetAddress,
         aptOrSuite: args.address.aptOrSuite,
@@ -125,7 +124,6 @@ export class UserResolver {
           address,
           roles,
           record,
-          client_id,
         },
       });
 
@@ -140,7 +138,6 @@ export class UserResolver {
         address,
         roles,
         record,
-        client_id,
       });
 
       return user;

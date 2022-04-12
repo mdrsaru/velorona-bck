@@ -122,24 +122,6 @@ export default class User extends Base {
   @Field(() => Workschedule, { nullable: true })
   @OneToMany(() => Workschedule, (workschedule) => workschedule.user)
   workschedules: Workschedule[];
-
-  @Field({ nullable: true })
-  @Column({ nullable: true })
-  client_id: string;
-
-  @OneToMany(() => UserClient, (userClient) => userClient.user, {
-    cascade: true,
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-  })
-  userClients: UserClient[];
-
-  @OneToMany(() => UserClient, (userClient) => userClient.client, {
-    cascade: true,
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-  })
-  userClient: UserClient[];
 }
 
 @ObjectType()
@@ -182,9 +164,6 @@ export class UserCreateInput {
 
   @Field((type) => UserRecordCreateInput)
   record: UserRecordCreateInput;
-
-  @Field()
-  client_id: string;
 }
 
 @InputType()

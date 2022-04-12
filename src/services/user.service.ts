@@ -87,7 +87,6 @@ export default class UserService implements IUserService {
       const roles = args.roles;
       const record = args?.record;
       const password = generateRandomStrings({ length: 8 });
-      const client_id = args?.client_id;
 
       const user = await this.userRepository.create({
         email,
@@ -101,7 +100,6 @@ export default class UserService implements IUserService {
         address,
         roles,
         record,
-        client_id,
       });
 
       let emailBody: string = emailSetting.newUser.adminBody;

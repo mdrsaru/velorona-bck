@@ -46,7 +46,6 @@ export interface IUserCreate {
   company_id?: string;
   address?: IAddressCreateInput;
   record?: IUserRecordCreateInput;
-  client_id?: string;
 }
 
 export interface IUserCreateRepo extends IUserCreate {
