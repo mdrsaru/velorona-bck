@@ -85,7 +85,6 @@ export default class UserService implements IUserService {
       const company_id = args.company_id;
       const address = args?.address;
       const roles = args.roles;
-      const record = args?.record;
       const password = generateRandomStrings({ length: 8 });
 
       const user = await this.userRepository.create({
@@ -99,7 +98,6 @@ export default class UserService implements IUserService {
         company_id,
         address,
         roles,
-        record,
       });
 
       let emailBody: string = emailSetting.newUser.adminBody;
@@ -158,7 +156,6 @@ export default class UserService implements IUserService {
       const phone = args.phone;
       const address = args?.address;
       const password = args?.password;
-      const record = args?.record;
       const archived = args?.archived;
 
       const user = await this.userRepository.update({
@@ -170,7 +167,6 @@ export default class UserService implements IUserService {
         phone,
         address,
         password,
-        record,
         archived,
       });
 
