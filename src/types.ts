@@ -39,6 +39,12 @@ const PROJECT = {
   ProjectController: Symbol('ProjectController'),
 };
 
+const USERCLIENT = {
+  UserClientRepository: Symbol('UserClientRepository'),
+  UserClientService: Symbol('UserClientService'),
+  UserClientController: Symbol('UserClientController'),
+};
+
 const COMMON = {
   AppService: Symbol('AppService'),
   AppController: Symbol('AppController'),
@@ -57,6 +63,7 @@ const COMMON = {
   AddressRepository: Symbol('AddressRepository'),
   UserRecordRepository: Symbol('UserRecordRepository'),
   HandlebarsService: Symbol('HandlebarsService'),
+  UserClientRepository: Symbol('UserClientRepository'),
 };
 
 const USER_TOKEN = {
@@ -88,6 +95,7 @@ const TYPES = {
   ...TASK_ASSIGNMENT,
   ...PROJECT,
   ...WORKSCHEDULE,
+  ...USERCLIENT,
 };
 
 export { TYPES };

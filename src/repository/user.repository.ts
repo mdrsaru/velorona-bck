@@ -161,13 +161,11 @@ export default class UserRepository extends BaseRepository<User> implements IUse
           name: roles,
         },
       });
-      console.log(existingRoles?.length, roles?.length);
       if (!existingRoles?.length) {
         throw new apiError.ValidationError({
           details: [strings.userCreateRoleNotFound],
         });
       }
-
       const hashedPassword = await this.hashService.hash(password, config.saltRounds);
 
       const user = await this.repo.save({

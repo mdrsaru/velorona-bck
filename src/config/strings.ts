@@ -62,4 +62,7 @@ export default {
   userTypeRequired: 'User type required',
   tokenExpired: 'Token expired',
   forgotPasswordMsg: 'If the email exists in our system, a link will be sent to the email to reset your password.',
+  userStatusActive: 'User is already associated with another client',
+  userNotEmployee: 'User is not an Employee',
+  userNotClient: 'User is not a client',
 };
