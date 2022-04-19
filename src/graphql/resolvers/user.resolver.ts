@@ -102,7 +102,6 @@ export class UserResolver {
       const status = args.status;
       const company_id = args.company_id;
       const roles = args.roles;
-      const record = args.record;
       const address = {
         streetAddress: args.address.streetAddress,
         aptOrSuite: args.address.aptOrSuite,
@@ -123,7 +122,6 @@ export class UserResolver {
           company_id,
           address,
           roles,
-          record,
         },
       });
 
@@ -137,7 +135,6 @@ export class UserResolver {
         company_id,
         address,
         roles,
-        record,
       });
 
       return user;
@@ -220,7 +217,6 @@ export class UserResolver {
       const middleName = args.middleName;
       const status = args.status;
       const phone = args.phone;
-      const record = args.record;
       const address = args.address;
 
       const schema = UserValidation.update();
@@ -233,7 +229,6 @@ export class UserResolver {
           middleName,
           phone,
           address,
-          record,
         },
       });
 
@@ -245,7 +240,6 @@ export class UserResolver {
         status,
         phone,
         address,
-        record,
       });
 
       return user;

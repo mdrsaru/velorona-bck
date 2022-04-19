@@ -112,7 +112,6 @@ export default class UserRepository extends BaseRepository<User> implements IUse
       const company_id = args.company_id;
       const address = args?.address;
       const roles = args.roles;
-      const record = args.record;
       const archived = args?.archived ?? false;
 
       const errors: string[] = [];
@@ -134,10 +133,6 @@ export default class UserRepository extends BaseRepository<User> implements IUse
       }
       if (isNil(roles) || !isArray(roles) || !roles.length) {
         errors.push(strings.rolesRequired);
-      }
-
-      if (record?.startDate && record?.endDate && record.endDate <= record.startDate) {
-        errors.push(strings.endDateMustBeValidDate);
       }
 
       if (errors.length) {
@@ -184,7 +179,6 @@ export default class UserRepository extends BaseRepository<User> implements IUse
         company_id,
         address,
         roles: existingRoles,
-        record,
         archived,
       });
 
@@ -204,7 +198,6 @@ export default class UserRepository extends BaseRepository<User> implements IUse
       const phone = args.phone;
       const address = args?.address ?? {};
       const password = args?.password;
-      const record = args?.record ?? {};
       const avatar_id = args?.avatar_id;
       const archived = args?.archived;
 
@@ -235,10 +228,6 @@ export default class UserRepository extends BaseRepository<User> implements IUse
         address: {
           ...(found.address ?? {}),
           ...address,
-        },
-        record: {
-          ...(found?.record ?? {}),
-          ...record,
         },
         archived,
       });

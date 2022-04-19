@@ -62,13 +62,6 @@ const messages = {
     'any.required': strings.payRateRequired,
     'any.message': strings.payRateRequired,
   },
-  record: {
-    'string.base': strings.recordRequired,
-    'string.empty': strings.recordRequired,
-    'string.name': strings.recordRequired,
-    'any.required': strings.recordRequired,
-    'any.message': strings.recordRequired,
-  },
 };
 
 export default class UserValidation {
@@ -88,13 +81,6 @@ export default class UserValidation {
         zipcode: Joi.string(),
       }).required(),
       roles: Joi.array().items(Joi.string().required()).required(),
-      record: Joi.object({
-        startDate: Joi.date(),
-        endDate: Joi.date().min(Joi.ref('startDate')).required().messages(messages.endDate),
-        payRate: Joi.number(),
-      })
-        .required()
-        .messages(messages.record),
     });
   }
 
@@ -129,11 +115,6 @@ export default class UserValidation {
         city: Joi.string(),
         state: Joi.string(),
         zipcode: Joi.string(),
-      }),
-      record: Joi.object({
-        startDate: Joi.date(),
-        endDate: Joi.date().min(Joi.ref('startDate')).error(new Error(strings.endDateMustBeValidDate)),
-        payRate: Joi.number(),
       }),
     });
   }

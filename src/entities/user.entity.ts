@@ -8,12 +8,11 @@ import Media from './media.entity';
 import { Base } from './base.entity';
 import { PagingInput, PagingResult } from './common.entity';
 import Address, { AddressCreateInput, AddressUpdateInput } from './address.entity';
-import UserRecord, { UserRecordCreateInput, UserRecordUpdateInput } from './user-record.entity';
 import { AdminRole, CompanyRole, entities, UserStatus, Role as RoleEnum } from '../config/constants';
 import Task from './task.entity';
 import Workschedule from './workschedule.entity';
 import { userRolesTable } from '../config/db/columns';
-import UserClient from './user-client.entity';
+import UserRecord from './user-record.entity';
 
 registerEnumType(UserStatus, {
   name: 'UserStatus',
@@ -161,9 +160,6 @@ export class UserCreateInput {
 
   @Field((type) => [CompanyRole])
   roles: CompanyRole[];
-
-  @Field((type) => UserRecordCreateInput)
-  record: UserRecordCreateInput;
 }
 
 @InputType()
@@ -230,9 +226,6 @@ export class UserUpdateInput {
 
   @Field((type) => AddressUpdateInput, { nullable: true })
   address: AddressUpdateInput;
-
-  @Field((type) => UserRecordUpdateInput, { nullable: true })
-  record: UserRecordUpdateInput;
 }
 
 @InputType()
