@@ -45,6 +45,12 @@ const TIMESHEET = {
   TimesheetController: Symbol('TimesheetController'),
 };
 
+const USERCLIENT = {
+  UserClientRepository: Symbol('UserClientRepository'),
+  UserClientService: Symbol('UserClientService'),
+  UserClientController: Symbol('UserClientController'),
+};
+
 const COMMON = {
   AppService: Symbol('AppService'),
   AppController: Symbol('AppController'),
@@ -63,6 +69,7 @@ const COMMON = {
   AddressRepository: Symbol('AddressRepository'),
   UserRecordRepository: Symbol('UserRecordRepository'),
   HandlebarsService: Symbol('HandlebarsService'),
+  UserClientRepository: Symbol('UserClientRepository'),
 };
 
 const USER_TOKEN = {
@@ -95,6 +102,7 @@ const TYPES = {
   ...PROJECT,
   ...WORKSCHEDULE,
   ...TIMESHEET,
+  ...USERCLIENT,
 };
 
 export { TYPES };

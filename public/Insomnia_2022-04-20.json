@@ -1,7 +1,7 @@
 {
   "_type": "export",
   "__export_format": 4,
-  "__export_date": "2022-04-19T11:22:41.465Z",
+  "__export_date": "2022-04-20T04:55:58.759Z",
   "__export_source": "insomnia.desktop.app:v2022.2.1",
   "resources": [
     {
@@ -171,7 +171,7 @@
     {
       "_id": "req_79f4961f21a04d108aae7c8c2dcb530b",
       "parentId": "fld_b017df8adc754fa891b75b937faee998",
-      "modified": 1650358079547,
+      "modified": 1650426112951,
       "created": 1649826164173,
       "url": "{{ api_url }}/{{ version }}/graphql",
       "name": "AssociateUserClient",
@@ -517,7 +517,7 @@
     {
       "_id": "req_bf0873093e7749b3a20f89522783a900",
       "parentId": "fld_9a7753c89a724a5ab6add918218e97ea",
-      "modified": 1649402852536,
+      "modified": 1650368259961,
       "created": 1646814799695,
       "url": "{{ api_url }}/{{ version }}/graphql",
       "name": "UserCreate",
@@ -525,7 +525,7 @@
       "method": "POST",
       "body": {
         "mimeType": "application/graphql",
-        "text": "{\"query\":\"mutation UserCreate($input: UserCreateInput!) {\\n  UserCreate(input: $input) {\\n    id\\n    fullName    \\n  }\\n}\",\"variables\":{\"input\":{\"email\":\"user@yopmail.com\",\"phone\":\"9841773322\",\"firstName\":\"John\",\"lastName\":\"Doe\",\"status\":\"Active\",\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\",\"roles\":[\"Employee\"],\"address\":{\"streetAddress\":\"street\",\"city\":\"City\",\"state\":\"AL\",\"zipcode\":\"43215\"},\"record\":{\"startDate\":\"2022-03-25T08:15:51.634Z\",\"endDate\":\"2022-03-28T08:15:51.634Z\",\"payRate\":140}}},\"operationName\":\"UserCreate\"}"
+        "text": "{\"query\":\"mutation UserCreate($input: UserCreateInput!) {\\n  UserCreate(input: $input) {\\n    id\\n    fullName    \\n  }\\n}\",\"variables\":{\"input\":{\"email\":\"10user@yopmail.com\",\"phone\":\"9841773322\",\"firstName\":\"John\",\"lastName\":\"Doe\",\"status\":\"Active\",\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\",\"roles\":[\"Employee\"],\"address\":{\"streetAddress\":\"street\",\"city\":\"City\",\"state\":\"AL\",\"zipcode\":\"43215\"}}},\"operationName\":\"UserCreate\"}"
       },
       "parameters": [],
       "headers": [
@@ -851,7 +851,7 @@
     {
       "_id": "req_0cccc92089e34d85be93f7443015cd9d",
       "parentId": "fld_4b51c186049444bb8c795b2ddc65239f",
-      "modified": 1650367345900,
+      "modified": 1650429720326,
       "created": 1650358353327,
       "url": "{{ api_url }}/{{ version }}/graphql",
       "name": "Timesheet",
@@ -894,7 +894,7 @@
     {
       "_id": "req_073074e16d8b483b92800d6916c33625",
       "parentId": "fld_4b51c186049444bb8c795b2ddc65239f",
-      "modified": 1650365465567,
+      "modified": 1650429795813,
       "created": 1650358353306,
       "url": "{{ api_url }}/{{ version }}/graphql",
       "name": "TimesheetCreate",
@@ -902,7 +902,7 @@
       "method": "POST",
       "body": {
         "mimeType": "application/graphql",
-        "text": "{\"query\":\"mutation TimesheetCreate($input: TimesheetCreateInput!) {\\n  TimesheetCreate(input: $input) {\\n    id\\n   total_hours\\n\\t\\ttotal_hours\\n\\t\\tproject_id\\n\\t\\tapprover_id\\n\\t\\tcompany_id\\n  }\\n}\\n\",\"variables\":{\"input\":{\"total_hours\":10,\"total_expense\":100000,\"client_location\":\"Lalitpur\",\"project_id\":\"{% response 'body', 'req_031f86964d3f4b09aada9dfb951fc7dc', 'b64::JC5kYXRhLlByb2plY3RDcmVhdGUuaWQ=::46b', 'never', 60 %}\",\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\",\"approver_id\":\"3dc646b8-2cdc-4b20-b8bb-c8af70a62cdb\",\"created_by\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmlk::46b', 'never', 60 %}\"}},\"operationName\":\"TimesheetCreate\"}"
+        "text": "{\"query\":\"mutation TimesheetCreate($input: TimesheetCreateInput!) {\\n  TimesheetCreate(input: $input) {\\n    id\\n   total_hours\\n\\t\\ttotal_hours\\n\\t\\tproject_id\\n\\t\\tapprover_id\\n\\t\\tcompany_id\\n\\t\\tcreated_by\\n  }\\n}\\n\",\"variables\":{\"input\":{\"total_hours\":10,\"total_expense\":100000,\"client_location\":\"Lalitpur\",\"project_id\":\"{% response 'body', 'req_031f86964d3f4b09aada9dfb951fc7dc', 'b64::JC5kYXRhLlByb2plY3RDcmVhdGUuaWQ=::46b', 'never', 60 %}\",\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\",\"approver_id\":\"3dc646b8-2cdc-4b20-b8bb-c8af70a62cdb\",\"created_by\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmlk::46b', 'never', 60 %}\"}},\"operationName\":\"TimesheetCreate\"}"
       },
       "parameters": [],
       "headers": [
@@ -1535,7 +1535,7 @@
     {
       "_id": "req_7891357ab736456a8e14b348b31135d3",
       "parentId": "fld_e864bd8433684c93a335724143ac8a23",
-      "modified": 1649402947739,
+      "modified": 1650429713511,
       "created": 1647846264731,
       "url": "{{ api_url }}/{{ version }}/graphql",
       "name": "CompanyLogin",
@@ -1616,22 +1616,22 @@
     {
       "_id": "jar_2121b271f08ea9ff6a364be633b863d913907d01",
       "parentId": "wrk_4360c7a0bbfa403c86be07deeb666c4c",
-      "modified": 1649402948936,
+      "modified": 1650429714451,
       "created": 1646649800465,
       "name": "Default Jar",
       "cookies": [
         {
-          "creation": "2022-03-16T07:43:51.090Z",
-          "domain": "localhost",
-          "expires": "2022-04-15T07:29:08.000Z",
-          "hostOnly": true,
-          "httpOnly": true,
-          "id": "5873771252022226",
           "key": "refreshToken",
-          "lastAccessed": "2022-04-08T07:29:08.934Z",
+          "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImRiZDM5YjlkLWY0YmYtNGY1Mi1iZmNlLTNhYmE3N2ZhOWVmZSIsInJvbGVzIjpbImI4MzRiY2ExLTMyZjgtNGNlNi1hZDZlLTdkYjc3YzA4ZjFmMyJdLCJpYXQiOjE2NTA0Mjk3MTQsImV4cCI6MTY1MTAzNDUxNH0.Caa8ITz0-p8-Rjp5QSMq7ecnZjFYfqFaz1wT4ltJnF0",
+          "expires": "2022-04-27T04:41:54.000Z",
           "maxAge": 604800,
+          "domain": "localhost",
           "path": "/",
-          "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQxNGI3M2UyLTJlNTQtNDcyOS1iZWU4LWQ3N2JjYzJlYTE1OSIsInJvbGVzIjpbIjA0OWMwMzIxLTFkNmEtNGNmMC1iMzA5LWYyMGVlM2EzNDRjMCJdLCJpYXQiOjE2NDk0MDI5NDgsImV4cCI6MTY1MDAwNzc0OH0.aO_oWftlhjCUu3QaMIjuxCZdWxtJ-cbb-ToZ7SAJoMc"
+          "httpOnly": true,
+          "hostOnly": true,
+          "creation": "2022-03-16T07:43:51.090Z",
+          "lastAccessed": "2022-04-20T04:41:54.426Z",
+          "id": "9899433741644121"
         }
       ],
       "_type": "cookie_jar"

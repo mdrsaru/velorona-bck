@@ -66,4 +66,7 @@ export default {
   projectIdRequired: 'Project required',
   createdByRequired: 'Creator required',
   approverNotFound: 'Approver not found',
+  userStatusActive: 'User is already associated with another client',
+  userNotEmployee: 'User is not an Employee',
+  userNotClient: 'User is not a client',
 };
