@@ -8,6 +8,7 @@ import Media from '../entities/media.entity';
 import Address from '../entities/address.entity';
 import UserRecord from '../entities/user-record.entity';
 import Task from '../entities/task.entity';
+import Project from '../entities/project.entity';
 
 export interface IDataloader {
   companyByIdLoader: Dataloader<string, Company>;
@@ -18,6 +19,7 @@ export interface IDataloader {
   recordByUserIdLoader: Dataloader<string, UserRecord>;
   usersByIdLoader: Dataloader<string, User>;
   tasksByIdLoader: Dataloader<string, Task>;
+  projectByIdLoader: Dataloader<string, Project>;
 }
 
 export interface IGraphqlContext {

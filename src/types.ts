@@ -39,6 +39,12 @@ const PROJECT = {
   ProjectController: Symbol('ProjectController'),
 };
 
+const TIMESHEET = {
+  TimesheetRepository: Symbol('TimesheetRepository'),
+  TimesheetService: Symbol('TimesheetService'),
+  TimesheetController: Symbol('TimesheetController'),
+};
+
 const COMMON = {
   AppService: Symbol('AppService'),
   AppController: Symbol('AppController'),
@@ -88,6 +94,7 @@ const TYPES = {
   ...TASK_ASSIGNMENT,
   ...PROJECT,
   ...WORKSCHEDULE,
+  ...TIMESHEET,
 };
 
 export { TYPES };

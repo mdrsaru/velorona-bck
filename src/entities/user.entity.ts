@@ -13,6 +13,7 @@ import Task from './task.entity';
 import Workschedule from './workschedule.entity';
 import { userRolesTable } from '../config/db/columns';
 import UserRecord from './user-record.entity';
+import Timesheet from './timesheet.entity';
 
 registerEnumType(UserStatus, {
   name: 'UserStatus',
@@ -121,6 +122,14 @@ export default class User extends Base {
   @Field(() => Workschedule, { nullable: true })
   @OneToMany(() => Workschedule, (workschedule) => workschedule.user)
   workschedules: Workschedule[];
+
+  @Field(() => Timesheet, { nullable: true, description: 'Field for approver timesheet' })
+  @OneToMany(() => Timesheet, (timesheet) => timesheet.approver)
+  approverTimesheet: Timesheet[];
+
+  @Field(() => Timesheet, { nullable: true, description: 'Field for created by timesheet' })
+  @OneToMany(() => Timesheet, (timesheet) => timesheet.created_by)
+  createdByTimesheet: Timesheet[];
 }
 
 @ObjectType()
