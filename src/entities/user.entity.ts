@@ -109,12 +109,6 @@ export default class User extends Base {
   @OneToMany(() => UserToken, (token) => token.user)
   tokens: UserToken[];
 
-  @Field(() => UserRecord, { nullable: true })
-  @OneToOne(() => UserRecord, (record) => record.user, {
-    cascade: true,
-  })
-  record: UserRecord;
-
   @ManyToMany(() => Task)
   assignedTasks: Task[];
 

@@ -337,9 +337,4 @@ export class UserResolver {
   async address(@Root() root: User, @Ctx() ctx: IGraphqlContext) {
     return await ctx.loaders.addressByUserIdLoader.load(root.id);
   }
-
-  @FieldResolver()
-  async record(@Root() root: User, @Ctx() ctx: IGraphqlContext) {
-    return await ctx.loaders.recordByUserIdLoader.load(root.id);
-  }
 }

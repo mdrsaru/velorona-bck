@@ -208,7 +208,6 @@ export class AuthResolver {
       const middleName = args.middleName;
       const phone = args.phone;
       const address = args.address;
-      const record = args.record;
 
       const schema = AuthValidation.registerWithInvitation();
       await this.joiService.validate({
@@ -221,7 +220,6 @@ export class AuthResolver {
           middleName,
           phone,
           address,
-          record,
         },
       });
 
@@ -233,7 +231,6 @@ export class AuthResolver {
         middleName,
         phone,
         address,
-        record,
       });
 
       return registeredResponse;
