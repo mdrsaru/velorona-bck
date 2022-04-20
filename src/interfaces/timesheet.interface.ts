@@ -8,9 +8,9 @@ import { IEntityID, IEntityRemove } from './common.interface';
 
 export interface ITimesheet {
   id: string;
-  total_hours: number;
-  total_expense: number;
-  client_location: string;
+  totalHours: number;
+  totalExpense: number;
+  clientLocation: string;
   approver_id: string;
   project_id: string;
   company_id: string;
@@ -24,9 +24,9 @@ export interface ITimesheet {
 }
 
 export interface ITimesheetCreateInput {
-  total_hours: ITimesheet['total_hours'];
-  total_expense: ITimesheet['total_expense'];
-  client_location: ITimesheet['client_location'];
+  totalHours: ITimesheet['totalHours'];
+  totalExpense: ITimesheet['totalExpense'];
+  clientLocation: ITimesheet['clientLocation'];
   approver_id: ITimesheet['approver_id'];
   project_id: ITimesheet['project_id'];
   company_id: ITimesheet['company_id'];
@@ -35,9 +35,9 @@ export interface ITimesheetCreateInput {
 
 export interface ITimesheetUpdateInput {
   id: ITimesheet['id'];
-  total_hours?: ITimesheet['total_hours'];
-  total_expense?: ITimesheet['total_expense'];
-  client_location?: ITimesheet['client_location'];
+  totalHours?: ITimesheet['totalHours'];
+  totalExpense?: ITimesheet['totalExpense'];
+  clientLocation?: ITimesheet['clientLocation'];
   approver_id?: ITimesheet['approver_id'];
   project_id?: ITimesheet['project_id'];
   company_id?: ITimesheet['company_id'];

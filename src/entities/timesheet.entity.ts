@@ -12,16 +12,16 @@ import { PagingInput, PagingResult } from './common.entity';
 @Entity({ name: entities.timesheet })
 export default class Timesheet extends Base {
   @Field({ nullable: true })
-  @Column({ nullable: true })
-  total_hours: number;
+  @Column({ nullable: true, name: 'total_hours' })
+  totalHours: number;
 
   @Field({ nullable: true })
-  @Column({ type: 'float', nullable: true })
-  total_expense: number;
+  @Column({ type: 'float', nullable: true, name: 'total_expense' })
+  totalExpense: number;
 
-  @Field()
-  @Column()
-  client_location: string;
+  @Field({ nullable: true })
+  @Column({ name: 'client_location', nullable: true })
+  clientLocation: string;
 
   @Field()
   @Column()
@@ -64,6 +64,7 @@ export default class Timesheet extends Base {
 export class TimesheetPagingResult {
   @Field()
   paging: PagingResult;
+
   @Field(() => [Timesheet])
   data: Timesheet[];
 }
@@ -71,13 +72,13 @@ export class TimesheetPagingResult {
 @InputType()
 export class TimesheetCreateInput {
   @Field({ nullable: true })
-  total_hours: number;
+  totalHours: number;
 
   @Field({ nullable: true })
-  total_expense: number;
+  totalExpense: number;
 
   @Field({ nullable: true })
-  client_location: string;
+  clientLocation: string;
 
   @Field()
   project_id: string;
@@ -98,13 +99,13 @@ export class TimesheetUpdateInput {
   id: string;
 
   @Field({ nullable: true })
-  total_hours: number;
+  totalHours: number;
 
   @Field({ nullable: true })
-  total_expense: number;
+  totalExpense: number;
 
   @Field({ nullable: true })
-  client_location: string;
+  clientLocation: string;
 
   @Field({ nullable: true })
   project_id: string;
@@ -123,6 +124,7 @@ export class TimesheetUpdateInput {
 export class TimesheetQuery {
   @Field({ nullable: true })
   id: string;
+
   @Field()
   company_id: string;
 }
@@ -131,6 +133,7 @@ export class TimesheetQuery {
 export class TimesheetQueryInput {
   @Field({ nullable: true })
   paging: PagingInput;
+
   @Field()
   query: TimesheetQuery;
 }

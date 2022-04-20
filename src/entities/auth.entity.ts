@@ -5,7 +5,6 @@ import UserToken from './user-token.entity';
 import Company from '../entities/company.entity';
 import { ForgotPasswordUserType } from '../config/constants';
 import { AddressCreateInput } from '../entities/address.entity';
-import { UserRecordCreateInput } from '../entities/user-record.entity';
 
 registerEnumType(ForgotPasswordUserType, {
   name: 'ForgotPasswordUserType',
@@ -90,9 +89,6 @@ export class InvitationRegisterInput {
 
   @Field((type) => AddressCreateInput)
   address: AddressCreateInput;
-
-  @Field((type) => UserRecordCreateInput)
-  record: UserRecordCreateInput;
 }
 
 @ObjectType()

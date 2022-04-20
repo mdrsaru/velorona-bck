@@ -63,9 +63,9 @@ export class TimesheetResolver {
   async TimesheetCreate(@Arg('input') args: TimesheetCreateInput, @Ctx() ctx: any): Promise<Timesheet> {
     const operation = 'TimesheetCreate';
     try {
-      const total_hours = args.total_hours;
-      const total_expense = args.total_expense;
-      const client_location = args.client_location;
+      const totalHours = args.totalHours;
+      const totalExpense = args.totalExpense;
+      const clientLocation = args.clientLocation;
       const approver_id = args.approver_id;
       const project_id = args.project_id;
       const company_id = args.company_id;
@@ -75,9 +75,9 @@ export class TimesheetResolver {
       await this.joiService.validate({
         schema,
         input: {
-          total_hours,
-          total_expense,
-          client_location,
+          totalHours,
+          totalExpense,
+          clientLocation,
           approver_id,
           project_id,
           company_id,
@@ -85,9 +85,9 @@ export class TimesheetResolver {
         },
       });
       let timesheet: Timesheet = await this.timesheetService.create({
-        total_hours,
-        total_expense,
-        client_location,
+        totalHours,
+        totalExpense,
+        clientLocation,
         approver_id,
         project_id,
         company_id,
@@ -110,9 +110,9 @@ export class TimesheetResolver {
     const operation = 'TimesheetCreate';
     try {
       const id = args.id;
-      const total_hours = args.total_hours;
-      const total_expense = args.total_expense;
-      const client_location = args.client_location;
+      const totalHours = args.totalHours;
+      const totalExpense = args.totalExpense;
+      const clientLocation = args.clientLocation;
       const approver_id = args.approver_id;
       const project_id = args.project_id;
       const company_id = args.company_id;
@@ -123,9 +123,9 @@ export class TimesheetResolver {
         schema,
         input: {
           id,
-          total_hours,
-          total_expense,
-          client_location,
+          totalHours,
+          totalExpense,
+          clientLocation,
           approver_id,
           project_id,
           company_id,
@@ -134,9 +134,9 @@ export class TimesheetResolver {
       });
       let timesheet: Timesheet = await this.timesheetService.update({
         id,
-        total_hours,
-        total_expense,
-        client_location,
+        totalHours,
+        totalExpense,
+        clientLocation,
         approver_id,
         project_id,
         company_id,

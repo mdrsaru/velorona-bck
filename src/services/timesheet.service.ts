@@ -48,9 +48,9 @@ export default class TimesheetService implements ITimesheetService {
 
   create = async (args: ITimesheetCreateInput) => {
     const operation = 'create';
-    const total_hours = args.total_hours;
-    const total_expense = args.total_expense;
-    const client_location = args.client_location;
+    const totalHours = args.totalHours;
+    const totalExpense = args.totalExpense;
+    const clientLocation = args.clientLocation;
     const approver_id = args.approver_id;
     const project_id = args.project_id;
     const company_id = args.company_id;
@@ -58,9 +58,9 @@ export default class TimesheetService implements ITimesheetService {
 
     try {
       let timesheet = await this.timesheetRepository.create({
-        total_hours,
-        total_expense,
-        client_location,
+        totalHours,
+        totalExpense,
+        clientLocation,
         approver_id,
         project_id,
         company_id,
@@ -79,9 +79,9 @@ export default class TimesheetService implements ITimesheetService {
   update = async (args: ITimesheetUpdateInput) => {
     const operation = 'update';
     const id = args?.id;
-    const total_hours = args.total_hours;
-    const total_expense = args.total_expense;
-    const client_location = args.client_location;
+    const totalHours = args.totalHours;
+    const totalExpense = args.totalExpense;
+    const clientLocation = args.clientLocation;
     const approver_id = args.approver_id;
     const project_id = args.project_id;
     const company_id = args.company_id;
@@ -90,9 +90,9 @@ export default class TimesheetService implements ITimesheetService {
     try {
       let timesheet = await this.timesheetRepository.update({
         id,
-        total_hours,
-        total_expense,
-        client_location,
+        totalHours,
+        totalExpense,
+        clientLocation,
         approver_id,
         project_id,
         company_id,

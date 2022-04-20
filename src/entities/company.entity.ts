@@ -50,10 +50,6 @@ export default class Company extends Base {
   @Field(() => Workschedule, { nullable: true })
   @OneToMany(() => Workschedule, (workschedule) => workschedule.tasks)
   workschedules: Workschedule[];
-
-  @Field(() => Timesheet, { nullable: true, description: 'Field for company timesheet' })
-  @OneToMany(() => Timesheet, (timesheet) => timesheet.company)
-  companyTimesheet: Timesheet[];
 }
 
 @ObjectType()

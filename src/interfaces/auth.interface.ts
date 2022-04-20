@@ -1,11 +1,9 @@
-import User from '../entities/user.entity';
 import Role from '../entities/role.entity';
 import Company from '../entities/company.entity';
 import { ForgotPasswordUserType } from '../config/constants';
 
 import { IEntityID } from './common.interface';
 import { IAddressCreateInput } from './address.interface';
-import { IUserRecordCreateInput } from './user-record.interface';
 import { IUser } from './user.interface';
 
 export interface ILoginInput {
@@ -48,7 +46,6 @@ export interface IInvitationRegisterInput {
   middleName?: IUser['middleName'];
   phone: IUser['phone'];
   address: IAddressCreateInput;
-  record: IUserRecordCreateInput;
 }
 
 export interface IInvitationRegisterResponse {

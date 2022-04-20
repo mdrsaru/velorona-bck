@@ -202,7 +202,7 @@ export default class UserRepository extends BaseRepository<User> implements IUse
       const archived = args?.archived;
 
       const found = await this.repo.findOne(id, {
-        relations: ['address', 'record'],
+        relations: ['address'],
       });
 
       if (!found) {

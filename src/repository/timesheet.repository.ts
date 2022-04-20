@@ -31,9 +31,9 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
 
   async create(args: ITimesheetCreateInput): Promise<Timesheet> {
     try {
-      const total_hours = args.total_hours;
-      const total_expense = args.total_expense;
-      const client_location = args.client_location;
+      const totalHours = args.totalHours;
+      const totalExpense = args.totalExpense;
+      const clientLocation = args.clientLocation;
       const approver_id = args.approver_id;
       const project_id = args.project_id;
       const company_id = args.company_id;
@@ -67,9 +67,9 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
         });
       }
       const Timesheet = this.repo.save({
-        total_hours,
-        total_expense,
-        client_location,
+        totalHours,
+        totalExpense,
+        clientLocation,
         approver_id,
         project_id,
         company_id,
@@ -84,9 +84,9 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
   update = async (args: ITimesheetUpdateInput): Promise<Timesheet> => {
     try {
       const id = args?.id;
-      const total_hours = args.total_hours;
-      const total_expense = args.total_expense;
-      const client_location = args.client_location;
+      const totalHours = args.totalHours;
+      const totalExpense = args.totalExpense;
+      const clientLocation = args.clientLocation;
       const approver_id = args.approver_id;
       const project_id = args.project_id;
       const company_id = args.company_id;
@@ -101,9 +101,9 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
 
       const update = merge(found, {
         id,
-        total_hours,
-        total_expense,
-        client_location,
+        totalHours,
+        totalExpense,
+        clientLocation,
         approver_id,
         project_id,
         company_id,

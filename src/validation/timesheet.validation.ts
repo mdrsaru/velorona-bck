@@ -32,9 +32,9 @@ const messages = {
 export default class TimesheetValidation {
   static create() {
     return Joi.object({
-      total_hours: Joi.number(),
-      total_expense: Joi.number(),
-      client_location: Joi.string(),
+      totalHours: Joi.number(),
+      totalExpense: Joi.number(),
+      clientLocation: Joi.string(),
       approver_id: Joi.string().required().messages(messages.approver_id),
       project_id: Joi.string().required().messages(messages.project_id),
       company_id: Joi.string().required().messages(messages.company_id),
@@ -44,9 +44,9 @@ export default class TimesheetValidation {
   static update() {
     return Joi.object({
       id: Joi.string().required().messages(messages.id),
-      total_hours: Joi.number(),
-      total_expense: Joi.number(),
-      client_location: Joi.string(),
+      totalHours: Joi.number(),
+      totalExpense: Joi.number(),
+      clientLocation: Joi.string(),
       approver_id: Joi.string(),
       project_id: Joi.string(),
       company_id: Joi.string(),

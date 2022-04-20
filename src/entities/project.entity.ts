@@ -33,9 +33,9 @@ export default class Project extends Base {
   @Column()
   client_id: string;
 
-  @Field(() => Timesheet, { nullable: true, description: 'Field for project timesheet' })
+  @Field(() => Timesheet, { nullable: true, description: 'Field for timesheet' })
   @OneToMany(() => Timesheet, (timesheet) => timesheet.project)
-  project: Timesheet[];
+  timesheet: Timesheet[];
 }
 
 @ObjectType()

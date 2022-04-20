@@ -110,26 +110,12 @@ export default class User extends Base {
   @OneToMany(() => UserToken, (token) => token.user)
   tokens: UserToken[];
 
-  @Field(() => UserRecord, { nullable: true })
-  @OneToOne(() => UserRecord, (record) => record.user, {
-    cascade: true,
-  })
-  record: UserRecord;
-
   @ManyToMany(() => Task)
   assignedTasks: Task[];
 
   @Field(() => Workschedule, { nullable: true })
   @OneToMany(() => Workschedule, (workschedule) => workschedule.user)
   workschedules: Workschedule[];
-
-  @Field(() => Timesheet, { nullable: true, description: 'Field for approver timesheet' })
-  @OneToMany(() => Timesheet, (timesheet) => timesheet.approver)
-  approverTimesheet: Timesheet[];
-
-  @Field(() => Timesheet, { nullable: true, description: 'Field for created by timesheet' })
-  @OneToMany(() => Timesheet, (timesheet) => timesheet.created_by)
-  createdByTimesheet: Timesheet[];
 }
 
 @ObjectType()
