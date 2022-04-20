@@ -66,11 +66,6 @@ export default class AuthValidation {
       lastName: Joi.string().required(),
       middleName: Joi.string(),
       phone: Joi.string().required(),
-      record: Joi.object({
-        startDate: Joi.date().required(),
-        endDate: Joi.date().required(),
-        payRate: Joi.number().required(),
-      }).required(),
       address: Joi.object({
         streetAddress: Joi.string().required(),
         aptOrSuite: Joi.string(),

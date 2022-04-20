@@ -406,7 +406,6 @@ export default class AuthService implements IAuthService {
       const middleName = args.middleName;
       const phone = args.phone;
       const address = args.address;
-      const record = args.record;
       const status = UserStatus.Active;
 
       const invitation = await this.invitationRepository.getSingleEntity({
@@ -451,7 +450,6 @@ export default class AuthService implements IAuthService {
         phone,
         status,
         address,
-        record,
         company_id,
         roles: roles.map((r) => r.id),
       });

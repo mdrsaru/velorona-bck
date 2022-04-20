@@ -21,13 +21,13 @@ export default class UserRecord extends Base {
   @Column({ name: 'pay_rate' })
   payRate: number;
 
-  @Field()
-  @Column()
-  user_id: string;
+  // @Field()
+  // @Column()
+  // user_id: string;
 
-  @OneToOne(() => User, (user) => user.record)
-  @JoinColumn({ name: 'user_id' })
-  user: User;
+  // @OneToOne(() => User, (user) => user.record)
+  // @JoinColumn({ name: 'user_id' })
+  // user: User;
 }
 
 @InputType()
