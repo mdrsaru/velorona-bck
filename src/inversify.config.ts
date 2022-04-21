@@ -14,6 +14,7 @@ import address from './config/inversify/address';
 import userRecord from './config/inversify/user-record';
 import project from './config/inversify/project';
 import workschedule from './config/inversify/workschedule';
+import timesheet from './config/inversify/timesheet';
 import userClient from './config/inversify/user-client';
 
 const container = new Container({ skipBaseClassChecks: true });
@@ -41,6 +42,7 @@ container.load(
   userRecord,
   project,
   workschedule,
+  timesheet,
   userClient,
 );
 

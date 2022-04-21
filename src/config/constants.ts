@@ -55,6 +55,7 @@ export const entities = {
   projects: 'projects',
   workschedule: 'workschedule',
   userRoles: 'user_roles',
+  timesheet: 'timesheet',
   userClient: 'user_clients',
 };
 

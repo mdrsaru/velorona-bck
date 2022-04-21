@@ -9,6 +9,7 @@ import { InvitationResolver } from './resolvers/invitation.resolver';
 import { TaskResolver } from './resolvers/task.resolver';
 import { ProjectResolver } from './resolvers/project.resolver';
 import { WorkscheduleResolver } from './resolvers/workschedule.resolver';
+import { TimesheetResolver } from './resolvers/timesheet.resolver';
 import { UserClientResolver } from './resolvers/user-client.resolver';
 
 export default buildSchema({
@@ -24,6 +25,7 @@ export default buildSchema({
     TaskResolver,
     ProjectResolver,
     WorkscheduleResolver,
+    TimesheetResolver,
     UserClientResolver,
   ],
 });

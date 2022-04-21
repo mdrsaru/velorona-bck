@@ -13,8 +13,8 @@ import { Base } from './base.entity';
 import User from './user.entity';
 import { entities, CompanyStatus } from '../config/constants';
 import { PagingResult, PagingInput } from './common.entity';
-import Task from './task.entity';
 import Workschedule from './workschedule.entity';
+import Timesheet from './timesheet.entity';
 
 registerEnumType(CompanyStatus, {
   name: 'CompanyStatus',

@@ -1,7 +1,7 @@
 {
   "_type": "export",
   "__export_format": 4,
-  "__export_date": "2022-04-13T07:24:28.492Z",
+  "__export_date": "2022-04-21T07:37:30.526Z",
   "__export_source": "insomnia.desktop.app:v2022.2.1",
   "resources": [
     {
@@ -171,7 +171,7 @@
     {
       "_id": "req_79f4961f21a04d108aae7c8c2dcb530b",
       "parentId": "fld_b017df8adc754fa891b75b937faee998",
-      "modified": 1649834643066,
+      "modified": 1650426112951,
       "created": 1649826164173,
       "url": "{{ api_url }}/{{ version }}/graphql",
       "name": "AssociateUserClient",
@@ -179,7 +179,7 @@
       "method": "POST",
       "body": {
         "mimeType": "application/graphql",
-        "text": "{\"query\":\"mutation AssociateUserWithClient($input: AssociateUserClientInput!) {\\n  AssociateUserWithClient(input: $input) {\\n    id\\n   status\\n  }\\n}\",\"variables\":{\"input\":{\"user_id\":\"{% response 'body', 'req_bf0873093e7749b3a20f89522783a900', 'b64::JC5kYXRhLlVzZXJDcmVhdGUuaWQ=::46b', 'never', 60 %}\",\"client_id\":\"b762f64a-b9d5-470f-9289-ee951600fe1f\"}},\"operationName\":\"AssociateUserWithClient\"}"
+        "text": "{\"query\":\"mutation AssociateUserWithClient($input: AssociateUserClientInput!) {\\n  AssociateUserWithClient(input: $input) {\\n    id\\n   status\\n\\t\\tuser{\\n\\t\\t\\tfirstName\\n\\t\\t\\tlastName\\n\\t\\t}\\n\\t\\tclient{\\n\\t\\t\\tfullName\\n\\t\\t}\\n  }\\n}\",\"variables\":{\"input\":{\"user_id\":\"{% response 'body', 'req_bf0873093e7749b3a20f89522783a900', 'b64::JC5kYXRhLlVzZXJDcmVhdGUuaWQ=::46b', 'never', 60 %}\",\"client_id\":\"b762f64a-b9d5-470f-9289-ee951600fe1f\"}},\"operationName\":\"AssociateUserWithClient\"}"
       },
       "parameters": [],
       "headers": [
@@ -210,6 +210,37 @@
       "environmentPropertyOrder": null,
       "metaSortKey": -1646362188246,
       "_type": "request_group"
+    },
+    {
+      "_id": "req_79b3c779b37349698b7dcf2929c068a3",
+      "parentId": "fld_b017df8adc754fa891b75b937faee998",
+      "modified": 1650521105771,
+      "created": 1650519368545,
+      "url": "{{ api_url }}/{{ version }}/graphql",
+      "name": "ChangeStatus",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/graphql",
+        "text": "{\"query\":\"mutation ChangeStatus($input: ChangeStatusInput!) {\\n  ChangeStatus(input: $input) {\\n    id\\n   status\\n\\t\\tuser{\\n\\t\\t\\tfirstName\\n\\t\\t\\tlastName\\n\\t\\t}\\n\\t\\tclient{\\n\\t\\t\\tfullName\\n\\t\\t}\\n\\t\\tstatus\\n  }\\n}\",\"variables\":{\"input\":{\"id\":\"{% response 'body', 'req_79f4961f21a04d108aae7c8c2dcb530b', 'b64::JC5kYXRhLkFzc29jaWF0ZVVzZXJXaXRoQ2xpZW50Lmlk::46b', 'never', 60 %}\"}},\"operationName\":\"ChangeStatus\"}"
+      },
+      "parameters": [],
+      "headers": [
+        { "id": "pair_5785fa0d281e4c5980ec45d40cc212a4", "name": "Content-Type", "value": "application/json" }
+      ],
+      "authentication": {
+        "token": "{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLnRva2Vu::46b', 'never', 60 %}",
+        "type": "bearer"
+      },
+      "metaSortKey": -1646642349897.459,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
     },
     {
       "_id": "req_718f9a2be37c44a980dedaa175ff71f6",
@@ -517,7 +548,7 @@
     {
       "_id": "req_bf0873093e7749b3a20f89522783a900",
       "parentId": "fld_9a7753c89a724a5ab6add918218e97ea",
-      "modified": 1649402852536,
+      "modified": 1650368259961,
       "created": 1646814799695,
       "url": "{{ api_url }}/{{ version }}/graphql",
       "name": "UserCreate",
@@ -525,7 +556,7 @@
       "method": "POST",
       "body": {
         "mimeType": "application/graphql",
-        "text": "{\"query\":\"mutation UserCreate($input: UserCreateInput!) {\\n  UserCreate(input: $input) {\\n    id\\n    fullName    \\n  }\\n}\",\"variables\":{\"input\":{\"email\":\"user@yopmail.com\",\"phone\":\"9841773322\",\"firstName\":\"John\",\"lastName\":\"Doe\",\"status\":\"Active\",\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\",\"roles\":[\"Employee\"],\"address\":{\"streetAddress\":\"street\",\"city\":\"City\",\"state\":\"AL\",\"zipcode\":\"43215\"},\"record\":{\"startDate\":\"2022-03-25T08:15:51.634Z\",\"endDate\":\"2022-03-28T08:15:51.634Z\",\"payRate\":140}}},\"operationName\":\"UserCreate\"}"
+        "text": "{\"query\":\"mutation UserCreate($input: UserCreateInput!) {\\n  UserCreate(input: $input) {\\n    id\\n    fullName    \\n  }\\n}\",\"variables\":{\"input\":{\"email\":\"10user@yopmail.com\",\"phone\":\"9841773322\",\"firstName\":\"John\",\"lastName\":\"Doe\",\"status\":\"Active\",\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\",\"roles\":[\"Employee\"],\"address\":{\"streetAddress\":\"street\",\"city\":\"City\",\"state\":\"AL\",\"zipcode\":\"43215\"}}},\"operationName\":\"UserCreate\"}"
       },
       "parameters": [],
       "headers": [
@@ -839,6 +870,142 @@
         "type": "bearer"
       },
       "metaSortKey": -1646634883848.918,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_0cccc92089e34d85be93f7443015cd9d",
+      "parentId": "fld_4b51c186049444bb8c795b2ddc65239f",
+      "modified": 1650526619626,
+      "created": 1650358353327,
+      "url": "{{ api_url }}/{{ version }}/graphql",
+      "name": "Timesheet",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/graphql",
+        "text": "{\"query\":\"query Timesheet($input: TimesheetQueryInput!) {\\n  Timesheet(input: $input) {\\n    paging {\\n      total\\n      startIndex\\n      endIndex\\n      hasNextPage\\n    }\\n    data {\\n      id\\n\\t\\t\\ttotalHours\\n\\t\\t\\ttotalExpense\\n\\t\\t\\tclientLocation\\n     company{\\n\\t\\t\\tid\\n\\t\\t\\tname\\n\\t\\t}\\n\\t\\t\\tapprover{\\n\\t\\t\\t\\tfirstName\\n\\t\\t\\t}\\n\\t\\t\\tproject{\\n\\t\\t\\t\\tid\\n\\t\\t\\t\\tname\\n\\t\\t\\t}\\n\\t\\t\\t\\n    }\\n  }\\n}\",\"variables\":{\"input\":{\"query\":{\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\"}}},\"operationName\":\"Timesheet\"}"
+      },
+      "parameters": [],
+      "headers": [
+        { "id": "pair_5785fa0d281e4c5980ec45d40cc212a4", "name": "Content-Type", "value": "application/json" }
+      ],
+      "authentication": {
+        "token": "{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLnRva2Vu::46b', 'never', 60 %}",
+        "type": "bearer"
+      },
+      "metaSortKey": -1646649815996,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "fld_4b51c186049444bb8c795b2ddc65239f",
+      "parentId": "wrk_4360c7a0bbfa403c86be07deeb666c4c",
+      "modified": 1650358353297,
+      "created": 1650358353297,
+      "name": "Timesheet",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1643809572469.875,
+      "_type": "request_group"
+    },
+    {
+      "_id": "req_073074e16d8b483b92800d6916c33625",
+      "parentId": "fld_4b51c186049444bb8c795b2ddc65239f",
+      "modified": 1650526627636,
+      "created": 1650358353306,
+      "url": "{{ api_url }}/{{ version }}/graphql",
+      "name": "TimesheetCreate",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/graphql",
+        "text": "{\"query\":\"mutation TimesheetCreate($input: TimesheetCreateInput!) {\\n  TimesheetCreate(input: $input) {\\n    id\\n   totalHours\\n\\t\\ttotalExpense\\n\\t\\tproject{\\n\\t\\t\\tid\\n\\t\\t\\tname\\n\\t\\t}\\n\\t\\tapprover{\\n\\t\\t\\tid\\n\\t\\t\\tfullName\\n\\t\\t}\\n\\t\\tcompany{\\n\\t\\t\\tid\\n\\t\\t\\tname\\n\\t\\t}\\n\\t\\tcreated_by\\n  }\\n}\\n\",\"variables\":{\"input\":{\"totalHours\":10,\"totalExpense\":100000,\"clientLocation\":\"Lalitpur\",\"project_id\":\"{% response 'body', 'req_031f86964d3f4b09aada9dfb951fc7dc', 'b64::JC5kYXRhLlByb2plY3RDcmVhdGUuaWQ=::46b', 'never', 60 %}\",\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\",\"approver_id\":\"3dc646b8-2cdc-4b20-b8bb-c8af70a62cdb\",\"created_by\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmlk::46b', 'never', 60 %}\"}},\"operationName\":\"TimesheetCreate\"}"
+      },
+      "parameters": [],
+      "headers": [
+        { "id": "pair_5785fa0d281e4c5980ec45d40cc212a4", "name": "Content-Type", "value": "application/json" }
+      ],
+      "authentication": {
+        "token": "{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLnRva2Vu::46b', 'never', 60 %}",
+        "type": "bearer"
+      },
+      "metaSortKey": -1646649815946,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_dc54838ce22c4d28985a449fd66dd7d6",
+      "parentId": "fld_4b51c186049444bb8c795b2ddc65239f",
+      "modified": 1650526592485,
+      "created": 1650358353334,
+      "url": "{{ api_url }}/{{ version }}/graphql",
+      "name": "TimesheetUpdate",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/graphql",
+        "text": "{\"query\":\"mutation TimesheetUpdate($input: TimesheetUpdateInput!) {\\n  TimesheetUpdate(input: $input) {\\n    id\\n    company_id\\n  }\\n}\\n\",\"variables\":{\"input\":{\"id\":\"{% response 'body', 'req_073074e16d8b483b92800d6916c33625', 'b64::JC5kYXRhLlRpbWVzaGVldENyZWF0ZS5pZA==::46b', 'never', 60 %}\",\"totalHours\":300,\"company_id\":\"{% response 'body', 'req_031f86964d3f4b09aada9dfb951fc7dc', 'b64::JC5kYXRhLlByb2plY3RDcmVhdGUuY29tcGFueS5pZA==::46b', 'never', 60 %}\"}},\"operationName\":\"TimesheetUpdate\"}"
+      },
+      "parameters": [],
+      "headers": [
+        { "id": "pair_5785fa0d281e4c5980ec45d40cc212a4", "name": "Content-Type", "value": "application/json" }
+      ],
+      "authentication": {
+        "token": "{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLnRva2Vu::46b', 'never', 60 %}",
+        "type": "bearer"
+      },
+      "metaSortKey": -1646634883848.918,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_5f50ea37439a4758afb86755474d06e0",
+      "parentId": "fld_4b51c186049444bb8c795b2ddc65239f",
+      "modified": 1650526595360,
+      "created": 1650360932969,
+      "url": "{{ api_url }}/{{ version }}/graphql",
+      "name": "TimesheetDelete",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/graphql",
+        "text": "{\"query\":\"mutation TimesheetDelete($input: DeleteInput!) {\\n  TimesheetDelete(input: $input) {\\n    id\\n\\t\\tcompany_id\\n  }\\n}\",\"variables\":{\"input\":{\"id\":\"{% response 'body', 'req_073074e16d8b483b92800d6916c33625', 'b64::JC5kYXRhLlRpbWVzaGVldENyZWF0ZS5pZA==::46b', 'never', 60 %}\"}},\"operationName\":\"TimesheetDelete\"}"
+      },
+      "parameters": [],
+      "headers": [
+        { "id": "pair_5785fa0d281e4c5980ec45d40cc212a4", "name": "Content-Type", "value": "application/json" }
+      ],
+      "authentication": {
+        "token": "{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLnRva2Vu::46b', 'never', 60 %}",
+        "type": "bearer"
+      },
+      "metaSortKey": -1646634883798.918,
       "isPrivate": false,
       "settingStoreCookies": true,
       "settingSendCookies": true,
@@ -1399,7 +1566,7 @@
     {
       "_id": "req_7891357ab736456a8e14b348b31135d3",
       "parentId": "fld_e864bd8433684c93a335724143ac8a23",
-      "modified": 1649402947739,
+      "modified": 1650429713511,
       "created": 1647846264731,
       "url": "{{ api_url }}/{{ version }}/graphql",
       "name": "CompanyLogin",
@@ -1480,22 +1647,22 @@
     {
       "_id": "jar_2121b271f08ea9ff6a364be633b863d913907d01",
       "parentId": "wrk_4360c7a0bbfa403c86be07deeb666c4c",
-      "modified": 1649402948936,
+      "modified": 1650429714451,
       "created": 1646649800465,
       "name": "Default Jar",
       "cookies": [
         {
-          "creation": "2022-03-16T07:43:51.090Z",
-          "domain": "localhost",
-          "expires": "2022-04-15T07:29:08.000Z",
-          "hostOnly": true,
-          "httpOnly": true,
-          "id": "5873771252022226",
           "key": "refreshToken",
-          "lastAccessed": "2022-04-08T07:29:08.934Z",
+          "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImRiZDM5YjlkLWY0YmYtNGY1Mi1iZmNlLTNhYmE3N2ZhOWVmZSIsInJvbGVzIjpbImI4MzRiY2ExLTMyZjgtNGNlNi1hZDZlLTdkYjc3YzA4ZjFmMyJdLCJpYXQiOjE2NTA0Mjk3MTQsImV4cCI6MTY1MTAzNDUxNH0.Caa8ITz0-p8-Rjp5QSMq7ecnZjFYfqFaz1wT4ltJnF0",
+          "expires": "2022-04-27T04:41:54.000Z",
           "maxAge": 604800,
+          "domain": "localhost",
           "path": "/",
-          "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQxNGI3M2UyLTJlNTQtNDcyOS1iZWU4LWQ3N2JjYzJlYTE1OSIsInJvbGVzIjpbIjA0OWMwMzIxLTFkNmEtNGNmMC1iMzA5LWYyMGVlM2EzNDRjMCJdLCJpYXQiOjE2NDk0MDI5NDgsImV4cCI6MTY1MDAwNzc0OH0.aO_oWftlhjCUu3QaMIjuxCZdWxtJ-cbb-ToZ7SAJoMc"
+          "httpOnly": true,
+          "hostOnly": true,
+          "creation": "2022-03-16T07:43:51.090Z",
+          "lastAccessed": "2022-04-20T04:41:54.426Z",
+          "id": "9899433741644121"
         }
       ],
       "_type": "cookie_jar"

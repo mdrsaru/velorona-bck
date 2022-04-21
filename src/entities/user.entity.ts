@@ -13,6 +13,7 @@ import Task from './task.entity';
 import Workschedule from './workschedule.entity';
 import { userRolesTable } from '../config/db/columns';
 import UserRecord from './user-record.entity';
+import Timesheet from './timesheet.entity';
 
 registerEnumType(UserStatus, {
   name: 'UserStatus',

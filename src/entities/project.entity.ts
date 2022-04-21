@@ -6,6 +6,7 @@ import User from './user.entity';
 import Company from './company.entity';
 import { Base } from './base.entity';
 import { PagingInput, PagingResult } from './common.entity';
+import Timesheet from './timesheet.entity';
 
 @ObjectType()
 @Entity({ name: entities.projects })
@@ -31,6 +32,10 @@ export default class Project extends Base {
   @Field()
   @Column()
   client_id: string;
+
+  @Field(() => Timesheet, { nullable: true, description: 'Field for timesheet' })
+  @OneToMany(() => Timesheet, (timesheet) => timesheet.project)
+  timesheet: Timesheet[];
 }
 
 @ObjectType()

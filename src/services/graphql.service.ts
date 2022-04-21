@@ -8,6 +8,7 @@ import User from '../entities/user.entity';
 import * as companyLoader from '../loaders/dataloader/company.dataloader';
 import * as userLoader from '../loaders/dataloader/user.dataloader';
 import * as workscheduleLoader from '../loaders/dataloader/workschedule.dataloader';
+import * as projectLoader from '../loaders/dataloader/project.dataloader';
 
 import { IGraphql, IGraphqlContext } from '../interfaces/graphql.interface';
 import { ITokenService, ILogger } from '../interfaces/common.interface';
@@ -84,6 +85,7 @@ export default class GraphqlService implements IGraphql {
         recordByUserIdLoader: userLoader.recordByUserIdLoader(),
         usersByIdLoader: userLoader.usersByIdLoader(),
         tasksByIdLoader: workscheduleLoader.tasksByIdLoader(),
+        projectByIdLoader: projectLoader.projectsByIdLoader(),
       },
     };
   };
