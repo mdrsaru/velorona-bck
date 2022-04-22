@@ -6,6 +6,7 @@ import {
   ITimesheetCreateInput,
   ITimesheetRepository,
   ITimesheetService,
+  ITimeSheetStopInput,
   ITimesheetUpdateInput,
 } from '../interfaces/timesheet.interface';
 import { TYPES } from '../types';
@@ -48,23 +49,23 @@ export default class TimesheetService implements ITimesheetService {
 
   create = async (args: ITimesheetCreateInput) => {
     const operation = 'create';
-    const totalHours = args.totalHours;
-    const totalExpense = args.totalExpense;
+    const start = args.start;
+    const end = args.end;
     const clientLocation = args.clientLocation;
-    const approver_id = args.approver_id;
     const project_id = args.project_id;
     const company_id = args.company_id;
     const created_by = args.created_by;
+    const task_id = args.task_id;
 
     try {
       let timesheet = await this.timesheetRepository.create({
-        totalHours,
-        totalExpense,
+        start,
+        end,
         clientLocation,
-        approver_id,
         project_id,
         company_id,
         created_by,
+        task_id,
       });
       return timesheet;
     } catch (err) {
@@ -79,24 +80,46 @@ export default class TimesheetService implements ITimesheetService {
   update = async (args: ITimesheetUpdateInput) => {
     const operation = 'update';
     const id = args?.id;
-    const totalHours = args.totalHours;
-    const totalExpense = args.totalExpense;
+    const start = args.start;
+    const end = args.end;
     const clientLocation = args.clientLocation;
     const approver_id = args.approver_id;
     const project_id = args.project_id;
     const company_id = args.company_id;
     const created_by = args.created_by;
+    const task_id = args.task_id;
 
     try {
       let timesheet = await this.timesheetRepository.update({
         id,
-        totalHours,
-        totalExpense,
+        start,
+        end,
         clientLocation,
         approver_id,
         project_id,
         company_id,
         created_by,
+        task_id,
+      });
+      return timesheet;
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        operation,
+        name: this.name,
+        logError: true,
+      });
+    }
+  };
+
+  stop = async (args: ITimeSheetStopInput) => {
+    const operation = 'stop';
+    try {
+      const id = args.id;
+      const end = args.end;
+      let timesheet = await this.timesheetRepository.update({
+        id,
+        end,
       });
       return timesheet;
     } catch (err) {

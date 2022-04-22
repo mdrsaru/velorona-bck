@@ -8,6 +8,7 @@ import Workschedule from './workschedule.entity';
 import { entities, TaskStatus } from '../config/constants';
 import { PagingInput, PagingResult } from './common.entity';
 import { taskAssignmentTable } from '../config/db/columns';
+import Timesheet from './timesheet.entity';
 
 registerEnumType(TaskStatus, {
   name: 'TaskStatus',
@@ -67,6 +68,10 @@ export default class Task extends Base {
   @Field(() => Workschedule, { nullable: true })
   @OneToMany(() => Workschedule, (workschedule) => workschedule.tasks)
   workschedules: Workschedule[];
+
+  @Field(() => Timesheet, { nullable: true, description: 'Field for timesheet' })
+  @OneToMany(() => Timesheet, (timesheet) => timesheet.task)
+  timesheet: Timesheet[];
 }
 
 @InputType()

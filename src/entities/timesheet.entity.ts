@@ -7,17 +7,18 @@ import User from './user.entity';
 import Project from './project.entity';
 import { Base } from './base.entity';
 import { PagingInput, PagingResult } from './common.entity';
+import Task from './task.entity';
 
 @ObjectType()
 @Entity({ name: entities.timesheet })
 export default class Timesheet extends Base {
-  @Field({ nullable: true })
-  @Column({ nullable: true, name: 'total_hours' })
-  totalHours: number;
+  @Field()
+  @Column()
+  start: Date;
 
   @Field({ nullable: true })
-  @Column({ type: 'float', nullable: true, name: 'total_expense' })
-  totalExpense: number;
+  @Column({ nullable: true })
+  end: Date;
 
   @Field({ nullable: true })
   @Column({ name: 'client_location', nullable: true })
@@ -32,12 +33,12 @@ export default class Timesheet extends Base {
   @JoinColumn({ name: timesheet.project_id })
   project: Project;
 
-  @Field()
-  @Column()
+  @Field({ nullable: true })
+  @Column({ nullable: true })
   approver_id: string;
 
-  @Field((type) => User)
-  @ManyToOne(() => User)
+  @Field((type) => User, { nullable: true })
+  @ManyToOne(() => User, { nullable: true })
   @JoinColumn({ name: timesheet.approver_id })
   approver: User;
 
@@ -58,6 +59,15 @@ export default class Timesheet extends Base {
   @ManyToOne(() => User)
   @JoinColumn({ name: timesheet.created_by })
   creator: User;
+
+  @Field()
+  @Column()
+  task_id: string;
+
+  @Field((type) => Task)
+  @ManyToOne(() => Task)
+  @JoinColumn({ name: timesheet.task_id })
+  task: Task;
 }
 
 @ObjectType()
@@ -71,11 +81,11 @@ export class TimesheetPagingResult {
 
 @InputType()
 export class TimesheetCreateInput {
-  @Field({ nullable: true })
-  totalHours: number;
+  @Field()
+  start: Date;
 
   @Field({ nullable: true })
-  totalExpense: number;
+  end: Date;
 
   @Field({ nullable: true })
   clientLocation: string;
@@ -87,10 +97,10 @@ export class TimesheetCreateInput {
   company_id: string;
 
   @Field()
-  approver_id: string;
+  created_by: string;
 
   @Field()
-  created_by: string;
+  task_id: string;
 }
 
 @InputType()
@@ -99,10 +109,10 @@ export class TimesheetUpdateInput {
   id: string;
 
   @Field({ nullable: true })
-  totalHours: number;
+  start: Date;
 
   @Field({ nullable: true })
-  totalExpense: number;
+  end: Date;
 
   @Field({ nullable: true })
   clientLocation: string;
@@ -118,6 +128,21 @@ export class TimesheetUpdateInput {
 
   @Field({ nullable: true })
   created_by: string;
+
+  @Field({ nullable: true })
+  task_id: string;
+}
+
+@InputType()
+export class StopTimesheetInput {
+  @Field()
+  id: string;
+
+  @Field()
+  end: Date;
+
+  @Field()
+  company_id: string;
 }
 
 @InputType()
@@ -127,6 +152,9 @@ export class TimesheetQuery {
 
   @Field()
   company_id: string;
+
+  @Field({ nullable: true })
+  task_id: string;
 }
 
 @InputType()
