@@ -69,4 +69,6 @@ export default {
   userStatusActive: 'User is already associated with another client',
   userNotEmployee: 'User is not an Employee',
   userNotClient: 'User is not a client',
+  streetAddressRequired: 'Street address required',
+  invoicingEmailRequired: 'Invoicing email required',
 };
