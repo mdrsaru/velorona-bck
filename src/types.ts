@@ -89,6 +89,12 @@ const INVITATION = {
   InvitationRepository: Symbol('InvitationRepository'),
 };
 
+const CLIENT = {
+  ClientService: Symbol('ClientService'),
+  ClientRepository: Symbol('ClientRepository'),
+  ClientController: Symbol('ClientController'),
+};
+
 const TYPES = {
   ...COMMON,
   ...COMPANY,
@@ -103,6 +109,7 @@ const TYPES = {
   ...WORKSCHEDULE,
   ...TIMESHEET,
   ...USERCLIENT,
+  ...CLIENT,
 };
 
 export { TYPES };

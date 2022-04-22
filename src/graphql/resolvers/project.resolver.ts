@@ -40,7 +40,7 @@ export class ProjectResolver {
   }
 
   @Query((returns) => ProjectPagingResult)
-  @UseMiddleware(authenticate)
+  @UseMiddleware(authenticate, checkCompanyAccess)
   async Project(@Arg('input') args: ProjectQueryInput, @Ctx() ctx: any): Promise<IPaginationData<Project>> {
     const operation = 'Projects';
 

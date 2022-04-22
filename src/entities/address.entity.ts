@@ -46,7 +46,7 @@ export class AddressPagingResult {
 }
 
 @InputType()
-export class AddressCreateInput {
+export class AddressInput {
   @Field()
   streetAddress: string;
 
@@ -64,24 +64,12 @@ export class AddressCreateInput {
 }
 
 @InputType()
-export class AddressUpdateInput {
+export class AddressCreateInput extends AddressInput {}
+
+@InputType()
+export class AddressUpdateInput extends AddressInput {
   @Field({ nullable: true })
   id: string;
-
-  @Field({ nullable: true })
-  streetAddress: string;
-
-  @Field({ nullable: true })
-  aptOrSuite: string;
-
-  @Field({ nullable: true })
-  city: string;
-
-  @Field({ nullable: true })
-  state: string;
-
-  @Field({ nullable: true })
-  zipcode: string;
 }
 
 @InputType()

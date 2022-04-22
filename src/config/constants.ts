@@ -57,6 +57,7 @@ export const entities = {
   userRoles: 'user_roles',
   timesheet: 'timesheet',
   userClient: 'user_clients',
+  clients: 'clients',
 };
 
 export enum CompanyStatus {
@@ -65,6 +66,11 @@ export enum CompanyStatus {
 }
 
 export enum UserStatus {
+  Active = 'Active',
+  Inactive = 'Inactive',
+}
+
+export enum ClientStatus {
   Active = 'Active',
   Inactive = 'Inactive',
 }
