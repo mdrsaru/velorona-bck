@@ -5,43 +5,52 @@ import { IGetAllAndCountResult, IPaginationData, IPagingArgs } from './paging.in
 
 import Timesheet from '../entities/timesheet.entity';
 import { IEntityID, IEntityRemove } from './common.interface';
+import Task from '../entities/task.entity';
 
 export interface ITimesheet {
   id: string;
-  totalHours: number;
-  totalExpense: number;
+  start: Date;
+  end: Date;
   clientLocation: string;
   approver_id: string;
   project_id: string;
   company_id: string;
+  task_id: string;
   created_by: string;
   approver: User;
   project: Project;
   company: Company;
   creator: User;
+  task: Task;
   createdAt: Date;
   updatedAt: Date;
 }
 
 export interface ITimesheetCreateInput {
-  totalHours: ITimesheet['totalHours'];
-  totalExpense: ITimesheet['totalExpense'];
+  start: ITimesheet['start'];
+  end: ITimesheet['end'];
   clientLocation: ITimesheet['clientLocation'];
-  approver_id: ITimesheet['approver_id'];
   project_id: ITimesheet['project_id'];
   company_id: ITimesheet['company_id'];
   created_by: ITimesheet['created_by'];
+  task_id: ITimesheet['task_id'];
 }
 
 export interface ITimesheetUpdateInput {
   id: ITimesheet['id'];
-  totalHours?: ITimesheet['totalHours'];
-  totalExpense?: ITimesheet['totalExpense'];
+  start?: ITimesheet['start'];
+  end?: ITimesheet['end'];
   clientLocation?: ITimesheet['clientLocation'];
   approver_id?: ITimesheet['approver_id'];
   project_id?: ITimesheet['project_id'];
   company_id?: ITimesheet['company_id'];
   created_by?: ITimesheet['created_by'];
+  task_id?: ITimesheet['task_id'];
+}
+
+export interface ITimeSheetStopInput {
+  id: ITimesheet['id'];
+  end: ITimesheet['end'];
 }
 
 export interface ITimesheetRepository {
@@ -57,5 +66,6 @@ export interface ITimesheetService {
   getAllAndCount(args: IPagingArgs): Promise<IPaginationData<Timesheet>>;
   create(args: ITimesheetCreateInput): Promise<Timesheet>;
   update(args: ITimesheetUpdateInput): Promise<Timesheet>;
+  stop(args: ITimeSheetStopInput): Promise<Timesheet>;
   remove(args: IEntityRemove): Promise<Timesheet>;
 }

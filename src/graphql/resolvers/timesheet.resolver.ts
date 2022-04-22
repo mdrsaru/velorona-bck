@@ -1,6 +1,7 @@
 import { inject, injectable } from 'inversify';
 import { Arg, Ctx, FieldResolver, Mutation, Query, Resolver, Root, UseMiddleware } from 'type-graphql';
 import Timesheet, {
+  StopTimesheetInput,
   TimesheetCreateInput,
   TimesheetPagingResult,
   TimesheetQueryInput,
@@ -59,39 +60,70 @@ export class TimesheetResolver {
   }
 
   @Mutation((returns) => Timesheet)
-  @UseMiddleware(authenticate, authorize(RoleEnum.CompanyAdmin, RoleEnum.SuperAdmin), checkCompanyAccess)
+  @UseMiddleware(authenticate, checkCompanyAccess)
   async TimesheetCreate(@Arg('input') args: TimesheetCreateInput, @Ctx() ctx: any): Promise<Timesheet> {
     const operation = 'TimesheetCreate';
     try {
-      const totalHours = args.totalHours;
-      const totalExpense = args.totalExpense;
+      const start = args.start;
+      const end = args.end;
       const clientLocation = args.clientLocation;
-      const approver_id = args.approver_id;
       const project_id = args.project_id;
       const company_id = args.company_id;
       const created_by = args.created_by;
+      const task_id = args.task_id;
 
       const schema = TimesheetValidation.create();
       await this.joiService.validate({
         schema,
         input: {
-          totalHours,
-          totalExpense,
+          start,
+          end,
           clientLocation,
-          approver_id,
           project_id,
           company_id,
           created_by,
+          task_id,
         },
       });
       let timesheet: Timesheet = await this.timesheetService.create({
-        totalHours,
-        totalExpense,
+        start,
+        end,
         clientLocation,
-        approver_id,
         project_id,
         company_id,
         created_by,
+        task_id,
+      });
+      return timesheet;
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: false,
+      });
+    }
+  }
+
+  @Mutation((returns) => Timesheet)
+  @UseMiddleware(authenticate, checkCompanyAccess)
+  async StopTimesheet(@Arg('input') args: StopTimesheetInput, @Ctx() ctx: any): Promise<Timesheet> {
+    const operation = 'TimesheetCreate';
+    try {
+      const id = args.id;
+      const end = args.end;
+
+      const schema = TimesheetValidation.stop();
+      await this.joiService.validate({
+        schema,
+        input: {
+          id,
+          end,
+        },
+      });
+      let timesheet: Timesheet = await this.timesheetService.update({
+        id,
+        end,
       });
       return timesheet;
     } catch (err) {
@@ -107,40 +139,43 @@ export class TimesheetResolver {
   @Mutation((returns) => Timesheet)
   @UseMiddleware(authenticate, authorize(RoleEnum.CompanyAdmin, RoleEnum.SuperAdmin), checkCompanyAccess)
   async TimesheetUpdate(@Arg('input') args: TimesheetUpdateInput, @Ctx() ctx: any): Promise<Timesheet> {
-    const operation = 'TimesheetCreate';
+    const operation = 'TimesheetUpdate';
     try {
       const id = args.id;
-      const totalHours = args.totalHours;
-      const totalExpense = args.totalExpense;
+      const start = args.start;
+      const end = args.end;
       const clientLocation = args.clientLocation;
       const approver_id = args.approver_id;
       const project_id = args.project_id;
       const company_id = args.company_id;
       const created_by = args.created_by;
+      const task_id = args.task_id;
 
       const schema = TimesheetValidation.update();
       await this.joiService.validate({
         schema,
         input: {
           id,
-          totalHours,
-          totalExpense,
+          start,
+          end,
           clientLocation,
           approver_id,
           project_id,
           company_id,
           created_by,
+          task_id,
         },
       });
       let timesheet: Timesheet = await this.timesheetService.update({
         id,
-        totalHours,
-        totalExpense,
+        start,
+        end,
         clientLocation,
         approver_id,
         project_id,
         company_id,
         created_by,
+        task_id,
       });
       return timesheet;
     } catch (err) {
