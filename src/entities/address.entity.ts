@@ -3,7 +3,6 @@ import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
 import { entities } from '../config/constants';
 import { Base } from './base.entity';
 import { PagingInput, PagingResult } from './common.entity';
-import User from './user.entity';
 
 @Entity({ name: entities.addresses })
 @ObjectType()
@@ -28,13 +27,13 @@ export default class Address extends Base {
   @Column({ nullable: true })
   zipcode: string;
 
-  @Field()
-  @Column({ nullable: true })
-  user_id: string;
+  //@Field()
+  //@Column({ nullable: true })
+  //user_id: string;
 
-  @OneToOne(() => User, (user) => user.address)
-  @JoinColumn({ name: 'user_id' })
-  user: User;
+  //@OneToOne(() => User, (user) => user.address)
+  //@JoinColumn({ name: 'user_id' })
+  //user: User;
 }
 
 @ObjectType()

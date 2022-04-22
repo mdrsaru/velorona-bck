@@ -100,8 +100,13 @@ export default class User extends Base {
   })
   roles: Role[];
 
+  @Field()
+  @Column()
+  address_id: string;
+
   @Field(() => Address)
-  @OneToOne(() => Address, (address) => address.user, {
+  @JoinColumn({ name: 'address_id' })
+  @OneToOne(() => Address, {
     cascade: true,
   })
   address: Address;

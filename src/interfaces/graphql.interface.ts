@@ -15,7 +15,7 @@ export interface IDataloader {
   usersByCompanyIdLoader: Dataloader<string, User[]>;
   rolesByUserIdLoader: Dataloader<string, Role[]>;
   avatarByIdLoader: Dataloader<string, Media>;
-  addressByUserIdLoader: Dataloader<string, Address>;
+  addressByIdLoader: Dataloader<string, Address>;
   recordByUserIdLoader: Dataloader<string, UserRecord>;
   usersByIdLoader: Dataloader<string, User>;
   tasksByIdLoader: Dataloader<string, Task>;

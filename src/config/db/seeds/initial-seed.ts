@@ -23,10 +23,6 @@ const roles = [
     name: RoleEnum.TaskManager,
     description: 'Task Manager',
   },
-  {
-    name: RoleEnum.Client,
-    description: 'Client',
-  },
 ];
 
 const users = [
@@ -42,12 +38,9 @@ const users = [
   {
     email: 'manager@user.com',
   },
-  {
-    email: 'client@user.com',
-  },
 ];
 
-const companys = [
+const companies = [
   {
     name: 'Vellorum',
     status: CompanyStatus.Active,
@@ -58,7 +51,7 @@ const companys = [
 export default class InitialDatabaseSeed implements Seeder {
   public async run(factory: Factory, connection: Connection): Promise<void> {
     let createdRoles: any = [];
-    let createdCompanys: Company[] = [];
+    let createdCompanies: Company[] = [];
 
     for (let role of roles) {
       const createdRole = await factory(Role)().create({
@@ -68,10 +61,10 @@ export default class InitialDatabaseSeed implements Seeder {
       createdRoles.push(createdRole);
     }
 
-    for (let company of companys) {
+    for (let company of companies) {
       const newCompany = await factory(Company)().create(company);
 
-      createdCompanys.push(newCompany);
+      createdCompanies.push(newCompany);
     }
 
     // admin
@@ -80,12 +73,12 @@ export default class InitialDatabaseSeed implements Seeder {
       email: users[0].email,
     });
 
-    //companys
+    //companies
     for (let i = 1; i < users.length; i++) {
       await factory(User)().create({
         roles: [createdRoles[i]],
         email: users[i].email,
-        company_id: createdCompanys[0]?.id,
+        company_id: createdCompanies[0]?.id,
       });
     }
   }
