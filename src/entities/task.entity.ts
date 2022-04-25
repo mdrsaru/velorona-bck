@@ -9,6 +9,7 @@ import { entities, TaskStatus } from '../config/constants';
 import { PagingInput, PagingResult } from './common.entity';
 import { taskAssignmentTable } from '../config/db/columns';
 import Timesheet from './timesheet.entity';
+import Project from './project.entity';
 
 registerEnumType(TaskStatus, {
   name: 'TaskStatus',
@@ -72,6 +73,14 @@ export default class Task extends Base {
   @Field(() => Timesheet, { nullable: true, description: 'Field for timesheet' })
   @OneToMany(() => Timesheet, (timesheet) => timesheet.task)
   timesheet: Timesheet[];
+
+  @Field()
+  @Column()
+  project_id: string;
+
+  @ManyToOne(() => Project)
+  @JoinColumn({ name: 'project_id' })
+  project: Project;
 }
 
 @InputType()
@@ -90,6 +99,9 @@ export class TaskCreateInput {
 
   @Field()
   company_id: string;
+
+  @Field()
+  project_id: string;
 }
 
 @InputType()
@@ -111,6 +123,9 @@ export class TaskUpdateInput {
 
   @Field({ nullable: true })
   company_id: string;
+
+  @Field({ nullable: true })
+  project_id: string;
 }
 
 @ObjectType()

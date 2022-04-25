@@ -25,7 +25,6 @@ export default class ClientRepository extends BaseRepository<Client> implements 
   }
 
   create = async (args: IClientCreateInput): Promise<Client> => {
-    console.log(args, 'args');
     try {
       const name = args.name?.trim();
       const email = args.email?.trim()?.toLowerCase();

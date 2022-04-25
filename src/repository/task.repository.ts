@@ -4,6 +4,8 @@ import { getRepository, getManager } from 'typeorm';
 import strings from '../config/strings';
 import Task from '../entities/task.entity';
 import { IEntityID } from '../interfaces/common.interface';
+import { ICompanyRepository } from '../interfaces/company.interface';
+import { IProjectRepository } from '../interfaces/project.interface';
 import { IAssignTask, ITaskCreateInput, ITaskRepository, ITaskUpdateInput } from '../interfaces/task.interface';
 import { IUserRepository } from '../interfaces/user.interface';
 import { TYPES } from '../types';
@@ -13,18 +15,49 @@ import BaseRepository from './base.repository';
 @injectable()
 export default class TaskRepository extends BaseRepository<Task> implements ITaskRepository {
   private userRepository: IUserRepository;
-  constructor(@inject(TYPES.UserRepository) userRepository: IUserRepository) {
+  private companyRepository: ICompanyRepository;
+  private projectRepository: IProjectRepository;
+  constructor(
+    @inject(TYPES.UserRepository) userRepository: IUserRepository,
+    @inject(TYPES.CompanyRepository) _companyRepository: ICompanyRepository,
+    @inject(TYPES.ProjectRepository) _projectRepository: IProjectRepository
+  ) {
     super(getRepository(Task));
     this.userRepository = userRepository;
+    this.companyRepository = _companyRepository;
+    this.projectRepository = _projectRepository;
   }
 
-  create(args: ITaskCreateInput): Promise<Task> {
+  async create(args: ITaskCreateInput): Promise<Task> {
     try {
       const name = args.name?.trim();
       const status = args.status;
       const archived = args.archived;
       const manager_id = args.manager_id;
       const company_id = args.company_id;
+      const project_id = args.project_id;
+
+      const project = await this.projectRepository.getById({ id: project_id });
+
+      if (!project) {
+        throw new NotFoundError({
+          details: [strings.projectNotFound],
+        });
+      }
+
+      const company = await this.companyRepository.getById({ id: company_id });
+      if (!company) {
+        throw new NotFoundError({
+          details: [strings.companyNotFound],
+        });
+      }
+
+      const manager = await this.userRepository.getById({ id: manager_id });
+      if (!manager) {
+        throw new NotFoundError({
+          details: [strings.userNotFound],
+        });
+      }
 
       const task = this.repo.save({
         name,
@@ -32,6 +65,7 @@ export default class TaskRepository extends BaseRepository<Task> implements ITas
         archived,
         manager_id,
         company_id,
+        project_id,
       });
       return task;
     } catch (err) {
@@ -47,6 +81,7 @@ export default class TaskRepository extends BaseRepository<Task> implements ITas
       const archived = args.archived;
       const manager_id = args.manager_id;
       const company_id = args.company_id;
+      const project_id = args.project_id;
 
       const found = await this.getById({ id });
       if (!found) {
@@ -62,6 +97,7 @@ export default class TaskRepository extends BaseRepository<Task> implements ITas
         archived,
         manager_id,
         company_id,
+        project_id,
       });
       let task = await this.repo.save(update);
 

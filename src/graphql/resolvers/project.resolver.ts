@@ -138,6 +138,11 @@ export class ProjectResolver {
 
   @FieldResolver()
   client(@Root() root: Project, @Ctx() ctx: IGraphqlContext) {
-    return ctx.loaders.usersByIdLoader.load(root.client_id);
+    return ctx.loaders.clientByIdLoader.load(root.client_id);
+  }
+
+  @FieldResolver()
+  async task(@Root() root: Project, @Ctx() ctx: IGraphqlContext) {
+    return await ctx.loaders.tasksByProjectIdLoader.load(root.id);
   }
 }

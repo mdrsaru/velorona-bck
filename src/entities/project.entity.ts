@@ -7,6 +7,8 @@ import Company from './company.entity';
 import { Base } from './base.entity';
 import { PagingInput, PagingResult } from './common.entity';
 import Timesheet from './timesheet.entity';
+import Task from './task.entity';
+import Client from './client.entity';
 
 @ObjectType()
 @Entity({ name: entities.projects })
@@ -24,10 +26,10 @@ export default class Project extends Base {
   @Column()
   company_id: string;
 
-  @Field(() => User)
-  @ManyToOne(() => User)
+  @Field(() => Client)
+  @ManyToOne(() => Client)
   @JoinColumn({ name: 'client_id' })
-  client: User;
+  client: Client;
 
   @Field()
   @Column()
@@ -36,6 +38,10 @@ export default class Project extends Base {
   @Field(() => Timesheet, { nullable: true, description: 'Field for timesheet' })
   @OneToMany(() => Timesheet, (timesheet) => timesheet.project)
   timesheet: Timesheet[];
+
+  @Field(() => Task, { nullable: true, description: 'Field for Task' })
+  @OneToMany(() => Task, (task) => task.project)
+  task: Task[];
 }
 
 @ObjectType()
