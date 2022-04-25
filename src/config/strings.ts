@@ -71,4 +71,5 @@ export default {
   userNotClient: 'User is not a client',
   streetAddressRequired: 'Street address required',
   invoicingEmailRequired: 'Invoicing email required',
+  clientExists: 'Client with the email address already exists',
 };
