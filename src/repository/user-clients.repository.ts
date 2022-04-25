@@ -2,20 +2,34 @@ import { inject, injectable } from 'inversify';
 import { getRepository } from 'typeorm';
 import BaseRepository from './base.repository';
 
-import UserClient from '../entities/user-client.entity';
-import { IUserClientCreate, IUserClientRepository, IUserIdQuery } from '../interfaces/user-client.interface';
-import { IUserRepository } from '../interfaces/user.interface';
 import { TYPES } from '../types';
-import { Role, UserClientStatus } from '../config/constants';
-import { ConflictError, ValidationError } from '../utils/api-error';
 import strings from '../config/strings';
+import User from '../entities/user.entity';
+import UserClient from '../entities/user-client.entity';
+import { Role, UserClientStatus } from '../config/constants';
+import * as apiError from '../utils/api-error';
+
+import { IUserRepository } from '../interfaces/user.interface';
+import {
+  IUserClientCreate,
+  IUserClientRepository,
+  IUserIdQuery,
+  IUserClientMakeInactive,
+} from '../interfaces/user-client.interface';
+import { IClientRepository } from '../interfaces/client.interface';
 
 @injectable()
 export default class UserClientRepository extends BaseRepository<UserClient> implements IUserClientRepository {
   private userRepository: IUserRepository;
-  constructor(@inject(TYPES.UserRepository) _userRepository: IUserRepository) {
+  private clientRepository: IClientRepository;
+
+  constructor(
+    @inject(TYPES.UserRepository) _userRepository: IUserRepository,
+    @inject(TYPES.ClientRepository) _clientRepository: IClientRepository
+  ) {
     super(getRepository(UserClient));
     this.userRepository = _userRepository;
+    this.clientRepository = _clientRepository;
   }
 
   create = async (args: IUserClientCreate): Promise<UserClient> => {
@@ -24,31 +38,30 @@ export default class UserClientRepository extends BaseRepository<UserClient> imp
       const user_id = args.user_id;
 
       let user = await this.userRepository.getById({ id: user_id, relations: ['roles'] });
+
+      if (!user) {
+        throw new apiError.NotFoundError({ details: [strings.userNotFound] });
+      }
+
       const userRole = user?.roles.find((role) => role.name === Role.Employee);
-
       if (!userRole) {
-        throw new ValidationError({ details: [strings.userNotEmployee] });
-      }
-      let client = await this.userRepository.getById({
-        id: client_id,
-        relations: ['roles'],
-      });
-
-      const clientRole = client?.roles.find((e) => e.name === Role.Client);
-
-      if (!clientRole) {
-        throw new ValidationError({ details: [strings.userNotClient] });
+        throw new apiError.ValidationError({ details: [strings.userNotEmployee] });
       }
 
-      let activeUser = await this.getAll({
-        query: {
+      let client = await this.clientRepository.getById({ id: client_id });
+      if (!client) {
+        throw new apiError.NotFoundError({ details: [strings.clientNotFound] });
+      }
+
+      let activeUser = await this.repo.count({
+        where: {
           user_id: user_id,
           status: UserClientStatus.Active,
         },
       });
 
-      if (activeUser.length > 0) {
-        throw new ConflictError({ details: [strings.userStatusActive] });
+      if (activeUser) {
+        throw new apiError.ConflictError({ details: [strings.userStatusActive] });
       }
 
       const userClient = await this.repo.save({
@@ -56,23 +69,28 @@ export default class UserClientRepository extends BaseRepository<UserClient> imp
         client_id,
         user_id,
       });
+
       return userClient;
     } catch (err) {
       throw err;
     }
   };
 
-  async getByUserId(args: IUserIdQuery): Promise<UserClient | undefined> {
+  changeStatusToInactive = async (args: IUserClientMakeInactive): Promise<User> => {
     try {
-      const userClient = await this.repo.findOne({
-        where: {
-          user_id: args.user_id,
-        },
-        relations: args?.relations ?? [],
-      });
-      return userClient;
+      const user_id = args.user_id;
+
+      let user = await this.userRepository.getById({ id: user_id, relations: ['roles'] });
+
+      if (!user) {
+        throw new apiError.NotFoundError({ details: [strings.userNotFound] });
+      }
+
+      await this.repo.update({ user_id }, { status: UserClientStatus.Inactive });
+
+      return user;
     } catch (err) {
       throw err;
     }
-  }
+  };
 }

@@ -5,6 +5,7 @@ import Company from './company.entity';
 import Role from './role.entity';
 import UserToken from './user-token.entity';
 import Media from './media.entity';
+import Client from './client.entity';
 import { Base } from './base.entity';
 import { PagingInput, PagingResult } from './common.entity';
 import Address, { AddressCreateInput, AddressUpdateInput } from './address.entity';
@@ -121,6 +122,9 @@ export default class User extends Base {
   @Field(() => Workschedule, { nullable: true })
   @OneToMany(() => Workschedule, (workschedule) => workschedule.user)
   workschedules: Workschedule[];
+
+  @Field({ nullable: true })
+  activeClient: Client;
 }
 
 @ObjectType()

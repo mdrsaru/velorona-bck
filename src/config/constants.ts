@@ -56,8 +56,8 @@ export const entities = {
   workschedule: 'workschedule',
   userRoles: 'user_roles',
   timesheet: 'timesheet',
-  userClient: 'user_clients',
   clients: 'clients',
+  usersClients: 'users_clients',
 };
 
 export enum CompanyStatus {

@@ -337,4 +337,9 @@ export class UserResolver {
   address(@Root() root: User, @Ctx() ctx: IGraphqlContext) {
     return ctx.loaders.addressByIdLoader.load(root.address_id);
   }
+
+  @FieldResolver()
+  activeClient(@Root() root: User, @Ctx() ctx: IGraphqlContext) {
+    return ctx.loaders.activeClientByUserIdLoader.load(root.id);
+  }
 }
