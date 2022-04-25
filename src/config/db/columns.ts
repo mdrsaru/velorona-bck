@@ -15,3 +15,8 @@ export const timesheet = {
   created_by: 'created_by',
   task_id: 'task_id',
 };
+
+export const usersClients = {
+  user_id: 'user_id',
+  client_id: 'client_id',
+};

@@ -1,7 +1,12 @@
+import User from '../entities/user.entity';
 import UserClient from '../entities/user-client.entity';
 
 export interface IUserClientCreate {
   client_id: string;
+  user_id: string;
+}
+
+export interface IUserClientMakeInactive {
   user_id: string;
 }
 
@@ -11,9 +16,11 @@ export interface IUserIdQuery {
 }
 export interface IUserClientService {
   associate(args: IUserClientCreate): Promise<UserClient>;
+  changeStatusToInactive(args: IUserClientMakeInactive): Promise<User>;
 }
+
 export interface IUserClientRepository {
   getAll(args: any): Promise<UserClient[]>;
-  getByUserId(args: IUserIdQuery): Promise<UserClient | undefined>;
   create(args: IUserClientCreate): Promise<UserClient>;
+  changeStatusToInactive(args: IUserClientMakeInactive): Promise<User>;
 }

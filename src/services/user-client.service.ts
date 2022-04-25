@@ -1,7 +1,15 @@
 import { inject, injectable } from 'inversify';
-import { IErrorService, ILogger } from '../interfaces/common.interface';
-import { IUserClientCreate, IUserClientRepository, IUserClientService } from '../interfaces/user-client.interface';
+
 import { TYPES } from '../types';
+import User from '../entities/user.entity';
+
+import { IErrorService, ILogger } from '../interfaces/common.interface';
+import {
+  IUserClientCreate,
+  IUserClientRepository,
+  IUserClientService,
+  IUserClientMakeInactive,
+} from '../interfaces/user-client.interface';
 
 @injectable()
 export default class UserClientService implements IUserClientService {
@@ -27,11 +35,33 @@ export default class UserClientService implements IUserClientService {
     const client_id = args.client_id;
 
     try {
-      let res = await this.userClientRepository.create({
+      const userClient = await this.userClientRepository.create({
         client_id,
         user_id,
       });
-      return res;
+
+      return userClient;
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        operation,
+        name: this.name,
+        logError: true,
+      });
+    }
+  };
+
+  changeStatusToInactive = async (args: IUserClientMakeInactive): Promise<User> => {
+    const operation = 'changeStatusToInactive';
+
+    const user_id = args.user_id;
+
+    try {
+      const userClient = await this.userClientRepository.changeStatusToInactive({
+        user_id,
+      });
+
+      return userClient;
     } catch (err) {
       this.errorService.throwError({
         err,

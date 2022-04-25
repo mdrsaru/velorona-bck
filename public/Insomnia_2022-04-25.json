@@ -1,7 +1,7 @@
 {
   "_type": "export",
   "__export_format": 4,
-  "__export_date": "2022-04-22T12:31:25.318Z",
+  "__export_date": "2022-04-25T09:53:58.324Z",
   "__export_source": "insomnia.desktop.app:v2020.3.3",
   "resources": [
     {
@@ -176,7 +176,7 @@
       },
       "body": {
         "mimeType": "application/graphql",
-        "text": "{\"query\":\"mutation ClientCreate($input: ClientCreateInput!) {\\n  ClientCreate(input: $input) {\\n    id\\n    name\\n    email\\n    invoicingEmail\\n  }\\n}\\n\",\"variables\":{\"input\":{\"name\":\"Insightworkshop\",\"email\":\"bijay@yopmail.com\",\"invoicingEmail\":\"bijay@yopmail.com\",\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\",\"address\":{\"streetAddress\":\"street\",\"city\":\"City\",\"state\":\"AL\",\"zipcode\":\"43215\"}}},\"operationName\":\"ClientCreate\"}"
+        "text": "{\"query\":\"mutation ClientCreate($input: ClientCreateInput!) {\\n  ClientCreate(input: $input) {\\n    id\\n    name\\n    email\\n    invoicingEmail\\n  }\\n}\\n\",\"variables\":{\"input\":{\"name\":\"Vellorum\",\"email\":\"vellorum@yopmail.com\",\"invoicingEmail\":\"velloruminvoice@yopmail.com\",\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\",\"address\":{\"streetAddress\":\"street\",\"city\":\"City\",\"state\":\"AL\",\"zipcode\":\"43215\"}}},\"operationName\":\"ClientCreate\"}"
       },
       "created": 1650627296334,
       "description": "",
@@ -186,7 +186,7 @@
       "isPrivate": false,
       "metaSortKey": -1646649815946,
       "method": "POST",
-      "modified": 1650629549276,
+      "modified": 1650880381860,
       "name": "ClientCreate",
       "parameters": [],
       "parentId": "fld_b3fbec9fe515490584ed85e0b519e1fc",
@@ -229,7 +229,7 @@
       "isPrivate": false,
       "metaSortKey": -1642837690901,
       "method": "POST",
-      "modified": 1650630382767,
+      "modified": 1650860869108,
       "name": "ClientUpdate",
       "parameters": [],
       "parentId": "fld_b3fbec9fe515490584ed85e0b519e1fc",
@@ -250,7 +250,7 @@
       },
       "body": {
         "mimeType": "application/graphql",
-        "text": "{\"query\":\"query Client($input: ClientQueryInput!) {\\n  Client(input: $input) {\\n    data {\\n      id\\n      name\\n      email\\n      invoicingEmail\\n    }\\n    paging {\\n      total\\n      startIndex\\n      endIndex\\n      hasNextPage\\n    }\\n  }\\n}\",\"variables\":{\"input\":{\"paging\":{},\"query\":{\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\"}}},\"operationName\":\"Client\"}"
+        "text": "{\"query\":\"query Client($input: ClientQueryInput!) {\\n  Client(input: $input) {\\n    data {\\n      id\\n      name\\n      email\\n      invoicingEmail\\n      company {\\n        id\\n        name\\n      }\\n    }\\n    paging {\\n      total\\n      startIndex\\n      endIndex\\n      hasNextPage\\n    }\\n  }\\n}\",\"variables\":{\"input\":{\"paging\":{},\"query\":{\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\"}}},\"operationName\":\"Client\"}"
       },
       "created": 1650627296383,
       "description": "",
@@ -260,7 +260,7 @@
       "isPrivate": false,
       "metaSortKey": -1640931628378.5,
       "method": "POST",
-      "modified": 1650629434074,
+      "modified": 1650861110561,
       "name": "Client",
       "parameters": [],
       "parentId": "fld_b3fbec9fe515490584ed85e0b519e1fc",
@@ -281,7 +281,7 @@
       },
       "body": {
         "mimeType": "application/graphql",
-        "text": "{\"query\":\"mutation AssociateUserWithClient($input: AssociateUserClientInput!) {\\n  AssociateUserWithClient(input: $input) {\\n    id\\n   status\\n\\t\\tuser{\\n\\t\\t\\tfirstName\\n\\t\\t\\tlastName\\n\\t\\t}\\n\\t\\tclient{\\n\\t\\t\\tfullName\\n\\t\\t}\\n  }\\n}\",\"variables\":{\"input\":{\"user_id\":\"{% response 'body', 'req_bf0873093e7749b3a20f89522783a900', 'b64::JC5kYXRhLlVzZXJDcmVhdGUuaWQ=::46b', 'never', 60 %}\",\"client_id\":\"b762f64a-b9d5-470f-9289-ee951600fe1f\"}},\"operationName\":\"AssociateUserWithClient\"}"
+        "text": "{\"query\":\"mutation UserClientAssociate($input: UserClientAssociateInput!) {\\n  UserClientAssociate(input: $input) {\\n    status\\n    user {\\n      id\\n      fullName\\n      activeClient {\\n        id\\n        name\\n      }\\n    }\\n    client {\\n      name\\n    }\\n  }\\n}\\n\",\"variables\":{\"input\":{\"user_id\":\"{% response 'body', 'req_bf0873093e7749b3a20f89522783a900', 'b64::JC5kYXRhLlVzZXJDcmVhdGUuaWQ=::46b', 'never', 60 %}\",\"client_id\":\"{% response 'body', 'req_ccdf4d4e99e54132ab18648038017d67', 'b64::JC5kYXRhLkNsaWVudENyZWF0ZS5pZA==::46b', 'never', 60 %}\",\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\"}},\"operationName\":\"UserClientAssociate\"}"
       },
       "created": 1649826164173,
       "description": "",
@@ -291,8 +291,8 @@
       "isPrivate": false,
       "metaSortKey": -1646649815946,
       "method": "POST",
-      "modified": 1650426112951,
-      "name": "AssociateUserClient",
+      "modified": 1650880384250,
+      "name": "UserClientAssociate",
       "parameters": [],
       "parentId": "fld_b017df8adc754fa891b75b937faee998",
       "settingDisableRenderRequestBody": false,
@@ -324,7 +324,7 @@
       },
       "body": {
         "mimeType": "application/graphql",
-        "text": "{\"query\":\"mutation ChangeStatus($input: ChangeStatusInput!) {\\n  ChangeStatus(input: $input) {\\n    id\\n   status\\n\\t\\tuser{\\n\\t\\t\\tfirstName\\n\\t\\t\\tlastName\\n\\t\\t}\\n\\t\\tclient{\\n\\t\\t\\tfullName\\n\\t\\t}\\n\\t\\tstatus\\n  }\\n}\",\"variables\":{\"input\":{\"id\":\"{% response 'body', 'req_79f4961f21a04d108aae7c8c2dcb530b', 'b64::JC5kYXRhLkFzc29jaWF0ZVVzZXJXaXRoQ2xpZW50Lmlk::46b', 'never', 60 %}\"}},\"operationName\":\"ChangeStatus\"}"
+        "text": "{\"query\":\"mutation UserClientMakeInactive($input: UserClientMakeInactiveInput!) {\\n  UserClientMakeInactive(input: $input) {\\n    id\\n    activeClient {\\n      id\\n      name\\n    }\\n  }\\n}\",\"variables\":{\"input\":{\"user_id\":\"{% response 'body', 'req_79f4961f21a04d108aae7c8c2dcb530b', 'b64::JC5kYXRhLlVzZXJDbGllbnRBc3NvY2lhdGUudXNlci5pZA==::46b', 'never', 60 %}\",\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\"}},\"operationName\":\"UserClientMakeInactive\"}"
       },
       "created": 1650519368545,
       "description": "",
@@ -334,8 +334,8 @@
       "isPrivate": false,
       "metaSortKey": -1646642349897.459,
       "method": "POST",
-      "modified": 1650521105771,
-      "name": "ChangeStatus",
+      "modified": 1650880391775,
+      "name": "MakeUserInactiveForClient",
       "parameters": [],
       "parentId": "fld_b017df8adc754fa891b75b937faee998",
       "settingDisableRenderRequestBody": false,
@@ -658,7 +658,7 @@
       },
       "body": {
         "mimeType": "application/graphql",
-        "text": "{\"query\":\"mutation UserCreate($input: UserCreateInput!) {\\n  UserCreate(input: $input) {\\n    id\\n    fullName    \\n  }\\n}\",\"variables\":{\"input\":{\"email\":\"10user@yopmail.com\",\"phone\":\"9841773322\",\"firstName\":\"John\",\"lastName\":\"Doe\",\"status\":\"Active\",\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\",\"roles\":[\"Employee\"],\"address\":{\"streetAddress\":\"street\",\"city\":\"City\",\"state\":\"AL\",\"zipcode\":\"43215\"}}},\"operationName\":\"UserCreate\"}"
+        "text": "{\"query\":\"mutation UserCreate($input: UserCreateInput!) {\\n  UserCreate(input: $input) {\\n    id\\n    fullName    \\n  }\\n}\",\"variables\":{\"input\":{\"email\":\"user@yopmail.com\",\"phone\":\"9841773322\",\"firstName\":\"John\",\"lastName\":\"Doe\",\"status\":\"Active\",\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\",\"roles\":[\"Employee\"],\"address\":{\"streetAddress\":\"street\",\"city\":\"City\",\"state\":\"AL\",\"zipcode\":\"43215\"}}},\"operationName\":\"UserCreate\"}"
       },
       "created": 1646814799695,
       "description": "",
@@ -668,7 +668,7 @@
       "isPrivate": false,
       "metaSortKey": -1646649815946,
       "method": "POST",
-      "modified": 1650628164204,
+      "modified": 1650875718889,
       "name": "UserCreate",
       "parameters": [],
       "parentId": "fld_9a7753c89a724a5ab6add918218e97ea",
@@ -825,7 +825,7 @@
       },
       "body": {
         "mimeType": "application/graphql",
-        "text": "{\"query\":\"query User($input: UserQueryInput) {\\n  User(input: $input) {\\n    paging {\\n      total\\n      startIndex\\n      endIndex\\n      hasNextPage\\n    }\\n    data {\\n      id\\n      email\\n      phone\\n      firstName\\n      middleName\\n      lastName\\n      status\\n      company {\\n        id\\n        name\\n      }\\n      roles {\\n        id\\n        name\\n      }\\n    }\\n  }\\n}\",\"variables\":{\"input\":{\"paging\":{\"skip\":0,\"order\":[\"createdAt:DESC\"]},\"query\":{}}},\"operationName\":\"User\"}"
+        "text": "{\"query\":\"query User($input: UserQueryInput) {\\n  User(input: $input) {\\n    paging {\\n      total\\n      startIndex\\n      endIndex\\n      hasNextPage\\n    }\\n    data {\\n      id\\n      email\\n      phone\\n      firstName\\n      middleName\\n      lastName\\n      status\\n      activeClient {\\n        id\\n        name\\n      }\\n      company {\\n        id\\n        name\\n      }\\n      roles {\\n        id\\n        name\\n      }\\n    }\\n  }\\n}\",\"variables\":{\"input\":{\"paging\":{\"skip\":0,\"order\":[\"createdAt:DESC\"]},\"query\":{}}},\"operationName\":\"User\"}"
       },
       "created": 1646814799723,
       "description": "",
@@ -835,7 +835,7 @@
       "isPrivate": false,
       "metaSortKey": -1640931628378.5,
       "method": "POST",
-      "modified": 1649069826002,
+      "modified": 1650877820899,
       "name": "User",
       "parameters": [],
       "parentId": "fld_9a7753c89a724a5ab6add918218e97ea",
@@ -1627,7 +1627,7 @@
       "isPrivate": false,
       "metaSortKey": -1646649815946,
       "method": "POST",
-      "modified": 1649404430540,
+      "modified": 1650877812463,
       "name": "Login",
       "parameters": [],
       "parentId": "fld_e864bd8433684c93a335724143ac8a23",
@@ -1683,7 +1683,7 @@
       "isPrivate": false,
       "metaSortKey": -1646410902392.6875,
       "method": "POST",
-      "modified": 1650627961209,
+      "modified": 1650879658644,
       "name": "CompanyLogin",
       "parameters": [],
       "parentId": "fld_e864bd8433684c93a335724143ac8a23",
@@ -1755,19 +1755,19 @@
         {
           "creation": "2022-03-16T07:43:51.090Z",
           "domain": "localhost",
-          "expires": "2022-04-29T11:46:03.000Z",
+          "expires": "2022-05-02T09:41:00.000Z",
           "hostOnly": true,
           "httpOnly": true,
-          "id": "637002315480083",
+          "id": "5774764506763177",
           "key": "refreshToken",
-          "lastAccessed": "2022-04-22T11:46:03.669Z",
+          "lastAccessed": "2022-04-25T09:41:00.012Z",
           "maxAge": 604800,
           "path": "/",
-          "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjIyNzkzYmQ3LTVjMDItNDYyMy1iMTk4LWI4YzdlMmQwODU3NiIsInJvbGVzIjpbIjAyNmI0ZTNmLTI4ZWItNDc4Ni1iODQzLTgzZGI1MzU3ZGU4NiJdLCJpYXQiOjE2NTA2Mjc5NjMsImV4cCI6MTY1MTIzMjc2M30.t66in-r9BPj70_Unr7_eI1gS3ZkZ-ZQTCF2ZmLm3358"
+          "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjFlMmViZjBiLTUxNjAtNDg0ZC1hY2Y5LTM5YzBlZTZjNjY3NiIsInJvbGVzIjpbImE2YzlkOTM2LWU0MTUtNDE3Zi1hZjM1LTI3MWUyZWJmMmMxNSJdLCJpYXQiOjE2NTA4Nzk2NTksImV4cCI6MTY1MTQ4NDQ1OX0.fUeVsyB41gnFiCS21rcWIgMxzH865UFNO8xdAkNTzmU"
         }
       ],
       "created": 1646649800465,
-      "modified": 1650627963669,
+      "modified": 1650879660014,
       "name": "Default Jar",
       "parentId": "wrk_4360c7a0bbfa403c86be07deeb666c4c",
       "_type": "cookie_jar"
