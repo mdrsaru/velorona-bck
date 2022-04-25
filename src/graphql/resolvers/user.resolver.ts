@@ -326,15 +326,15 @@ export class UserResolver {
   }
 
   @FieldResolver()
-  async avatar(@Root() root: User, @Ctx() ctx: IGraphqlContext) {
+  avatar(@Root() root: User, @Ctx() ctx: IGraphqlContext) {
     if (root.avatar_id) {
-      return await ctx.loaders.avatarByIdLoader.load(root.avatar_id);
+      return ctx.loaders.avatarByIdLoader.load(root.avatar_id);
     }
     return null;
   }
 
   @FieldResolver()
-  async address(@Root() root: User, @Ctx() ctx: IGraphqlContext) {
-    return await ctx.loaders.addressByIdLoader.load(root.address_id);
+  address(@Root() root: User, @Ctx() ctx: IGraphqlContext) {
+    return ctx.loaders.addressByIdLoader.load(root.address_id);
   }
 }
