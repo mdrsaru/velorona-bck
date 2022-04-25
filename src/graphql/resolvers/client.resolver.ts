@@ -180,4 +180,9 @@ export class ClientResolver {
   company(@Root() root: Client, @Ctx() ctx: IGraphqlContext) {
     return ctx.loaders.companyByIdLoader.load(root.company_id);
   }
+
+  @FieldResolver()
+  address(@Root() root: User, @Ctx() ctx: IGraphqlContext) {
+    return ctx.loaders.addressByIdLoader.load(root.address_id);
+  }
 }
