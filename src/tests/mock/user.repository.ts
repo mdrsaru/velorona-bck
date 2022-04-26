@@ -6,7 +6,7 @@ import { IUserRepository } from '../../interfaces/user.interface';
 import config from '../../config/constants';
 import strings from '../../config/strings';
 import User from '../../entities/user.entity';
-import { IEntityID, IEntityRemove } from '../../interfaces/common.interface';
+import { IEntityID, IEntityRemove, ISingleEntityQuery } from '../../interfaces/common.interface';
 import { IUser, IUserCreate, IUserUpdate, IEmailQuery, IEmailCompanyQuery } from '../../interfaces/user.interface';
 import { IPaginationData, IPagingArgs, IGetAllAndCountResult } from '../../interfaces/paging.interface';
 import { users } from './data';
@@ -37,6 +37,10 @@ export default class UserRepository implements IUserRepository {
   getAll = (args: any): Promise<User[]> => {
     throw new Error('not implemented');
   };
+
+  async getSingleEntity(args: ISingleEntityQuery): Promise<User | undefined> {
+    throw new Error('not implemented');
+  }
 
   getById = (args: IEntityID): Promise<User | undefined> => {
     throw new Error('not implemented');

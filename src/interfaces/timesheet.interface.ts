@@ -21,7 +21,7 @@ export interface ITimesheet {
   project: Project;
   company: Company;
   creator: User;
-  task: Task;
+  task?: Task;
   createdAt: Date;
   updatedAt: Date;
 }

@@ -41,11 +41,11 @@ describe('Timesheet Service', () => {
   describe('create', () => {
     it('should create a new task', async () => {
       const args: ITimesheetCreateInput = {
-        total_hours: 10,
-        total_expense: 100000,
-        client_location: 'Lalitpur',
-        approver_id: '3dc646b8-2cdc-4b20-b8bb-c8af70a62cdb',
+        start: new Date(),
+        end: new Date(),
+        clientLocation: 'Lalitpur',
         project_id: '12566ff8-1247-4a2a-a258-09b05268e2ce',
+        task_id: '12566ff8-1247-4a2a-a258-09b05268e2ce',
         company_id: 'b585d580-3e1b-4c07-8e51-9e38eddadf24',
         created_by: '26124a58-9167-45eb-a3b3-13163f263309',
       };
@@ -64,7 +64,7 @@ describe('Timesheet Service', () => {
 
       const update: ITimesheetUpdateInput = {
         id,
-        client_location: 'Bhaktapur',
+        clientLocation: 'Bhaktapur',
       };
 
       let error: any;
@@ -80,11 +80,11 @@ describe('Timesheet Service', () => {
 
     it('should update an existing task', async () => {
       const args: ITimesheetCreateInput = {
-        total_hours: 10,
-        total_expense: 100000,
-        client_location: 'Lalitpur',
-        approver_id: '3dc646b8-2cdc-4b20-b8bb-c8af70a62cdb',
+        start: new Date(),
+        end: new Date(),
+        clientLocation: 'Lalitpur',
         project_id: '12566ff8-1247-4a2a-a258-09b05268e2ce',
+        task_id: '12566ff8-1247-4a2a-a258-09b05268e2ce',
         company_id: 'b585d580-3e1b-4c07-8e51-9e38eddadf24',
         created_by: '26124a58-9167-45eb-a3b3-13163f263309',
       };
@@ -95,14 +95,14 @@ describe('Timesheet Service', () => {
 
       const update: ITimesheetUpdateInput = {
         id,
-        client_location: 'Bhaktapur',
+        clientLocation: 'Bhaktapur',
       };
 
       const updated = await timesheetService.update(update);
 
       expect(updated).toBeDefined();
 
-      expect(updated.client_location).toBe(update.client_location);
+      expect(updated.clientLocation).toBe(update.clientLocation);
     });
   });
 });

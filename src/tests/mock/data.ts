@@ -151,9 +151,10 @@ export let projects = _projects.map((project) => {
 const _timesheets: ITimesheet[] = [
   {
     id: 'aed11edc-4c05-4731-8676-72e105eea64d',
-    total_hours: 100,
-    total_expense: 100000,
-    client_location: 'Lalitpur',
+    start: new Date(),
+    end: new Date(),
+    clientLocation: 'Lalitpur',
+    task_id: '12566ff8-1247-4a2a-a258-09b05268e2ce',
     project_id: projects[0].id,
     project: projects[0],
     approver_id: users[0].id,
@@ -170,11 +171,9 @@ const _timesheets: ITimesheet[] = [
 export let timesheets = _timesheets.map((timesheet) => {
   const _timesheet: any = new Timesheet();
   _timesheet.id = timesheet.id;
-  _timesheet.total_hours = timesheet.total_hours;
-  _timesheet.total_expense = timesheet.total_expense;
-  _timesheet.client_location = timesheet.client_location;
+  _timesheet.clientLocation = timesheet.clientLocation;
   _timesheet.project_id = timesheet.project_id;
-  _timesheet.approver_id = timesheet.total_hours;
+  _timesheet.approver_id = timesheet.approver_id;
   _timesheet.created_by = timesheet.created_by;
   _timesheet.company_id = timesheet.company_id;
   _timesheet.createdAt = timesheet.createdAt;

@@ -2,7 +2,9 @@ version: '3.8'
 
 services:
   app:
-    build: .
+    build:
+      context: .
+      target: dev
     ports:
       - ${PORT}:${PORT}
     volumes:
@@ -19,7 +21,7 @@ services:
     environment:
       POSTGRES_USER: ${POSTGRES_DATABASE_USERNAME}
       POSTGRES_PASSWORD: ${POSTGRES_DATABASE_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DATABASE_NAME} 
+      POSTGRES_DB: ${POSTGRES_DATABASE_NAME}
 
 volumes:
   pgdata:

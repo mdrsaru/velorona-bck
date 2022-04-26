@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      target: prod
+    ports:
+      - ${PORT}:${PORT}
+    volumes:
+      - /app/node_modules

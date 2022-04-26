@@ -6,6 +6,7 @@
   "scripts": {
     "build": "tsc",
     "start:build": "nodemon build/server.js",
+    "start:production": "NODE_ENV=production node build/server.js",
     "dev": "nodemon ./src/server.ts",
     "prettier:check": "prettier --check \"src/**/*.ts\"",
     "prettier:fix": "prettier --write \"src/**/*.ts\"",

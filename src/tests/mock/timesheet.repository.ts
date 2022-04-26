@@ -45,10 +45,7 @@ export default class TimesheetRepository implements ITimesheetRepository {
       const timesheet = new Timesheet();
 
       timesheet.id = generateUuid();
-      timesheet.total_hours = args.total_hours;
-      timesheet.total_expense = args.total_expense;
-      timesheet.client_location = args.client_location;
-      timesheet.approver_id = args.approver_id;
+      timesheet.clientLocation = args.clientLocation;
       timesheet.project_id = args.project_id;
       timesheet.company_id = args.company_id;
       timesheet.created_by = args.created_by;
@@ -75,9 +72,7 @@ export default class TimesheetRepository implements ITimesheetRepository {
         });
       }
       const update = merge(this.timesheets[foundIndex], {
-        total_hours: args.total_hours,
-        total_expense: args.total_expense,
-        client_location: args.client_location,
+        clientLocation: args.clientLocation,
         approver_id: args.approver_id,
         project_id: args.project_id,
         company_id: args.company_id,
