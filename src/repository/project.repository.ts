@@ -15,19 +15,23 @@ import BaseRepository from './base.repository';
 import { ICompanyRepository } from '../interfaces/company.interface';
 import { IUserRepository } from '../interfaces/user.interface';
 import { IProjectCreateInput, IProjectRepository, IProjectUpdateInput } from '../interfaces/project.interface';
+import { IClientRepository } from '../interfaces/client.interface';
 
 @injectable()
 export default class ProjectRepository extends BaseRepository<Project> implements IProjectRepository {
   private companyRepository: ICompanyRepository;
   private userRepository: IUserRepository;
+  private clientRepository: IClientRepository;
 
   constructor(
     @inject(TYPES.CompanyRepository) _companyRepository: ICompanyRepository,
-    @inject(TYPES.UserRepository) _userRepository: IUserRepository
+    @inject(TYPES.UserRepository) _userRepository: IUserRepository,
+    @inject(TYPES.ClientRepository) _clientRepository: IClientRepository
   ) {
     super(getRepository(Project));
     this.companyRepository = _companyRepository;
     this.userRepository = _userRepository;
+    this.clientRepository = _clientRepository;
   }
 
   create = async (args: IProjectCreateInput): Promise<Project> => {
@@ -54,17 +58,11 @@ export default class ProjectRepository extends BaseRepository<Project> implement
         });
       }
 
-      const client = await this.userRepository.getById({ id: client_id, relations: ['roles'] });
+      const client = await this.clientRepository.getById({ id: client_id });
+
       if (!client) {
         throw new apiError.NotFoundError({
           details: [strings.clientNotFound],
-        });
-      }
-
-      const clientRole = find(client.roles, { name: RoleEnum.Client });
-      if (!clientRole) {
-        throw new apiError.ValidationError({
-          details: [strings.providedUserNotClient],
         });
       }
 

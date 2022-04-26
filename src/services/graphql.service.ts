@@ -88,6 +88,7 @@ export default class GraphqlService implements IGraphql {
         usersByIdLoader: userLoader.usersByIdLoader(),
         tasksByIdLoader: workscheduleLoader.tasksByIdLoader(),
         projectByIdLoader: projectLoader.projectsByIdLoader(),
+        tasksByProjectIdLoader: projectLoader.tasksByProjectIdLoader(),
         clientByIdLoader: clientLoader.clientByIdLoader(),
         activeClientByUserIdLoader: clientLoader.activeClientByUserIdLoader(),
       },

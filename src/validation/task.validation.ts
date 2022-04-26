@@ -37,6 +37,11 @@ const messages = {
     'string.empty': strings.EmployeeIdRequired,
     'any.required': strings.EmployeeIdRequired,
   },
+  project_id: {
+    'string.base': strings.projectIdRequired,
+    'string.empty': strings.projectIdRequired,
+    'any.required': strings.projectIdRequired,
+  },
 };
 
 export default class TaskValidation {
@@ -47,6 +52,7 @@ export default class TaskValidation {
       archived: Joi.boolean(),
       manager_id: Joi.string().required().messages(messages.manager_id),
       company_id: Joi.string().required().messages(messages.company_id),
+      project_id: Joi.string().required().messages(messages.project_id),
     });
   }
   static update() {
@@ -57,6 +63,7 @@ export default class TaskValidation {
       status: Joi.string(),
       manager_id: Joi.string(),
       company_id: Joi.string(),
+      project_id: Joi.string(),
     });
   }
   static assignTask() {

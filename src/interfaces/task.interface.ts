@@ -17,6 +17,7 @@ export interface ITaskCreateInput {
   archived?: boolean;
   manager_id: string;
   company_id: string;
+  project_id: string;
 }
 
 export interface ITaskUpdateInput {
@@ -26,6 +27,7 @@ export interface ITaskUpdateInput {
   archived?: boolean | undefined;
   manager_id?: string | undefined;
   company_id?: string | undefined;
+  project_id?: string | undefined;
 }
 
 export interface IAssignTask {
