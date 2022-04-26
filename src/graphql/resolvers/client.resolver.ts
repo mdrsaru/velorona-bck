@@ -175,4 +175,9 @@ export class ClientResolver {
       });
     }
   }
+
+  @FieldResolver()
+  company(@Root() root: Client, @Ctx() ctx: IGraphqlContext) {
+    return ctx.loaders.companyByIdLoader.load(root.company_id);
+  }
 }

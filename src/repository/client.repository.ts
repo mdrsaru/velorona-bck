@@ -1,8 +1,9 @@
 import merge from 'lodash/merge';
 import isNil from 'lodash/isNil';
 import isString from 'lodash/isString';
+import isArray from 'lodash/isArray';
 import { injectable, inject } from 'inversify';
-import { getRepository, Repository } from 'typeorm';
+import { getRepository, Repository, In, ILike, FindConditions } from 'typeorm';
 
 import { TYPES } from '../types';
 import { ClientStatus } from '../config/constants';
@@ -12,7 +13,7 @@ import BaseRepository from './base.repository';
 import * as apiError from '../utils/api-error';
 
 import { ICompanyRepository } from '../interfaces/company.interface';
-
+import { IGetAllAndCountResult, IGetOptions } from '../interfaces/paging.interface';
 import { IClient, IClientCreateInput, IClientUpdateInput, IClientRepository } from '../interfaces/client.interface';
 
 @injectable()
@@ -23,6 +24,48 @@ export default class ClientRepository extends BaseRepository<Client> implements 
     super(getRepository(Client));
     this.companyRepository = _companyRepository;
   }
+
+  getAllAndCount = async (args: IGetOptions): Promise<IGetAllAndCountResult<Client>> => {
+    try {
+      let { query = {}, relations = [], ...rest } = args;
+      let { search, ...where } = query;
+
+      for (let key in query) {
+        if (isArray(query[key])) {
+          query[key] = In(query[key]);
+        }
+      }
+
+      let _searchWhere: FindConditions<Client[]> = [];
+
+      if (search) {
+        _searchWhere = [
+          {
+            name: ILike(`%${search}%`),
+            ...where,
+          },
+          {
+            email: ILike(`%${search}%`),
+            ...where,
+          },
+        ];
+      }
+      console.log(_searchWhere, '\nsearchwhere\n');
+
+      let [rows, count] = await this.repo.findAndCount({
+        relations,
+        where: _searchWhere.length ? _searchWhere : where,
+        ...rest,
+      });
+
+      return {
+        count,
+        rows,
+      };
+    } catch (err) {
+      throw err;
+    }
+  };
 
   create = async (args: IClientCreateInput): Promise<Client> => {
     try {
@@ -64,6 +107,20 @@ export default class ClientRepository extends BaseRepository<Client> implements 
       if (!company) {
         throw new apiError.NotFoundError({
           details: [strings.companyNotFound],
+        });
+      }
+
+      // check for duplicate email with company
+      const foundClient = await this.repo.count({
+        where: {
+          email,
+          company_id,
+        },
+      });
+
+      if (foundClient) {
+        throw new apiError.ConflictError({
+          details: [strings.clientExists],
         });
       }
 

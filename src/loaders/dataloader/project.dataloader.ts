@@ -4,12 +4,14 @@ import { TYPES } from '../../types';
 import container from '../../inversify.config';
 import { IProjectRepository } from '../../interfaces/project.interface';
 import { ITaskRepository } from '../../interfaces/task.interface';
+import Project from '../../entities/project.entity';
+import Task from '../../entities/task.entity';
 
 const batchProjectsByIdFn = async (ids: readonly string[]) => {
   const ProjectRepo: IProjectRepository = container.get(TYPES.ProjectRepository);
   const query = { id: ids };
   const projects = await ProjectRepo.getAll({ query });
-  const projectObj: any = {};
+  const projectObj: { [id: string]: Project } = {};
 
   projects.forEach((project: any) => {
     projectObj[project.id] = project;
@@ -23,7 +25,7 @@ const batchTasksByProjectIdFn = async (ids: readonly string[]) => {
   const query = { project_id: ids };
 
   const tasks = await TaskRepo.getAll({ query });
-  const taskObj: any = {};
+  const taskObj: { [id: string]: Task } = {};
 
   tasks.forEach((task: any) => {
     taskObj[task.project_id] = task;

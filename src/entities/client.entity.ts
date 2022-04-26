@@ -1,4 +1,4 @@
-import { Entity, Column, JoinColumn, OneToOne, ManyToOne } from 'typeorm';
+import { Entity, Column, JoinColumn, OneToOne, ManyToOne, Index } from 'typeorm';
 import { ObjectType, Field, ID, InputType, registerEnumType } from 'type-graphql';
 
 import Company from './company.entity';
@@ -12,13 +12,17 @@ registerEnumType(ClientStatus, {
   name: 'ClientStatus',
 });
 
+const indexPrefix = 'client';
+
 @Entity({ name: entities.clients })
 @ObjectType()
 export default class Client extends Base {
+  @Index(`${indexPrefix}_name_index`)
   @Field()
   @Column()
   name: string;
 
+  @Index(`${indexPrefix}_email_index`)
   @Field()
   @Column()
   email: string;
@@ -27,6 +31,7 @@ export default class Client extends Base {
   @Column()
   invoicingEmail: string;
 
+  @Index(`${indexPrefix}_archived_index`)
   @Field()
   @Column({ default: false })
   archived: boolean;
@@ -50,6 +55,7 @@ export default class Client extends Base {
   })
   address: Address;
 
+  @Index(`${indexPrefix}_company_id_index`)
   @Field()
   @Column({ nullable: true })
   company_id: string;
@@ -121,6 +127,9 @@ export class ClientQuery {
 
   @Field()
   company_id: string;
+
+  @Field({ nullable: true })
+  search: string;
 
   @Field({ nullable: true })
   archived: boolean;

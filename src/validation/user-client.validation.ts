@@ -20,4 +20,10 @@ export default class UserClientValidation {
       client_id: Joi.string().required().messages(messages.client_id),
     });
   }
+
+  static changeStatusToInactive() {
+    return Joi.object({
+      user_id: Joi.string().required().messages(messages.user_id),
+    });
+  }
 }
