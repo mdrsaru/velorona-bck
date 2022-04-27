@@ -14,10 +14,14 @@ RUN yarn
 COPY . .
 RUN yarn build
 
-FROM base AS prod
+FROM base AS app_build 
 WORKDIR /app
 COPY package.json yarn.lock ./
-COPY --from=build /app/build ./
+COPY --from=build /app/build ./build/
 RUN yarn --production 
-CMD ["yarn", "start:production"]
 
+FROM app_build AS stage
+CMD ["yarn", "stage"]
+
+FROM app_build AS prod 
+CMD ["yarn", "production"]
