@@ -3,10 +3,19 @@ version: '3.8'
 services:
   app:
     build:
-      context: .
       target: stage
-    ports:
-      - ${PORT}:${PORT}
     volumes:
       - /app/node_modules
       - /app/build
+
+    deploy:
+      resources:
+        limits:
+          cpus: '3'
+          memory: 4g
+  postgres:
+    deploy:
+      resources:
+        limits:
+          cpus: '3'
+          memory: 4g
