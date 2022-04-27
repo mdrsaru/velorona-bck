@@ -242,6 +242,9 @@ export class UserQuery {
 
   @Field((type) => RoleEnum, { nullable: true })
   role: RoleEnum;
+
+  @Field({ nullable: true })
+  archived: boolean;
 }
 
 @InputType()

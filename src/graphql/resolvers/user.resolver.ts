@@ -53,6 +53,9 @@ export class UserResolver {
     const operation = 'User';
 
     try {
+      if (!args.query.archived) {
+        args.query.archived = false;
+      }
       const pagingArgs = Paging.createPagingPayload(args);
       let result: IPaginationData<User> = await this.userService.getAllAndCount(pagingArgs);
       return result;
