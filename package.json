@@ -16,12 +16,15 @@
     "lint:fix": "eslint \"src/**/*.ts\" --fix",
     "test": "jest",
     "typeorm": "ts-node ./node_modules/.bin/typeorm -f ./src/config/db/ormconfig.ts",
-    "typeorm:build": "./node_modules/.bin/typeorm -f ./build/config/db/ormconfig.js",
+    "typeorm:js": "./node_modules/.bin/typeorm -f ./build/config/db/ormconfig.js",
     "prepare": "husky install",
     "docs": "apidoc -i src/config/apidoc/ -o public/docs/",
     "db:seed": "ts-node ./node_modules/typeorm-seeding/dist/cli.js seed --configName ./src/config/db/ormconfig.ts",
-    "schema:drop": "ts-node ./node_modules/typeorm/cli.js -f ./src/config/db/ormconfig.ts schema:drop",
-    "schema:sync": "ts-node ./node_modules/typeorm/cli.js -f ./src/config/db/ormconfig.ts schema:sync"
+    "db:seed:prod": "typeorm-seeding seed --configName ./build/config/db/ormconfig.js",
+    "db:drop": "ts-node ./node_modules/typeorm/cli.js -f ./src/config/db/ormconfig.ts schema:drop",
+    "db:sync": "ts-node ./node_modules/typeorm/cli.js -f ./src/config/db/ormconfig.ts schema:sync",
+    "db:drop:js": "./node_modules/typeorm/cli.js -f ./build/config/db/ormconfig.js schema:drop",
+    "db:sync:js": "./node_modules/typeorm/cli.js -f ./build/config/db/ormconfig.js schema:sync"
   },
   "dependencies": {
     "@sendgrid/mail": "^7.6.2",
