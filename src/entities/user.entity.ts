@@ -243,7 +243,7 @@ export class UserQuery {
   @Field((type) => RoleEnum, { nullable: true })
   role: RoleEnum;
 
-  @Field({ nullable: true })
+  @Field({ nullable: true, defaultValue: false })
   archived: boolean;
 }
 

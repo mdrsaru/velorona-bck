@@ -37,7 +37,9 @@ export const databaseSetting = {
   host: process.env.POSTGRES_DATABASE_HOST as string,
   dialect: process.env.POSTGRES_DATABASE_DIALECT as string,
   port: parseInt((process.env.POSTGRES_DATABASE_PORT as string) || '5432'),
-  synchronize: ['local', 'development', 'dev'].includes(env) ? process.env.DATABASE_SYNCHRONIZE == 'true' : false,
+  synchronize: ['local', 'development', 'dev', 'stage'].includes(env)
+    ? process.env.DATABASE_SYNCHRONIZE == 'true'
+    : false,
   logging: ['local', 'development', 'dev'].includes(env),
 };
 
