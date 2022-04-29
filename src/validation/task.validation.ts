@@ -53,6 +53,7 @@ export default class TaskValidation {
       manager_id: Joi.string().required().messages(messages.manager_id),
       company_id: Joi.string().required().messages(messages.company_id),
       project_id: Joi.string().required().messages(messages.project_id),
+      user_id: Joi.array(),
     });
   }
   static update() {
@@ -64,6 +65,7 @@ export default class TaskValidation {
       manager_id: Joi.string(),
       company_id: Joi.string(),
       project_id: Joi.string(),
+      user_id: Joi.array(),
     });
   }
   static assignTask() {
