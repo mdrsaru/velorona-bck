@@ -3,10 +3,7 @@ import { NextFn, MiddlewareFn } from 'type-graphql';
 import strings from '../../config/strings';
 import * as apiError from '../../utils/api-error';
 
-const authenticate: MiddlewareFn = async (
-  { context, args }: any,
-  next: NextFn
-) => {
+const authenticate: MiddlewareFn = async ({ context, args }: any, next: NextFn) => {
   if (!context.user) {
     throw new apiError.NotAuthenticatedError({
       message: strings.userNotAuthenticated,

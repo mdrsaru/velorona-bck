@@ -53,10 +53,25 @@ export interface ITimeSheetStopInput {
   end: ITimesheet['end'];
 }
 
+export interface ITimesheetWeeklyDetailsInput {
+  company_id: string;
+  created_by: string;
+  start?: Date;
+  end?: Date;
+}
+
+export interface ITimesheetWeeklyDetailsRepoInput {
+  company_id: string;
+  created_by: string;
+  start: Date;
+  end: Date;
+}
+
 export interface ITimesheetRepository {
   getAllAndCount(args: IPagingArgs): Promise<IGetAllAndCountResult<Timesheet>>;
   getAll(args: any): Promise<Timesheet[]>;
   getById(args: IEntityID): Promise<Timesheet | undefined>;
+  getWeeklyDetails(args: ITimesheetWeeklyDetailsRepoInput): Promise<Timesheet[]>;
   create(args: ITimesheetCreateInput): Promise<Timesheet>;
   update(args: ITimesheetUpdateInput): Promise<Timesheet>;
   remove(args: IEntityRemove): Promise<Timesheet>;
@@ -64,6 +79,7 @@ export interface ITimesheetRepository {
 
 export interface ITimesheetService {
   getAllAndCount(args: IPagingArgs): Promise<IPaginationData<Timesheet>>;
+  getWeeklyDetails(args: ITimesheetWeeklyDetailsInput): Promise<Timesheet[]>;
   create(args: ITimesheetCreateInput): Promise<Timesheet>;
   update(args: ITimesheetUpdateInput): Promise<Timesheet>;
   stop(args: ITimeSheetStopInput): Promise<Timesheet>;

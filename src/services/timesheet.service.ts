@@ -1,5 +1,10 @@
+import moment from 'moment';
 import { inject, injectable } from 'inversify';
+
+import { TYPES } from '../types';
+import Paging from '../utils/paging';
 import Timesheet from '../entities/timesheet.entity';
+
 import { IEntityRemove, IErrorService, ILogger } from '../interfaces/common.interface';
 import { IPaginationData, IPagingArgs } from '../interfaces/paging.interface';
 import {
@@ -8,9 +13,8 @@ import {
   ITimesheetService,
   ITimeSheetStopInput,
   ITimesheetUpdateInput,
+  ITimesheetWeeklyDetailsInput,
 } from '../interfaces/timesheet.interface';
-import { TYPES } from '../types';
-import Paging from '../utils/paging';
 
 @injectable()
 export default class TimesheetService implements ITimesheetService {
@@ -47,6 +51,34 @@ export default class TimesheetService implements ITimesheetService {
     }
   };
 
+  getWeeklyDetails = async (args: ITimesheetWeeklyDetailsInput): Promise<Timesheet[]> => {
+    try {
+      const start = args.start;
+      const end = args.end;
+      const company_id = args.company_id;
+      const created_by = args.created_by;
+
+      let startDate = moment().startOf('isoWeek').toDate();
+      let endDate = moment().endOf('isoWeek').toDate();
+
+      if (start && end) {
+        startDate = moment(start).toDate();
+        endDate = moment(end).toDate();
+      }
+
+      const timesheet = await this.timesheetRepository.getWeeklyDetails({
+        company_id,
+        created_by,
+        start: startDate,
+        end: endDate,
+      });
+
+      return timesheet;
+    } catch (err) {
+      throw err;
+    }
+  };
+
   create = async (args: ITimesheetCreateInput) => {
     const operation = 'create';
     const start = args.start;
@@ -67,6 +99,7 @@ export default class TimesheetService implements ITimesheetService {
         created_by,
         task_id,
       });
+
       return timesheet;
     } catch (err) {
       this.errorService.throwError({
@@ -101,6 +134,7 @@ export default class TimesheetService implements ITimesheetService {
         created_by,
         task_id,
       });
+
       return timesheet;
     } catch (err) {
       this.errorService.throwError({
@@ -117,10 +151,12 @@ export default class TimesheetService implements ITimesheetService {
     try {
       const id = args.id;
       const end = args.end;
+
       let timesheet = await this.timesheetRepository.update({
         id,
         end,
       });
+
       return timesheet;
     } catch (err) {
       this.errorService.throwError({
@@ -131,13 +167,16 @@ export default class TimesheetService implements ITimesheetService {
       });
     }
   };
+
   remove = async (args: IEntityRemove) => {
     try {
       const id = args.id;
-      const role = await this.timesheetRepository.remove({
+
+      const timesheet = await this.timesheetRepository.remove({
         id,
       });
-      return role;
+
+      return timesheet;
     } catch (err) {
       throw err;
     }

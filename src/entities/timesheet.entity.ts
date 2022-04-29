@@ -1,4 +1,4 @@
-import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, ManyToOne, JoinColumn, Index } from 'typeorm';
 import { ObjectType, Field, ID, InputType } from 'type-graphql';
 import { entities } from '../config/constants';
 import { timesheet } from '../config/db/columns';
@@ -9,13 +9,17 @@ import { Base } from './base.entity';
 import { PagingInput, PagingResult } from './common.entity';
 import Task from './task.entity';
 
+const indexPrefix = 'timesheet';
+
 @ObjectType()
 @Entity({ name: entities.timesheet })
 export default class Timesheet extends Base {
+  @Index(`${indexPrefix}_start_index`)
   @Field()
   @Column()
   start: Date;
 
+  @Index(`${indexPrefix}_end_index`)
   @Field({ nullable: true })
   @Column({ nullable: true })
   end: Date;
@@ -24,6 +28,7 @@ export default class Timesheet extends Base {
   @Column({ name: 'client_location', nullable: true })
   clientLocation: string;
 
+  @Index(`${indexPrefix}_project_id_index`)
   @Field()
   @Column()
   project_id: string;
@@ -42,6 +47,7 @@ export default class Timesheet extends Base {
   @JoinColumn({ name: timesheet.approver_id })
   approver: User;
 
+  @Index(`${indexPrefix}_company_id_index`)
   @Field()
   @Column()
   company_id: string;
@@ -51,6 +57,7 @@ export default class Timesheet extends Base {
   @JoinColumn({ name: timesheet.company_id })
   company: Company;
 
+  @Index(`${indexPrefix}_created_by_index`)
   @Field()
   @Column()
   created_by: string;
@@ -60,6 +67,7 @@ export default class Timesheet extends Base {
   @JoinColumn({ name: timesheet.created_by })
   creator: User;
 
+  @Index(`${indexPrefix}_task_id_index`)
   @Field()
   @Column()
   task_id: string;
@@ -95,9 +103,6 @@ export class TimesheetCreateInput {
 
   @Field()
   company_id: string;
-
-  @Field()
-  created_by: string;
 
   @Field()
   task_id: string;
@@ -150,6 +155,9 @@ export class TimesheetQuery {
   @Field({ nullable: true })
   id: string;
 
+  @Field({ nullable: true })
+  created_by: string;
+
   @Field()
   company_id: string;
 
@@ -164,4 +172,26 @@ export class TimesheetQueryInput {
 
   @Field()
   query: TimesheetQuery;
+}
+
+@InputType()
+export class TimesheetWeeklyDetailsInput {
+  @Field()
+  company_id: string;
+
+  @Field({ nullable: true })
+  created_by: string;
+
+  @Field((type) => [String], {
+    nullable: true,
+    description: 'Sort order. Default by start.',
+    defaultValue: 'start:DESC',
+  })
+  order?: string[];
+
+  @Field({ nullable: true })
+  start: Date;
+
+  @Field({ nullable: true })
+  end: Date;
 }
