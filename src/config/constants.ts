@@ -60,6 +60,7 @@ export const entities = {
   timesheet: 'timesheet',
   clients: 'clients',
   usersClients: 'users_clients',
+  userPayRate: 'user_payrate',
 };
 
 export enum CompanyStatus {

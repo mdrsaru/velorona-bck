@@ -73,4 +73,6 @@ export default {
   streetAddressRequired: 'Street address required',
   invoicingEmailRequired: 'Invoicing email required',
   clientExists: 'Client with the email address already exists',
+  amountRequired: 'Amount required',
+  userPayRateNotFound: 'User pay rate not found',
 };

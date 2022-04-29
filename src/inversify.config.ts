@@ -17,6 +17,7 @@ import workschedule from './config/inversify/workschedule';
 import timesheet from './config/inversify/timesheet';
 import userClient from './config/inversify/user-client';
 import client from './config/inversify/client';
+import userpayrate from './config/inversify/user-payrate';
 
 const container = new Container({ skipBaseClassChecks: true });
 
@@ -46,6 +47,7 @@ container.load(
   timesheet,
   userClient,
   client,
+  userpayrate
 );
 
 export default container;
