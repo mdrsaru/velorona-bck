@@ -1,18 +1,27 @@
 import { inject, injectable } from 'inversify';
-import { merge } from 'lodash';
-import { getRepository } from 'typeorm';
+import merge from 'lodash/merge';
+import isNil from 'lodash/isNil';
+import isDate from 'lodash/isDate';
+import isString from 'lodash/isString';
+import { getRepository, LessThanOrEqual, MoreThanOrEqual } from 'typeorm';
+
+import { TYPES } from '../types';
 import strings from '../config/strings';
+import * as apiError from '../utils/api-error';
 import Timesheet from '../entities/timesheet.entity';
+import { NotFoundError } from '../utils/api-error';
+import BaseRepository from './base.repository';
+
 import { ICompanyRepository } from '../interfaces/company.interface';
 import { IProjectRepository } from '../interfaces/project.interface';
 import { ITaskRepository } from '../interfaces/task.interface';
-import { ITimesheetCreateInput, ITimesheetRepository, ITimesheetUpdateInput } from '../interfaces/timesheet.interface';
+import {
+  ITimesheetCreateInput,
+  ITimesheetRepository,
+  ITimesheetUpdateInput,
+  ITimesheetWeeklyDetailsRepoInput,
+} from '../interfaces/timesheet.interface';
 import { IUserRepository } from '../interfaces/user.interface';
-import { TYPES } from '../types';
-
-import * as apiError from '../utils/api-error';
-import { NotFoundError } from '../utils/api-error';
-import BaseRepository from './base.repository';
 
 @injectable()
 export default class TimesheetRepository extends BaseRepository<Timesheet> implements ITimesheetRepository {
@@ -32,6 +41,44 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
     this.companyRepository = _companyRepository;
     this.taskRepository = _taskRepository;
   }
+
+  getWeeklyDetails = async (args: ITimesheetWeeklyDetailsRepoInput): Promise<Timesheet[]> => {
+    try {
+      const start = args.start;
+      const end = args.end;
+      const company_id = args.company_id;
+      const created_by = args.created_by;
+      const errors: string[] = [];
+
+      if (isNil(start) || !isDate(start)) {
+        errors.push(strings.startDateRequired);
+      }
+      if (isNil(end) || !isDate(end)) {
+        errors.push(strings.endDateRequired);
+      }
+      if (isNil(company_id) || !isDate(company_id)) {
+        errors.push(strings.companyIdRequired);
+      }
+      if (isNil(created_by) || !isDate(created_by)) {
+        errors.push(strings.userIdRequired);
+      }
+
+      const query = {
+        company_id,
+        created_by,
+        start: MoreThanOrEqual(start),
+        end: LessThanOrEqual(end),
+      };
+
+      const timesheet = await this.getAll({
+        query,
+      });
+
+      return timesheet;
+    } catch (err) {
+      throw err;
+    }
+  };
 
   async create(args: ITimesheetCreateInput): Promise<Timesheet> {
     try {
@@ -70,7 +117,8 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
           details: [strings.taskNotFound],
         });
       }
-      const Timesheet = this.repo.save({
+
+      const timesheet = this.repo.save({
         start,
         end,
         clientLocation,
@@ -79,7 +127,8 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
         created_by,
         task_id,
       });
-      return Timesheet;
+
+      return timesheet;
     } catch (err) {
       throw err;
     }
@@ -87,7 +136,7 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
 
   update = async (args: ITimesheetUpdateInput): Promise<Timesheet> => {
     try {
-      const id = args?.id;
+      const id = args.id;
       const start = args.start;
       const end = args.end;
       const clientLocation = args.clientLocation;
@@ -96,6 +145,18 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
       const company_id = args.company_id;
       const created_by = args.created_by;
       const task_id = args.task_id;
+
+      const errors: string[] = [];
+
+      if (isNil(id) || !isString(id)) {
+        errors.push(strings.idRequired);
+      }
+
+      if (errors.length) {
+        throw new apiError.ValidationError({
+          details: errors,
+        });
+      }
 
       const found = await this.getById({ id });
       if (!found) {
@@ -115,9 +176,10 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
         created_by,
         task_id,
       });
-      let Timesheet = await this.repo.save(update);
 
-      return Timesheet;
+      let timesheet = await this.repo.save(update);
+
+      return timesheet;
     } catch (err) {
       throw err;
     }

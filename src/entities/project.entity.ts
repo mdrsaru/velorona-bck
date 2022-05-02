@@ -9,6 +9,7 @@ import { PagingInput, PagingResult } from './common.entity';
 import Timesheet from './timesheet.entity';
 import Task from './task.entity';
 import Client from './client.entity';
+import UserPayRate from './user_payrate.entity';
 
 @ObjectType()
 @Entity({ name: entities.projects })
@@ -42,6 +43,10 @@ export default class Project extends Base {
   @Field(() => Task, { nullable: true, description: 'Field for Task' })
   @OneToMany(() => Task, (task) => task.project)
   task: Task[];
+
+  @Field(() => UserPayRate, { nullable: true, description: 'Field for UserPayRate' })
+  @OneToMany(() => UserPayRate, (userpayrate) => userpayrate.project)
+  userPayRate: UserPayRate[];
 }
 
 @ObjectType()

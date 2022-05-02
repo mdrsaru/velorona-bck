@@ -76,4 +76,19 @@ export default class TimesheetValidation {
       end: Joi.date().required().messages(messages.end),
     });
   }
+
+  static weeklyDetails() {
+    return Joi.object({
+      company_id: Joi.string().required(),
+      start: Joi.date().error(new Error(strings.startDateMustBeValidDate)),
+      end: Joi.date().when('start', {
+        is: Joi.exist(),
+        then: Joi.date()
+          .timestamp()
+          .greater(Joi.ref('start'))
+          .required()
+          .error(new Error(strings.endDateMustBeValidDate)),
+      }),
+    });
+  }
 }

@@ -104,7 +104,7 @@ export class TaskCreateInput {
   project_id: string;
 
   @Field(() => [String], { nullable: true })
-  user_id: string[];
+  user_ids: string[];
 }
 
 @InputType()
@@ -131,7 +131,7 @@ export class TaskUpdateInput {
   project_id: string;
 
   @Field(() => [String], { nullable: true })
-  user_id: string[];
+  user_ids: string[];
 }
 
 @ObjectType()

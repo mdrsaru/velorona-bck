@@ -19,8 +19,9 @@ export default {
   expiresInNotValid: 'Argument expiresIn is not valid',
   userIdRequired: 'User id is required',
   tokenInvalid: 'Token is invalid',
-  startDateRequired: 'Start Date required',
-  endDateRequired: 'End Date required',
+  startDateRequired: 'Start date required',
+  startDateMustBeValidDate: 'Start must be a valid date',
+  endDateRequired: 'End date required',
   payRateRequired: 'PayRate required',
   companyNotFound: 'Company not found',
   companyCodeExists: 'Company code already exists',
@@ -72,4 +73,6 @@ export default {
   streetAddressRequired: 'Street address required',
   invoicingEmailRequired: 'Invoicing email required',
   clientExists: 'Client with the email address already exists',
+  amountRequired: 'Amount required',
+  userPayRateNotFound: 'User pay rate not found',
 };

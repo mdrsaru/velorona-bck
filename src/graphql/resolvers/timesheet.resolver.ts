@@ -1,25 +1,29 @@
+import set from 'lodash/set';
 import { inject, injectable } from 'inversify';
 import { Arg, Ctx, FieldResolver, Mutation, Query, Resolver, Root, UseMiddleware } from 'type-graphql';
+
+import { TYPES } from '../../types';
+import strings from '../../config/strings';
+import * as apiError from '../../utils/api-error';
 import Timesheet, {
   StopTimesheetInput,
   TimesheetCreateInput,
   TimesheetPagingResult,
   TimesheetQueryInput,
   TimesheetUpdateInput,
+  TimesheetWeeklyDetailsInput,
 } from '../../entities/timesheet.entity';
-import { IErrorService, IJoiService } from '../../interfaces/common.interface';
-import { IPaginationData } from '../../interfaces/paging.interface';
-import { ITimesheetService } from '../../interfaces/timesheet.interface';
-import { TYPES } from '../../types';
+import { DeleteInput } from '../../entities/common.entity';
 import Paging from '../../utils/paging';
-
-import { Role as RoleEnum } from '../../config/constants';
-
 import authenticate from '../middlewares/authenticate';
 import { checkCompanyAccess } from '../middlewares/company';
 import authorize from '../middlewares/authorize';
 import TimesheetValidation from '../../validation/timesheet.validation';
-import { DeleteInput } from '../../entities/common.entity';
+import { Role as RoleEnum } from '../../config/constants';
+
+import { IErrorService, IJoiService } from '../../interfaces/common.interface';
+import { IPaginationData } from '../../interfaces/paging.interface';
+import { ITimesheetService } from '../../interfaces/timesheet.interface';
 import { IGraphqlContext } from '../../interfaces/graphql.interface';
 
 @injectable()
@@ -42,12 +46,24 @@ export class TimesheetResolver {
 
   @Query((returns) => TimesheetPagingResult)
   @UseMiddleware(authenticate, checkCompanyAccess)
-  async Timesheet(@Arg('input') args: TimesheetQueryInput, @Ctx() ctx: any): Promise<IPaginationData<Timesheet>> {
+  async Timesheet(
+    @Arg('input') args: TimesheetQueryInput,
+    @Ctx() ctx: IGraphqlContext
+  ): Promise<IPaginationData<Timesheet>> {
     const operation = 'Timesheets';
 
     try {
+      const created_by = args?.query?.created_by;
+
+      // Show timesheet of the logged in users if created_by is not provided
+      if (!created_by) {
+        set(args, 'query.created_by', ctx?.user?.id);
+      }
+
       const pagingArgs = Paging.createPagingPayload(args);
+
       let result: IPaginationData<Timesheet> = await this.timesheetService.getAllAndCount(pagingArgs);
+
       return result;
     } catch (err) {
       this.errorService.throwError({
@@ -59,17 +75,77 @@ export class TimesheetResolver {
     }
   }
 
+  @Query((returns) => [Timesheet])
+  @UseMiddleware(authenticate, checkCompanyAccess)
+  async TimesheetWeeklyDetails(
+    @Arg('input') args: TimesheetWeeklyDetailsInput,
+    @Ctx() ctx: IGraphqlContext
+  ): Promise<Timesheet[]> {
+    const operation = 'TimesheetWeeklyDetails';
+
+    try {
+      const start = args.start;
+      const end = args.end;
+      const company_id = args.company_id;
+      let created_by = args?.created_by;
+
+      // Show timesheet of the logged in users if created_by is not provided
+      if (!created_by) {
+        created_by = ctx?.user?.id ?? '';
+      }
+
+      const schema = TimesheetValidation.weeklyDetails();
+      await this.joiService.validate({
+        schema,
+        input: {
+          company_id,
+          start,
+          end,
+        },
+      });
+
+      if (start && !end) {
+        throw new apiError.ValidationError({
+          details: [strings.endDateRequired],
+        });
+      }
+
+      if (end && !start) {
+        throw new apiError.ValidationError({
+          details: [strings.startDateRequired],
+        });
+      }
+
+      const timesheet = await this.timesheetService.getWeeklyDetails({
+        company_id,
+        created_by,
+        start,
+        end,
+      });
+
+      return timesheet;
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: false,
+      });
+    }
+  }
+
   @Mutation((returns) => Timesheet)
   @UseMiddleware(authenticate, checkCompanyAccess)
   async TimesheetCreate(@Arg('input') args: TimesheetCreateInput, @Ctx() ctx: any): Promise<Timesheet> {
     const operation = 'TimesheetCreate';
+
     try {
       const start = args.start;
       const end = args.end;
       const clientLocation = args.clientLocation;
       const project_id = args.project_id;
       const company_id = args.company_id;
-      const created_by = args.created_by;
+      const created_by = ctx.user.id;
       const task_id = args.task_id;
 
       const schema = TimesheetValidation.create();
@@ -85,6 +161,7 @@ export class TimesheetResolver {
           task_id,
         },
       });
+
       let timesheet: Timesheet = await this.timesheetService.create({
         start,
         end,
@@ -94,8 +171,10 @@ export class TimesheetResolver {
         created_by,
         task_id,
       });
+
       return timesheet;
     } catch (err) {
+      console.log(err, 'err');
       this.errorService.throwError({
         err,
         name: this.name,
@@ -107,7 +186,7 @@ export class TimesheetResolver {
 
   @Mutation((returns) => Timesheet)
   @UseMiddleware(authenticate, checkCompanyAccess)
-  async StopTimesheet(@Arg('input') args: StopTimesheetInput, @Ctx() ctx: any): Promise<Timesheet> {
+  async StopTimesheet(@Arg('input') args: StopTimesheetInput): Promise<Timesheet> {
     const operation = 'TimesheetCreate';
     try {
       const id = args.id;
@@ -121,10 +200,12 @@ export class TimesheetResolver {
           end,
         },
       });
+
       let timesheet: Timesheet = await this.timesheetService.update({
         id,
         end,
       });
+
       return timesheet;
     } catch (err) {
       this.errorService.throwError({
@@ -138,7 +219,7 @@ export class TimesheetResolver {
 
   @Mutation((returns) => Timesheet)
   @UseMiddleware(authenticate, authorize(RoleEnum.CompanyAdmin, RoleEnum.SuperAdmin), checkCompanyAccess)
-  async TimesheetUpdate(@Arg('input') args: TimesheetUpdateInput, @Ctx() ctx: any): Promise<Timesheet> {
+  async TimesheetUpdate(@Arg('input') args: TimesheetUpdateInput): Promise<Timesheet> {
     const operation = 'TimesheetUpdate';
     try {
       const id = args.id;
@@ -166,7 +247,8 @@ export class TimesheetResolver {
           task_id,
         },
       });
-      let timesheet: Timesheet = await this.timesheetService.update({
+
+      const timesheet: Timesheet = await this.timesheetService.update({
         id,
         start,
         end,
@@ -177,6 +259,7 @@ export class TimesheetResolver {
         created_by,
         task_id,
       });
+
       return timesheet;
     } catch (err) {
       this.errorService.throwError({
@@ -189,11 +272,12 @@ export class TimesheetResolver {
   }
   @Mutation((returns) => Timesheet)
   @UseMiddleware(authenticate)
-  async TimesheetDelete(@Arg('input') args: DeleteInput, @Ctx() ctx: any): Promise<Timesheet> {
+  async TimesheetDelete(@Arg('input') args: DeleteInput): Promise<Timesheet> {
     const operation = 'TaskDelete';
 
     try {
       const id = args.id;
+
       let timesheet: Timesheet = await this.timesheetService.remove({ id });
 
       return timesheet;
@@ -209,20 +293,12 @@ export class TimesheetResolver {
 
   @FieldResolver()
   company(@Root() root: Timesheet, @Ctx() ctx: IGraphqlContext) {
-    if (root.company_id) {
-      return ctx.loaders.companyByIdLoader.load(root.company_id);
-    }
-
-    return null;
+    return ctx.loaders.companyByIdLoader.load(root.company_id);
   }
 
   @FieldResolver()
   project(@Root() root: Timesheet, @Ctx() ctx: IGraphqlContext) {
-    if (root.project_id) {
-      return ctx.loaders.projectByIdLoader.load(root.project_id);
-    }
-
-    return null;
+    return ctx.loaders.projectByIdLoader.load(root.project_id);
   }
 
   @FieldResolver()
@@ -236,10 +312,11 @@ export class TimesheetResolver {
 
   @FieldResolver()
   creator(@Root() root: Timesheet, @Ctx() ctx: IGraphqlContext) {
-    if (root.created_by) {
-      return ctx.loaders.usersByIdLoader.load(root.created_by);
-    }
+    return ctx.loaders.usersByIdLoader.load(root.created_by);
+  }
 
-    return null;
+  @FieldResolver()
+  task(@Root() root: Timesheet, @Ctx() ctx: IGraphqlContext) {
+    return ctx.loaders.tasksByIdLoader.load(root.task_id);
   }
 }
