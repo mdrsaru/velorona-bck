@@ -18,6 +18,7 @@ export interface ITaskCreateInput {
   manager_id: string;
   company_id: string;
   project_id: string;
+  user_ids?: string[];
 }
 
 export interface ITaskUpdateInput {
@@ -28,6 +29,7 @@ export interface ITaskUpdateInput {
   manager_id?: string | undefined;
   company_id?: string | undefined;
   project_id?: string | undefined;
+  user_ids?: string[];
 }
 
 export interface IAssignTask {

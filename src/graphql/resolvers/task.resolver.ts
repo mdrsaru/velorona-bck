@@ -92,6 +92,7 @@ export class TaskResolver {
       const manager_id = args.manager_id;
       const company_id = args.company_id;
       const project_id = args.project_id;
+      const user_ids = args.user_ids;
 
       const schema = TaskValidation.create();
       await this.joiService.validate({
@@ -103,6 +104,7 @@ export class TaskResolver {
           manager_id,
           company_id,
           project_id,
+          user_ids,
         },
       });
       let task: Task = await this.taskService.create({
@@ -112,6 +114,7 @@ export class TaskResolver {
         manager_id,
         company_id,
         project_id,
+        user_ids,
       });
       return task;
     } catch (err) {
@@ -137,6 +140,7 @@ export class TaskResolver {
       const manager_id = args.manager_id;
       const company_id = args.company_id;
       const project_id = args.project_id;
+      const user_ids = args.user_ids;
 
       const schema = TaskValidation.update();
       await this.joiService.validate({
@@ -149,6 +153,7 @@ export class TaskResolver {
           manager_id,
           company_id,
           project_id,
+          user_ids,
         },
       });
 
@@ -160,6 +165,7 @@ export class TaskResolver {
         manager_id,
         company_id,
         project_id,
+        user_ids,
       });
 
       return Task;

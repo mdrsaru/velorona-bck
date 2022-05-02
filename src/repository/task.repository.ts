@@ -36,6 +36,7 @@ export default class TaskRepository extends BaseRepository<Task> implements ITas
       const manager_id = args.manager_id;
       const company_id = args.company_id;
       const project_id = args.project_id;
+      const user_ids = args.user_ids;
 
       const project = await this.projectRepository.getById({ id: project_id });
 
@@ -59,7 +60,7 @@ export default class TaskRepository extends BaseRepository<Task> implements ITas
         });
       }
 
-      const task = this.repo.save({
+      const task = await this.repo.save({
         name,
         status,
         archived,
@@ -67,6 +68,15 @@ export default class TaskRepository extends BaseRepository<Task> implements ITas
         company_id,
         project_id,
       });
+
+      if (user_ids) {
+        const arg = {
+          user_id: user_ids,
+          task_id: task.id,
+        };
+        await this.assignTask(arg);
+      }
+
       return task;
     } catch (err) {
       throw err;
@@ -82,12 +92,22 @@ export default class TaskRepository extends BaseRepository<Task> implements ITas
       const manager_id = args.manager_id;
       const company_id = args.company_id;
       const project_id = args.project_id;
+      const user_ids = args.user_ids;
 
       const found = await this.getById({ id });
+
       if (!found) {
         throw new NotFoundError({
           details: ['Task not found'],
         });
+      }
+
+      if (user_ids) {
+        const arg = {
+          user_id: user_ids,
+          task_id: id,
+        };
+        await this.assignTask(arg);
       }
 
       const update = merge(found, {
@@ -99,6 +119,7 @@ export default class TaskRepository extends BaseRepository<Task> implements ITas
         company_id,
         project_id,
       });
+
       let task = await this.repo.save(update);
 
       return task;
@@ -130,6 +151,7 @@ export default class TaskRepository extends BaseRepository<Task> implements ITas
           details: [strings.userNotFound],
         });
       }
+
       const update = merge(found, {
         id,
         users: existingUsers,

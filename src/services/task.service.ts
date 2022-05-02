@@ -77,6 +77,7 @@ export default class TaskService implements ITaskService {
     const manager_id = args.manager_id;
     const company_id = args.company_id;
     const project_id = args.project_id;
+    const user_ids = args.user_ids;
 
     try {
       let task = await this.taskRepository.create({
@@ -86,6 +87,7 @@ export default class TaskService implements ITaskService {
         manager_id,
         company_id,
         project_id,
+        user_ids,
       });
       return task;
     } catch (err) {
@@ -107,6 +109,7 @@ export default class TaskService implements ITaskService {
     const manager_id = args?.manager_id;
     const company_id = args?.company_id;
     const project_id = args?.project_id;
+    const user_ids = args.user_ids;
 
     try {
       if (status) {
@@ -125,6 +128,7 @@ export default class TaskService implements ITaskService {
         manager_id,
         company_id,
         project_id,
+        user_ids,
       });
       return task;
     } catch (err) {
