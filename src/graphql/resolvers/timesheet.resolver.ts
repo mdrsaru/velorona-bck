@@ -218,7 +218,11 @@ export class TimesheetResolver {
   }
 
   @Mutation((returns) => Timesheet)
-  @UseMiddleware(authenticate, authorize(RoleEnum.CompanyAdmin, RoleEnum.SuperAdmin), checkCompanyAccess)
+  @UseMiddleware(
+    authenticate,
+    authorize(RoleEnum.CompanyAdmin, RoleEnum.SuperAdmin, RoleEnum.Employee, RoleEnum.TaskManager),
+    checkCompanyAccess
+  )
   async TimesheetUpdate(@Arg('input') args: TimesheetUpdateInput): Promise<Timesheet> {
     const operation = 'TimesheetUpdate';
     try {
