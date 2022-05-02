@@ -95,6 +95,12 @@ const CLIENT = {
   ClientController: Symbol('ClientController'),
 };
 
+const USERPAYRATE = {
+  UserPayRateService: Symbol('UserPayRateService'),
+  UserPayRateRepository: Symbol('UserPayRateRepository'),
+  UserPayRateController: Symbol('UserPayRateController'),
+};
+
 const TYPES = {
   ...COMMON,
   ...COMPANY,
@@ -110,6 +116,7 @@ const TYPES = {
   ...TIMESHEET,
   ...USERCLIENT,
   ...CLIENT,
+  ...USERPAYRATE,
 };
 
 export { TYPES };

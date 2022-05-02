@@ -13,6 +13,8 @@ import Invitation from '../../entities/invitation.entity';
 import Project from '../../entities/project.entity';
 import { ITimesheet } from '../../interfaces/timesheet.interface';
 import Timesheet from '../../entities/timesheet.entity';
+import { IUserPayRate } from '../../interfaces/user-payrate.interface';
+import UserPayRate from '../../entities/user_payrate.entity';
 
 const role = new Role();
 role.name = RoleEnum.SuperAdmin;
@@ -180,4 +182,31 @@ export let timesheets = _timesheets.map((timesheet) => {
   _timesheet.updatedAt = timesheet.updatedAt;
 
   return _timesheet;
+});
+
+const _userPayRate: IUserPayRate[] = [
+  {
+    id: 'aed11edc-4c05-4731-8676-72e105eea64d',
+    startDate: new Date(),
+    endDate: new Date(),
+    amount: 100000,
+    user_id: 'b97b91bd-03f1-450b-8b61-d8e033f8ac31',
+    project_id: 'ce351c02-3681-43df-9cdb-3a4f864dcb0b',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+];
+
+export let userPayRates = _userPayRate.map((userPayRate) => {
+  const _userPayRate: any = new UserPayRate();
+  _userPayRate.id = userPayRate.id;
+  _userPayRate.startDate = userPayRate.startDate;
+  _userPayRate.endDate = userPayRate.endDate;
+  _userPayRate.amount = userPayRate.amount;
+  _userPayRate.user_id = userPayRate.user_id;
+  _userPayRate.project_id = userPayRate.project_id;
+  _userPayRate.createdAt = userPayRate.createdAt;
+  _userPayRate.updatedAt = userPayRate.updatedAt;
+
+  return _userPayRate;
 });
