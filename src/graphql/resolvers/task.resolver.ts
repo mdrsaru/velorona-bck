@@ -141,6 +141,7 @@ export class TaskResolver {
       const company_id = args.company_id;
       const project_id = args.project_id;
       const user_ids = args.user_ids;
+      const removeAssignedUserId = args.removeAssignedUserId;
 
       const schema = TaskValidation.update();
       await this.joiService.validate({
@@ -154,6 +155,7 @@ export class TaskResolver {
           company_id,
           project_id,
           user_ids,
+          removeAssignedUserId,
         },
       });
 
@@ -166,6 +168,7 @@ export class TaskResolver {
         company_id,
         project_id,
         user_ids,
+        removeAssignedUserId,
       });
 
       return Task;

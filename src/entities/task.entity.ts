@@ -132,6 +132,9 @@ export class TaskUpdateInput {
 
   @Field(() => [String], { nullable: true })
   user_ids: string[];
+
+  @Field(() => [String], { nullable: true })
+  removeAssignedUserId: string[];
 }
 
 @ObjectType()
@@ -156,6 +159,9 @@ export class TaskQuery {
 
   @Field({ nullable: true, description: 'Assigned user_id for the task' })
   user_id: string;
+
+  @Field({ nullable: true })
+  project_id: string;
 }
 
 @InputType()
