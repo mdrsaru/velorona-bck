@@ -15,6 +15,7 @@ import Workschedule from './workschedule.entity';
 import { userRolesTable } from '../config/db/columns';
 import UserRecord from './user-record.entity';
 import Timesheet from './timesheet.entity';
+import UserPayRate from './user_payrate.entity';
 
 registerEnumType(UserStatus, {
   name: 'UserStatus',
@@ -125,6 +126,10 @@ export default class User extends Base {
 
   @Field({ nullable: true })
   activeClient: Client;
+
+  @Field(() => UserPayRate, { nullable: true, description: 'Field for UserPayRate' })
+  @OneToMany(() => UserPayRate, (userPayRate) => userPayRate.user)
+  userPayRate: UserPayRate[];
 }
 
 @ObjectType()
@@ -242,6 +247,9 @@ export class UserQuery {
 
   @Field((type) => RoleEnum, { nullable: true })
   role: RoleEnum;
+
+  @Field({ nullable: true, defaultValue: false })
+  archived: boolean;
 }
 
 @InputType()

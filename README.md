@@ -42,7 +42,7 @@ $ docker-compose up
 Specifying env file:
 
 ```
-$ docker-compose --env-file [path-to-env-file] up
+$ docker-compose [--env-file path-to-env-file] [-f <path-to-docker-compose>] up
 ```
 
 To run the tests inside docker container and watch

@@ -7,6 +7,7 @@ import {
   ITimesheetCreateInput,
   ITimesheetRepository,
   ITimesheetUpdateInput,
+  ITimesheetWeeklyDetailsRepoInput,
 } from '../../interfaces/timesheet.interface';
 import { timesheets } from './data';
 
@@ -37,6 +38,10 @@ export default class TimesheetRepository implements ITimesheetRepository {
   };
 
   getById = (args: IEntityID): Promise<Timesheet | undefined> => {
+    throw new Error('not implemented');
+  };
+
+  getWeeklyDetails = (args: ITimesheetWeeklyDetailsRepoInput): Promise<Timesheet[]> => {
     throw new Error('not implemented');
   };
 
