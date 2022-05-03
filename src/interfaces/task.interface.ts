@@ -30,6 +30,7 @@ export interface ITaskUpdateInput {
   company_id?: string | undefined;
   project_id?: string | undefined;
   user_ids?: string[];
+  removeAssignedUserId?: string[];
 }
 
 export interface IAssignTask {
@@ -65,6 +66,11 @@ export interface ITaskAssignment {
   task_id: string;
 }
 
+export interface ITaskAssignmentRemoveInput {
+  removeAssignedUserId: string[];
+  id: string;
+}
 export interface ITaskAssignmentRepository {
   getTaskAssignmentByUser(args: ITaskAssignmentUserQuery): Promise<ITaskAssignment[]>;
+  remove(args: ITaskAssignmentRemoveInput): Promise<ITaskAssignment>;
 }

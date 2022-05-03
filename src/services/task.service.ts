@@ -110,8 +110,15 @@ export default class TaskService implements ITaskService {
     const company_id = args?.company_id;
     const project_id = args?.project_id;
     const user_ids = args.user_ids;
+    const removeAssignedUserId = args?.removeAssignedUserId;
 
     try {
+      if (removeAssignedUserId) {
+        await this.taskAssignmentRepository.remove({
+          removeAssignedUserId,
+          id,
+        });
+      }
       if (status) {
         let task: Task | undefined = await this.taskRepository.getById({ id, relations: ['users'] });
         if (task?.users.length) {
