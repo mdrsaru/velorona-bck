@@ -78,6 +78,7 @@ export default class Task extends Base {
   @Column()
   project_id: string;
 
+  @Field(() => Project)
   @ManyToOne(() => Project)
   @JoinColumn({ name: 'project_id' })
   project: Project;
@@ -156,6 +157,9 @@ export class TaskQuery {
 
   @Field({ nullable: true, description: 'Assigned user_id for the task' })
   user_id: string;
+
+  @Field({ nullable: true })
+  project_id: string;
 }
 
 @InputType()
