@@ -17,7 +17,7 @@ import {
 } from '../interfaces/user-payrate.interface';
 import { IUserRepository } from '../interfaces/user.interface';
 import { IProjectRepository } from '../interfaces/project.interface';
-import UserPayRate from '../entities/user_payrate.entity';
+import UserPayRate from '../entities/user-payrate.entity';
 
 @injectable()
 export default class UserPayRateRepository extends BaseRepository<UserPayRate> implements IUserPayRateRepository {
