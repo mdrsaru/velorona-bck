@@ -66,7 +66,6 @@ export default class TaskValidation {
       company_id: Joi.string(),
       project_id: Joi.string(),
       user_ids: Joi.array(),
-      removeAssignedUserId: Joi.array(),
     });
   }
   static assignTask() {
