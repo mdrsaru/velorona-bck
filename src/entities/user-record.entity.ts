@@ -33,29 +33,23 @@ export default class UserRecord extends Base {
 @InputType()
 export class UserRecordCreateInput {
   @Field()
-  @Column()
   startDate: Date;
 
   @Field()
-  @Column()
   endDate: Date;
 
   @Field()
-  @Column()
   payRate: number;
 }
 
 @InputType()
 export class UserRecordUpdateInput {
   @Field({ nullable: true })
-  @Column({ nullable: true })
   startDate: Date;
 
   @Field({ nullable: true })
-  @Column({ nullable: true })
   endDate: Date;
 
   @Field({ nullable: true })
-  @Column({ nullable: true })
   payRate: number;
 }

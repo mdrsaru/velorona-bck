@@ -1,3 +1,24 @@
+const COMMON = {
+  AppService: Symbol('AppService'),
+  AppController: Symbol('AppController'),
+  Logger: Symbol('Logger'),
+  LoggerFactory: Symbol('LoggerFactory'),
+  GraphqlService: Symbol('GrahqlService'),
+  HashService: Symbol('HashService'),
+  TokenService: Symbol('TokenService'),
+  EmailService: Symbol('EmailService'),
+  AuthenticateMiddleware: Symbol('AuthenticateMiddleware'),
+  ErrorService: Symbol('ErrorService'),
+  JoiService: Symbol('JoiService'),
+  RoleService: Symbol('RoleService'),
+  RoleRepository: Symbol('RoleRepository'),
+  AddressService: Symbol('AddressService'),
+  AddressRepository: Symbol('AddressRepository'),
+  UserRecordRepository: Symbol('UserRecordRepository'),
+  HandlebarsService: Symbol('HandlebarsService'),
+  UserClientRepository: Symbol('UserClientRepository'),
+};
+
 const COMPANY = {
   CompanyRepository: Symbol('CompanyRepository'),
   CompanyService: Symbol('CompanyService'),
@@ -51,27 +72,6 @@ const USERCLIENT = {
   UserClientController: Symbol('UserClientController'),
 };
 
-const COMMON = {
-  AppService: Symbol('AppService'),
-  AppController: Symbol('AppController'),
-  Logger: Symbol('Logger'),
-  LoggerFactory: Symbol('LoggerFactory'),
-  GraphqlService: Symbol('GrahqlService'),
-  HashService: Symbol('HashService'),
-  TokenService: Symbol('TokenService'),
-  EmailService: Symbol('EmailService'),
-  AuthenticateMiddleware: Symbol('AuthenticateMiddleware'),
-  ErrorService: Symbol('ErrorService'),
-  JoiService: Symbol('JoiService'),
-  RoleService: Symbol('RoleService'),
-  RoleRepository: Symbol('RoleRepository'),
-  AddressService: Symbol('AddressService'),
-  AddressRepository: Symbol('AddressRepository'),
-  UserRecordRepository: Symbol('UserRecordRepository'),
-  HandlebarsService: Symbol('HandlebarsService'),
-  UserClientRepository: Symbol('UserClientRepository'),
-};
-
 const USER_TOKEN = {
   UserTokenRepository: Symbol('UserTokenRepository'),
   UserTokenService: Symbol('UserTokenService'),
@@ -101,6 +101,18 @@ const USERPAYRATE = {
   UserPayRateController: Symbol('UserPayRateController'),
 };
 
+const INVOICE = {
+  InvoiceRepository: Symbol('InvoiceRepository'),
+  InvoiceService: Symbol('InvoiceService'),
+  InvoiceController: Symbol('InvoiceController'),
+};
+
+const INVOICE_ITEMS = {
+  InvoiceItemRepository: Symbol('InvoiceItemRepository'),
+  InvoiceItemService: Symbol('InvoiceItemService'),
+  InvoiceItemController: Symbol('InvoiceItemController'),
+};
+
 const TYPES = {
   ...COMMON,
   ...COMPANY,
@@ -117,6 +129,8 @@ const TYPES = {
   ...USERCLIENT,
   ...CLIENT,
   ...USERPAYRATE,
+  ...INVOICE,
+  ...INVOICE_ITEMS,
 };
 
 export { TYPES };

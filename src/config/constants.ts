@@ -61,6 +61,8 @@ export const entities = {
   clients: 'clients',
   usersClients: 'users_clients',
   userPayRate: 'user_payrate',
+  invoices: 'invoices',
+  invoiceItems: 'invoice_items',
 };
 
 export enum CompanyStatus {
@@ -112,6 +114,11 @@ export enum TaskStatus {
   Inactive = 'Inactive',
 }
 
+export enum InvoiceStatus {
+  Active = 'Active',
+  Inactive = 'Inactive',
+}
+
 export enum ForgotPasswordUserType {
   Company = 'Company',
   SystemAdmin = 'SystemAdmin',
@@ -121,6 +128,7 @@ export enum UserClientStatus {
   Active = 'Active',
   Inactive = 'Inactive',
 }
+
 export const emailSetting = {
   testMask: process.env.EMAIL_TEST_MASK as string,
   fromEmail: process.env.EMAIL_FROM_EMAIL as string,

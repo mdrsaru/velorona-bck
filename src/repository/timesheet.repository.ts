@@ -3,7 +3,8 @@ import merge from 'lodash/merge';
 import isNil from 'lodash/isNil';
 import isDate from 'lodash/isDate';
 import isString from 'lodash/isString';
-import { getRepository, LessThanOrEqual, MoreThanOrEqual } from 'typeorm';
+import isArray from 'lodash/isArray';
+import { getRepository, LessThanOrEqual, MoreThanOrEqual, In } from 'typeorm';
 
 import { TYPES } from '../types';
 import strings from '../config/strings';
@@ -22,6 +23,7 @@ import {
   ITimesheetWeeklyDetailsRepoInput,
 } from '../interfaces/timesheet.interface';
 import { IUserRepository } from '../interfaces/user.interface';
+import { IGetOptions, IGetAllAndCountResult } from '../interfaces/paging.interface';
 
 @injectable()
 export default class TimesheetRepository extends BaseRepository<Timesheet> implements ITimesheetRepository {
@@ -41,6 +43,44 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
     this.companyRepository = _companyRepository;
     this.taskRepository = _taskRepository;
   }
+
+  getAllAndCount = async (args: IGetOptions): Promise<IGetAllAndCountResult<Timesheet>> => {
+    try {
+      let { query = {}, ...rest } = args;
+
+      // For array values to be used as In operator
+      // https://github.com/typeorm/typeorm/blob/master/docs/find-options.md
+      for (let key in query) {
+        if (isArray(query[key])) {
+          query[key] = In(query[key]);
+        }
+      }
+
+      if ('afterStart' in query) {
+        const start = query.afterStart;
+        delete query.afterStart;
+        query.start = MoreThanOrEqual(start);
+      }
+
+      if ('beforeEnd' in query) {
+        const start = query.beforeEnd;
+        delete query.beforeEnd;
+        query.start = MoreThanOrEqual(start);
+      }
+
+      const [rows, count] = await this.repo.findAndCount({
+        where: query,
+        ...rest,
+      });
+
+      return {
+        count,
+        rows,
+      };
+    } catch (err) {
+      throw err;
+    }
+  };
 
   getWeeklyDetails = async (args: ITimesheetWeeklyDetailsRepoInput): Promise<Timesheet[]> => {
     try {

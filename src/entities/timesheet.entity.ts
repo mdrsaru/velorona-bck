@@ -163,6 +163,15 @@ export class TimesheetQuery {
 
   @Field({ nullable: true })
   task_id: string;
+
+  @Field({ nullable: true })
+  project_id: string;
+
+  @Field({ nullable: true })
+  afterStart: string;
+
+  @Field({ nullable: true })
+  beforeEnd: string;
 }
 
 @InputType()

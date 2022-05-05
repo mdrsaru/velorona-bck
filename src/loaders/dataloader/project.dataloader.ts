@@ -8,9 +8,9 @@ import Project from '../../entities/project.entity';
 import Task from '../../entities/task.entity';
 
 const batchProjectsByIdFn = async (ids: readonly string[]) => {
-  const ProjectRepo: IProjectRepository = container.get(TYPES.ProjectRepository);
+  const projectRepo: IProjectRepository = container.get(TYPES.ProjectRepository);
   const query = { id: ids };
-  const projects = await ProjectRepo.getAll({ query });
+  const projects = await projectRepo.getAll({ query });
   const projectObj: { [id: string]: Project } = {};
 
   projects.forEach((project: any) => {
@@ -21,10 +21,10 @@ const batchProjectsByIdFn = async (ids: readonly string[]) => {
 };
 
 const batchTasksByProjectIdFn = async (ids: readonly string[]) => {
-  const TaskRepo: ITaskRepository = container.get(TYPES.TaskRepository);
+  const taskRepo: ITaskRepository = container.get(TYPES.TaskRepository);
   const query = { project_id: ids };
 
-  const tasks = await TaskRepo.getAll({ query });
+  const tasks = await taskRepo.getAll({ query });
   const taskObj: { [id: string]: Task } = {};
 
   tasks.forEach((task: any) => {
