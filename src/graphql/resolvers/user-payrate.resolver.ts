@@ -5,7 +5,7 @@ import UserPayRate, {
   UserPayRatePagingResult,
   UserPayRateQueryInput,
   UserPayRateUpdateInput,
-} from '../../entities/user_payrate.entity';
+} from '../../entities/user-payrate.entity';
 import { IErrorService, IJoiService } from '../../interfaces/common.interface';
 import { IPaginationData } from '../../interfaces/paging.interface';
 import { IUserPayRate, IUserPayRateService } from '../../interfaces/user-payrate.interface';

@@ -24,9 +24,10 @@ import { checkCompanyAccess } from '../middlewares/company';
 import { IErrorService, IJoiService } from '../../interfaces/common.interface';
 import { IPaginationData } from '../../interfaces/paging.interface';
 import { ITaskService } from '../../interfaces/task.interface';
+import { IGraphqlContext } from '../../interfaces/graphql.interface';
 
 @injectable()
-@Resolver()
+@Resolver((of) => Task)
 export class TaskResolver {
   private name = 'TaskResolver';
   private taskService: ITaskService;
@@ -227,5 +228,9 @@ export class TaskResolver {
         logError: false,
       });
     }
+  }
+  @FieldResolver()
+  project(@Root() root: Task, @Ctx() ctx: IGraphqlContext) {
+    return ctx.loaders.projectByIdLoader.load(root.project_id);
   }
 }

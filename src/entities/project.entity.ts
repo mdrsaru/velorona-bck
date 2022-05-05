@@ -9,7 +9,7 @@ import { PagingInput, PagingResult } from './common.entity';
 import Timesheet from './timesheet.entity';
 import Task from './task.entity';
 import Client from './client.entity';
-import UserPayRate from './user_payrate.entity';
+import UserPayRate from './user-payrate.entity';
 
 @ObjectType()
 @Entity({ name: entities.projects })

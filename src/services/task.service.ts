@@ -112,6 +112,12 @@ export default class TaskService implements ITaskService {
     const user_ids = args.user_ids;
 
     try {
+      if (user_ids) {
+        await this.taskRepository.assignTask({
+          user_id: user_ids,
+          task_id: id,
+        });
+      }
       if (status) {
         let task: Task | undefined = await this.taskRepository.getById({ id, relations: ['users'] });
         if (task?.users.length) {

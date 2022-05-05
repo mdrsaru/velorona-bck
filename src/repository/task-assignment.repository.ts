@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { getManager, EntityManager } from 'typeorm';
+import { getManager, EntityManager, getRepository } from 'typeorm';
 
 import { TYPES } from '../types';
 import * as apiError from '../utils/api-error';
@@ -9,7 +9,7 @@ import { entities } from '../config/constants';
 import { ITaskAssignmentRepository, ITaskAssignmentUserQuery, ITaskAssignment } from '../interfaces/task.interface';
 
 @injectable()
-export default class TaskRepository implements ITaskAssignmentRepository {
+export default class TaskAssignmentRepository implements ITaskAssignmentRepository {
   private manager: EntityManager;
 
   constructor() {

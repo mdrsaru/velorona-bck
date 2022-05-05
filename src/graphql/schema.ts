@@ -12,9 +12,9 @@ import { WorkscheduleResolver } from './resolvers/workschedule.resolver';
 import { TimesheetResolver } from './resolvers/timesheet.resolver';
 import { UserClientResolver } from './resolvers/user-client.resolver';
 import { ClientResolver } from './resolvers/client.resolver';
-import { UserPayRateResolver } from './resolvers/userPayrate.resolver';
 import { InvoiceResolver } from './resolvers/invoice.resolver';
 import { InvoiceItemResolver } from './resolvers/invoice-item.resolver';
+import { UserPayRateResolver } from './resolvers/user-payrate.resolver';
 
 export default buildSchema({
   container,

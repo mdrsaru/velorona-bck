@@ -1,8 +1,8 @@
 import { ContainerModule, interfaces } from 'inversify';
-import { UserPayRateResolver } from '../../graphql/resolvers/userPayrate.resolver';
+import { UserPayRateResolver } from '../../graphql/resolvers/user-payrate.resolver';
 import { IUserPayRateRepository, IUserPayRateService } from '../../interfaces/user-payrate.interface';
 import UserPayRateRepository from '../../repository/user-payrate.repository';
-import UserPayRateService from '../../services/userPayrate.service';
+import UserPayRateService from '../../services/user-payrate.service';
 
 import { TYPES } from '../../types';
 

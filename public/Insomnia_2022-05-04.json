@@ -1,7 +1,7 @@
 {
   "_type": "export",
   "__export_format": 4,
-  "__export_date": "2022-05-02T05:47:22.547Z",
+  "__export_date": "2022-05-04T08:57:52.357Z",
   "__export_source": "insomnia.desktop.app:v2022.3.0",
   "resources": [
     {
@@ -956,7 +956,7 @@
     {
       "_id": "req_bd4dee357a5c44e2b27678949ec4d5e0",
       "parentId": "fld_9a7753c89a724a5ab6add918218e97ea",
-      "modified": 1650877820899,
+      "modified": 1651642604353,
       "created": 1646814799723,
       "url": "{{ api_url }}/{{ version }}/graphql",
       "name": "User",
@@ -971,7 +971,7 @@
         { "id": "pair_5785fa0d281e4c5980ec45d40cc212a4", "name": "Content-Type", "value": "application/json" }
       ],
       "authentication": {
-        "token": "{% response 'body', 'req_d1297130d87b4fc7a39459364a2323fb', 'b64::JC5kYXRhLkxvZ2luLnRva2Vu::46b', 'never', 60 %}",
+        "token": "{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLnRva2Vu::46b', 'never', 60 %}",
         "type": "bearer"
       },
       "metaSortKey": -1640931628378.5,
@@ -1166,7 +1166,7 @@
     {
       "_id": "req_63926731743c4fd18bcc82e343f3f125",
       "parentId": "fld_4b51c186049444bb8c795b2ddc65239f",
-      "modified": 1651117399292,
+      "modified": 1651578153731,
       "created": 1651033269664,
       "url": "{{ api_url }}/{{ version }}/graphql",
       "name": "weeklyTimesheet",
@@ -1197,7 +1197,7 @@
     {
       "_id": "req_073074e16d8b483b92800d6916c33625",
       "parentId": "fld_4b51c186049444bb8c795b2ddc65239f",
-      "modified": 1650526627636,
+      "modified": 1651635404598,
       "created": 1650358353306,
       "url": "{{ api_url }}/{{ version }}/graphql",
       "name": "TimesheetCreate",
@@ -1228,7 +1228,7 @@
     {
       "_id": "req_dc54838ce22c4d28985a449fd66dd7d6",
       "parentId": "fld_4b51c186049444bb8c795b2ddc65239f",
-      "modified": 1650526592485,
+      "modified": 1651578152579,
       "created": 1650358353334,
       "url": "{{ api_url }}/{{ version }}/graphql",
       "name": "TimesheetUpdate",
@@ -1426,7 +1426,7 @@
     {
       "_id": "req_9161a44aa9394a7dae13cba1d1bb11e1",
       "parentId": "fld_2f7c9f73ae9c4db6994b3a0ec37ef915",
-      "modified": 1651470429084,
+      "modified": 1651654542537,
       "created": 1648548425777,
       "url": "{{ api_url }}/{{ version }}/graphql",
       "name": "TaskCreate",
@@ -1434,7 +1434,7 @@
       "method": "POST",
       "body": {
         "mimeType": "application/graphql",
-        "text": "{\"query\":\"mutation TaskCreate($input: TaskCreateInput!) {\\n  TaskCreate(input: $input) {\\n    id\\n    name\\n\\t\\t\\n  }\\n}\",\"variables\":{\"input\":{\"name\":\"  New Task\",\"status\":\"Active\",\"manager_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmlk::46b', 'never', 60 %}\",\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\",\"project_id\":\"{% response 'body', 'req_031f86964d3f4b09aada9dfb951fc7dc', 'b64::JC5kYXRhLlByb2plY3RDcmVhdGUuaWQ=::46b', 'never', 60 %}\"}},\"operationName\":\"TaskCreate\"}"
+        "text": "{\"query\":\"mutation TaskCreate($input: TaskCreateInput!) {\\n  TaskCreate(input: $input) {\\n    id\\n    name\\n\\t\\t\\n  }\\n}\",\"variables\":{\"input\":{\"name\":\"  New Task\",\"status\":\"Active\",\"manager_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmlk::46b', 'never', 60 %}\",\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\",\"project_id\":\"{% response 'body', 'req_031f86964d3f4b09aada9dfb951fc7dc', 'b64::JC5kYXRhLlByb2plY3RDcmVhdGUuaWQ=::46b', 'never', 60 %}\",\"user_ids\":[\"fada1cb8-3243-4957-8642-0634a9a2c42d\"]}},\"operationName\":\"TaskCreate\"}"
       },
       "parameters": [],
       "headers": [
@@ -1469,15 +1469,15 @@
     {
       "_id": "req_3a1bc9aaf01a4c8aa0f6c27f26735935",
       "parentId": "fld_2f7c9f73ae9c4db6994b3a0ec37ef915",
-      "modified": 1651470418296,
+      "modified": 1651654588279,
       "created": 1648548425782,
-      "url": "{{ api_url }}/{{ version }}/graphql",
+      "url": " {{ api_url }}/{{ version }}/graphql",
       "name": "TaskUpdate",
       "description": "",
       "method": "POST",
       "body": {
         "mimeType": "application/graphql",
-        "text": "{\"query\":\"mutation TaskUpdate($input: TaskUpdateInput!) {\\n  TaskUpdate(input: $input) {\\n    id\\n    name\\n    status\\n\\t\\t\\n  }\\n}\",\"variables\":{\"input\":{\"id\":\"{% response 'body', 'req_9161a44aa9394a7dae13cba1d1bb11e1', 'b64::JC5kYXRhLlRhc2tDcmVhdGUuaWQ=::46b', 'never', 60 %}\",\"name\":\"Change task status\",\"status\":\"Active\"}},\"operationName\":\"TaskUpdate\"}"
+        "text": "{\"query\":\"mutation TaskUpdate($input: TaskUpdateInput!) {\\n  TaskUpdate(input: $input) {\\n    id\\n    name\\n    status\\n\\t\\t\\n  }\\n}\",\"variables\":{\"input\":{\"id\":\"{% response 'body', 'req_9161a44aa9394a7dae13cba1d1bb11e1', 'b64::JC5kYXRhLlRhc2tDcmVhdGUuaWQ=::46b', 'never', 60 %}\",\"name\":\"Change task status\",\"user_ids\":[\"f0012bf8-8187-41ae-8745-10d17097f25a\",\"fada1cb8-3243-4957-8642-0634a9a2c42d\"]}},\"operationName\":\"TaskUpdate\"}"
       },
       "parameters": [],
       "headers": [
@@ -1500,7 +1500,7 @@
     {
       "_id": "req_1cb82bdc6dbc408199bd253157fc2d17",
       "parentId": "fld_2f7c9f73ae9c4db6994b3a0ec37ef915",
-      "modified": 1649234597053,
+      "modified": 1651642768408,
       "created": 1648624301996,
       "url": "{{ api_url }}/{{ version }}/graphql",
       "name": "TaskDelete",
@@ -1531,7 +1531,7 @@
     {
       "_id": "req_937b9ea2ff1444e4a8cece5f4c8d7922",
       "parentId": "fld_2f7c9f73ae9c4db6994b3a0ec37ef915",
-      "modified": 1650948539271,
+      "modified": 1651642766990,
       "created": 1648549366660,
       "url": "{{ api_url }}/{{ version }}/graphql",
       "name": "Task",
@@ -1539,7 +1539,7 @@
       "method": "POST",
       "body": {
         "mimeType": "application/graphql",
-        "text": "{\"query\":\"query Task($input: TaskQueryInput!) {\\n  Task(input: $input) {\\n    data {\\n      id\\n      name\\n      status\\n      archived\\n      company_id\\n\\t\\t\\tproject_id\\n    }\\n  }\\n}\\n\",\"variables\":{\"input\":{\"paging\":{},\"query\":{\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\"}}},\"operationName\":\"Task\"}"
+        "text": "{\"query\":\"query Task($input: TaskQueryInput!) {\\n  Task(input: $input) {\\n    data {\\n      id\\n      name\\n      status\\n      archived\\n      company_id\\n\\t\\t\\tproject_id\\n\\t\\t\\tusers{\\n\\t\\t\\t\\tid\\n\\t\\t\\t}\\n    }\\n  }\\n}\\n\",\"variables\":{\"input\":{\"paging\":{},\"query\":{\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\"}}},\"operationName\":\"Task\"}"
       },
       "parameters": [],
       "headers": [
@@ -1593,7 +1593,7 @@
     {
       "_id": "req_0662bf3e84ee4e79900677a872b06442",
       "parentId": "fld_2f7c9f73ae9c4db6994b3a0ec37ef915",
-      "modified": 1649233643701,
+      "modified": 1651639382732,
       "created": 1648720867389,
       "url": "{{ api_url }}/{{ version }}/graphql",
       "name": "GetAssignedTasks",
@@ -1601,7 +1601,7 @@
       "method": "POST",
       "body": {
         "mimeType": "application/graphql",
-        "text": "{\"query\":\"query AssignedUser($input: AssignedUserQueryInput) {\\n  AssignedUser(input: $input) {\\nid\\n      }\\n} \",\"variables\":{\"input\":{\"id\":\"404b5ccb-db41-4150-8a53-76b25bdab41f\",\"company_id\":\"{% response 'body', 'req_23b94e00d43949c8af5462e9bac89dbd', 'b64::JC5kYXRhLkNvbXBhbnlDcmVhdGUuaWQ=::46b', 'never', 60 %}\"}},\"operationName\":\"AssignedUser\"}"
+        "text": "{\"query\":\"query AssignedUser($input: AssignedUserQueryInput) {\\n  AssignedUser(input: $input) {\\nid\\n      }\\n} \",\"variables\":{\"input\":{\"id\":\"f103a375-69e3-4708-989a-dfe1389bbadd\",\"company_id\":\"{% response 'body', 'req_23b94e00d43949c8af5462e9bac89dbd', 'b64::JC5kYXRhLkNvbXBhbnlDcmVhdGUuaWQ=::46b', 'never', 60 %}\"}},\"operationName\":\"AssignedUser\"}"
       },
       "parameters": [],
       "headers": [
@@ -1838,7 +1838,7 @@
     {
       "_id": "req_7891357ab736456a8e14b348b31135d3",
       "parentId": "fld_e864bd8433684c93a335724143ac8a23",
-      "modified": 1650879658644,
+      "modified": 1651642763281,
       "created": 1647846264731,
       "url": "{{ api_url }}/{{ version }}/graphql",
       "name": "CompanyLogin",
@@ -1919,22 +1919,22 @@
     {
       "_id": "jar_2121b271f08ea9ff6a364be633b863d913907d01",
       "parentId": "wrk_4360c7a0bbfa403c86be07deeb666c4c",
-      "modified": 1650879660014,
+      "modified": 1651642763862,
       "created": 1646649800465,
       "name": "Default Jar",
       "cookies": [
         {
-          "creation": "2022-03-16T07:43:51.090Z",
-          "domain": "localhost",
-          "expires": "2022-05-02T09:41:00.000Z",
-          "hostOnly": true,
-          "httpOnly": true,
-          "id": "5774764506763177",
           "key": "refreshToken",
-          "lastAccessed": "2022-04-25T09:41:00.012Z",
+          "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImVkMzExNWFhLTc0ZDAtNGQ2My1iZTE0LTJmMDg2OGFhNjc5NyIsInJvbGVzIjpbIjMxMTg1MTRmLTQwMjMtNDg5Zi1hODMwLTVmZDFkZjVjYjViZCJdLCJpYXQiOjE2NTE2NDI3NjMsImV4cCI6MTY1MjI0NzU2M30.fiZ2a05Czd7VKOtiNSlrb12W3pEGPelvPGQfrBrJK9I",
+          "expires": "2022-05-11T05:39:23.000Z",
           "maxAge": 604800,
+          "domain": "localhost",
           "path": "/",
-          "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjFlMmViZjBiLTUxNjAtNDg0ZC1hY2Y5LTM5YzBlZTZjNjY3NiIsInJvbGVzIjpbImE2YzlkOTM2LWU0MTUtNDE3Zi1hZjM1LTI3MWUyZWJmMmMxNSJdLCJpYXQiOjE2NTA4Nzk2NTksImV4cCI6MTY1MTQ4NDQ1OX0.fUeVsyB41gnFiCS21rcWIgMxzH865UFNO8xdAkNTzmU"
+          "httpOnly": true,
+          "hostOnly": true,
+          "creation": "2022-03-16T07:43:51.090Z",
+          "lastAccessed": "2022-05-04T05:39:23.861Z",
+          "id": "3443784379717918"
         }
       ],
       "_type": "cookie_jar"

@@ -14,7 +14,7 @@ import Project from '../../entities/project.entity';
 import { ITimesheet } from '../../interfaces/timesheet.interface';
 import Timesheet from '../../entities/timesheet.entity';
 import { IUserPayRate } from '../../interfaces/user-payrate.interface';
-import UserPayRate from '../../entities/user_payrate.entity';
+import UserPayRate from '../../entities/user-payrate.entity';
 
 const role = new Role();
 role.name = RoleEnum.SuperAdmin;

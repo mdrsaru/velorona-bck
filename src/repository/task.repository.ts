@@ -3,6 +3,7 @@ import { merge } from 'lodash';
 import { getRepository, getManager } from 'typeorm';
 import strings from '../config/strings';
 import Task from '../entities/task.entity';
+import User from '../entities/user.entity';
 import { IEntityID } from '../interfaces/common.interface';
 import { ICompanyRepository } from '../interfaces/company.interface';
 import { IProjectRepository } from '../interfaces/project.interface';
@@ -92,7 +93,6 @@ export default class TaskRepository extends BaseRepository<Task> implements ITas
       const manager_id = args.manager_id;
       const company_id = args.company_id;
       const project_id = args.project_id;
-      const user_ids = args.user_ids;
 
       const found = await this.getById({ id });
 
@@ -100,14 +100,6 @@ export default class TaskRepository extends BaseRepository<Task> implements ITas
         throw new NotFoundError({
           details: ['Task not found'],
         });
-      }
-
-      if (user_ids) {
-        const arg = {
-          user_id: user_ids,
-          task_id: id,
-        };
-        await this.assignTask(arg);
       }
 
       const update = merge(found, {
