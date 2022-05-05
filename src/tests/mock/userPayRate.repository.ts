@@ -1,7 +1,7 @@
 import { injectable } from 'inversify';
 import { find } from 'lodash';
 import strings from '../../config/strings';
-import UserPayRate from '../../entities/user_payrate.entity';
+import UserPayRate from '../../entities/user-payrate.entity';
 import { IEntityID, IEntityRemove, ISingleEntityQuery } from '../../interfaces/common.interface';
 import { IGetAllAndCountResult, IPagingArgs } from '../../interfaces/paging.interface';
 import {

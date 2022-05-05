@@ -15,7 +15,7 @@ import Workschedule from './workschedule.entity';
 import { userRolesTable } from '../config/db/columns';
 import UserRecord from './user-record.entity';
 import Timesheet from './timesheet.entity';
-import UserPayRate from './user_payrate.entity';
+import UserPayRate from './user-payrate.entity';
 
 registerEnumType(UserStatus, {
   name: 'UserStatus',

@@ -12,7 +12,7 @@ import {
   IUserPayRateService,
   IUserPayRateUpdateInput,
 } from '../interfaces/user-payrate.interface';
-import UserPayRate from '../entities/user_payrate.entity';
+import UserPayRate from '../entities/user-payrate.entity';
 
 @injectable()
 export default class UserPayRateService implements IUserPayRateService {

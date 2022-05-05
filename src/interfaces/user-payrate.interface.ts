@@ -1,6 +1,6 @@
 import { IPagingArgs, IGetAllAndCountResult, IPaginationData } from './paging.interface';
 import { IEntityRemove, IEntityID } from './common.interface';
-import UserPayRate from '../entities/user_payrate.entity';
+import UserPayRate from '../entities/user-payrate.entity';
 
 export interface IUserPayRate {
   id: string;
