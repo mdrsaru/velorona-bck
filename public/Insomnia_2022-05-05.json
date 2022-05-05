@@ -1,7 +1,7 @@
 {
   "_type": "export",
   "__export_format": 4,
-  "__export_date": "2022-05-05T08:32:41.731Z",
+  "__export_date": "2022-05-05T11:12:49.684Z",
   "__export_source": "insomnia.desktop.app:v2020.3.3",
   "resources": [
     {
@@ -322,7 +322,7 @@
       "isPrivate": false,
       "metaSortKey": -1646649815946,
       "method": "POST",
-      "modified": 1651735343720,
+      "modified": 1651744290695,
       "name": "ClientCreate",
       "parameters": [],
       "parentId": "fld_b3fbec9fe515490584ed85e0b519e1fc",
@@ -1181,7 +1181,7 @@
       "isPrivate": false,
       "metaSortKey": -1646649815946,
       "method": "POST",
-      "modified": 1651735457084,
+      "modified": 1651744297031,
       "name": "ProjectCreate",
       "parameters": [],
       "parentId": "fld_fbe855c4a4d44dcd95c633c17718429c",
@@ -1233,7 +1233,7 @@
       },
       "body": {
         "mimeType": "application/graphql",
-        "text": "{\"query\":\"query TimeEntry($input: TimeEntryQueryInput!) {\\n  TimeEntry(input: $input) {\\n    paging {\\n      total\\n      startIndex\\n      endIndex\\n      hasNextPage\\n    }\\n    data {\\n      id\\n      clientLocation\\n      start\\n      end\\n      company {\\n        id\\n        name\\n      }\\n      approver {\\n        firstName\\n      }\\n      project {\\n        id\\n        name\\n      }\\n    }\\n  }\\n}\\n\",\"variables\":{\"input\":{\"query\":{\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\"}}},\"operationName\":\"TimeEntry\"}"
+        "text": "{\"query\":\"query TimeEntry($input: TimeEntryQueryInput!) {\\n  TimeEntry(input: $input) {\\n    paging {\\n      total\\n      startIndex\\n      endIndex\\n      hasNextPage\\n    }\\n    data {\\n      id\\n      clientLocation\\n      start\\n      end\\n      company {\\n        id\\n        name\\n      }\\n      approver {\\n        firstName\\n      }\\n      project {\\n        id\\n        name\\n      }\\n    }\\n  }\\n}\\n\",\"variables\":{\"input\":{\"paging\":{\"order\":[\"start:DESC\"]},\"query\":{\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\"}}},\"operationName\":\"TimeEntry\"}"
       },
       "created": 1650358353327,
       "description": "",
@@ -1243,7 +1243,7 @@
       "isPrivate": false,
       "metaSortKey": -1646649815996,
       "method": "POST",
-      "modified": 1651738433394,
+      "modified": 1651748803862,
       "name": "TimeEntry",
       "parameters": [],
       "parentId": "fld_4b51c186049444bb8c795b2ddc65239f",
@@ -1286,7 +1286,7 @@
       "isPrivate": false,
       "metaSortKey": -1646649815971,
       "method": "POST",
-      "modified": 1651738414932,
+      "modified": 1651745813267,
       "name": "TimeEntryWeeklyDetails",
       "parameters": [],
       "parentId": "fld_4b51c186049444bb8c795b2ddc65239f",
@@ -1307,7 +1307,7 @@
       },
       "body": {
         "mimeType": "application/graphql",
-        "text": "{\"query\":\"mutation TimeEntryCreate($input: TimeEntryCreateInput!) {\\n  TimeEntryCreate(input: $input) {\\n    id\\n\\t\\tproject{\\n\\t\\t\\tid\\n\\t\\t\\tname\\n\\t\\t}\\n\\t\\tapprover{\\n\\t\\t\\tid\\n\\t\\t\\tfullName\\n\\t\\t}\\n\\t\\tcompany{\\n\\t\\t\\tid\\n\\t\\t\\tname\\n\\t\\t}\\n\\t\\tcreated_by\\n  }\\n}\\n\",\"variables\":{\"input\":{\"task_id\":\"{% response 'body', 'req_9161a44aa9394a7dae13cba1d1bb11e1', 'b64::JC5kYXRhLlRhc2tDcmVhdGUuaWQ=::46b', 'never', 60 %}\",\"clientLocation\":\"Lalitpur\",\"project_id\":\"{% response 'body', 'req_031f86964d3f4b09aada9dfb951fc7dc', 'b64::JC5kYXRhLlByb2plY3RDcmVhdGUuaWQ=::46b', 'never', 60 %}\",\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\",\"start\":\"2022-05-05T11:44:00\",\"end\":\"2022-05-05T11:45:00\"}},\"operationName\":\"TimeEntryCreate\"}"
+        "text": "{\"query\":\"mutation TimeEntryCreate($input: TimeEntryCreateInput!) {\\n  TimeEntryCreate(input: $input) {\\n    id\\n    start\\n    end\\n    duration\\n\\t\\tproject{\\n\\t\\t\\tid\\n\\t\\t\\tname\\n\\t\\t}\\n\\t\\tapprover{\\n\\t\\t\\tid\\n\\t\\t\\tfullName\\n\\t\\t}\\n\\t\\tcompany{\\n\\t\\t\\tid\\n\\t\\t\\tname\\n\\t\\t}\\n\\t\\tcreated_by\\n  }\\n}\\n\",\"variables\":{\"input\":{\"task_id\":\"{% response 'body', 'req_9161a44aa9394a7dae13cba1d1bb11e1', 'b64::JC5kYXRhLlRhc2tDcmVhdGUuaWQ=::46b', 'never', 60 %}\",\"clientLocation\":\"Lalitpur\",\"project_id\":\"{% response 'body', 'req_031f86964d3f4b09aada9dfb951fc7dc', 'b64::JC5kYXRhLlByb2plY3RDcmVhdGUuaWQ=::46b', 'never', 60 %}\",\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\",\"start\":\"2022-05-05T11:44:00\"}},\"operationName\":\"TimeEntryCreate\"}"
       },
       "created": 1650358353306,
       "description": "",
@@ -1317,7 +1317,7 @@
       "isPrivate": false,
       "metaSortKey": -1646649815946,
       "method": "POST",
-      "modified": 1651738500086,
+      "modified": 1651748879658,
       "name": "TimeEntryCreate",
       "parameters": [],
       "parentId": "fld_4b51c186049444bb8c795b2ddc65239f",
@@ -1338,7 +1338,7 @@
       },
       "body": {
         "mimeType": "application/graphql",
-        "text": "{\"query\":\"mutation TimeEntryUpdate($input: TimeEntryUpdateInput!) {\\n  TimeEntryUpdate(input: $input) {\\n    id\\n    company_id\\n  }\\n}\\n\",\"variables\":{\"input\":{\"id\":\"{% response 'body', 'req_073074e16d8b483b92800d6916c33625', 'b64::JC5kYXRhLlRpbWVFbnRyeUNyZWF0ZS5pZA==::46b', 'never', 60 %}\",\"company_id\":\"{% response 'body', 'req_031f86964d3f4b09aada9dfb951fc7dc', 'b64::JC5kYXRhLlByb2plY3RDcmVhdGUuY29tcGFueS5pZA==::46b', 'never', 60 %}\"}},\"operationName\":\"TimeEntryUpdate\"}"
+        "text": "{\"query\":\"mutation TimeEntryUpdate($input: TimeEntryUpdateInput!) {\\n  TimeEntryUpdate(input: $input) {\\n    id\\n    company_id\\n    start\\n    end\\n    duration\\n  }\\n}\\n\",\"variables\":{\"input\":{\"id\":\"{% response 'body', 'req_073074e16d8b483b92800d6916c33625', 'b64::JC5kYXRhLlRpbWVFbnRyeUNyZWF0ZS5pZA==::46b', 'never', 60 %}\",\"company_id\":\"{% response 'body', 'req_031f86964d3f4b09aada9dfb951fc7dc', 'b64::JC5kYXRhLlByb2plY3RDcmVhdGUuY29tcGFueS5pZA==::46b', 'never', 60 %}\"}},\"operationName\":\"TimeEntryUpdate\"}"
       },
       "created": 1650358353334,
       "description": "",
@@ -1348,8 +1348,39 @@
       "isPrivate": false,
       "metaSortKey": -1646634883848.918,
       "method": "POST",
-      "modified": 1651739343424,
+      "modified": 1651748325387,
       "name": "TimeEntryUpdate",
+      "parameters": [],
+      "parentId": "fld_4b51c186049444bb8c795b2ddc65239f",
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingFollowRedirects": "global",
+      "settingRebuildPath": true,
+      "settingSendCookies": true,
+      "settingStoreCookies": true,
+      "url": "{{ api_url }}/{{ version }}/graphql",
+      "_type": "request"
+    },
+    {
+      "_id": "req_b9a21c3f5a0541d581629e964af040f5",
+      "authentication": {
+        "token": "{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLnRva2Vu::46b', 'never', 60 %}",
+        "type": "bearer"
+      },
+      "body": {
+        "mimeType": "application/graphql",
+        "text": "{\"query\":\"mutation TimeEntryStop($input: TimeEntryStopInput!) {\\n  TimeEntryStop(input: $input) {\\n    id\\n    start\\n    end\\n    duration\\n  }\\n}\",\"variables\":{\"input\":{\"id\":\"{% response 'body', 'req_073074e16d8b483b92800d6916c33625', 'b64::JC5kYXRhLlRpbWVFbnRyeUNyZWF0ZS5pZA==::46b', 'never', 60 %}\",\"company_id\":\"{% response 'body', 'req_031f86964d3f4b09aada9dfb951fc7dc', 'b64::JC5kYXRhLlByb2plY3RDcmVhdGUuY29tcGFueS5pZA==::46b', 'never', 60 %}\",\"end\":\"2022-05-05T16:54:38\"}},\"operationName\":\"TimeEntryStop\"}"
+      },
+      "created": 1651745824669,
+      "description": "",
+      "headers": [
+        { "id": "pair_5785fa0d281e4c5980ec45d40cc212a4", "name": "Content-Type", "value": "application/json" }
+      ],
+      "isPrivate": false,
+      "metaSortKey": -1646634883823.918,
+      "method": "POST",
+      "modified": 1651748905627,
+      "name": "TimeEntryStop",
       "parameters": [],
       "parentId": "fld_4b51c186049444bb8c795b2ddc65239f",
       "settingDisableRenderRequestBody": false,
@@ -1379,7 +1410,7 @@
       "isPrivate": false,
       "metaSortKey": -1646634883798.918,
       "method": "POST",
-      "modified": 1651739370280,
+      "modified": 1651748230576,
       "name": "TimeEntryDelete",
       "parameters": [],
       "parentId": "fld_4b51c186049444bb8c795b2ddc65239f",
@@ -1546,7 +1577,7 @@
       "isPrivate": false,
       "metaSortKey": -1646649815946,
       "method": "POST",
-      "modified": 1651470429084,
+      "modified": 1651744307203,
       "name": "TaskCreate",
       "parameters": [],
       "parentId": "fld_2f7c9f73ae9c4db6994b3a0ec37ef915",
@@ -1899,7 +1930,7 @@
       "isPrivate": false,
       "metaSortKey": -1646649815946,
       "method": "POST",
-      "modified": 1651492200037,
+      "modified": 1651744157704,
       "name": "Login",
       "parameters": [],
       "parentId": "fld_e864bd8433684c93a335724143ac8a23",
@@ -1955,7 +1986,7 @@
       "isPrivate": false,
       "metaSortKey": -1646410902392.6875,
       "method": "POST",
-      "modified": 1651657677170,
+      "modified": 1651744267325,
       "name": "CompanyLogin",
       "parameters": [],
       "parentId": "fld_e864bd8433684c93a335724143ac8a23",
@@ -1965,7 +1996,7 @@
       "settingRebuildPath": true,
       "settingSendCookies": true,
       "settingStoreCookies": true,
-      "url": "invo",
+      "url": "{{ api_url }}/{{ version }}/graphql",
       "_type": "request"
     },
     {
@@ -2027,19 +2058,19 @@
         {
           "creation": "2022-03-16T07:43:51.090Z",
           "domain": "localhost",
-          "expires": "2022-05-11T09:47:54.000Z",
+          "expires": "2022-05-12T09:51:07.000Z",
           "hostOnly": true,
           "httpOnly": true,
-          "id": "5199581410123228",
+          "id": "8059036772685311",
           "key": "refreshToken",
-          "lastAccessed": "2022-05-04T09:47:54.800Z",
+          "lastAccessed": "2022-05-05T09:51:07.225Z",
           "maxAge": 604800,
           "path": "/",
-          "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImJmZmI1YmYyLWI3ZDQtNDhjYy1iZTI5LTM2ZjJiYTM2YmVhMyIsInJvbGVzIjpbIjE0MmNkYjg2LTZlNTctNDM5ZS05MzY0LTY5NzI0ZTJiOGI0YiJdLCJpYXQiOjE2NTE2NTc2NzQsImV4cCI6MTY1MjI2MjQ3NH0.VY8DEibbGyLq6fryqXw1hMNwmCJxVt9WK_-Ne6jp_yA"
+          "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjlhNjBjOTA5LThkYTktNDAyYi04NzkzLWYyMTEzNmVkZjkzMyIsInJvbGVzIjpbIjBjZGIyNTA0LTFkYWMtNDYzMy04OTRmLWQzOTYxZWNjMmMwZCJdLCJpYXQiOjE2NTE3NDQyNjcsImV4cCI6MTY1MjM0OTA2N30.l5qJE4yJMd4Bzb1EZVTSPlv1uCTEz4oDjq3Lk-nsaCs"
         }
       ],
       "created": 1646649800465,
-      "modified": 1651657674803,
+      "modified": 1651744267235,
       "name": "Default Jar",
       "parentId": "wrk_4360c7a0bbfa403c86be07deeb666c4c",
       "_type": "cookie_jar"
