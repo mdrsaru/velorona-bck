@@ -11,8 +11,8 @@ import Role from '../../entities/role.entity';
 import Company from '../../entities/company.entity';
 import Invitation from '../../entities/invitation.entity';
 import Project from '../../entities/project.entity';
-import { ITimesheet } from '../../interfaces/timesheet.interface';
-import Timesheet from '../../entities/timesheet.entity';
+import { ITimeEntry } from '../../interfaces/time-entry.interface';
+import TimeEntry from '../../entities/time-entry.entity';
 import { IUserPayRate } from '../../interfaces/user-payrate.interface';
 import UserPayRate from '../../entities/user-payrate.entity';
 
@@ -150,7 +150,7 @@ export let projects = _projects.map((project) => {
   return _project;
 });
 
-const _timesheets: ITimesheet[] = [
+const _timeEntries: ITimeEntry[] = [
   {
     id: 'aed11edc-4c05-4731-8676-72e105eea64d',
     start: new Date(),
@@ -170,18 +170,18 @@ const _timesheets: ITimesheet[] = [
   },
 ];
 
-export let timesheets = _timesheets.map((timesheet) => {
-  const _timesheet: any = new Timesheet();
-  _timesheet.id = timesheet.id;
-  _timesheet.clientLocation = timesheet.clientLocation;
-  _timesheet.project_id = timesheet.project_id;
-  _timesheet.approver_id = timesheet.approver_id;
-  _timesheet.created_by = timesheet.created_by;
-  _timesheet.company_id = timesheet.company_id;
-  _timesheet.createdAt = timesheet.createdAt;
-  _timesheet.updatedAt = timesheet.updatedAt;
+export let timeEntries = _timeEntries.map((timeEntry) => {
+  const _timeEntry: any = new TimeEntry();
+  _timeEntry.id = timeEntry.id;
+  _timeEntry.clientLocation = timeEntry.clientLocation;
+  _timeEntry.project_id = timeEntry.project_id;
+  _timeEntry.approver_id = timeEntry.approver_id;
+  _timeEntry.created_by = timeEntry.created_by;
+  _timeEntry.company_id = timeEntry.company_id;
+  _timeEntry.createdAt = timeEntry.createdAt;
+  _timeEntry.updatedAt = timeEntry.updatedAt;
 
-  return _timesheet;
+  return _timeEntry;
 });
 
 const _userPayRate: IUserPayRate[] = [

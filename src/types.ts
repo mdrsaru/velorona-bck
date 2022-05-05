@@ -60,10 +60,10 @@ const PROJECT = {
   ProjectController: Symbol('ProjectController'),
 };
 
-const TIMESHEET = {
-  TimesheetRepository: Symbol('TimesheetRepository'),
-  TimesheetService: Symbol('TimesheetService'),
-  TimesheetController: Symbol('TimesheetController'),
+const TIME_ENTRY = {
+  TimeEntryRepository: Symbol('TimeEntryRepository'),
+  TimeEntryService: Symbol('TimeEntryService'),
+  TimeEntryController: Symbol('TimeEntryController'),
 };
 
 const USERCLIENT = {
@@ -125,7 +125,7 @@ const TYPES = {
   ...TASK_ASSIGNMENT,
   ...PROJECT,
   ...WORKSCHEDULE,
-  ...TIMESHEET,
+  ...TIME_ENTRY,
   ...USERCLIENT,
   ...CLIENT,
   ...USERPAYRATE,

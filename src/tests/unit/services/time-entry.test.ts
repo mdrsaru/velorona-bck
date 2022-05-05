@@ -1,23 +1,23 @@
 import { IErrorService, ILogger } from '../../../interfaces/common.interface';
 import {
-  ITimesheetCreateInput,
-  ITimesheetRepository,
-  ITimesheetService,
-  ITimesheetUpdateInput,
-} from '../../../interfaces/timesheet.interface';
+  ITimeEntryCreateInput,
+  ITimeEntryRepository,
+  ITimeEntryService,
+  ITimeEntryUpdateInput,
+} from '../../../interfaces/time-entry.interface';
 import container from '../../../inversify.config';
 import * as apiError from '../../../utils/api-error';
 import { TYPES } from '../../../types';
-import { timesheets } from '../../mock/data';
-import TimesheetRepository from '../../mock//timesheet.repository';
+import { timeEntries } from '../../mock/data';
+import TimeEntryRepository from '../../mock//time-entry.repository';
 
-describe('Timesheet Service', () => {
-  let timesheetService: ITimesheetService;
+describe('TimeEntry Service', () => {
+  let timeEntryService: ITimeEntryService;
   let errorService: IErrorService;
   let logger: ILogger;
   beforeAll(() => {
-    container.rebind<ITimesheetRepository>(TYPES.TimesheetRepository).to(TimesheetRepository);
-    timesheetService = container.get<ITimesheetService>(TYPES.TimesheetService);
+    container.rebind<ITimeEntryRepository>(TYPES.TimeEntryRepository).to(TimeEntryRepository);
+    timeEntryService = container.get<ITimeEntryService>(TYPES.TimeEntryService);
     errorService = container.get<IErrorService>(TYPES.ErrorService);
   });
 
@@ -27,20 +27,20 @@ describe('Timesheet Service', () => {
 
   describe('getAllAndCount', () => {
     it('should have a defined project service instance', () => {
-      expect(timesheetService).toBeDefined();
+      expect(timeEntryService).toBeDefined();
     });
 
     it('should return projects with pagination', async () => {
-      const _timesheets = await timesheetService.getAllAndCount({});
+      const _timeEntries = await timeEntryService.getAllAndCount({});
 
-      expect(_timesheets).toBeDefined();
-      expect(_timesheets.data.length).toBe(timesheets.length);
+      expect(_timeEntries).toBeDefined();
+      expect(_timeEntries.data.length).toBe(timeEntries.length);
     });
   });
 
   describe('create', () => {
     it('should create a new task', async () => {
-      const args: ITimesheetCreateInput = {
+      const args: ITimeEntryCreateInput = {
         start: new Date(),
         end: new Date(),
         clientLocation: 'Lalitpur',
@@ -50,11 +50,11 @@ describe('Timesheet Service', () => {
         created_by: '26124a58-9167-45eb-a3b3-13163f263309',
       };
 
-      const timesheet = await timesheetService.create(args);
+      const timeEntry = await timeEntryService.create(args);
 
-      expect(timesheet).toBeDefined();
+      expect(timeEntry).toBeDefined();
 
-      expect(timesheet.id).toBeDefined();
+      expect(timeEntry.id).toBeDefined();
     });
   });
 
@@ -62,7 +62,7 @@ describe('Timesheet Service', () => {
     it('should throw not found error', async () => {
       const id = 'random uuid';
 
-      const update: ITimesheetUpdateInput = {
+      const update: ITimeEntryUpdateInput = {
         id,
         clientLocation: 'Bhaktapur',
       };
@@ -70,7 +70,7 @@ describe('Timesheet Service', () => {
       let error: any;
 
       try {
-        const updated = await timesheetService.update(update);
+        const updated = await timeEntryService.update(update);
       } catch (err) {
         error = err;
       }
@@ -79,7 +79,7 @@ describe('Timesheet Service', () => {
     });
 
     it('should update an existing task', async () => {
-      const args: ITimesheetCreateInput = {
+      const args: ITimeEntryCreateInput = {
         start: new Date(),
         end: new Date(),
         clientLocation: 'Lalitpur',
@@ -89,16 +89,16 @@ describe('Timesheet Service', () => {
         created_by: '26124a58-9167-45eb-a3b3-13163f263309',
       };
 
-      const task = await timesheetService.create(args);
+      const task = await timeEntryService.create(args);
 
       const id = task.id;
 
-      const update: ITimesheetUpdateInput = {
+      const update: ITimeEntryUpdateInput = {
         id,
         clientLocation: 'Bhaktapur',
       };
 
-      const updated = await timesheetService.update(update);
+      const updated = await timeEntryService.update(update);
 
       expect(updated).toBeDefined();
 

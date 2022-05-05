@@ -9,7 +9,7 @@ import { InvitationResolver } from './resolvers/invitation.resolver';
 import { TaskResolver } from './resolvers/task.resolver';
 import { ProjectResolver } from './resolvers/project.resolver';
 import { WorkscheduleResolver } from './resolvers/workschedule.resolver';
-import { TimesheetResolver } from './resolvers/timesheet.resolver';
+import { TimeEntryResolver } from './resolvers/time-entry.resolver';
 import { UserClientResolver } from './resolvers/user-client.resolver';
 import { ClientResolver } from './resolvers/client.resolver';
 import { InvoiceResolver } from './resolvers/invoice.resolver';
@@ -29,7 +29,7 @@ export default buildSchema({
     TaskResolver,
     ProjectResolver,
     WorkscheduleResolver,
-    TimesheetResolver,
+    TimeEntryResolver,
     UserClientResolver,
     ClientResolver,
     UserPayRateResolver,

@@ -6,7 +6,7 @@ import User from './user.entity';
 import Company from './company.entity';
 import { Base } from './base.entity';
 import { PagingInput, PagingResult } from './common.entity';
-import Timesheet from './timesheet.entity';
+import TimeEntry from './time-entry.entity';
 import Task from './task.entity';
 import Client from './client.entity';
 import UserPayRate from './user-payrate.entity';
@@ -36,9 +36,9 @@ export default class Project extends Base {
   @Column()
   client_id: string;
 
-  @Field(() => Timesheet, { nullable: true, description: 'Field for timesheet' })
-  @OneToMany(() => Timesheet, (timesheet) => timesheet.project)
-  timesheet: Timesheet[];
+  @Field(() => TimeEntry, { nullable: true, description: 'Field for timeEntry' })
+  @OneToMany(() => TimeEntry, (timeEntry) => timeEntry.project)
+  timeEntry: TimeEntry[];
 
   @Field(() => Task, { nullable: true, description: 'Field for Task' })
   @OneToMany(() => Task, (task) => task.project)

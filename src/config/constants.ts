@@ -57,7 +57,7 @@ export const entities = {
   projects: 'projects',
   workschedule: 'workschedule',
   userRoles: 'user_roles',
-  timesheet: 'timesheet',
+  timeEntry: 'time_entry',
   clients: 'clients',
   usersClients: 'users_clients',
   userPayRate: 'user_payrate',

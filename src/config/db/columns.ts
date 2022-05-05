@@ -8,7 +8,7 @@ export const userRolesTable = {
   role_id: 'role_id',
 };
 
-export const timesheet = {
+export const timeEntry = {
   project_id: 'project_id',
   approver_id: 'approver_id',
   company_id: 'company_id',

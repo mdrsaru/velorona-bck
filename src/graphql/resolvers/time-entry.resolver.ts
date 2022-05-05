@@ -5,64 +5,64 @@ import { Arg, Ctx, FieldResolver, Mutation, Query, Resolver, Root, UseMiddleware
 import { TYPES } from '../../types';
 import strings from '../../config/strings';
 import * as apiError from '../../utils/api-error';
-import Timesheet, {
-  StopTimesheetInput,
-  TimesheetCreateInput,
-  TimesheetPagingResult,
-  TimesheetQueryInput,
-  TimesheetUpdateInput,
-  TimesheetWeeklyDetailsInput,
-} from '../../entities/timesheet.entity';
-import { DeleteInput } from '../../entities/common.entity';
+import TimeEntry, {
+  StopTimeEntryInput,
+  TimeEntryCreateInput,
+  TimeEntryPagingResult,
+  TimeEntryQueryInput,
+  TimeEntryUpdateInput,
+  TimeEntryWeeklyDetailsInput,
+  TimeEntryDeleteInput,
+} from '../../entities/time-entry.entity';
 import Paging from '../../utils/paging';
 import authenticate from '../middlewares/authenticate';
 import { checkCompanyAccess } from '../middlewares/company';
 import authorize from '../middlewares/authorize';
-import TimesheetValidation from '../../validation/timesheet.validation';
+import TimeEntryValidation from '../../validation/time-entry.validation';
 import { Role as RoleEnum } from '../../config/constants';
 
 import { IErrorService, IJoiService } from '../../interfaces/common.interface';
 import { IPaginationData } from '../../interfaces/paging.interface';
-import { ITimesheetService } from '../../interfaces/timesheet.interface';
+import { ITimeEntryService } from '../../interfaces/time-entry.interface';
 import { IGraphqlContext } from '../../interfaces/graphql.interface';
 
 @injectable()
-@Resolver((of) => Timesheet)
-export class TimesheetResolver {
-  private name = 'TimesheetResolver';
-  private timesheetService: ITimesheetService;
+@Resolver((of) => TimeEntry)
+export class TimeEntryResolver {
+  private name = 'TimeEntryResolver';
+  private timeEntryService: ITimeEntryService;
   private joiService: IJoiService;
   private errorService: IErrorService;
 
   constructor(
-    @inject(TYPES.TimesheetService) timesheetService: ITimesheetService,
+    @inject(TYPES.TimeEntryService) timeEntryService: ITimeEntryService,
     @inject(TYPES.JoiService) joiService: IJoiService,
     @inject(TYPES.ErrorService) errorService: IErrorService
   ) {
-    this.timesheetService = timesheetService;
+    this.timeEntryService = timeEntryService;
     this.joiService = joiService;
     this.errorService = errorService;
   }
 
-  @Query((returns) => TimesheetPagingResult)
+  @Query((returns) => TimeEntryPagingResult)
   @UseMiddleware(authenticate, checkCompanyAccess)
-  async Timesheet(
-    @Arg('input') args: TimesheetQueryInput,
+  async TimeEntry(
+    @Arg('input') args: TimeEntryQueryInput,
     @Ctx() ctx: IGraphqlContext
-  ): Promise<IPaginationData<Timesheet>> {
-    const operation = 'Timesheets';
+  ): Promise<IPaginationData<TimeEntry>> {
+    const operation = 'TimeEntrys';
 
     try {
       const created_by = args?.query?.created_by;
 
-      // Show timesheet of the logged in users if created_by is not provided
+      // Show timeEntry of the logged in users if created_by is not provided
       if (!created_by) {
         set(args, 'query.created_by', ctx?.user?.id);
       }
 
       const pagingArgs = Paging.createPagingPayload(args);
 
-      let result: IPaginationData<Timesheet> = await this.timesheetService.getAllAndCount(pagingArgs);
+      let result: IPaginationData<TimeEntry> = await this.timeEntryService.getAllAndCount(pagingArgs);
 
       return result;
     } catch (err) {
@@ -75,13 +75,13 @@ export class TimesheetResolver {
     }
   }
 
-  @Query((returns) => [Timesheet])
+  @Query((returns) => [TimeEntry])
   @UseMiddleware(authenticate, checkCompanyAccess)
-  async TimesheetWeeklyDetails(
-    @Arg('input') args: TimesheetWeeklyDetailsInput,
+  async TimeEntryWeeklyDetails(
+    @Arg('input') args: TimeEntryWeeklyDetailsInput,
     @Ctx() ctx: IGraphqlContext
-  ): Promise<Timesheet[]> {
-    const operation = 'TimesheetWeeklyDetails';
+  ): Promise<TimeEntry[]> {
+    const operation = 'TimeEntryWeeklyDetails';
 
     try {
       const start = args.start;
@@ -89,12 +89,12 @@ export class TimesheetResolver {
       const company_id = args.company_id;
       let created_by = args?.created_by;
 
-      // Show timesheet of the logged in users if created_by is not provided
+      // Show timeEntry of the logged in users if created_by is not provided
       if (!created_by) {
         created_by = ctx?.user?.id ?? '';
       }
 
-      const schema = TimesheetValidation.weeklyDetails();
+      const schema = TimeEntryValidation.weeklyDetails();
       await this.joiService.validate({
         schema,
         input: {
@@ -116,14 +116,14 @@ export class TimesheetResolver {
         });
       }
 
-      const timesheet = await this.timesheetService.getWeeklyDetails({
+      const timeEntry = await this.timeEntryService.getWeeklyDetails({
         company_id,
         created_by,
         start,
         end,
       });
 
-      return timesheet;
+      return timeEntry;
     } catch (err) {
       this.errorService.throwError({
         err,
@@ -134,10 +134,10 @@ export class TimesheetResolver {
     }
   }
 
-  @Mutation((returns) => Timesheet)
+  @Mutation((returns) => TimeEntry)
   @UseMiddleware(authenticate, checkCompanyAccess)
-  async TimesheetCreate(@Arg('input') args: TimesheetCreateInput, @Ctx() ctx: any): Promise<Timesheet> {
-    const operation = 'TimesheetCreate';
+  async TimeEntryCreate(@Arg('input') args: TimeEntryCreateInput, @Ctx() ctx: any): Promise<TimeEntry> {
+    const operation = 'TimeEntryCreate';
 
     try {
       const start = args.start;
@@ -148,7 +148,7 @@ export class TimesheetResolver {
       const created_by = ctx.user.id;
       const task_id = args.task_id;
 
-      const schema = TimesheetValidation.create();
+      const schema = TimeEntryValidation.create();
       await this.joiService.validate({
         schema,
         input: {
@@ -162,7 +162,7 @@ export class TimesheetResolver {
         },
       });
 
-      let timesheet: Timesheet = await this.timesheetService.create({
+      let timeEntry: TimeEntry = await this.timeEntryService.create({
         start,
         end,
         clientLocation,
@@ -172,7 +172,7 @@ export class TimesheetResolver {
         task_id,
       });
 
-      return timesheet;
+      return timeEntry;
     } catch (err) {
       console.log(err, 'err');
       this.errorService.throwError({
@@ -184,15 +184,15 @@ export class TimesheetResolver {
     }
   }
 
-  @Mutation((returns) => Timesheet)
+  @Mutation((returns) => TimeEntry)
   @UseMiddleware(authenticate, checkCompanyAccess)
-  async StopTimesheet(@Arg('input') args: StopTimesheetInput): Promise<Timesheet> {
-    const operation = 'TimesheetCreate';
+  async StopTimeEntry(@Arg('input') args: StopTimeEntryInput): Promise<TimeEntry> {
+    const operation = 'TimeEntryCreate';
     try {
       const id = args.id;
       const end = args.end;
 
-      const schema = TimesheetValidation.stop();
+      const schema = TimeEntryValidation.stop();
       await this.joiService.validate({
         schema,
         input: {
@@ -201,12 +201,12 @@ export class TimesheetResolver {
         },
       });
 
-      let timesheet: Timesheet = await this.timesheetService.update({
+      let timeEntry: TimeEntry = await this.timeEntryService.update({
         id,
         end,
       });
 
-      return timesheet;
+      return timeEntry;
     } catch (err) {
       this.errorService.throwError({
         err,
@@ -217,14 +217,14 @@ export class TimesheetResolver {
     }
   }
 
-  @Mutation((returns) => Timesheet)
+  @Mutation((returns) => TimeEntry)
   @UseMiddleware(
     authenticate,
     authorize(RoleEnum.CompanyAdmin, RoleEnum.SuperAdmin, RoleEnum.Employee, RoleEnum.TaskManager),
     checkCompanyAccess
   )
-  async TimesheetUpdate(@Arg('input') args: TimesheetUpdateInput): Promise<Timesheet> {
-    const operation = 'TimesheetUpdate';
+  async TimeEntryUpdate(@Arg('input') args: TimeEntryUpdateInput): Promise<TimeEntry> {
+    const operation = 'TimeEntryUpdate';
     try {
       const id = args.id;
       const start = args.start;
@@ -236,7 +236,7 @@ export class TimesheetResolver {
       const created_by = args.created_by;
       const task_id = args.task_id;
 
-      const schema = TimesheetValidation.update();
+      const schema = TimeEntryValidation.update();
       await this.joiService.validate({
         schema,
         input: {
@@ -252,7 +252,7 @@ export class TimesheetResolver {
         },
       });
 
-      const timesheet: Timesheet = await this.timesheetService.update({
+      const timeEntry: TimeEntry = await this.timeEntryService.update({
         id,
         start,
         end,
@@ -264,7 +264,7 @@ export class TimesheetResolver {
         task_id,
       });
 
-      return timesheet;
+      return timeEntry;
     } catch (err) {
       this.errorService.throwError({
         err,
@@ -274,17 +274,21 @@ export class TimesheetResolver {
       });
     }
   }
-  @Mutation((returns) => Timesheet)
-  @UseMiddleware(authenticate)
-  async TimesheetDelete(@Arg('input') args: DeleteInput): Promise<Timesheet> {
+  @Mutation((returns) => TimeEntry)
+  @UseMiddleware(
+    authenticate,
+    authorize(RoleEnum.CompanyAdmin, RoleEnum.SuperAdmin, RoleEnum.Employee, RoleEnum.TaskManager),
+    checkCompanyAccess
+  )
+  async TimeEntryDelete(@Arg('input') args: TimeEntryDeleteInput): Promise<TimeEntry> {
     const operation = 'TaskDelete';
 
     try {
       const id = args.id;
 
-      let timesheet: Timesheet = await this.timesheetService.remove({ id });
+      let timeEntry: TimeEntry = await this.timeEntryService.remove({ id });
 
-      return timesheet;
+      return timeEntry;
     } catch (err) {
       this.errorService.throwError({
         err,
@@ -296,17 +300,17 @@ export class TimesheetResolver {
   }
 
   @FieldResolver()
-  company(@Root() root: Timesheet, @Ctx() ctx: IGraphqlContext) {
+  company(@Root() root: TimeEntry, @Ctx() ctx: IGraphqlContext) {
     return ctx.loaders.companyByIdLoader.load(root.company_id);
   }
 
   @FieldResolver()
-  project(@Root() root: Timesheet, @Ctx() ctx: IGraphqlContext) {
+  project(@Root() root: TimeEntry, @Ctx() ctx: IGraphqlContext) {
     return ctx.loaders.projectByIdLoader.load(root.project_id);
   }
 
   @FieldResolver()
-  approver(@Root() root: Timesheet, @Ctx() ctx: IGraphqlContext) {
+  approver(@Root() root: TimeEntry, @Ctx() ctx: IGraphqlContext) {
     if (root.approver_id) {
       return ctx.loaders.usersByIdLoader.load(root.approver_id);
     }
@@ -315,12 +319,12 @@ export class TimesheetResolver {
   }
 
   @FieldResolver()
-  creator(@Root() root: Timesheet, @Ctx() ctx: IGraphqlContext) {
+  creator(@Root() root: TimeEntry, @Ctx() ctx: IGraphqlContext) {
     return ctx.loaders.usersByIdLoader.load(root.created_by);
   }
 
   @FieldResolver()
-  task(@Root() root: Timesheet, @Ctx() ctx: IGraphqlContext) {
+  task(@Root() root: TimeEntry, @Ctx() ctx: IGraphqlContext) {
     return ctx.loaders.tasksByIdLoader.load(root.task_id);
   }
 }

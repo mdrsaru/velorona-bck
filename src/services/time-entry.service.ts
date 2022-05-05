@@ -3,39 +3,39 @@ import { inject, injectable } from 'inversify';
 
 import { TYPES } from '../types';
 import Paging from '../utils/paging';
-import Timesheet from '../entities/timesheet.entity';
+import TimeEntry from '../entities/time-entry.entity';
 
 import { IEntityRemove, IErrorService, ILogger } from '../interfaces/common.interface';
 import { IPaginationData, IPagingArgs } from '../interfaces/paging.interface';
 import {
-  ITimesheetCreateInput,
-  ITimesheetRepository,
-  ITimesheetService,
-  ITimeSheetStopInput,
-  ITimesheetUpdateInput,
-  ITimesheetWeeklyDetailsInput,
-} from '../interfaces/timesheet.interface';
+  ITimeEntryCreateInput,
+  ITimeEntryRepository,
+  ITimeEntryService,
+  ITimeEntryStopInput,
+  ITimeEntryUpdateInput,
+  ITimeEntryWeeklyDetailsInput,
+} from '../interfaces/time-entry.interface';
 
 @injectable()
-export default class TimesheetService implements ITimesheetService {
-  private name = 'TimesheetService';
-  private timesheetRepository: ITimesheetRepository;
+export default class TimeEntryService implements ITimeEntryService {
+  private name = 'TimeEntryService';
+  private timeEntryRepository: ITimeEntryRepository;
   private logger: ILogger;
   private errorService: IErrorService;
 
   constructor(
-    @inject(TYPES.TimesheetRepository) timesheetRepository: ITimesheetRepository,
+    @inject(TYPES.TimeEntryRepository) timeEntryRepository: ITimeEntryRepository,
     @inject(TYPES.LoggerFactory) loggerFactory: (name: string) => ILogger,
     @inject(TYPES.ErrorService) errorService: IErrorService
   ) {
-    this.timesheetRepository = timesheetRepository;
+    this.timeEntryRepository = timeEntryRepository;
     this.logger = loggerFactory(this.name);
     this.errorService = errorService;
   }
 
-  getAllAndCount = async (args: IPagingArgs): Promise<IPaginationData<Timesheet>> => {
+  getAllAndCount = async (args: IPagingArgs): Promise<IPaginationData<TimeEntry>> => {
     try {
-      const { rows, count } = await this.timesheetRepository.getAllAndCount(args);
+      const { rows, count } = await this.timeEntryRepository.getAllAndCount(args);
 
       const paging = Paging.getPagingResult({
         ...args,
@@ -51,7 +51,7 @@ export default class TimesheetService implements ITimesheetService {
     }
   };
 
-  getWeeklyDetails = async (args: ITimesheetWeeklyDetailsInput): Promise<Timesheet[]> => {
+  getWeeklyDetails = async (args: ITimeEntryWeeklyDetailsInput): Promise<TimeEntry[]> => {
     try {
       const start = args.start;
       const end = args.end;
@@ -66,20 +66,20 @@ export default class TimesheetService implements ITimesheetService {
         endDate = moment(end).toDate();
       }
 
-      const timesheet = await this.timesheetRepository.getWeeklyDetails({
+      const timeEntry = await this.timeEntryRepository.getWeeklyDetails({
         company_id,
         created_by,
         start: startDate,
         end: endDate,
       });
 
-      return timesheet;
+      return timeEntry;
     } catch (err) {
       throw err;
     }
   };
 
-  create = async (args: ITimesheetCreateInput) => {
+  create = async (args: ITimeEntryCreateInput) => {
     const operation = 'create';
     const start = args.start;
     const end = args.end;
@@ -90,7 +90,7 @@ export default class TimesheetService implements ITimesheetService {
     const task_id = args.task_id;
 
     try {
-      let timesheet = await this.timesheetRepository.create({
+      let timeEntry = await this.timeEntryRepository.create({
         start,
         end,
         clientLocation,
@@ -100,7 +100,7 @@ export default class TimesheetService implements ITimesheetService {
         task_id,
       });
 
-      return timesheet;
+      return timeEntry;
     } catch (err) {
       this.errorService.throwError({
         err,
@@ -110,7 +110,8 @@ export default class TimesheetService implements ITimesheetService {
       });
     }
   };
-  update = async (args: ITimesheetUpdateInput) => {
+
+  update = async (args: ITimeEntryUpdateInput) => {
     const operation = 'update';
     const id = args?.id;
     const start = args.start;
@@ -123,7 +124,7 @@ export default class TimesheetService implements ITimesheetService {
     const task_id = args.task_id;
 
     try {
-      let timesheet = await this.timesheetRepository.update({
+      let timeEntry = await this.timeEntryRepository.update({
         id,
         start,
         end,
@@ -135,7 +136,7 @@ export default class TimesheetService implements ITimesheetService {
         task_id,
       });
 
-      return timesheet;
+      return timeEntry;
     } catch (err) {
       this.errorService.throwError({
         err,
@@ -146,18 +147,18 @@ export default class TimesheetService implements ITimesheetService {
     }
   };
 
-  stop = async (args: ITimeSheetStopInput) => {
+  stop = async (args: ITimeEntryStopInput) => {
     const operation = 'stop';
     try {
       const id = args.id;
       const end = args.end;
 
-      let timesheet = await this.timesheetRepository.update({
+      let timeEntry = await this.timeEntryRepository.update({
         id,
         end,
       });
 
-      return timesheet;
+      return timeEntry;
     } catch (err) {
       this.errorService.throwError({
         err,
@@ -172,11 +173,11 @@ export default class TimesheetService implements ITimesheetService {
     try {
       const id = args.id;
 
-      const timesheet = await this.timesheetRepository.remove({
+      const timeEntry = await this.timeEntryRepository.remove({
         id,
       });
 
-      return timesheet;
+      return timeEntry;
     } catch (err) {
       throw err;
     }

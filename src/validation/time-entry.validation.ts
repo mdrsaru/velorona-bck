@@ -44,7 +44,7 @@ const messages = {
   },
 };
 
-export default class TimesheetValidation {
+export default class TimeEntryValidation {
   static create() {
     return Joi.object({
       start: Joi.date().required(),

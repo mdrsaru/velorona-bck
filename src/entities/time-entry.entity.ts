@@ -1,19 +1,20 @@
 import { Entity, Column, ManyToOne, JoinColumn, Index } from 'typeorm';
 import { ObjectType, Field, ID, InputType } from 'type-graphql';
+
 import { entities } from '../config/constants';
-import { timesheet } from '../config/db/columns';
+import { timeEntry } from '../config/db/columns';
+import { Base } from './base.entity';
 import Company from './company.entity';
 import User from './user.entity';
 import Project from './project.entity';
-import { Base } from './base.entity';
-import { PagingInput, PagingResult } from './common.entity';
 import Task from './task.entity';
+import { PagingInput, PagingResult, DeleteInput } from './common.entity';
 
-const indexPrefix = 'timesheet';
+const indexPrefix = 'time_entry';
 
 @ObjectType()
-@Entity({ name: entities.timesheet })
-export default class Timesheet extends Base {
+@Entity({ name: entities.timeEntry })
+export default class TimeEntry extends Base {
   @Index(`${indexPrefix}_start_index`)
   @Field()
   @Column()
@@ -35,7 +36,7 @@ export default class Timesheet extends Base {
 
   @Field((type) => Project)
   @ManyToOne(() => Project)
-  @JoinColumn({ name: timesheet.project_id })
+  @JoinColumn({ name: timeEntry.project_id })
   project: Project;
 
   @Field({ nullable: true })
@@ -44,7 +45,7 @@ export default class Timesheet extends Base {
 
   @Field((type) => User, { nullable: true })
   @ManyToOne(() => User, { nullable: true })
-  @JoinColumn({ name: timesheet.approver_id })
+  @JoinColumn({ name: timeEntry.approver_id })
   approver: User;
 
   @Index(`${indexPrefix}_company_id_index`)
@@ -54,7 +55,7 @@ export default class Timesheet extends Base {
 
   @Field((type) => Company)
   @ManyToOne(() => Company)
-  @JoinColumn({ name: timesheet.company_id })
+  @JoinColumn({ name: timeEntry.company_id })
   company: Company;
 
   @Index(`${indexPrefix}_created_by_index`)
@@ -64,7 +65,7 @@ export default class Timesheet extends Base {
 
   @Field((type) => User)
   @ManyToOne(() => User)
-  @JoinColumn({ name: timesheet.created_by })
+  @JoinColumn({ name: timeEntry.created_by })
   creator: User;
 
   @Index(`${indexPrefix}_task_id_index`)
@@ -74,21 +75,21 @@ export default class Timesheet extends Base {
 
   @Field((type) => Task)
   @ManyToOne(() => Task)
-  @JoinColumn({ name: timesheet.task_id })
+  @JoinColumn({ name: timeEntry.task_id })
   task: Task;
 }
 
 @ObjectType()
-export class TimesheetPagingResult {
+export class TimeEntryPagingResult {
   @Field()
   paging: PagingResult;
 
-  @Field(() => [Timesheet])
-  data: Timesheet[];
+  @Field(() => [TimeEntry])
+  data: TimeEntry[];
 }
 
 @InputType()
-export class TimesheetCreateInput {
+export class TimeEntryCreateInput {
   @Field()
   start: Date;
 
@@ -109,7 +110,7 @@ export class TimesheetCreateInput {
 }
 
 @InputType()
-export class TimesheetUpdateInput {
+export class TimeEntryUpdateInput {
   @Field()
   id: string;
 
@@ -139,7 +140,7 @@ export class TimesheetUpdateInput {
 }
 
 @InputType()
-export class StopTimesheetInput {
+export class StopTimeEntryInput {
   @Field()
   id: string;
 
@@ -151,7 +152,7 @@ export class StopTimesheetInput {
 }
 
 @InputType()
-export class TimesheetQuery {
+export class TimeEntryQuery {
   @Field({ nullable: true })
   id: string;
 
@@ -175,16 +176,16 @@ export class TimesheetQuery {
 }
 
 @InputType()
-export class TimesheetQueryInput {
+export class TimeEntryQueryInput {
   @Field({ nullable: true })
   paging: PagingInput;
 
   @Field()
-  query: TimesheetQuery;
+  query: TimeEntryQuery;
 }
 
 @InputType()
-export class TimesheetWeeklyDetailsInput {
+export class TimeEntryWeeklyDetailsInput {
   @Field()
   company_id: string;
 
@@ -203,4 +204,10 @@ export class TimesheetWeeklyDetailsInput {
 
   @Field({ nullable: true })
   end: Date;
+}
+
+@InputType()
+export class TimeEntryDeleteInput extends DeleteInput {
+  @Field()
+  company_id: string;
 }

@@ -14,7 +14,7 @@ import address from './config/inversify/address';
 import userRecord from './config/inversify/user-record';
 import project from './config/inversify/project';
 import workschedule from './config/inversify/workschedule';
-import timesheet from './config/inversify/timesheet';
+import timeEntry from './config/inversify/time-entry';
 import userClient from './config/inversify/user-client';
 import client from './config/inversify/client';
 import userpayrate from './config/inversify/user-payrate';
@@ -46,7 +46,7 @@ container.load(
   userRecord,
   project,
   workschedule,
-  timesheet,
+  timeEntry,
   userClient,
   client,
   userpayrate,
