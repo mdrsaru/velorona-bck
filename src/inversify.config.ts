@@ -18,6 +18,8 @@ import timesheet from './config/inversify/timesheet';
 import userClient from './config/inversify/user-client';
 import client from './config/inversify/client';
 import userpayrate from './config/inversify/user-payrate';
+import invoice from './config/inversify/invoice';
+import invoiceItem from './config/inversify/invoice-item';
 
 const container = new Container({ skipBaseClassChecks: true });
 
@@ -47,7 +49,9 @@ container.load(
   timesheet,
   userClient,
   client,
-  userpayrate
+  userpayrate,
+  invoice,
+  invoiceItem,
 );
 
 export default container;

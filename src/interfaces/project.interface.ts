@@ -1,6 +1,7 @@
 import Project from '../entities/project.entity';
 import { IPagingArgs, IGetAllAndCountResult, IPaginationData } from './paging.interface';
 import { IEntityRemove, IEntityID } from './common.interface';
+import { IGetOptions } from './paging.interface';
 
 export interface IProject {
   id: string;
@@ -24,8 +25,9 @@ export interface IProjectUpdateInput {
 
 export interface IProjectRepository {
   getAllAndCount(args: IPagingArgs): Promise<IGetAllAndCountResult<Project>>;
-  getAll(args: any): Promise<Project[]>;
+  getAll(args: IGetOptions): Promise<Project[]>;
   getById(args: IEntityID): Promise<Project | undefined>;
+  countEntities(args: IGetOptions): Promise<number>;
   create(args: IProjectCreateInput): Promise<Project>;
   update(args: IProjectUpdateInput): Promise<Project>;
   remove(args: IEntityRemove): Promise<Project>;

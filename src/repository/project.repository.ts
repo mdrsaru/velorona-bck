@@ -2,8 +2,9 @@ import isNil from 'lodash/isNil';
 import isString from 'lodash/isString';
 import merge from 'lodash/merge';
 import find from 'lodash/find';
+import isArray from 'lodash/isArray';
 import { inject, injectable } from 'inversify';
-import { getRepository, Repository } from 'typeorm';
+import { getRepository, Repository, In } from 'typeorm';
 
 import * as apiError from '../utils/api-error';
 import { TYPES } from '../types';
@@ -16,6 +17,7 @@ import { ICompanyRepository } from '../interfaces/company.interface';
 import { IUserRepository } from '../interfaces/user.interface';
 import { IProjectCreateInput, IProjectRepository, IProjectUpdateInput } from '../interfaces/project.interface';
 import { IClientRepository } from '../interfaces/client.interface';
+import { IGetOptions } from '../interfaces/paging.interface';
 
 @injectable()
 export default class ProjectRepository extends BaseRepository<Project> implements IProjectRepository {
@@ -33,6 +35,23 @@ export default class ProjectRepository extends BaseRepository<Project> implement
     this.userRepository = _userRepository;
     this.clientRepository = _clientRepository;
   }
+
+  countEntities = (args: IGetOptions): Promise<number> => {
+    let { query = {}, ...rest } = args;
+
+    // For array values to be used as In operator
+    // https://github.com/typeorm/typeorm/blob/master/docs/find-options.md
+    for (let key in query) {
+      if (isArray(query[key])) {
+        query[key] = In(query[key]);
+      }
+    }
+
+    return this.repo.count({
+      where: query,
+      ...rest,
+    });
+  };
 
   create = async (args: IProjectCreateInput): Promise<Project> => {
     try {

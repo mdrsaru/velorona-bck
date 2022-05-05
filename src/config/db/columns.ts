@@ -20,3 +20,27 @@ export const usersClients = {
   user_id: 'user_id',
   client_id: 'client_id',
 };
+
+export const invoices = {
+  verified: 'verified',
+  sent_as_email: 'sent_as_email',
+  status: 'status',
+  date: 'date',
+  payment_due: 'payment_due',
+  po_number: 'po_number',
+  total_amount: 'total_amount',
+  tax_percent: 'tax_percent',
+  notes: 'notes',
+  company_id: 'company_id',
+  client_id: 'client_id',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+};
+
+export const invoiceItems = {
+  invoice_id: 'invoice_id',
+  project_id: 'project_id',
+  hours: 'hours',
+  rate: 'rate',
+  amount: 'amount',
+};
