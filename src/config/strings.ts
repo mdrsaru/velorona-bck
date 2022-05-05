@@ -84,4 +84,5 @@ export default {
   oneOrMoreInvoiceItems404: 'One or more of the invoice items do not exist',
   hoursRequired: 'Hours required',
   rateRequired: 'Hours required',
+  activeTimerNotStopped: 'Started timer has not stopped yet.',
 };

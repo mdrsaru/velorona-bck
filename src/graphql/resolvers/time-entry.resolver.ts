@@ -6,7 +6,7 @@ import { TYPES } from '../../types';
 import strings from '../../config/strings';
 import * as apiError from '../../utils/api-error';
 import TimeEntry, {
-  StopTimeEntryInput,
+  TimeEntryStopInput,
   TimeEntryCreateInput,
   TimeEntryPagingResult,
   TimeEntryQueryInput,
@@ -186,8 +186,9 @@ export class TimeEntryResolver {
 
   @Mutation((returns) => TimeEntry)
   @UseMiddleware(authenticate, checkCompanyAccess)
-  async StopTimeEntry(@Arg('input') args: StopTimeEntryInput): Promise<TimeEntry> {
-    const operation = 'TimeEntryCreate';
+  async TimeEntryStop(@Arg('input') args: TimeEntryStopInput): Promise<TimeEntry> {
+    const operation = 'TimeEntryStop';
+
     try {
       const id = args.id;
       const end = args.end;

@@ -1,10 +1,12 @@
-import { inject, injectable } from 'inversify';
+import moment from 'moment';
 import merge from 'lodash/merge';
 import isNil from 'lodash/isNil';
 import isDate from 'lodash/isDate';
 import isString from 'lodash/isString';
 import isArray from 'lodash/isArray';
-import { getRepository, LessThanOrEqual, MoreThanOrEqual, In } from 'typeorm';
+import isEmpty from 'lodash/isEmpty';
+import { inject, injectable } from 'inversify';
+import { getRepository, LessThanOrEqual, MoreThanOrEqual, In, IsNull } from 'typeorm';
 
 import { TYPES } from '../types';
 import strings from '../config/strings';
@@ -120,7 +122,7 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
     }
   };
 
-  async create(args: ITimeEntryCreateInput): Promise<TimeEntry> {
+  create = async (args: ITimeEntryCreateInput): Promise<TimeEntry> => {
     try {
       const start = args.start;
       const end = args.end;
@@ -129,6 +131,44 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
       const company_id = args.company_id;
       const created_by = args.created_by;
       const task_id = args.task_id;
+
+      const errors: string[] = [];
+
+      if (isNil(start)) {
+        errors.push(strings.startDateRequired);
+      }
+      if (isNil(project_id) || isEmpty(project_id)) {
+        errors.push(strings.projectIdRequired);
+      }
+      if (isNil(company_id) || isEmpty(company_id)) {
+        errors.push(strings.companyRequired);
+      }
+      if (isNil(task_id) || isEmpty(task_id)) {
+        errors.push(strings.taskIdRequired);
+      }
+      if (isNil(created_by) || isEmpty(created_by)) {
+        errors.push(strings.userIdRequired);
+      }
+      if (!isNil(end) && !isNil(start) && end <= start) {
+        errors.push(strings.endDateMustBeValidDate);
+      }
+
+      if (errors.length) {
+        throw new apiError.ValidationError({
+          details: errors,
+        });
+      }
+
+      const activeTimeEntryCount = await this.repo.count({
+        company_id,
+        end: IsNull(),
+      });
+
+      if (activeTimeEntryCount) {
+        throw new apiError.ValidationError({
+          details: [strings.activeTimerNotStopped],
+        });
+      }
 
       const creator = await this.userRepository.getById({ id: created_by, relations: ['roles'] });
       if (!creator) {
@@ -158,9 +198,17 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
         });
       }
 
-      const timeEntry = this.repo.save({
+      let duration: undefined | number = undefined;
+      if (end) {
+        const startDate = moment(start);
+        const endDate = moment(end);
+        duration = endDate.diff(startDate, 'seconds');
+      }
+
+      const timeEntry = await this.repo.save({
         start,
         end,
+        duration,
         clientLocation,
         project_id,
         company_id,
@@ -172,7 +220,7 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
     } catch (err) {
       throw err;
     }
-  }
+  };
 
   update = async (args: ITimeEntryUpdateInput): Promise<TimeEntry> => {
     try {
@@ -198,6 +246,13 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
         });
       }
 
+      let duration: undefined | number = undefined;
+      if (end) {
+        const startDate = moment(start);
+        const endDate = moment(end);
+        duration = endDate.diff(startDate, 'seconds');
+      }
+
       const found = await this.getById({ id });
       if (!found) {
         throw new NotFoundError({
@@ -209,6 +264,7 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
         id,
         start,
         end,
+        duration,
         clientLocation,
         approver_id,
         project_id,

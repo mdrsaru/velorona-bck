@@ -10,7 +10,7 @@ import Project from './project.entity';
 import Task from './task.entity';
 import { PagingInput, PagingResult, DeleteInput } from './common.entity';
 
-const indexPrefix = 'time_entry';
+const indexPrefix = 'time_entries';
 
 @ObjectType()
 @Entity({ name: entities.timeEntry })
@@ -24,6 +24,10 @@ export default class TimeEntry extends Base {
   @Field({ nullable: true })
   @Column({ nullable: true })
   end: Date;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true, type: 'int' })
+  duration: number;
 
   @Field({ nullable: true })
   @Column({ name: 'client_location', nullable: true })
@@ -140,7 +144,7 @@ export class TimeEntryUpdateInput {
 }
 
 @InputType()
-export class StopTimeEntryInput {
+export class TimeEntryStopInput {
   @Field()
   id: string;
 
