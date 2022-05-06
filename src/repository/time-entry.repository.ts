@@ -21,6 +21,7 @@ import { ITaskRepository } from '../interfaces/task.interface';
 import {
   ITimeEntryCreateInput,
   ITimeEntryRepository,
+  ITimeEntryTotalTimeRepoInput,
   ITimeEntryUpdateInput,
   ITimeEntryWeeklyDetailsRepoInput,
 } from '../interfaces/time-entry.interface';
@@ -33,6 +34,7 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
   private companyRepository: ICompanyRepository;
   private projectRepository: IProjectRepository;
   private taskRepository: ITaskRepository;
+
   constructor(
     @inject(TYPES.CompanyRepository) _companyRepository: ICompanyRepository,
     @inject(TYPES.ProjectRepository) _projectRepository: IProjectRepository,
@@ -117,6 +119,49 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
       });
 
       return timeEntry;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  getTotalTimeInSeconds = async (args: ITimeEntryTotalTimeRepoInput): Promise<number> => {
+    try {
+      const start = args.start;
+      const end = args.end;
+      const company_id = args.company_id;
+      const project_id = args.project_id;
+      const created_by = args.user_id;
+      const errors: string[] = [];
+
+      if (isNil(start) || !isDate(start)) {
+        errors.push(strings.startDateRequired);
+      }
+      if (isNil(end) || !isDate(end)) {
+        errors.push(strings.endDateRequired);
+      }
+      if (isNil(company_id) || !isDate(company_id)) {
+        errors.push(strings.companyIdRequired);
+      }
+      if (isNil(project_id) || !isDate(project_id)) {
+        errors.push(strings.projectIdRequired);
+      }
+
+      const query = {
+        company_id,
+        project_id,
+        start: MoreThanOrEqual(start),
+        end: LessThanOrEqual(end),
+        created_by,
+      };
+
+      const timeEntry = await this.getAll({
+        query,
+      });
+
+      let totalDuration = 0;
+      timeEntry.map((time, index) => (totalDuration = totalDuration + time.duration));
+
+      return totalDuration;
     } catch (err) {
       throw err;
     }

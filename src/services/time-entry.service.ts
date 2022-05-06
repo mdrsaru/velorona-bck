@@ -15,20 +15,24 @@ import {
   ITimeEntryUpdateInput,
   ITimeEntryWeeklyDetailsInput,
 } from '../interfaces/time-entry.interface';
+import { IUserPayRateRepository } from '../interfaces/user-payrate.interface';
 
 @injectable()
 export default class TimeEntryService implements ITimeEntryService {
   private name = 'TimeEntryService';
   private timeEntryRepository: ITimeEntryRepository;
+  private userPayRateRepository: IUserPayRateRepository;
   private logger: ILogger;
   private errorService: IErrorService;
 
   constructor(
     @inject(TYPES.TimeEntryRepository) timeEntryRepository: ITimeEntryRepository,
+    @inject(TYPES.UserPayRateRepository) userPayRateRepository: IUserPayRateRepository,
     @inject(TYPES.LoggerFactory) loggerFactory: (name: string) => ILogger,
     @inject(TYPES.ErrorService) errorService: IErrorService
   ) {
     this.timeEntryRepository = timeEntryRepository;
+    this.userPayRateRepository = userPayRateRepository;
     this.logger = loggerFactory(this.name);
     this.errorService = errorService;
   }

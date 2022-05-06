@@ -60,6 +60,13 @@ export interface ITimeEntryWeeklyDetailsInput {
   end?: Date;
 }
 
+export interface ITimeEntryTotalTimeRepoInput {
+  company_id: string;
+  user_id: string;
+  start: Date;
+  end: Date;
+  project_id: string;
+}
 export interface ITimeEntryWeeklyDetailsRepoInput {
   company_id: string;
   created_by: string;
@@ -71,6 +78,10 @@ export interface ITimeEntryRepository {
   getAllAndCount(args: IPagingArgs): Promise<IGetAllAndCountResult<TimeEntry>>;
   getAll(args: any): Promise<TimeEntry[]>;
   getById(args: IEntityID): Promise<TimeEntry | undefined>;
+  /*
+  Calculate total time in seconds of users time entry from start date to end date
+  */
+  getTotalTimeInSeconds(args: ITimeEntryTotalTimeRepoInput): Promise<number>;
   getWeeklyDetails(args: ITimeEntryWeeklyDetailsRepoInput): Promise<TimeEntry[]>;
   create(args: ITimeEntryCreateInput): Promise<TimeEntry>;
   update(args: ITimeEntryUpdateInput): Promise<TimeEntry>;
