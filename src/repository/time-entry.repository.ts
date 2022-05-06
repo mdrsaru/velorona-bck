@@ -225,7 +225,6 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
   update = async (args: ITimeEntryUpdateInput): Promise<TimeEntry> => {
     try {
       const id = args.id;
-      const start = args.start;
       const end = args.end;
       const clientLocation = args.clientLocation;
       const approver_id = args.approver_id;
@@ -233,6 +232,7 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
       const company_id = args.company_id;
       const created_by = args.created_by;
       const task_id = args.task_id;
+      let start = args.start;
 
       const errors: string[] = [];
 
@@ -246,18 +246,25 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
         });
       }
 
-      let duration: undefined | number = undefined;
-      if (end) {
-        const startDate = moment(start);
-        const endDate = moment(end);
-        duration = endDate.diff(startDate, 'seconds');
-      }
-
       const found = await this.getById({ id });
       if (!found) {
         throw new NotFoundError({
           details: ['TimeEntry not found'],
         });
+      }
+
+      start = start ?? found.start;
+      let duration: undefined | number = undefined;
+      if (end) {
+        if (end <= start) {
+          throw new apiError.ValidationError({
+            details: [strings.endDateMustBeValidDate],
+          });
+        }
+
+        const startDate = moment(start ?? found.start);
+        const endDate = moment(end);
+        duration = endDate.diff(startDate, 'seconds');
       }
 
       const update = merge(found, {
