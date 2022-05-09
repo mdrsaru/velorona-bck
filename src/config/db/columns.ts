@@ -9,8 +9,10 @@ export const userRolesTable = {
 };
 
 export const timeEntry = {
+  start_time: 'start_time',
+  end_time: 'end_time',
+  client_location: 'client_location',
   project_id: 'project_id',
-  approver_id: 'approver_id',
   company_id: 'company_id',
   created_by: 'created_by',
   task_id: 'task_id',

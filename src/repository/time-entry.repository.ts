@@ -62,15 +62,15 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
       }
 
       if ('afterStart' in query) {
-        const start = query.afterStart;
+        const startTime = query.afterStart;
         delete query.afterStart;
-        query.start = MoreThanOrEqual(start);
+        query.startTime = MoreThanOrEqual(startTime);
       }
 
       if ('beforeEnd' in query) {
-        const end = query.beforeEnd;
+        const endTime = query.beforeEnd;
         delete query.beforeEnd;
-        query.end = LessThanOrEqual(end);
+        query.endTime = LessThanOrEqual(endTime);
       }
 
       const [rows, count] = await this.repo.findAndCount({
@@ -89,16 +89,16 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
 
   getWeeklyDetails = async (args: ITimeEntryWeeklyDetailsRepoInput): Promise<TimeEntry[]> => {
     try {
-      const start = args.start;
-      const end = args.end;
+      const startTime = args.startTime;
+      const endTime = args.endTime;
       const company_id = args.company_id;
       const created_by = args.created_by;
       const errors: string[] = [];
 
-      if (isNil(start) || !isDate(start)) {
+      if (isNil(startTime) || !isDate(startTime)) {
         errors.push(strings.startDateRequired);
       }
-      if (isNil(end) || !isDate(end)) {
+      if (isNil(endTime) || !isDate(endTime)) {
         errors.push(strings.endDateRequired);
       }
       if (isNil(company_id) || !isDate(company_id)) {
@@ -111,8 +111,8 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
       const query = {
         company_id,
         created_by,
-        start: MoreThanOrEqual(start),
-        end: LessThanOrEqual(end),
+        startTime: MoreThanOrEqual(startTime),
+        endTime: LessThanOrEqual(endTime),
       };
 
       const timeEntry = await this.getAll({
@@ -127,17 +127,17 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
 
   getTotalTimeInSeconds = async (args: ITimeEntryTotalDurationInput): Promise<number> => {
     try {
-      const start = args.start;
-      const end = args.end;
+      const startTime = args.startTime;
+      const endTime = args.endTime;
       const company_id = args.company_id;
       const project_id = args.project_id;
       const created_by = args.user_id;
       const errors: string[] = [];
 
-      if (isNil(start) || isEmpty(start)) {
+      if (isNil(startTime) || isEmpty(startTime)) {
         errors.push(strings.startDateRequired);
       }
-      if (isNil(end) || isEmpty(end)) {
+      if (isNil(endTime) || isEmpty(endTime)) {
         errors.push(strings.endDateRequired);
       }
       if (isNil(company_id) || !isDate(company_id)) {
@@ -153,8 +153,8 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
         .where('company_id = :company_id', { company_id })
         .andWhere('project_id = :project_id', { project_id })
         .andWhere('created_by = :created_by', { created_by })
-        .andWhere('start >= :start', { start })
-        .andWhere('"end" <= :end', { end })
+        .andWhere('startTime >= :startTime', { startTime })
+        .andWhere('"endTime" <= :endTime', { endTime })
         .getRawOne();
 
       return totalTime ?? 0;
@@ -165,8 +165,8 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
 
   create = async (args: ITimeEntryCreateInput): Promise<TimeEntry> => {
     try {
-      const start = args.start;
-      const end = args.end;
+      const startTime = args.startTime;
+      const endTime = args.endTime;
       const clientLocation = args.clientLocation;
       const project_id = args.project_id;
       const company_id = args.company_id;
@@ -175,7 +175,7 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
 
       const errors: string[] = [];
 
-      if (isNil(start)) {
+      if (isNil(startTime)) {
         errors.push(strings.startDateRequired);
       }
       if (isNil(project_id) || isEmpty(project_id)) {
@@ -190,7 +190,7 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
       if (isNil(created_by) || isEmpty(created_by)) {
         errors.push(strings.userIdRequired);
       }
-      if (!isNil(end) && !isNil(start) && end <= start) {
+      if (!isNil(endTime) && !isNil(startTime) && endTime <= startTime) {
         errors.push(strings.endDateMustBeValidDate);
       }
 
@@ -202,7 +202,7 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
 
       const activeTimeEntryCount = await this.repo.count({
         company_id,
-        end: IsNull(),
+        endTime: IsNull(),
       });
 
       if (activeTimeEntryCount) {
@@ -240,15 +240,15 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
       }
 
       let duration: undefined | number = undefined;
-      if (end) {
-        const startDate = moment(start);
-        const endDate = moment(end);
+      if (endTime) {
+        const startDate = moment(startTime);
+        const endDate = moment(endTime);
         duration = endDate.diff(startDate, 'seconds');
       }
 
       const timeEntry = await this.repo.save({
-        start,
-        end,
+        startTime,
+        endTime,
         duration,
         clientLocation,
         project_id,
@@ -266,14 +266,14 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
   update = async (args: ITimeEntryUpdateInput): Promise<TimeEntry> => {
     try {
       const id = args.id;
-      const end = args.end;
+      const endTime = args.endTime;
       const clientLocation = args.clientLocation;
       const approver_id = args.approver_id;
       const project_id = args.project_id;
       const company_id = args.company_id;
       const created_by = args.created_by;
       const task_id = args.task_id;
-      let start = args.start;
+      let startTime = args.startTime;
 
       const errors: string[] = [];
 
@@ -294,24 +294,24 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
         });
       }
 
-      start = start ?? found.start;
+      startTime = startTime ?? found.startTime;
       let duration: undefined | number = undefined;
-      if (end) {
-        if (end <= start) {
+      if (endTime) {
+        if (endTime <= startTime) {
           throw new apiError.ValidationError({
             details: [strings.endDateMustBeValidDate],
           });
         }
 
-        const startDate = moment(start ?? found.start);
-        const endDate = moment(end);
+        const startDate = moment(startTime ?? found.startTime);
+        const endDate = moment(endTime);
         duration = endDate.diff(startDate, 'seconds');
       }
 
       const update = merge(found, {
         id,
-        start,
-        end,
+        startTime,
+        endTime,
         duration,
         clientLocation,
         approver_id,

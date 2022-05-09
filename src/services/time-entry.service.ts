@@ -57,24 +57,24 @@ export default class TimeEntryService implements ITimeEntryService {
 
   getWeeklyDetails = async (args: ITimeEntryWeeklyDetailsInput): Promise<TimeEntry[]> => {
     try {
-      const start = args.start;
-      const end = args.end;
+      const startTime = args.startTime;
+      const endTime = args.endTime;
       const company_id = args.company_id;
       const created_by = args.created_by;
 
       let startDate = moment().startOf('isoWeek').toDate();
       let endDate = moment().endOf('isoWeek').toDate();
 
-      if (start && end) {
-        startDate = moment(start).toDate();
-        endDate = moment(end).toDate();
+      if (startTime && endTime) {
+        startDate = moment(startTime).toDate();
+        endDate = moment(endTime).toDate();
       }
 
       const timeEntry = await this.timeEntryRepository.getWeeklyDetails({
         company_id,
         created_by,
-        start: startDate,
-        end: endDate,
+        startTime: startDate,
+        endTime: endDate,
       });
 
       return timeEntry;
@@ -85,8 +85,8 @@ export default class TimeEntryService implements ITimeEntryService {
 
   create = async (args: ITimeEntryCreateInput) => {
     const operation = 'create';
-    const start = args.start;
-    const end = args.end;
+    const startTime = args.startTime;
+    const endTime = args.endTime;
     const clientLocation = args.clientLocation;
     const project_id = args.project_id;
     const company_id = args.company_id;
@@ -95,8 +95,8 @@ export default class TimeEntryService implements ITimeEntryService {
 
     try {
       let timeEntry = await this.timeEntryRepository.create({
-        start,
-        end,
+        startTime,
+        endTime,
         clientLocation,
         project_id,
         company_id,
@@ -118,8 +118,8 @@ export default class TimeEntryService implements ITimeEntryService {
   update = async (args: ITimeEntryUpdateInput) => {
     const operation = 'update';
     const id = args?.id;
-    const start = args.start;
-    const end = args.end;
+    const startTime = args.startTime;
+    const endTime = args.endTime;
     const clientLocation = args.clientLocation;
     const approver_id = args.approver_id;
     const project_id = args.project_id;
@@ -130,8 +130,8 @@ export default class TimeEntryService implements ITimeEntryService {
     try {
       let timeEntry = await this.timeEntryRepository.update({
         id,
-        start,
-        end,
+        startTime,
+        endTime,
         clientLocation,
         approver_id,
         project_id,
@@ -155,11 +155,11 @@ export default class TimeEntryService implements ITimeEntryService {
     const operation = 'stop';
     try {
       const id = args.id;
-      const end = args.end;
+      const endTime = args.endTime;
 
       let timeEntry = await this.timeEntryRepository.update({
         id,
-        end,
+        endTime,
       });
 
       return timeEntry;

@@ -9,8 +9,8 @@ import Task from '../entities/task.entity';
 
 export interface ITimeEntry {
   id: string;
-  start: Date;
-  end: Date;
+  startTime: Date;
+  endTime: Date;
   clientLocation: string;
   approver_id: string;
   project_id: string;
@@ -27,8 +27,8 @@ export interface ITimeEntry {
 }
 
 export interface ITimeEntryCreateInput {
-  start: ITimeEntry['start'];
-  end: ITimeEntry['end'];
+  startTime: ITimeEntry['startTime'];
+  endTime: ITimeEntry['endTime'];
   clientLocation: ITimeEntry['clientLocation'];
   project_id: ITimeEntry['project_id'];
   company_id: ITimeEntry['company_id'];
@@ -38,8 +38,8 @@ export interface ITimeEntryCreateInput {
 
 export interface ITimeEntryUpdateInput {
   id: ITimeEntry['id'];
-  start?: ITimeEntry['start'];
-  end?: ITimeEntry['end'];
+  startTime?: ITimeEntry['startTime'];
+  endTime?: ITimeEntry['endTime'];
   clientLocation?: ITimeEntry['clientLocation'];
   approver_id?: ITimeEntry['approver_id'];
   project_id?: ITimeEntry['project_id'];
@@ -50,29 +50,29 @@ export interface ITimeEntryUpdateInput {
 
 export interface ITimeEntryStopInput {
   id: ITimeEntry['id'];
-  end: ITimeEntry['end'];
+  endTime: ITimeEntry['endTime'];
 }
 
 export interface ITimeEntryWeeklyDetailsInput {
   company_id: string;
   created_by: string;
-  start?: Date;
-  end?: Date;
+  startTime?: Date;
+  endTime?: Date;
 }
 
 export interface ITimeEntryTotalDurationInput {
   company_id: string;
   user_id: string;
-  start: string;
-  end: string;
+  startTime: string;
+  endTime: string;
   project_id: string;
 }
 
 export interface ITimeEntryWeeklyDetailsRepoInput {
   company_id: string;
   created_by: string;
-  start: Date;
-  end: Date;
+  startTime: Date;
+  endTime: Date;
 }
 
 export interface ITimeEntryRepository {

@@ -7,20 +7,15 @@ const messages = {
     'string.empty': strings.idRequired,
     'any.required': strings.idRequired,
   },
-  start: {
+  startTime: {
     'string.base': strings.startDateRequired,
     'string.empty': strings.startDateRequired,
     'any.required': strings.startDateRequired,
   },
-  end: {
+  endTime: {
     'string.base': strings.endDateRequired,
     'string.empty': strings.endDateRequired,
     'any.required': strings.endDateRequired,
-  },
-  approver_id: {
-    'string.base': strings.approverIdRequired,
-    'string.empty': strings.approverIdRequired,
-    'any.required': strings.approverIdRequired,
   },
   company_id: {
     'string.base': strings.companyIdRequired,
@@ -47,8 +42,8 @@ const messages = {
 export default class TimeEntryValidation {
   static create() {
     return Joi.object({
-      start: Joi.date().required(),
-      end: Joi.date(),
+      startTime: Joi.date().required(),
+      endTime: Joi.date(),
       clientLocation: Joi.string(),
       project_id: Joi.string().required().messages(messages.project_id),
       company_id: Joi.string().required().messages(messages.company_id),
@@ -59,10 +54,9 @@ export default class TimeEntryValidation {
   static update() {
     return Joi.object({
       id: Joi.string().required().messages(messages.id),
-      start: Joi.date(),
-      end: Joi.date(),
+      startTime: Joi.date(),
+      endTime: Joi.date(),
       clientLocation: Joi.string(),
-      approver_id: Joi.string(),
       project_id: Joi.string(),
       company_id: Joi.string(),
       created_by: Joi.string(),
@@ -73,19 +67,19 @@ export default class TimeEntryValidation {
   static stop() {
     return Joi.object({
       id: Joi.string().required().messages(messages.id),
-      end: Joi.date().required().messages(messages.end),
+      endTime: Joi.date().required().messages(messages.endTime),
     });
   }
 
   static weeklyDetails() {
     return Joi.object({
       company_id: Joi.string().required(),
-      start: Joi.date().error(new Error(strings.startDateMustBeValidDate)),
-      end: Joi.date().when('start', {
+      startTime: Joi.date().error(new Error(strings.startDateMustBeValidDate)),
+      endTime: Joi.date().when('startTime', {
         is: Joi.exist(),
         then: Joi.date()
           .timestamp()
-          .greater(Joi.ref('start'))
+          .greater(Joi.ref('startTime'))
           .required()
           .error(new Error(strings.endDateMustBeValidDate)),
       }),

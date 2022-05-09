@@ -84,8 +84,8 @@ export class TimeEntryResolver {
     const operation = 'TimeEntryWeeklyDetails';
 
     try {
-      const start = args.start;
-      const end = args.end;
+      const startTime = args.startTime;
+      const endTime = args.endTime;
       const company_id = args.company_id;
       let created_by = args?.created_by;
 
@@ -99,18 +99,18 @@ export class TimeEntryResolver {
         schema,
         input: {
           company_id,
-          start,
-          end,
+          startTime,
+          endTime,
         },
       });
 
-      if (start && !end) {
+      if (startTime && !endTime) {
         throw new apiError.ValidationError({
           details: [strings.endDateRequired],
         });
       }
 
-      if (end && !start) {
+      if (endTime && !startTime) {
         throw new apiError.ValidationError({
           details: [strings.startDateRequired],
         });
@@ -119,8 +119,8 @@ export class TimeEntryResolver {
       const timeEntry = await this.timeEntryService.getWeeklyDetails({
         company_id,
         created_by,
-        start,
-        end,
+        startTime,
+        endTime,
       });
 
       return timeEntry;
@@ -140,8 +140,8 @@ export class TimeEntryResolver {
     const operation = 'TimeEntryCreate';
 
     try {
-      const start = args.start;
-      const end = args.end;
+      const startTime = args.startTime;
+      const endTime = args.endTime;
       const clientLocation = args.clientLocation;
       const project_id = args.project_id;
       const company_id = args.company_id;
@@ -152,8 +152,8 @@ export class TimeEntryResolver {
       await this.joiService.validate({
         schema,
         input: {
-          start,
-          end,
+          startTime,
+          endTime,
           clientLocation,
           project_id,
           company_id,
@@ -163,8 +163,8 @@ export class TimeEntryResolver {
       });
 
       let timeEntry: TimeEntry = await this.timeEntryService.create({
-        start,
-        end,
+        startTime,
+        endTime,
         clientLocation,
         project_id,
         company_id,
@@ -191,20 +191,20 @@ export class TimeEntryResolver {
 
     try {
       const id = args.id;
-      const end = args.end;
+      const endTime = args.endTime;
 
       const schema = TimeEntryValidation.stop();
       await this.joiService.validate({
         schema,
         input: {
           id,
-          end,
+          endTime,
         },
       });
 
       let timeEntry: TimeEntry = await this.timeEntryService.update({
         id,
-        end,
+        endTime,
       });
 
       return timeEntry;
@@ -228,10 +228,9 @@ export class TimeEntryResolver {
     const operation = 'TimeEntryUpdate';
     try {
       const id = args.id;
-      const start = args.start;
-      const end = args.end;
+      const startTime = args.startTime;
+      const endTime = args.endTime;
       const clientLocation = args.clientLocation;
-      const approver_id = args.approver_id;
       const project_id = args.project_id;
       const company_id = args.company_id;
       const created_by = args.created_by;
@@ -242,10 +241,9 @@ export class TimeEntryResolver {
         schema,
         input: {
           id,
-          start,
-          end,
+          startTime,
+          endTime,
           clientLocation,
-          approver_id,
           project_id,
           company_id,
           created_by,
@@ -255,10 +253,9 @@ export class TimeEntryResolver {
 
       const timeEntry: TimeEntry = await this.timeEntryService.update({
         id,
-        start,
-        end,
+        startTime,
+        endTime,
         clientLocation,
-        approver_id,
         project_id,
         company_id,
         created_by,
@@ -308,15 +305,6 @@ export class TimeEntryResolver {
   @FieldResolver()
   project(@Root() root: TimeEntry, @Ctx() ctx: IGraphqlContext) {
     return ctx.loaders.projectByIdLoader.load(root.project_id);
-  }
-
-  @FieldResolver()
-  approver(@Root() root: TimeEntry, @Ctx() ctx: IGraphqlContext) {
-    if (root.approver_id) {
-      return ctx.loaders.usersByIdLoader.load(root.approver_id);
-    }
-
-    return null;
   }
 
   @FieldResolver()

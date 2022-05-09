@@ -15,22 +15,22 @@ const indexPrefix = 'time_entries';
 @ObjectType()
 @Entity({ name: entities.timeEntry })
 export default class TimeEntry extends Base {
-  @Index(`${indexPrefix}_start_index`)
+  @Index(`${indexPrefix}_start_time_index`)
   @Field()
-  @Column()
-  start: Date;
+  @Column({ name: timeEntry.start_time })
+  startTime: Date;
 
-  @Index(`${indexPrefix}_end_index`)
+  @Index(`${indexPrefix}_end_time_index`)
   @Field({ nullable: true })
-  @Column({ nullable: true })
-  end: Date;
+  @Column({ nullable: true, name: timeEntry.end_time })
+  endTime: Date;
 
   @Field({ nullable: true })
   @Column({ nullable: true, type: 'int' })
   duration: number;
 
   @Field({ nullable: true })
-  @Column({ name: 'client_location', nullable: true })
+  @Column({ name: timeEntry.client_location, nullable: true })
   clientLocation: string;
 
   @Index(`${indexPrefix}_project_id_index`)
@@ -42,15 +42,6 @@ export default class TimeEntry extends Base {
   @ManyToOne(() => Project)
   @JoinColumn({ name: timeEntry.project_id })
   project: Project;
-
-  @Field({ nullable: true })
-  @Column({ nullable: true })
-  approver_id: string;
-
-  @Field((type) => User, { nullable: true })
-  @ManyToOne(() => User, { nullable: true })
-  @JoinColumn({ name: timeEntry.approver_id })
-  approver: User;
 
   @Index(`${indexPrefix}_company_id_index`)
   @Field()
@@ -95,10 +86,10 @@ export class TimeEntryPagingResult {
 @InputType()
 export class TimeEntryCreateInput {
   @Field()
-  start: Date;
+  startTime: Date;
 
   @Field({ nullable: true })
-  end: Date;
+  endTime: Date;
 
   @Field({ nullable: true })
   clientLocation: string;
@@ -119,10 +110,10 @@ export class TimeEntryUpdateInput {
   id: string;
 
   @Field({ nullable: true })
-  start: Date;
+  startTime: Date;
 
   @Field({ nullable: true })
-  end: Date;
+  endTime: Date;
 
   @Field({ nullable: true })
   clientLocation: string;
@@ -149,7 +140,7 @@ export class TimeEntryStopInput {
   id: string;
 
   @Field()
-  end: Date;
+  endTime: Date;
 
   @Field()
   company_id: string;
@@ -198,16 +189,16 @@ export class TimeEntryWeeklyDetailsInput {
 
   @Field((type) => [String], {
     nullable: true,
-    description: 'Sort order. Default by start.',
-    defaultValue: 'start:DESC',
+    description: 'Sort order. Default by start time.',
+    defaultValue: 'startTime:DESC',
   })
   order?: string[];
 
   @Field({ nullable: true })
-  start: Date;
+  startTime: Date;
 
   @Field({ nullable: true })
-  end: Date;
+  endTime: Date;
 }
 
 @InputType()

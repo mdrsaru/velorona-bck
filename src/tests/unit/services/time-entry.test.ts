@@ -41,8 +41,8 @@ describe('TimeEntry Service', () => {
   describe('create', () => {
     it('should create a new task', async () => {
       const args: ITimeEntryCreateInput = {
-        start: new Date(),
-        end: new Date(),
+        startTime: new Date(),
+        endTime: new Date(),
         clientLocation: 'Lalitpur',
         project_id: '12566ff8-1247-4a2a-a258-09b05268e2ce',
         task_id: '12566ff8-1247-4a2a-a258-09b05268e2ce',
@@ -80,8 +80,8 @@ describe('TimeEntry Service', () => {
 
     it('should update an existing task', async () => {
       const args: ITimeEntryCreateInput = {
-        start: new Date(),
-        end: new Date(),
+        startTime: new Date(),
+        endTime: new Date(),
         clientLocation: 'Lalitpur',
         project_id: '12566ff8-1247-4a2a-a258-09b05268e2ce',
         task_id: '12566ff8-1247-4a2a-a258-09b05268e2ce',
