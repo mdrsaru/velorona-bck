@@ -10,6 +10,7 @@ import { getRepository, LessThanOrEqual, MoreThanOrEqual, In, IsNull } from 'typ
 
 import { TYPES } from '../types';
 import strings from '../config/strings';
+import { entities } from '../config/constants';
 import * as apiError from '../utils/api-error';
 import TimeEntry from '../entities/time-entry.entity';
 import { NotFoundError } from '../utils/api-error';
@@ -21,7 +22,7 @@ import { ITaskRepository } from '../interfaces/task.interface';
 import {
   ITimeEntryCreateInput,
   ITimeEntryRepository,
-  ITimeEntryTotalTimeRepoInput,
+  ITimeEntryTotalDurationInput,
   ITimeEntryUpdateInput,
   ITimeEntryWeeklyDetailsRepoInput,
 } from '../interfaces/time-entry.interface';
@@ -67,9 +68,9 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
       }
 
       if ('beforeEnd' in query) {
-        const start = query.beforeEnd;
+        const end = query.beforeEnd;
         delete query.beforeEnd;
-        query.start = MoreThanOrEqual(start);
+        query.end = LessThanOrEqual(end);
       }
 
       const [rows, count] = await this.repo.findAndCount({
@@ -124,7 +125,7 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
     }
   };
 
-  getTotalTimeInSeconds = async (args: ITimeEntryTotalTimeRepoInput): Promise<number> => {
+  getTotalTimeInSeconds = async (args: ITimeEntryTotalDurationInput): Promise<number> => {
     try {
       const start = args.start;
       const end = args.end;
@@ -133,10 +134,10 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
       const created_by = args.user_id;
       const errors: string[] = [];
 
-      if (isNil(start) || !isDate(start)) {
+      if (isNil(start) || isEmpty(start)) {
         errors.push(strings.startDateRequired);
       }
-      if (isNil(end) || !isDate(end)) {
+      if (isNil(end) || isEmpty(end)) {
         errors.push(strings.endDateRequired);
       }
       if (isNil(company_id) || !isDate(company_id)) {
@@ -146,22 +147,17 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
         errors.push(strings.projectIdRequired);
       }
 
-      const query = {
-        company_id,
-        project_id,
-        start: MoreThanOrEqual(start),
-        end: LessThanOrEqual(end),
-        created_by,
-      };
+      const { totalTime } = await this.repo
+        .createQueryBuilder(entities.timeEntry)
+        .select('SUM(duration)', 'totalTime')
+        .where('company_id = :company_id', { company_id })
+        .andWhere('project_id = :project_id', { project_id })
+        .andWhere('created_by = :created_by', { created_by })
+        .andWhere('start >= :start', { start })
+        .andWhere('"end" <= :end', { end })
+        .getRawOne();
 
-      const timeEntry = await this.getAll({
-        query,
-      });
-
-      let totalDuration = 0;
-      timeEntry.map((time, index) => (totalDuration = totalDuration + time.duration));
-
-      return totalDuration;
+      return totalTime ?? 0;
     } catch (err) {
       throw err;
     }
