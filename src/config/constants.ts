@@ -63,6 +63,7 @@ export const entities = {
   userPayRate: 'user_payrate',
   invoices: 'invoices',
   invoiceItems: 'invoice_items',
+  timesheet: 'timesheet',
 };
 
 export enum CompanyStatus {
@@ -78,6 +79,11 @@ export enum UserStatus {
 export enum ClientStatus {
   Active = 'Active',
   Inactive = 'Inactive',
+}
+
+export enum TimesheetStatus {
+  Paid = 'Paid',
+  Unpaid = 'Unpaid',
 }
 
 export enum Role {

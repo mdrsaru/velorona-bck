@@ -16,6 +16,17 @@ export const timeEntry = {
   task_id: 'task_id',
 };
 
+export const timesheet = {
+  week_start_date: 'week-start_date',
+  week_end_date: 'week-end_date',
+  total_hours: 'total_hours',
+  total_expense: 'total_expense',
+  company_id: 'company_id',
+  user_id: 'user_id',
+  client_id: 'client_id',
+  approver_id: 'approver_id',
+};
+
 export const usersClients = {
   user_id: 'user_id',
   client_id: 'client_id',

@@ -15,6 +15,7 @@ import { ClientResolver } from './resolvers/client.resolver';
 import { InvoiceResolver } from './resolvers/invoice.resolver';
 import { InvoiceItemResolver } from './resolvers/invoice-item.resolver';
 import { UserPayRateResolver } from './resolvers/user-payrate.resolver';
+import { TimesheetResolver } from './resolvers/timesheet.resolver';
 
 export default buildSchema({
   container,
@@ -35,5 +36,6 @@ export default buildSchema({
     UserPayRateResolver,
     InvoiceResolver,
     InvoiceItemResolver,
+    TimesheetResolver,
   ],
 });
