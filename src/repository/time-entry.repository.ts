@@ -6,11 +6,12 @@ import isString from 'lodash/isString';
 import isArray from 'lodash/isArray';
 import isEmpty from 'lodash/isEmpty';
 import { inject, injectable } from 'inversify';
-import { getRepository, LessThanOrEqual, MoreThanOrEqual, In, IsNull } from 'typeorm';
+import { getRepository, LessThanOrEqual, MoreThanOrEqual, In, IsNull, getManager, EntityManager } from 'typeorm';
 
 import { TYPES } from '../types';
 import strings from '../config/strings';
 import { entities } from '../config/constants';
+import { timeEntry, userPayRate } from '../config/db/columns';
 import * as apiError from '../utils/api-error';
 import TimeEntry from '../entities/time-entry.entity';
 import { NotFoundError } from '../utils/api-error';
@@ -25,6 +26,7 @@ import {
   ITimeEntryTotalDurationInput,
   ITimeEntryUpdateInput,
   ITimeEntryWeeklyDetailsRepoInput,
+  IUserTotalExpenseInput,
 } from '../interfaces/time-entry.interface';
 import { IUserRepository } from '../interfaces/user.interface';
 import { IGetOptions, IGetAllAndCountResult } from '../interfaces/paging.interface';
@@ -35,6 +37,7 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
   private companyRepository: ICompanyRepository;
   private projectRepository: IProjectRepository;
   private taskRepository: ITaskRepository;
+  private manager: EntityManager;
 
   constructor(
     @inject(TYPES.CompanyRepository) _companyRepository: ICompanyRepository,
@@ -47,6 +50,7 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
     this.projectRepository = _projectRepository;
     this.companyRepository = _companyRepository;
     this.taskRepository = _taskRepository;
+    this.manager = getManager();
   }
 
   getAllAndCount = async (args: IGetOptions): Promise<IGetAllAndCountResult<TimeEntry>> => {
@@ -143,21 +147,48 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
       if (isNil(company_id) || !isDate(company_id)) {
         errors.push(strings.companyIdRequired);
       }
-      if (isNil(project_id) || !isDate(project_id)) {
-        errors.push(strings.projectIdRequired);
-      }
 
-      const { totalTime } = await this.repo
+      const query = this.repo
         .createQueryBuilder(entities.timeEntry)
         .select('SUM(duration)', 'totalTime')
         .where('company_id = :company_id', { company_id })
-        .andWhere('project_id = :project_id', { project_id })
         .andWhere('created_by = :created_by', { created_by })
-        .andWhere('startTime >= :startTime', { startTime })
-        .andWhere('"endTime" <= :endTime', { endTime })
-        .getRawOne();
+        .andWhere('start_time >= :startTime', { startTime })
+        .andWhere('end_time <= :endTime', { endTime });
+
+      if (project_id) {
+        query.andWhere('project_id = :project_id', { project_id });
+      }
+
+      const { totalTime } = await query.getRawOne();
 
       return totalTime ?? 0;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  getUserTotalExpense = async (args: IUserTotalExpenseInput): Promise<number> => {
+    try {
+      const startTime = args.startTime;
+      const endTime = args.endTime;
+      const company_id = args.company_id;
+      const user_id = args.user_id;
+      const client_id = args.client_id;
+
+      const queryResult = await this.manager.query(
+        `WITH cte_time_entry_payrate as (
+          SELECT t.duration, up.amount, ((t.duration::float / 3600) * up.amount) AS expense FROM time_entries as t 
+          INNER JOIN user_payrate AS up ON t.project_id = up.project_id
+          INNER JOIN projects as p on up.project_id = p.id
+          WHERE t.start_time >= $1 AND t.end_time <= $2 AND t.company_id = $3 AND t.created_by = $4 AND up.user_id = $4 AND p.client_id = $5
+        )
+        SELECT SUM(expense)::float(2) AS total_expense FROM cte_time_entry_payrate;
+        `,
+        [startTime, endTime, company_id, user_id, client_id]
+      );
+
+      return queryResult?.[0]?.total_expense as number;
     } catch (err) {
       throw err;
     }

@@ -1,17 +1,18 @@
 import { inject, injectable } from 'inversify';
-import { Arg, Ctx, Mutation, Query, Resolver, UseMiddleware } from 'type-graphql';
+import { Arg, Ctx, Mutation, Query, Resolver, UseMiddleware, FieldResolver, Root } from 'type-graphql';
+
+import { TYPES } from '../../types';
+import Paging from '../../utils/paging';
+import authenticate from '../middlewares/authenticate';
+import authorize from '../middlewares/authorize';
+import { checkCompanyAccess } from '../middlewares/company';
 import { DeleteInput } from '../../entities/common.entity';
 import Timesheet, { TimeSheetPagingResult, TimesheetQueryInput } from '../../entities/timesheet.entity';
+
 import { IErrorService, IJoiService } from '../../interfaces/common.interface';
 import { IGraphqlContext } from '../../interfaces/graphql.interface';
 import { IPaginationData } from '../../interfaces/paging.interface';
 import { ITimesheetService } from '../../interfaces/timesheet.interface';
-import { TYPES } from '../../types';
-import Paging from '../../utils/paging';
-// import TimesheetValidation from '../../validation/timesheet.validation';
-import authenticate from '../middlewares/authenticate';
-import authorize from '../middlewares/authorize';
-import { checkCompanyAccess } from '../middlewares/company';
 
 @injectable()
 @Resolver((of) => Timesheet)
@@ -53,5 +54,58 @@ export class TimesheetResolver {
         logError: true,
       });
     }
+  }
+
+  @FieldResolver()
+  durationFormat(@Root() root: Timesheet) {
+    if (root.duration) {
+      const hours = Math.floor(root.duration / 3600);
+      const mins = Math.floor((root.duration % 3600) / 60);
+      const seconds = Math.floor((root.duration % 3600) % 60);
+
+      let _hours = hours + '';
+      let _mins = mins + '';
+      let _seconds = seconds + '';
+
+      if (hours < 10) {
+        _hours = '0' + hours;
+      }
+
+      if (mins < 10) {
+        _mins = '0' + mins;
+      }
+
+      if (seconds < 10) {
+        _seconds = '0' + seconds;
+      }
+
+      return `${_hours}:${_mins}:${_seconds}`;
+    }
+
+    return '';
+  }
+
+  @FieldResolver()
+  company(@Root() root: Timesheet, @Ctx() ctx: IGraphqlContext) {
+    return ctx.loaders.companyByIdLoader.load(root.company_id);
+  }
+
+  @FieldResolver()
+  user(@Root() root: Timesheet, @Ctx() ctx: IGraphqlContext) {
+    return ctx.loaders.usersByIdLoader.load(root.user_id);
+  }
+
+  @FieldResolver()
+  client(@Root() root: Timesheet, @Ctx() ctx: IGraphqlContext) {
+    return ctx.loaders.clientByIdLoader.load(root.client_id);
+  }
+
+  @FieldResolver()
+  approver(@Root() root: Timesheet, @Ctx() ctx: IGraphqlContext) {
+    if (root.approver_id) {
+      return ctx.loaders.usersByIdLoader.load(root.approver_id);
+    }
+
+    return null;
   }
 }

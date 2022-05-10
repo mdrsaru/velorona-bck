@@ -1,20 +1,23 @@
 import { Field, InputType, ObjectType } from 'type-graphql';
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, Unique } from 'typeorm';
+
 import { entities } from '../config/constants';
+import { userPayRate } from '../config/db/columns';
 import { Base } from './base.entity';
 import { PagingInput, PagingResult } from './common.entity';
 import Project from './project.entity';
 import User from './user.entity';
 
 @ObjectType()
+@Unique(['user_id', 'project_id'])
 @Entity({ name: entities.userPayRate })
 export default class UserPayRate extends Base {
   @Field()
-  @Column({ name: 'start_date' })
+  @Column({ name: userPayRate.start_date })
   startDate: Date;
 
   @Field()
-  @Column({ name: 'end_date' })
+  @Column({ name: userPayRate.end_date })
   endDate: Date;
 
   @Field()
@@ -27,7 +30,7 @@ export default class UserPayRate extends Base {
 
   @Field((type) => User)
   @ManyToOne(() => User)
-  @JoinColumn({ name: 'user_id' })
+  @JoinColumn({ name: userPayRate.user_id })
   user: User;
 
   @Field()
@@ -36,7 +39,7 @@ export default class UserPayRate extends Base {
 
   @Field((type) => Project)
   @ManyToOne(() => Project)
-  @JoinColumn({ name: 'project_id' })
+  @JoinColumn({ name: userPayRate.project_id })
   project: Project;
 }
 
