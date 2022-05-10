@@ -81,6 +81,9 @@ export class TimeEntryPagingResult {
 
   @Field(() => [TimeEntry])
   data: TimeEntry[];
+
+  @Field(() => TimeEntry, { nullable: true })
+  activeEntry: TimeEntry;
 }
 
 @InputType()
@@ -168,6 +171,9 @@ export class TimeEntryQuery {
 
   @Field({ nullable: true })
   beforeEnd: string;
+
+  @Field({ nullable: true, defaultValue: false, description: 'Filter null endTime data' })
+  needActiveTimeEntry: boolean;
 }
 
 @InputType()
