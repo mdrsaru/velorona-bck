@@ -13,10 +13,11 @@ registerEnumType(TimesheetStatus, {
   name: 'TimesheetStatus',
 });
 
-const indexPrefix = 'timesheets';
+const indexPrefix = entities.timesheet;
+
 @ObjectType()
 @Entity({ name: entities.timesheet })
-@Unique(`unique_user_${indexPrefix}`, ['user_id', 'client_id', 'week_start_date', 'week_end_date'])
+@Unique(`unique_user_${indexPrefix}`, ['user_id', 'client_id', 'weekStartDate', 'weekEndDate'])
 export default class Timesheet extends Base {
   @Index(`${indexPrefix}_week_start_date_index`)
   @Field()
