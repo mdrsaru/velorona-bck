@@ -21,7 +21,7 @@ export const timeEntry = {
 export const timesheet = {
   week_start_date: 'week-start_date',
   week_end_date: 'week-end_date',
-  total_hours: 'total_hours',
+  duration: 'duration',
   total_expense: 'total_expense',
   company_id: 'company_id',
   user_id: 'user_id',
@@ -56,4 +56,12 @@ export const invoiceItems = {
   hours: 'hours',
   rate: 'rate',
   amount: 'amount',
+};
+
+export const userPayRate = {
+  start_date: 'start_date',
+  end_date: 'end_date',
+  amount: 'amount',
+  user_id: 'user_id',
+  project_id: 'project_id',
 };

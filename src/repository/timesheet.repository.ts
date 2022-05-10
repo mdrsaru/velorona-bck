@@ -33,7 +33,7 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
     try {
       const weekStartDate = args.weekStartDate;
       const weekEndDate = args.weekEndDate;
-      const totalHours = args.totalHours;
+      const duration = args.duration;
       const totalExpense = args.totalExpense;
       const status = args.status;
       const user_id = args.user_id;
@@ -64,20 +64,22 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
         });
       }
 
-      const approver = await this.userRepository.getById({ id: approver_id });
+      if (approver_id) {
+        const approver = await this.userRepository.getById({ id: approver_id });
 
-      if (!approver) {
-        throw new NotFoundError({
-          details: [strings.approverNotFound],
-        });
+        if (!approver) {
+          throw new NotFoundError({
+            details: [strings.approverNotFound],
+          });
+        }
       }
 
       let startDate: any = moment(weekStartDate);
       let endDate: any = moment(weekEndDate);
 
-      const duration = endDate.diff(startDate, 'days');
+      const daysDifference = endDate.diff(startDate, 'days') + 1;
 
-      if (duration != 7) {
+      if (daysDifference !== 7) {
         throw new ValidationError({ details: ['Start Date and End Date should be 7 days apart'] });
       }
 
@@ -98,7 +100,7 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
       const res = await this.repo.save({
         weekStartDate: startDate,
         weekEndDate: endDate,
-        totalHours,
+        duration,
         totalExpense,
         status,
         user_id,
@@ -116,10 +118,9 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
   update = async (args: ITimesheetUpdateInput): Promise<Timesheet> => {
     try {
       const id = args.id;
-      const totalHours = args.totalHours;
+      const duration = args.duration;
       const totalExpense = args.totalExpense;
       const status = args.status;
-      const user_id = args.user_id;
       const errors: string[] = [];
 
       if (isNil(id) || !isString(id)) {
@@ -141,7 +142,7 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
 
       const update = merge(found, {
         id,
-        totalHours,
+        duration,
         totalExpense,
         status,
       });

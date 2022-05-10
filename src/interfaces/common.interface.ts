@@ -2,6 +2,8 @@ import { ResetPasswordResponse } from '../entities/auth.entity';
 import { CustomError } from '../utils/api-error';
 import { IPagingArgs, IGetAllAndCountResult, IGetOptions } from './paging.interface';
 
+export type Maybe<T> = T | undefined;
+
 export interface IEntityID {
   id: string;
   relations?: string[];
