@@ -27,6 +27,7 @@ import {
   ITimeEntryUpdateInput,
   ITimeEntryWeeklyDetailsRepoInput,
   IUserTotalExpenseInput,
+  ITimeEntryActiveInput,
 } from '../interfaces/time-entry.interface';
 import { IUserRepository } from '../interfaces/user.interface';
 import { IGetOptions, IGetAllAndCountResult } from '../interfaces/paging.interface';
@@ -95,10 +96,15 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
     }
   };
 
-  getActiveEntry = async (args: {}): Promise<TimeEntry | undefined> => {
+  getActiveEntry = async (args: ITimeEntryActiveInput): Promise<TimeEntry | undefined> => {
     try {
+      const company_id = args.company_id;
+      const created_by = args.created_by;
+
       const timeEntry = await this.repo.findOne({
         endTime: IsNull(),
+        company_id,
+        created_by,
       });
 
       return timeEntry;
@@ -249,6 +255,7 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
 
       const activeTimeEntryCount = await this.repo.count({
         company_id,
+        created_by,
         endTime: IsNull(),
       });
 

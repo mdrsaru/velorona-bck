@@ -50,7 +50,11 @@ export default class TimeEntryService implements ITimeEntryService {
   getAllAndCount = async (args: IPagingArgs): Promise<IPaginationData<TimeEntry>> => {
     try {
       const { rows, count } = await this.timeEntryRepository.getAllAndCount(args);
-      let activeEntry = await this.timeEntryRepository.getActiveEntry({});
+
+      const activeEntry = await this.timeEntryRepository.getActiveEntry({
+        company_id: args?.query?.company_id ?? undefined,
+        created_by: args?.query?.created_by ?? undefined,
+      });
 
       const paging = Paging.getPagingResult({
         ...args,

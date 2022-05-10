@@ -83,11 +83,20 @@ export interface ITimeEntryWeeklyDetailsRepoInput {
   endTime: Date;
 }
 
+export interface ITimeEntryActiveInput {
+  created_by: string;
+  company_id: string;
+}
+
 export interface ITimeEntryRepository {
   getAllAndCount(args: IPagingArgs): Promise<IGetAllAndCountResult<TimeEntry>>;
   getAll(args: any): Promise<TimeEntry[]>;
   getById(args: IEntityID): Promise<TimeEntry | undefined>;
-  getActiveEntry(args: any): Promise<TimeEntry | undefined>;
+
+  /**
+   * Get active time entry. i.e entry of user for which end_time is null
+   */
+  getActiveEntry(args: ITimeEntryActiveInput): Promise<TimeEntry | undefined>;
   /*
   Calculate total time in seconds of users time entry for the given interval
   */
