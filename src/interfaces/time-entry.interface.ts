@@ -87,6 +87,7 @@ export interface ITimeEntryRepository {
   getAllAndCount(args: IPagingArgs): Promise<IGetAllAndCountResult<TimeEntry>>;
   getAll(args: any): Promise<TimeEntry[]>;
   getById(args: IEntityID): Promise<TimeEntry | undefined>;
+  getActiveEntry(args: any): Promise<TimeEntry | undefined>;
   /*
   Calculate total time in seconds of users time entry for the given interval
   */

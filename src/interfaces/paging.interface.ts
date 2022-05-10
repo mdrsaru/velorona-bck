@@ -28,6 +28,7 @@ export interface IPagingResult {
 export interface IPaginationData<T> {
   paging: IPagingResult;
   data: T[];
+  activeEntry?: T;
 }
 
 export interface IGetAllAndCountResult<T> {

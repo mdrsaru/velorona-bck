@@ -6,7 +6,7 @@ import isString from 'lodash/isString';
 import isArray from 'lodash/isArray';
 import isEmpty from 'lodash/isEmpty';
 import { inject, injectable } from 'inversify';
-import { getRepository, LessThanOrEqual, MoreThanOrEqual, In, IsNull, getManager, EntityManager } from 'typeorm';
+import { getRepository, LessThanOrEqual, MoreThanOrEqual, In, IsNull, Not, getManager, EntityManager } from 'typeorm';
 
 import { TYPES } from '../types';
 import strings from '../config/strings';
@@ -56,13 +56,17 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
   getAllAndCount = async (args: IGetOptions): Promise<IGetAllAndCountResult<TimeEntry>> => {
     try {
       let { query = {}, ...rest } = args;
-
-      // For array values to be used as In operator
-      // https://github.com/typeorm/typeorm/blob/master/docs/find-options.md
       for (let key in query) {
         if (isArray(query[key])) {
           query[key] = In(query[key]);
         }
+      }
+
+      if ('needActiveTimeEntry' in query) {
+        if (query.needActiveTimeEntry === false) {
+          query = { ...query, endTime: Not(IsNull()) };
+        }
+        delete query.needActiveTimeEntry;
       }
 
       if ('afterStart' in query) {
@@ -86,6 +90,18 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
         count,
         rows,
       };
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  getActiveEntry = async (args: {}): Promise<TimeEntry | undefined> => {
+    try {
+      const timeEntry = await this.repo.findOne({
+        endTime: IsNull(),
+      });
+
+      return timeEntry;
     } catch (err) {
       throw err;
     }
