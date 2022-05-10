@@ -174,7 +174,6 @@ export class TimeEntryResolver {
 
       return timeEntry;
     } catch (err) {
-      console.log(err, 'err');
       this.errorService.throwError({
         err,
         name: this.name,

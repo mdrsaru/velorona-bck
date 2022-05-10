@@ -65,7 +65,15 @@ export interface ITimeEntryTotalDurationInput {
   user_id: string;
   startTime: string;
   endTime: string;
-  project_id: string;
+  project_id?: string;
+}
+
+export interface IUserTotalExpenseInput {
+  company_id: string;
+  user_id: string;
+  client_id: string;
+  startTime: string;
+  endTime: string;
 }
 
 export interface ITimeEntryWeeklyDetailsRepoInput {
@@ -84,6 +92,11 @@ export interface ITimeEntryRepository {
   Calculate total time in seconds of users time entry for the given interval
   */
   getTotalTimeInSeconds(args: ITimeEntryTotalDurationInput): Promise<number>;
+
+  /**
+   * Get user's total expense for the time entries related to all project for the given time interval
+   */
+  getUserTotalExpense(args: IUserTotalExpenseInput): Promise<number>;
   getWeeklyDetails(args: ITimeEntryWeeklyDetailsRepoInput): Promise<TimeEntry[]>;
   create(args: ITimeEntryCreateInput): Promise<TimeEntry>;
   update(args: ITimeEntryUpdateInput): Promise<TimeEntry>;

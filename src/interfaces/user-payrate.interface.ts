@@ -1,4 +1,4 @@
-import { IPagingArgs, IGetAllAndCountResult, IPaginationData } from './paging.interface';
+import { IPagingArgs, IGetAllAndCountResult, IPaginationData, IGetOptions } from './paging.interface';
 import { IEntityRemove, IEntityID } from './common.interface';
 import UserPayRate from '../entities/user-payrate.entity';
 
@@ -30,9 +30,14 @@ export interface IUserPayRateUpdateInput {
   project_id?: IUserPayRate['project_id'];
 }
 
+export interface IPayrateByUserAndProject {
+  user_id: string;
+  project_id: string;
+}
+
 export interface IUserPayRateRepository {
   getAllAndCount(args: IPagingArgs): Promise<IGetAllAndCountResult<UserPayRate>>;
-  getAll(args: any): Promise<UserPayRate[]>;
+  getAll(args: IGetOptions): Promise<UserPayRate[]>;
   getById(args: IEntityID): Promise<UserPayRate | undefined>;
   create(args: IUserPayRateCreateInput): Promise<UserPayRate>;
   update(args: IUserPayRateUpdateInput): Promise<UserPayRate>;

@@ -3,9 +3,11 @@ import { inject, injectable } from 'inversify';
 
 import { TYPES } from '../types';
 import Paging from '../utils/paging';
+import * as apiError from '../utils/api-error';
 import TimeEntry from '../entities/time-entry.entity';
+import { TimesheetStatus } from '../config/constants';
 
-import { IEntityRemove, IErrorService, ILogger } from '../interfaces/common.interface';
+import { IEntityRemove, IErrorService, ILogger, Maybe } from '../interfaces/common.interface';
 import { IPaginationData, IPagingArgs } from '../interfaces/paging.interface';
 import {
   ITimeEntryCreateInput,
@@ -16,12 +18,16 @@ import {
   ITimeEntryWeeklyDetailsInput,
 } from '../interfaces/time-entry.interface';
 import { IUserPayRateRepository } from '../interfaces/user-payrate.interface';
+import { ITimesheetRepository } from '../interfaces/timesheet.interface';
+import { IProjectRepository } from '../interfaces/project.interface';
 
 @injectable()
 export default class TimeEntryService implements ITimeEntryService {
   private name = 'TimeEntryService';
   private timeEntryRepository: ITimeEntryRepository;
   private userPayRateRepository: IUserPayRateRepository;
+  private timesheetRepository: ITimesheetRepository;
+  private projectRepository: IProjectRepository;
   private logger: ILogger;
   private errorService: IErrorService;
 
@@ -29,12 +35,16 @@ export default class TimeEntryService implements ITimeEntryService {
     @inject(TYPES.TimeEntryRepository) timeEntryRepository: ITimeEntryRepository,
     @inject(TYPES.UserPayRateRepository) userPayRateRepository: IUserPayRateRepository,
     @inject(TYPES.LoggerFactory) loggerFactory: (name: string) => ILogger,
-    @inject(TYPES.ErrorService) errorService: IErrorService
+    @inject(TYPES.ErrorService) errorService: IErrorService,
+    @inject(TYPES.TimesheetRepository) _timesheetRepository: ITimesheetRepository,
+    @inject(TYPES.ProjectRepository) _projectRepository: IProjectRepository
   ) {
     this.timeEntryRepository = timeEntryRepository;
     this.userPayRateRepository = userPayRateRepository;
     this.logger = loggerFactory(this.name);
     this.errorService = errorService;
+    this.timesheetRepository = _timesheetRepository;
+    this.projectRepository = _projectRepository;
   }
 
   getAllAndCount = async (args: IPagingArgs): Promise<IPaginationData<TimeEntry>> => {
@@ -96,7 +106,7 @@ export default class TimeEntryService implements ITimeEntryService {
     const task_id = args.task_id;
 
     try {
-      let timeEntry = await this.timeEntryRepository.create({
+      const timeEntry = await this.timeEntryRepository.create({
         startTime,
         endTime,
         clientLocation,
@@ -105,6 +115,30 @@ export default class TimeEntryService implements ITimeEntryService {
         created_by,
         task_id,
       });
+
+      /* Create/Update timesheet if the end time is provided */
+      try {
+        if (endTime) {
+          const project = await this.projectRepository.getById({
+            id: project_id,
+          });
+
+          if (project) {
+            await this.createUpdateTimesheet({
+              startTime,
+              client_id: project.client_id,
+              company_id,
+              user_id: created_by,
+            });
+          }
+        }
+      } catch (err) {
+        this.logger.error({
+          operation,
+          message: 'Error on creating/updating timesheet',
+          data: err,
+        });
+      }
 
       return timeEntry;
     } catch (err) {
@@ -142,6 +176,30 @@ export default class TimeEntryService implements ITimeEntryService {
         task_id,
       });
 
+      /* Create/Update timesheet if the end time is provided */
+      try {
+        if (endTime) {
+          const project = await this.projectRepository.getById({
+            id: timeEntry.project_id,
+          });
+
+          if (project) {
+            await this.createUpdateTimesheet({
+              startTime: startTime ?? timeEntry.startTime,
+              client_id: project.client_id,
+              company_id: timeEntry.company_id,
+              user_id: timeEntry.created_by,
+            });
+          }
+        }
+      } catch (err) {
+        this.logger.error({
+          operation,
+          message: 'Error on creating/updating timesheet',
+          data: err,
+        });
+      }
+
       return timeEntry;
     } catch (err) {
       this.errorService.throwError({
@@ -163,6 +221,30 @@ export default class TimeEntryService implements ITimeEntryService {
         id,
         endTime,
       });
+
+      /* Create/Update timesheet if the end time is provided */
+      try {
+        if (endTime) {
+          const project = await this.projectRepository.getById({
+            id: timeEntry.project_id,
+          });
+
+          if (project) {
+            await this.createUpdateTimesheet({
+              startTime: timeEntry.startTime,
+              client_id: project.client_id,
+              company_id: timeEntry.company_id,
+              user_id: timeEntry.created_by,
+            });
+          }
+        }
+      } catch (err) {
+        this.logger.error({
+          operation,
+          message: 'Error on creating/updating timesheet',
+          data: err,
+        });
+      }
 
       return timeEntry;
     } catch (err) {
@@ -188,4 +270,107 @@ export default class TimeEntryService implements ITimeEntryService {
       throw err;
     }
   };
+
+  createUpdateTimesheet = async (args: CreateUpdateTimesheet) => {
+    try {
+      const startTime = args.startTime;
+      const company_id = args.company_id;
+      const user_id = args.user_id;
+      const client_id = args.client_id;
+      const approver_id = args.approver_id;
+
+      const startDate = moment(startTime).startOf('isoWeek');
+      const endDate = moment(startTime).endOf('isoWeek');
+
+      const totalTimeInSeconds = await this.timeEntryRepository.getTotalTimeInSeconds({
+        company_id,
+        user_id,
+        startTime: startDate.format('YYYY-MM-DDTHH:mm:ss'),
+        endTime: endDate.format('YYYY-MM-DDTHH:mm:ss'),
+      });
+      const totalTimeInHours = totalTimeInSeconds / 3600;
+
+      const totalExpense = await this.timeEntryRepository.getUserTotalExpense({
+        company_id,
+        user_id,
+        client_id,
+        startTime: startDate.format('YYYY-MM-DDTHH:mm:ss'),
+        endTime: endDate.format('YYYY-MM-DDTHH:mm:ss'),
+      });
+
+      const weekStartDate = startDate.format('YYYY-MM-DD');
+      const weekEndDate = endDate.format('YYYY-MM-DD');
+
+      const found = await this.timesheetRepository.getAll({
+        query: {
+          user_id,
+          client_id,
+          weekStartDate,
+          weekEndDate,
+        },
+      });
+
+      let id: Maybe<string>;
+
+      if (found.length > 1) {
+        // throw since the timesheet should be unique for the provided week for same user, client and start/end date.
+        throw new apiError.ConflictError({
+          details: ['More than 1 timesheet exists'],
+        });
+      } else if (found.length === 1) {
+        id = found[0].id;
+      }
+
+      if (id) {
+        const timesheet = await this.timesheetRepository.update({
+          id,
+          duration: totalTimeInSeconds,
+          totalExpense,
+        });
+
+        return timesheet;
+      } else {
+        console.log(
+          totalTimeInHours,
+          totalExpense,
+          {
+            weekStartDate,
+            weekEndDate,
+            duration: totalTimeInSeconds,
+            totalExpense,
+            status: TimesheetStatus.Unpaid,
+            user_id,
+            client_id,
+            company_id,
+          },
+          'hello\n\n'
+        );
+        const timesheet = await this.timesheetRepository.create({
+          weekStartDate,
+          weekEndDate,
+          duration: totalTimeInSeconds,
+          totalExpense,
+          status: TimesheetStatus.Unpaid,
+          user_id,
+          client_id,
+          company_id,
+        });
+
+        return timesheet;
+      }
+    } catch (err) {
+      throw err;
+    }
+  };
 }
+
+type CreateUpdateTimesheet = {
+  /**
+   * Start datetime of the time-entry
+   */
+  startTime: Date;
+  company_id: string;
+  user_id: string;
+  client_id: string;
+  approver_id?: string;
+};

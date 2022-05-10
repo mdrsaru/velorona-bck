@@ -36,9 +36,12 @@ export default class Timesheet extends Base {
   })
   weekEndDate: string;
 
-  @Field({ nullable: true })
-  @Column({ nullable: true, type: 'float', name: timesheet.total_hours })
-  totalHours: number;
+  @Field({ nullable: true, description: 'Weekly total time entries in seconds' })
+  @Column({ nullable: true, type: 'int', name: timesheet.duration })
+  duration: number;
+
+  @Field({ nullable: true, description: 'Weekly duration format in HH:mm:ss' })
+  durationFormat: string;
 
   @Field({ nullable: true })
   @Column({ name: timesheet.total_expense, type: 'float', nullable: true })
@@ -83,7 +86,7 @@ export default class Timesheet extends Base {
   client: Client;
 
   @Field()
-  @Column()
+  @Column({ nullable: true })
   approver_id: string;
 
   @Field((type) => User)
