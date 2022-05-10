@@ -1,4 +1,4 @@
-import { Entity, Column, JoinColumn, OneToOne, ManyToOne, Index } from 'typeorm';
+import { Entity, Column, JoinColumn, OneToOne, ManyToOne, Index, OneToMany } from 'typeorm';
 import { ObjectType, Field, ID, InputType, registerEnumType } from 'type-graphql';
 
 import Company from './company.entity';
@@ -7,6 +7,7 @@ import { Base } from './base.entity';
 import { entities, ClientStatus } from '../config/constants';
 import { PagingResult, PagingInput, DeleteInput } from './common.entity';
 import { AddressCreateInput, AddressUpdateInput } from './address.entity';
+import Timesheet from './timesheet.entity';
 
 registerEnumType(ClientStatus, {
   name: 'ClientStatus',

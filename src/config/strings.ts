@@ -85,4 +85,5 @@ export default {
   hoursRequired: 'Hours required',
   rateRequired: 'Hours required',
   activeTimerNotStopped: 'Started timer has not stopped yet.',
+  timesheetAlreadyExistWithSameDetail: 'Timesheet already exist with week start date or week end date or client',
 };

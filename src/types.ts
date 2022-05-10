@@ -113,6 +113,12 @@ const INVOICE_ITEMS = {
   InvoiceItemController: Symbol('InvoiceItemController'),
 };
 
+const TIMESHEET = {
+  TimesheetRepository: Symbol('TimesheetRepository'),
+  TimesheetService: Symbol('TimesheetService'),
+  TimesheetController: Symbol('TimesheetController'),
+};
+
 const TYPES = {
   ...COMMON,
   ...COMPANY,
@@ -131,6 +137,7 @@ const TYPES = {
   ...USERPAYRATE,
   ...INVOICE,
   ...INVOICE_ITEMS,
+  ...TIMESHEET,
 };
 
 export { TYPES };
