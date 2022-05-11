@@ -91,7 +91,6 @@ export default class TaskRepository extends BaseRepository<Task> implements ITas
       const status = args.status;
       const archived = args.archived;
       const manager_id = args.manager_id;
-      const company_id = args.company_id;
       const project_id = args.project_id;
 
       const found = await this.getById({ id });
@@ -108,7 +107,6 @@ export default class TaskRepository extends BaseRepository<Task> implements ITas
         status,
         archived,
         manager_id,
-        company_id,
         project_id,
       });
 

@@ -113,6 +113,9 @@ export class TaskUpdateInput {
   @Field()
   id: string;
 
+  @Field()
+  company_id: string;
+
   @Field({ nullable: true })
   name: string;
 
@@ -124,9 +127,6 @@ export class TaskUpdateInput {
 
   @Field({ nullable: true })
   manager_id: string;
-
-  @Field({ nullable: true })
-  company_id: string;
 
   @Field({ nullable: true })
   project_id: string;

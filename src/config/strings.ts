@@ -86,4 +86,5 @@ export default {
   rateRequired: 'Hours required',
   activeTimerNotStopped: 'Started timer has not stopped yet.',
   timesheetAlreadyExistWithSameDetail: 'Timesheet already exist with week start date or week end date or client',
+  taskNotBelongToProject: 'Task does not belong to the provided project',
 };

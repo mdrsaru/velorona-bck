@@ -220,4 +220,7 @@ export class TimeEntryBulkDeleteInput {
 
   @Field(() => [String])
   ids: string[];
+
+  @Field({ nullable: true })
+  created_by: string;
 }

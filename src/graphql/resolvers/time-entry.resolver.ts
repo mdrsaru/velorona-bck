@@ -299,7 +299,7 @@ export class TimeEntryResolver {
   }
 
   @Mutation((returns) => [TimeEntry])
-  @UseMiddleware(authenticate, checkRoleAndFilterTimeEntry, checkCompanyAccess)
+  @UseMiddleware(authenticate, checkCompanyAccess, checkRoleAndFilterTimeEntry)
   async TimeEntryBulkDelete(
     @Arg('input') args: TimeEntryBulkDeleteInput,
     @Ctx() ctx: IGraphqlContext
@@ -308,8 +308,13 @@ export class TimeEntryResolver {
 
     try {
       const ids = args.ids;
+      const created_by = args?.created_by;
 
-      let timeEntry: TimeEntry[] = await this.timeEntryService.bulkRemove({ ids });
+      let timeEntry: TimeEntry[] = await this.timeEntryService.bulkRemove({
+        ids,
+        created_by,
+      });
+
       return timeEntry;
     } catch (err) {
       this.errorService.throwError({

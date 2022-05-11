@@ -279,9 +279,11 @@ export default class TimeEntryService implements ITimeEntryService {
   bulkRemove = async (args: ITimeEntryBulkRemove) => {
     try {
       const ids = args.ids;
+      const created_by = args?.created_by;
 
       const timeEntry = await this.timeEntryRepository.bulkRemove({
         ids,
+        created_by,
       });
 
       return timeEntry;

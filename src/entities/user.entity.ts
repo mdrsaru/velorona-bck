@@ -243,6 +243,9 @@ export class UserQuery {
   id: string;
 
   @Field({ nullable: true })
+  company_id: string;
+
+  @Field({ nullable: true })
   search: string;
 
   @Field((type) => RoleEnum, { nullable: true })

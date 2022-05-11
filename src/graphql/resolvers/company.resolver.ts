@@ -41,7 +41,7 @@ export class CompanyResolver {
   }
 
   @Query((returns) => CompanyPagingResult)
-  @UseMiddleware(authenticate)
+  @UseMiddleware(authenticate, authorize(RoleEnum.SuperAdmin))
   async Company(
     @Arg('input', { nullable: true }) args: CompanyQueryInput,
     @Ctx() ctx: any

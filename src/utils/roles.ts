@@ -10,6 +10,9 @@ export interface ICheckAdmin {
   roles: Role[];
 }
 
+/**
+ * Checks the expected roles with the user roles
+ */
 export const checkRoles = (args: ICheckRoleArgs) => {
   const expectedRoles = args.expectedRoles;
   const userRoles: string[] = args.userRoles.map((role) => role.name);
