@@ -10,6 +10,7 @@ import { TimesheetStatus } from '../config/constants';
 import { IEntityRemove, IErrorService, ILogger, Maybe } from '../interfaces/common.interface';
 import { IPaginationData, IPagingArgs } from '../interfaces/paging.interface';
 import {
+  ITimeEntryBulkRemove,
   ITimeEntryCreateInput,
   ITimeEntryRepository,
   ITimeEntryService,
@@ -267,6 +268,22 @@ export default class TimeEntryService implements ITimeEntryService {
 
       const timeEntry = await this.timeEntryRepository.remove({
         id,
+      });
+
+      return timeEntry;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  bulkRemove = async (args: ITimeEntryBulkRemove) => {
+    try {
+      const ids = args.ids;
+      const created_by = args?.created_by;
+
+      const timeEntry = await this.timeEntryRepository.bulkRemove({
+        ids,
+        created_by,
       });
 
       return timeEntry;

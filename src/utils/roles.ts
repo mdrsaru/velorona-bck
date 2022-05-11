@@ -24,3 +24,8 @@ export const isSuperAdmin = (args: ICheckAdmin) => {
   const superAdmin = args.roles.find((role) => role.name === RoleEnum.SuperAdmin);
   return !!superAdmin;
 };
+
+export const isCompanyAdmin = (args: ICheckAdmin) => {
+  const companyAdmin = args.roles.find((role) => role.name === RoleEnum.CompanyAdmin);
+  return !!companyAdmin;
+};

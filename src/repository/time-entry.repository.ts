@@ -28,6 +28,7 @@ import {
   ITimeEntryWeeklyDetailsRepoInput,
   IUserTotalExpenseInput,
   ITimeEntryActiveInput,
+  ITimeEntryBulkRemove,
 } from '../interfaces/time-entry.interface';
 import { IUserRepository } from '../interfaces/user.interface';
 import { IGetOptions, IGetAllAndCountResult } from '../interfaces/paging.interface';
@@ -399,4 +400,32 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
       throw err;
     }
   };
+
+  async bulkRemove(args: ITimeEntryBulkRemove): Promise<TimeEntry[]> {
+    try {
+      const created_by = args?.created_by;
+      const ids = args.ids;
+
+      let query;
+      if (created_by) {
+        query = { created_by, id: In(ids) };
+      } else {
+        query = { id: In(ids) };
+      }
+
+      let timeEntries = await this.repo.find(query);
+
+      let timeEntryId: any = [];
+
+      if (timeEntries.length > 0) {
+        timeEntryId = timeEntries.map((timeEntry) => timeEntry.id);
+      }
+
+      await this.repo.delete({ id: In(timeEntryId) });
+
+      return timeEntries;
+    } catch (err) {
+      throw err;
+    }
+  }
 }
