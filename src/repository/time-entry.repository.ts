@@ -293,6 +293,12 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
         });
       }
 
+      if (task.project_id !== project_id) {
+        throw new apiError.NotFoundError({
+          details: [strings.taskNotBelongToProject],
+        });
+      }
+
       let duration: undefined | number = undefined;
       if (endTime) {
         const startDate = moment(startTime);
@@ -323,10 +329,10 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
       const endTime = args.endTime;
       const clientLocation = args.clientLocation;
       const approver_id = args.approver_id;
-      const project_id = args.project_id;
       const company_id = args.company_id;
       const created_by = args.created_by;
       const task_id = args.task_id;
+      let project_id = args.project_id;
       let startTime = args.startTime;
 
       const errors: string[] = [];
@@ -346,6 +352,17 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
         throw new NotFoundError({
           details: ['TimeEntry not found'],
         });
+      }
+
+      if (!isNil(task_id) && !isEmpty(task_id)) {
+        const task = await this.taskRepository.getById({ id: task_id });
+        if (!task) {
+          throw new apiError.NotFoundError({
+            details: [strings.taskNotFound],
+          });
+        }
+
+        project_id = task.project_id;
       }
 
       startTime = startTime ?? found.startTime;

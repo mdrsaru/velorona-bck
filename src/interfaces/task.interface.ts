@@ -27,7 +27,6 @@ export interface ITaskUpdateInput {
   status?: TaskStatus | undefined;
   archived?: boolean | undefined;
   manager_id?: string | undefined;
-  company_id?: string | undefined;
   project_id?: string | undefined;
   user_ids?: string[];
 }

@@ -11,10 +11,13 @@ import { checkRoles, isSuperAdmin } from '../../utils/roles';
 import { IErrorService } from '../../interfaces/common.interface';
 import { IGraphqlContext } from '../../interfaces/graphql.interface';
 
-const name = 'client.middleware';
+const name = 'company.middleware';
 
+/**
+ * Checks if the user has access to the reource with the provided company
+ */
 export const checkCompanyAccess: MiddlewareFn<IGraphqlContext> = async ({ context, args }, next: NextFn) => {
-  const operation = 'hasClientAccess';
+  const operation = 'checkCompanyAccess';
   const errorService = container.get<IErrorService>(TYPES.ErrorService);
 
   try {

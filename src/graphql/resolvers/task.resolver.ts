@@ -18,7 +18,6 @@ import { Role as RoleEnum } from '../../config/constants';
 import TaskValidation from '../../validation/task.validation';
 import authorize from '../middlewares/authorize';
 import authenticate from '../middlewares/authenticate';
-import { canCreateTask, canViewTask } from '../middlewares/task';
 import { checkCompanyAccess } from '../middlewares/company';
 
 import { IErrorService, IJoiService } from '../../interfaces/common.interface';
@@ -83,7 +82,7 @@ export class TaskResolver {
   }
 
   @Mutation((returns) => Task)
-  @UseMiddleware(authenticate, authorize(RoleEnum.CompanyAdmin, RoleEnum.SuperAdmin), canCreateTask)
+  @UseMiddleware(authenticate, authorize(RoleEnum.CompanyAdmin, RoleEnum.SuperAdmin), checkCompanyAccess)
   async TaskCreate(@Arg('input') args: TaskCreateInput, @Ctx() ctx: any): Promise<Task> {
     const operation = 'TaskCreate';
     try {
@@ -129,7 +128,7 @@ export class TaskResolver {
   }
 
   @Mutation((returns) => Task)
-  @UseMiddleware(authenticate)
+  @UseMiddleware(authenticate, authorize(RoleEnum.CompanyAdmin, RoleEnum.SuperAdmin), checkCompanyAccess)
   async TaskUpdate(@Arg('input') args: TaskUpdateInput, @Ctx() ctx: any): Promise<Task> {
     const operation = 'TaskUpdate';
 
@@ -139,7 +138,6 @@ export class TaskResolver {
       const status = args.status;
       const archived = args.archived;
       const manager_id = args.manager_id;
-      const company_id = args.company_id;
       const project_id = args.project_id;
       const user_ids = args.user_ids;
 
@@ -152,7 +150,6 @@ export class TaskResolver {
           status,
           archived,
           manager_id,
-          company_id,
           project_id,
           user_ids,
         },
@@ -164,7 +161,6 @@ export class TaskResolver {
         status,
         archived,
         manager_id,
-        company_id,
         project_id,
         user_ids,
       });
