@@ -28,6 +28,7 @@ import {
   ITimeEntryWeeklyDetailsRepoInput,
   IUserTotalExpenseInput,
   ITimeEntryActiveInput,
+  ITimeEntryBulkRemove,
 } from '../interfaces/time-entry.interface';
 import { IUserRepository } from '../interfaces/user.interface';
 import { IGetOptions, IGetAllAndCountResult } from '../interfaces/paging.interface';
@@ -382,4 +383,21 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
       throw err;
     }
   };
+
+  async bulkRemove(args: ITimeEntryBulkRemove): Promise<TimeEntry[]> {
+    try {
+      const row = await this.repo.findByIds(args.ids);
+
+      if (!row.length) {
+        throw new NotFoundError({
+          details: [strings.resourceNotFound],
+        });
+      }
+
+      await this.repo.delete(args.ids);
+      return row;
+    } catch (err) {
+      throw err;
+    }
+  }
 }

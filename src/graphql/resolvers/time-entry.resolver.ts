@@ -13,6 +13,7 @@ import TimeEntry, {
   TimeEntryUpdateInput,
   TimeEntryWeeklyDetailsInput,
   TimeEntryDeleteInput,
+  TimeEntryBulkDeleteInput,
 } from '../../entities/time-entry.entity';
 import Paging from '../../utils/paging';
 import authenticate from '../middlewares/authenticate';
@@ -25,6 +26,7 @@ import { IErrorService, IJoiService } from '../../interfaces/common.interface';
 import { IPaginationData } from '../../interfaces/paging.interface';
 import { ITimeEntryService } from '../../interfaces/time-entry.interface';
 import { IGraphqlContext } from '../../interfaces/graphql.interface';
+import { checkRoleAndFilterTimeEntry } from '../middlewares/time-entry';
 
 @injectable()
 @Resolver((of) => TimeEntry)
@@ -285,6 +287,29 @@ export class TimeEntryResolver {
 
       let timeEntry: TimeEntry = await this.timeEntryService.remove({ id });
 
+      return timeEntry;
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: false,
+      });
+    }
+  }
+
+  @Mutation((returns) => [TimeEntry])
+  @UseMiddleware(authenticate, checkRoleAndFilterTimeEntry, checkCompanyAccess)
+  async TimeEntryBulkDelete(
+    @Arg('input') args: TimeEntryBulkDeleteInput,
+    @Ctx() ctx: IGraphqlContext
+  ): Promise<TimeEntry[]> {
+    const operation = 'TaskDelete';
+
+    try {
+      const ids = args.ids;
+
+      let timeEntry: TimeEntry[] = await this.timeEntryService.bulkRemove({ ids });
       return timeEntry;
     } catch (err) {
       this.errorService.throwError({

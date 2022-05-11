@@ -212,3 +212,12 @@ export class TimeEntryDeleteInput extends DeleteInput {
   @Field()
   company_id: string;
 }
+
+@InputType()
+export class TimeEntryBulkDeleteInput {
+  @Field()
+  company_id: string;
+
+  @Field(() => [String])
+  ids: string[];
+}

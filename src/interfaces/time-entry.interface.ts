@@ -88,6 +88,10 @@ export interface ITimeEntryActiveInput {
   company_id: string;
 }
 
+export interface ITimeEntryBulkRemove {
+  ids: string[];
+}
+
 export interface ITimeEntryRepository {
   getAllAndCount(args: IPagingArgs): Promise<IGetAllAndCountResult<TimeEntry>>;
   getAll(args: any): Promise<TimeEntry[]>;
@@ -110,6 +114,7 @@ export interface ITimeEntryRepository {
   create(args: ITimeEntryCreateInput): Promise<TimeEntry>;
   update(args: ITimeEntryUpdateInput): Promise<TimeEntry>;
   remove(args: IEntityRemove): Promise<TimeEntry>;
+  bulkRemove(args: ITimeEntryBulkRemove): Promise<TimeEntry[]>;
 }
 
 export interface ITimeEntryService {
@@ -119,4 +124,5 @@ export interface ITimeEntryService {
   update(args: ITimeEntryUpdateInput): Promise<TimeEntry>;
   stop(args: ITimeEntryStopInput): Promise<TimeEntry>;
   remove(args: IEntityRemove): Promise<TimeEntry>;
+  bulkRemove(args: ITimeEntryBulkRemove): Promise<TimeEntry[]>;
 }
