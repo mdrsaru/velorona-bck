@@ -6,10 +6,11 @@ import { Role as RoleEnum } from '../../config/constants';
 import Company from '../../entities/company.entity';
 import Paging from '../../utils/paging';
 import authenticate from '../middlewares/authenticate';
-import { canCreateSystemAdmin } from '../middlewares/user';
-import { checkCompanyAccess } from '../middlewares/company';
 import authorize from '../middlewares/authorize';
+import { canCreateSystemAdmin, isSelf, filterCompany } from '../middlewares/user';
+import { checkCompanyAccess } from '../middlewares/company';
 import UserValidation from '../../validation/user.validation';
+
 import { PagingInput, DeleteInput, MessageResponse } from '../../entities/common.entity';
 import User, {
   UserPagingResult,
@@ -48,7 +49,7 @@ export class UserResolver {
   }
 
   @Query((returns) => UserPagingResult)
-  @UseMiddleware(authenticate)
+  @UseMiddleware(authenticate, filterCompany)
   async User(@Arg('input', { nullable: true }) args: UserQueryInput, @Ctx() ctx: any): Promise<IPaginationData<User>> {
     const operation = 'User';
 
@@ -184,7 +185,7 @@ export class UserResolver {
   }
 
   @Mutation((returns) => User)
-  @UseMiddleware(authenticate)
+  @UseMiddleware(authenticate, isSelf)
   async UserUpdate(@Arg('input') args: UserUpdateInput): Promise<User> {
     const operation = 'UserUpdate';
 
@@ -266,7 +267,7 @@ export class UserResolver {
   }
 
   @Mutation((returns) => User)
-  @UseMiddleware(authenticate)
+  @UseMiddleware(authenticate, isSelf)
   async ChangeProfilePicture(@Arg('input') args: ChangeProfilePictureInput, @Ctx() ctx: IGraphqlContext) {
     const operation = 'Change Profile Picture';
 
