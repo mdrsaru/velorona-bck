@@ -11,6 +11,7 @@ export const userRolesTable = {
 export const timeEntry = {
   start_time: 'start_time',
   end_time: 'end_time',
+  duration: 'duration',
   client_location: 'client_location',
   project_id: 'project_id',
   company_id: 'company_id',
@@ -27,6 +28,9 @@ export const timesheet = {
   user_id: 'user_id',
   client_id: 'client_id',
   approver_id: 'approver_id',
+  last_approved_at: 'last_approved_at',
+  is_submitted: 'is_submitted',
+  last_submitted_at: 'last_submitted_at',
 };
 
 export const usersClients = {

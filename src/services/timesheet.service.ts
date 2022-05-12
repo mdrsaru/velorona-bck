@@ -3,10 +3,16 @@ import { inject, injectable } from 'inversify';
 
 import { TYPES } from '../types';
 import Paging from '../utils/paging';
-import { ITimesheetCreateInput, ITimesheetRepository, ITimesheetService } from '../interfaces/timesheet.interface';
+import Timesheet from '../entities/timesheet.entity';
+
+import {
+  ITimesheetCreateInput,
+  ITimesheetRepository,
+  ITimesheetService,
+  ITimesheetUpdateInput,
+} from '../interfaces/timesheet.interface';
 import { IEntityRemove, IErrorService, ILogger } from '../interfaces/common.interface';
 import { IPaginationData, IPagingArgs } from '../interfaces/paging.interface';
-import Timesheet from '../entities/timesheet.entity';
 
 @injectable()
 export default class TimesheetService implements ITimesheetService {
@@ -38,6 +44,30 @@ export default class TimesheetService implements ITimesheetService {
         paging,
         data: rows,
       };
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  update = async (args: ITimesheetUpdateInput): Promise<Timesheet> => {
+    try {
+      const id = args.id;
+      const status = args.status;
+      const lastApprovedAt = args.lastApprovedAt;
+      const isSubmitted = args.isSubmitted;
+      const lastSubmittedAt = args.lastSubmittedAt;
+      const approver_id = args.approver_id;
+
+      const timesheet = await this.timesheetRepository.update({
+        id,
+        status,
+        lastApprovedAt,
+        isSubmitted,
+        lastSubmittedAt,
+        approver_id,
+      });
+
+      return timesheet;
     } catch (err) {
       throw err;
     }

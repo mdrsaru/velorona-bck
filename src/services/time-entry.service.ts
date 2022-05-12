@@ -351,27 +351,12 @@ export default class TimeEntryService implements ITimeEntryService {
 
         return timesheet;
       } else {
-        console.log(
-          totalTimeInHours,
-          totalExpense,
-          {
-            weekStartDate,
-            weekEndDate,
-            duration: totalTimeInSeconds,
-            totalExpense,
-            status: TimesheetStatus.Unpaid,
-            user_id,
-            client_id,
-            company_id,
-          },
-          'hello\n\n'
-        );
         const timesheet = await this.timesheetRepository.create({
           weekStartDate,
           weekEndDate,
           duration: totalTimeInSeconds,
           totalExpense,
-          status: TimesheetStatus.Unpaid,
+          status: TimesheetStatus.Open,
           user_id,
           client_id,
           company_id,

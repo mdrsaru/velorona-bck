@@ -2,12 +2,20 @@ import { inject, injectable } from 'inversify';
 import { Arg, Ctx, Mutation, Query, Resolver, UseMiddleware, FieldResolver, Root } from 'type-graphql';
 
 import { TYPES } from '../../types';
+import { Role as RoleEnum, TimesheetStatus } from '../../config/constants';
 import Paging from '../../utils/paging';
 import authenticate from '../middlewares/authenticate';
 import authorize from '../middlewares/authorize';
 import { checkCompanyAccess } from '../middlewares/company';
+import { filterTimesheetByUser } from '../middlewares/timesheet';
+
 import { DeleteInput } from '../../entities/common.entity';
-import Timesheet, { TimeSheetPagingResult, TimesheetQueryInput } from '../../entities/timesheet.entity';
+import Timesheet, {
+  TimeSheetPagingResult,
+  TimesheetQueryInput,
+  TimesheetApproveInput,
+  TimesheetSubmitInput,
+} from '../../entities/timesheet.entity';
 
 import { IErrorService, IJoiService } from '../../interfaces/common.interface';
 import { IGraphqlContext } from '../../interfaces/graphql.interface';
@@ -33,12 +41,12 @@ export class TimesheetResolver {
   }
 
   @Query((returns) => TimeSheetPagingResult)
-  @UseMiddleware(authenticate, checkCompanyAccess)
+  @UseMiddleware(authenticate, checkCompanyAccess, filterTimesheetByUser)
   async Timesheet(
     @Arg('input') args: TimesheetQueryInput,
     @Ctx() ctx: IGraphqlContext
   ): Promise<IPaginationData<Timesheet>> {
-    const operation = 'Timesheets';
+    const operation = 'Timesheet';
 
     try {
       const pagingArgs = Paging.createPagingPayload(args);
@@ -46,6 +54,70 @@ export class TimesheetResolver {
       let result: IPaginationData<Timesheet> = await this.timesheetService.getAllAndCount(pagingArgs);
 
       return result;
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
+    }
+  }
+
+  @Mutation((returns) => Timesheet)
+  @UseMiddleware(
+    authenticate,
+    authorize(RoleEnum.CompanyAdmin, RoleEnum.SuperAdmin, RoleEnum.TaskManager),
+    checkCompanyAccess
+  )
+  async TimesheetApprove(@Arg('input') args: TimesheetApproveInput, @Ctx() ctx: IGraphqlContext): Promise<Timesheet> {
+    const operation = 'TimesheetApprove';
+
+    try {
+      const id = args.id;
+      const status = TimesheetStatus.Approved;
+      const lastApprovedAt = new Date();
+      const approver_id = ctx?.user?.id;
+
+      const timesheet = await this.timesheetService.update({
+        id,
+        status,
+        lastApprovedAt,
+        approver_id,
+      });
+
+      return timesheet;
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
+    }
+  }
+
+  @Mutation((returns) => Timesheet)
+  @UseMiddleware(
+    authenticate,
+    authorize(RoleEnum.CompanyAdmin, RoleEnum.SuperAdmin, RoleEnum.Employee),
+    checkCompanyAccess
+  )
+  async TimesheetSubmit(@Arg('input') args: TimesheetSubmitInput): Promise<Timesheet> {
+    const operation = 'TimesheetSubmit';
+
+    try {
+      const id = args.id;
+      const isSubmitted = true;
+      const lastSubmittedAt = new Date();
+
+      const timesheet = await this.timesheetService.update({
+        id,
+        isSubmitted,
+        lastSubmittedAt,
+      });
+
+      return timesheet;
     } catch (err) {
       this.errorService.throwError({
         err,
@@ -82,7 +154,7 @@ export class TimesheetResolver {
       return `${_hours}:${_mins}:${_seconds}`;
     }
 
-    return '';
+    return null;
   }
 
   @FieldResolver()

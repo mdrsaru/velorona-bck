@@ -51,7 +51,7 @@ export default class Timesheet extends Base {
   @Column({
     type: 'enum',
     enum: TimesheetStatus,
-    default: TimesheetStatus.Unpaid,
+    default: TimesheetStatus.Open,
   })
   status: TimesheetStatus;
 
@@ -89,10 +89,49 @@ export default class Timesheet extends Base {
   @Column({ nullable: true })
   approver_id: string;
 
-  @Field((type) => User)
+  @Field((type) => User, { nullable: true })
   @ManyToOne(() => User)
   @JoinColumn({ name: timesheet.approver_id })
   approver: User;
+
+  @Field({ nullable: true })
+  @Column({
+    name: timesheet.last_approved_at,
+    nullable: true,
+  })
+  lastApprovedAt: Date;
+
+  @Field({ nullable: true })
+  @Column({
+    name: timesheet.last_submitted_at,
+    nullable: true,
+  })
+  lastSubmittedAt: Date;
+
+  @Field({ nullable: true })
+  @Column({
+    name: timesheet.is_submitted,
+    default: false,
+  })
+  isSubmitted: boolean;
+}
+
+@InputType()
+export class TimesheetApproveInput {
+  @Field()
+  id: string;
+
+  @Field()
+  company_id: string;
+}
+
+@InputType()
+export class TimesheetSubmitInput {
+  @Field()
+  id: string;
+
+  @Field()
+  company_id: string;
 }
 
 @ObjectType()

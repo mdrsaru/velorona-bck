@@ -40,6 +40,9 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
       const client_id = args.client_id;
       const company_id = args.company_id;
       const approver_id = args.approver_id;
+      const lastApprovedAt = args.lastApprovedAt;
+      const isSubmitted = args.isSubmitted;
+      const lastSubmittedAt = args.lastSubmittedAt;
 
       const user = await this.userRepository.getById({ id: user_id });
       if (!user) {
@@ -107,6 +110,9 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
         client_id,
         company_id,
         approver_id,
+        lastApprovedAt,
+        isSubmitted,
+        lastSubmittedAt,
       });
 
       return res;
@@ -121,6 +127,11 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
       const duration = args.duration;
       const totalExpense = args.totalExpense;
       const status = args.status;
+      const lastApprovedAt = args.lastApprovedAt;
+      const isSubmitted = args.isSubmitted;
+      const lastSubmittedAt = args.lastSubmittedAt;
+      const approver_id = args.approver_id;
+
       const errors: string[] = [];
 
       if (isNil(id) || !isString(id)) {
@@ -131,6 +142,16 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
         throw new ValidationError({
           details: errors,
         });
+      }
+
+      if (approver_id) {
+        const approver = await this.userRepository.getById({ id: approver_id });
+
+        if (!approver) {
+          throw new NotFoundError({
+            details: [strings.approverNotFound],
+          });
+        }
       }
 
       const found = await this.getById({ id });
@@ -145,6 +166,10 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
         duration,
         totalExpense,
         status,
+        lastApprovedAt,
+        isSubmitted,
+        approver_id,
+        lastSubmittedAt,
       });
 
       let timesheet = await this.repo.save(update);

@@ -201,17 +201,17 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
 
       const queryResult = await this.manager.query(
         `WITH cte_time_entry_payrate as (
-          SELECT t.duration, up.amount, ((t.duration::float / 3600) * up.amount) AS expense FROM time_entries as t 
-          INNER JOIN user_payrate AS up ON t.project_id = up.project_id
-          INNER JOIN projects as p on up.project_id = p.id
-          WHERE t.start_time >= $1 AND t.end_time <= $2 AND t.company_id = $3 AND t.created_by = $4 AND up.user_id = $4 AND p.client_id = $5
+          SELECT t.${timeEntry.duration}, up.${userPayRate.amount}, ((t.${timeEntry.duration}::float / 3600) * up.${userPayRate.amount}) AS expense FROM ${entities.timeEntry} as t 
+          INNER JOIN ${entities.userPayRate} AS up ON t.${timeEntry.project_id} = up.${userPayRate.project_id}
+          INNER JOIN ${entities.projects} as p on up.${userPayRate.project_id} = p.id
+          WHERE t.${timeEntry.start_time} >= $1 AND t.${timeEntry.end_time} <= $2 AND t.${timeEntry.company_id} = $3 AND t.${timeEntry.created_by} = $4 AND up.${userPayRate.user_id} = $4 AND p.client_id = $5
         )
         SELECT SUM(expense)::float(2) AS total_expense FROM cte_time_entry_payrate;
         `,
         [startTime, endTime, company_id, user_id, client_id]
       );
 
-      return queryResult?.[0]?.total_expense as number;
+      return queryResult?.[0]?.total_expense ?? 0;
     } catch (err) {
       throw err;
     }

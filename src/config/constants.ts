@@ -82,8 +82,8 @@ export enum ClientStatus {
 }
 
 export enum TimesheetStatus {
-  Paid = 'Paid',
-  Unpaid = 'Unpaid',
+  Open = 'Open',
+  Approved = 'Approved',
 }
 
 export enum Role {

@@ -1,4 +1,6 @@
+import set from 'lodash/set';
 import { MiddlewareFn, NextFn } from 'type-graphql';
+
 import { IGraphqlContext } from '../../interfaces/graphql.interface';
 import container from '../../inversify.config';
 import { IErrorService } from '../../interfaces/common.interface';
@@ -6,25 +8,24 @@ import { TYPES } from '../../types';
 import { Role as RoleEnum } from '../../config/constants';
 import { checkRoles } from '../../utils/roles';
 
-const name = 'time-entry.middleware';
+const name = 'timesheet.middleware';
 
-export const checkRoleAndFilterTimeEntry: MiddlewareFn<IGraphqlContext> = async ({ context, args }, next: NextFn) => {
-  const operation = 'checkRoleAndFilterTimeEntry';
+/**
+ * Filter timesheet list by user_id if the logged in user is not super admin or company admin
+ */
+export const filterTimesheetByUser: MiddlewareFn<IGraphqlContext> = async ({ context, args }, next: NextFn) => {
+  const operation = 'filterTimesheetByUser';
   const errorService = container.get<IErrorService>(TYPES.ErrorService);
 
   try {
-    const created_by = context.user?.id;
-
-    let ids = args.input.ids;
-    // Check only if user is not super admin and company admin
-
-    const isSuperAdminORCompanyAdmin = checkRoles({
+    const canAccessOtherTimesheet = checkRoles({
       expectedRoles: [RoleEnum.SuperAdmin, RoleEnum.CompanyAdmin],
       userRoles: context?.user?.roles ?? [],
     });
 
-    if (!isSuperAdminORCompanyAdmin) {
-      args.input.created_by = created_by;
+    if (!canAccessOtherTimesheet) {
+      args = args ?? {};
+      set(args, 'input.query.user_id', context?.user?.id);
     }
 
     await next();
