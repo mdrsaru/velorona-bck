@@ -1,15 +1,24 @@
-import { IErrorService, ILogger } from '../../../interfaces/common.interface';
+import ms from 'ms';
+import container from '../../../inversify.config';
+
+import * as apiError from '../../../utils/api-error';
+import { TYPES } from '../../../types';
+import { timeEntries } from '../../mock/data';
+import TimeEntryRepository from '../../mock/time-entry.repository';
+import TimesheetRepository from '../../mock/timesheet.repository';
+import UserPayRateRepository from '../../mock/user-payrate.repository';
+import ProjectRepository from '../../mock/project.repository';
+
 import {
   ITimeEntryCreateInput,
   ITimeEntryRepository,
   ITimeEntryService,
   ITimeEntryUpdateInput,
 } from '../../../interfaces/time-entry.interface';
-import container from '../../../inversify.config';
-import * as apiError from '../../../utils/api-error';
-import { TYPES } from '../../../types';
-import { timeEntries } from '../../mock/data';
-import TimeEntryRepository from '../../mock//time-entry.repository';
+import { IErrorService, ILogger } from '../../../interfaces/common.interface';
+import { ITimesheetRepository } from '../../../interfaces/timesheet.interface';
+import { IUserPayRateRepository } from '../../../interfaces/user-payrate.interface';
+import { IProjectRepository } from '../../../interfaces/project.interface';
 
 describe('TimeEntry Service', () => {
   let timeEntryService: ITimeEntryService;
@@ -17,6 +26,9 @@ describe('TimeEntry Service', () => {
   let logger: ILogger;
   beforeAll(() => {
     container.rebind<ITimeEntryRepository>(TYPES.TimeEntryRepository).to(TimeEntryRepository);
+    container.rebind<IUserPayRateRepository>(TYPES.UserPayRateRepository).to(UserPayRateRepository);
+    container.rebind<ITimesheetRepository>(TYPES.TimesheetRepository).to(TimesheetRepository);
+    container.rebind<IProjectRepository>(TYPES.ProjectRepository).to(ProjectRepository);
     timeEntryService = container.get<ITimeEntryService>(TYPES.TimeEntryService);
     errorService = container.get<IErrorService>(TYPES.ErrorService);
   });
@@ -79,9 +91,11 @@ describe('TimeEntry Service', () => {
     });
 
     it('should update an existing task', async () => {
+      const startTime = new Date('2022-05-12T01:02:00');
+      const endTime = new Date('2022-05-12T01:03:00');
+
       const args: ITimeEntryCreateInput = {
-        startTime: new Date(),
-        endTime: new Date(),
+        startTime,
         clientLocation: 'Lalitpur',
         project_id: '12566ff8-1247-4a2a-a258-09b05268e2ce',
         task_id: '12566ff8-1247-4a2a-a258-09b05268e2ce',
@@ -89,20 +103,23 @@ describe('TimeEntry Service', () => {
         created_by: '26124a58-9167-45eb-a3b3-13163f263309',
       };
 
-      const task = await timeEntryService.create(args);
+      const timeEntry = await timeEntryService.create(args);
+      console.log(timeEntry, 'timeentry\n\n\n\n');
 
-      const id = task.id;
+      const id = timeEntry.id;
 
       const update: ITimeEntryUpdateInput = {
         id,
         clientLocation: 'Bhaktapur',
+        endTime,
       };
 
       const updated = await timeEntryService.update(update);
+      console.log(updated, 'updated\n\n');
 
       expect(updated).toBeDefined();
-
       expect(updated.clientLocation).toBe(update.clientLocation);
+      expect(updated.duration).toBe(60);
     });
   });
 });

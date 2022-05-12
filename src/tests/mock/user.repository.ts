@@ -1,36 +1,33 @@
 import { injectable } from 'inversify';
 import find from 'lodash/find';
+import cloneDeep from 'lodash/cloneDeep';
 
 import { IUserRepository } from '../../interfaces/user.interface';
 
 import config from '../../config/constants';
 import strings from '../../config/strings';
+import { generateUuid } from './utils';
+import { users, address } from './data';
 import User from '../../entities/user.entity';
-import { IEntityID, IEntityRemove, ISingleEntityQuery } from '../../interfaces/common.interface';
-import { IUser, IUserCreate, IUserUpdate, IEmailQuery, IEmailCompanyQuery } from '../../interfaces/user.interface';
-import { IPaginationData, IPagingArgs, IGetAllAndCountResult } from '../../interfaces/paging.interface';
-import { users } from './data';
+import Address from '../../entities/address.entity';
 import Paging from '../../utils/paging';
 import { ConflictError, NotFoundError } from '../../utils/api-error';
 
-function generateUuid() {
-  var dt = new Date().getTime();
-  var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-    var r = (dt + Math.random() * 16) % 16 | 0;
-    dt = Math.floor(dt / 16);
-    return (c == 'x' ? r : (r & 0x3) | 0x8).toString(16);
-  });
-  return uuid;
-}
+import { IEntityID, IEntityRemove, ISingleEntityQuery } from '../../interfaces/common.interface';
+import { IUser, IUserCreate, IUserUpdate, IEmailQuery, IEmailCompanyQuery } from '../../interfaces/user.interface';
+import { IPaginationData, IPagingArgs, IGetAllAndCountResult } from '../../interfaces/paging.interface';
 
 const date = '2022-03-08T08:01:04.776Z';
 
 @injectable()
 export default class UserRepository implements IUserRepository {
+  users = cloneDeep(users);
+  address = cloneDeep(address);
+
   getAllAndCount = (args: IPagingArgs): Promise<IGetAllAndCountResult<User>> => {
     return Promise.resolve({
-      count: users.length,
-      rows: users as User[],
+      count: this.users.length,
+      rows: this.users as User[],
     });
   };
 
@@ -48,7 +45,7 @@ export default class UserRepository implements IUserRepository {
 
   create = (args: IUserCreate): Promise<User> => {
     try {
-      if (find(users, { email: args.email })) {
+      if (find(this.users, { email: args.email })) {
         throw new ConflictError({
           details: [strings.userAlreadyExists],
         });
@@ -65,8 +62,21 @@ export default class UserRepository implements IUserRepository {
       user.createdAt = new Date();
       user.updatedAt = new Date();
       user.password = 'password';
+      const _address = args?.address;
 
-      users.push(user);
+      if (_address) {
+        const address = new Address();
+        address.id = generateUuid();
+        address.aptOrSuite = _address.aptOrSuite ?? '';
+        address.city = _address.city;
+        address.state = _address.state;
+        address.streetAddress = _address.streetAddress;
+        address.zipcode = _address.zipcode;
+
+        user.address = address;
+      }
+
+      this.users.push(user);
 
       return Promise.resolve(user);
     } catch (err) {
@@ -76,7 +86,7 @@ export default class UserRepository implements IUserRepository {
 
   update = (args: IUserUpdate): Promise<User> => {
     try {
-      const user = find(users, { id: args.id });
+      const user = find(this.users, { id: args.id });
       if (!user) {
         throw new NotFoundError({
           details: [strings.userAlreadyExists],

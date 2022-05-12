@@ -1,6 +1,9 @@
 import { injectable } from 'inversify';
 import { find, findIndex, merge } from 'lodash';
+import moment from 'moment';
+
 import TimeEntry from '../../entities/time-entry.entity';
+
 import { IEntityID, IEntityRemove } from '../../interfaces/common.interface';
 import { IGetAllAndCountResult, IPagingArgs } from '../../interfaces/paging.interface';
 import {
@@ -8,25 +11,21 @@ import {
   ITimeEntryRepository,
   ITimeEntryUpdateInput,
   ITimeEntryWeeklyDetailsRepoInput,
+  ITimeEntryActiveInput,
+  ITimeEntryTotalDurationInput,
+  IUserTotalExpenseInput,
+  ITimeEntryBulkRemove,
 } from '../../interfaces/time-entry.interface';
 import { timeEntries } from './data';
+import { generateUuid } from './utils';
 
 import * as apiError from '../../utils/api-error';
 import strings from '../../config/strings';
 
-function generateUuid() {
-  var dt = new Date().getTime();
-  var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-    var r = (dt + Math.random() * 16) % 16 | 0;
-    dt = Math.floor(dt / 16);
-    return (c == 'x' ? r : (r & 0x3) | 0x8).toString(16);
-  });
-  return uuid;
-}
-
 @injectable()
 export default class TimeEntryRepository implements ITimeEntryRepository {
   timeEntries = timeEntries;
+
   getAllAndCount = (args: IPagingArgs): Promise<IGetAllAndCountResult<TimeEntry>> => {
     return Promise.resolve({
       count: this.timeEntries.length,
@@ -41,6 +40,23 @@ export default class TimeEntryRepository implements ITimeEntryRepository {
     throw new Error('not implemented');
   };
 
+  getActiveEntry = (args: ITimeEntryActiveInput): Promise<TimeEntry | undefined> => {
+    const created_by = args.created_by;
+    const company_id = args.company_id;
+
+    const found = find(this.timeEntries, { created_by, company_id });
+
+    return found;
+  };
+
+  getTotalTimeInSeconds = (args: ITimeEntryTotalDurationInput): Promise<number> => {
+    throw new Error('not implemented');
+  };
+
+  getUserTotalExpense = (args: IUserTotalExpenseInput): Promise<number> => {
+    throw new Error('not implemented');
+  };
+
   getWeeklyDetails = (args: ITimeEntryWeeklyDetailsRepoInput): Promise<TimeEntry[]> => {
     throw new Error('not implemented');
   };
@@ -50,12 +66,23 @@ export default class TimeEntryRepository implements ITimeEntryRepository {
       const timeEntry = new TimeEntry();
 
       timeEntry.id = generateUuid();
+      timeEntry.startTime = args.startTime;
       timeEntry.clientLocation = args.clientLocation;
       timeEntry.project_id = args.project_id;
       timeEntry.company_id = args.company_id;
       timeEntry.created_by = args.created_by;
       timeEntry.createdAt = new Date();
       timeEntry.updatedAt = new Date();
+
+      if (args.endTime) {
+        timeEntry.endTime = args.endTime;
+
+        let duration: undefined | number = undefined;
+        const startDate = moment(args.startTime);
+        const endDate = moment(args.endTime);
+        duration = endDate.diff(startDate, 'seconds');
+        timeEntry.duration = duration;
+      }
 
       timeEntries.push(timeEntry);
 
@@ -77,12 +104,23 @@ export default class TimeEntryRepository implements ITimeEntryRepository {
         });
       }
       const update = merge(this.timeEntries[foundIndex], {
+        startTime: args.startTime,
         clientLocation: args.clientLocation,
         approver_id: args.approver_id,
         project_id: args.project_id,
         company_id: args.company_id,
         created_by: args.created_by,
       });
+
+      if (args.endTime) {
+        update.endTime = args.endTime;
+
+        let duration: undefined | number = undefined;
+        const startDate = moment(update.startTime);
+        const endDate = moment(args.endTime);
+        duration = endDate.diff(startDate, 'seconds');
+        update.duration = duration;
+      }
 
       this.timeEntries[foundIndex] = update;
 
@@ -93,6 +131,10 @@ export default class TimeEntryRepository implements ITimeEntryRepository {
   };
 
   remove = (args: IEntityRemove): Promise<TimeEntry> => {
+    throw new Error('not implemented');
+  };
+
+  bulkRemove = (args: ITimeEntryBulkRemove): Promise<TimeEntry[]> => {
     throw new Error('not implemented');
   };
 }

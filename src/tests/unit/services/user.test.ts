@@ -70,12 +70,20 @@ describe('User Service', () => {
         status: UserStatus.Active,
         phone: '9841273487',
         roles: ['1,', '2'],
+        address: {
+          streetAddress: 'Street',
+          aptOrSuite: 'Apt',
+          city: 'City',
+          state: 'State',
+          zipcode: '001122',
+        },
       };
 
       const user = await userService.create(args);
 
       expect(user).toBeDefined();
       expect(user.id).toBeDefined();
+      expect(user.address).toBeDefined();
     });
   });
 

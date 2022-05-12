@@ -2,19 +2,23 @@ import find from 'lodash/find';
 import ms from 'ms';
 
 import { UserStatus, Role as RoleEnum, CompanyStatus, InvitationStatus } from '../../config/constants';
-import { IUser } from '../../interfaces/user.interface';
-import { ICompany } from '../../interfaces/company.interface';
-import { IInvitation } from '../../interfaces/invitation.interface';
-import { IProject } from '../../interfaces/project.interface';
+
 import User from '../../entities/user.entity';
 import Role from '../../entities/role.entity';
 import Company from '../../entities/company.entity';
 import Invitation from '../../entities/invitation.entity';
 import Project from '../../entities/project.entity';
-import { ITimeEntry } from '../../interfaces/time-entry.interface';
 import TimeEntry from '../../entities/time-entry.entity';
-import { IUserPayRate } from '../../interfaces/user-payrate.interface';
 import UserPayRate from '../../entities/user-payrate.entity';
+import Address from '../../entities/address.entity';
+
+import { IUserPayRate } from '../../interfaces/user-payrate.interface';
+import { IUser } from '../../interfaces/user.interface';
+import { ICompany } from '../../interfaces/company.interface';
+import { IInvitation } from '../../interfaces/invitation.interface';
+import { IProject } from '../../interfaces/project.interface';
+import { ITimeEntry } from '../../interfaces/time-entry.interface';
+import { IAddress } from '../../interfaces/address.interface';
 
 const role = new Role();
 role.name = RoleEnum.SuperAdmin;
@@ -153,8 +157,9 @@ export let projects = _projects.map((project) => {
 const _timeEntries: ITimeEntry[] = [
   {
     id: 'aed11edc-4c05-4731-8676-72e105eea64d',
-    start: new Date(),
-    end: new Date(),
+    startTime: new Date(),
+    endTime: new Date(),
+    duration: 0,
     clientLocation: 'Lalitpur',
     task_id: '12566ff8-1247-4a2a-a258-09b05268e2ce',
     project_id: projects[0].id,
@@ -173,6 +178,9 @@ const _timeEntries: ITimeEntry[] = [
 export let timeEntries = _timeEntries.map((timeEntry) => {
   const _timeEntry: any = new TimeEntry();
   _timeEntry.id = timeEntry.id;
+  _timeEntry.startTime = timeEntry.startTime;
+  _timeEntry.endTime = timeEntry.endTime;
+  _timeEntry.duration = timeEntry.duration;
   _timeEntry.clientLocation = timeEntry.clientLocation;
   _timeEntry.project_id = timeEntry.project_id;
   _timeEntry.approver_id = timeEntry.approver_id;
@@ -209,4 +217,27 @@ export let userPayRates = _userPayRate.map((userPayRate) => {
   _userPayRate.updatedAt = userPayRate.updatedAt;
 
   return _userPayRate;
+});
+
+const _address: IAddress[] = [
+  {
+    id: '3c696891-6aa6-4dec-a938-9531d67d887c',
+    aptOrSuite: 'Suite',
+    city: 'City',
+    state: 'State',
+    streetAddress: 'Street address',
+    zipcode: '11111',
+  },
+];
+
+export let address = _address.map((add) => {
+  const __address = new Address();
+  __address.id = add.id;
+  __address.aptOrSuite = add.aptOrSuite;
+  __address.city = add.city;
+  __address.state = add.state;
+  __address.streetAddress = add.streetAddress;
+  __address.zipcode = add.zipcode;
+
+  return __address;
 });

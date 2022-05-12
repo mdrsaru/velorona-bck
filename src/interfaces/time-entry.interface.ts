@@ -10,7 +10,8 @@ import Task from '../entities/task.entity';
 export interface ITimeEntry {
   id: string;
   startTime: Date;
-  endTime: Date;
+  endTime?: Date;
+  duration?: number;
   clientLocation: string;
   approver_id: string;
   project_id: string;
@@ -28,7 +29,7 @@ export interface ITimeEntry {
 
 export interface ITimeEntryCreateInput {
   startTime: ITimeEntry['startTime'];
-  endTime: ITimeEntry['endTime'];
+  endTime?: ITimeEntry['endTime'];
   clientLocation: ITimeEntry['clientLocation'];
   project_id: ITimeEntry['project_id'];
   company_id: ITimeEntry['company_id'];
@@ -95,13 +96,16 @@ export interface ITimeEntryBulkRemove {
 
 export interface ITimeEntryRepository {
   getAllAndCount(args: IPagingArgs): Promise<IGetAllAndCountResult<TimeEntry>>;
+
   getAll(args: any): Promise<TimeEntry[]>;
+
   getById(args: IEntityID): Promise<TimeEntry | undefined>;
 
   /**
    * Get active time entry. i.e entry of user for which end_time is null
    */
   getActiveEntry(args: ITimeEntryActiveInput): Promise<TimeEntry | undefined>;
+
   /*
   Calculate total time in seconds of users time entry for the given interval
   */
@@ -111,10 +115,15 @@ export interface ITimeEntryRepository {
    * Get user's total expense for the time entries related to all project for the given time interval
    */
   getUserTotalExpense(args: IUserTotalExpenseInput): Promise<number>;
+
   getWeeklyDetails(args: ITimeEntryWeeklyDetailsRepoInput): Promise<TimeEntry[]>;
+
   create(args: ITimeEntryCreateInput): Promise<TimeEntry>;
+
   update(args: ITimeEntryUpdateInput): Promise<TimeEntry>;
+
   remove(args: IEntityRemove): Promise<TimeEntry>;
+
   /*
   Removes multiple time entries(by created_by if the user is provided)`
   */

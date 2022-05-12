@@ -2,6 +2,7 @@ import { injectable } from 'inversify';
 import findIndex from 'lodash/findIndex';
 import find from 'lodash/find';
 import merge from 'lodash/merge';
+import cloneDeep from 'lodash/cloneDeep';
 
 import { ICompanyRepository } from '../../interfaces/company.interface';
 
@@ -21,7 +22,7 @@ const date = '2022-03-08T08:01:04.776Z';
 
 @injectable()
 export default class CompanyRepository implements ICompanyRepository {
-  public companies = companies;
+  public companies = cloneDeep(companies);
 
   getAllAndCount = (args: IPagingArgs): Promise<IGetAllAndCountResult<Company>> => {
     return Promise.resolve({

@@ -1,6 +1,7 @@
 import { injectable } from 'inversify';
 import findIndex from 'lodash/findIndex';
 import merge from 'lodash/merge';
+import cloneDeep from 'lodash/cloneDeep';
 
 import { IProjectRepository } from '../../interfaces/project.interface';
 
@@ -14,13 +15,13 @@ import * as apiError from '../../utils/api-error';
 
 import { IEntityID, IEntityRemove, ISingleEntityQuery } from '../../interfaces/common.interface';
 import { IProject, IProjectCreateInput, IProjectUpdateInput } from '../../interfaces/project.interface';
-import { IPaginationData, IPagingArgs, IGetAllAndCountResult } from '../../interfaces/paging.interface';
+import { IPaginationData, IPagingArgs, IGetAllAndCountResult, IGetOptions } from '../../interfaces/paging.interface';
 
 const date = '2022-03-08T08:01:04.776Z';
 
 @injectable()
 export default class ProjectRepository implements IProjectRepository {
-  public projects = projects;
+  public projects = cloneDeep(projects);
 
   getAllAndCount = (args: IPagingArgs): Promise<IGetAllAndCountResult<Project>> => {
     return Promise.resolve({
@@ -34,6 +35,10 @@ export default class ProjectRepository implements IProjectRepository {
   };
 
   getById = (args: IEntityID): Promise<Project | undefined> => {
+    throw new Error('not implemented');
+  };
+
+  countEntities = (args: IGetOptions): Promise<number> => {
     throw new Error('not implemented');
   };
 

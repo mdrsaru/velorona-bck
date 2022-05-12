@@ -9,7 +9,7 @@ import {
   IUserPayRateService,
   IUserPayRateUpdateInput,
 } from '../../../interfaces/user-payrate.interface';
-import UserPayRateRepository from '../../mock/userPayRate.repository';
+import UserPayRateRepository from '../../mock/user-payrate.repository';
 import { IErrorService, ILogger } from '../../../interfaces/common.interface';
 
 describe('Project Service', () => {
