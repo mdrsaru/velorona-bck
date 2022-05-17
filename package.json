@@ -14,7 +14,7 @@
     "prettier:fix": "prettier --write \"src/**/*.ts\"",
     "lint:check": "eslint \"src/**/*.ts\"",
     "lint:fix": "eslint \"src/**/*.ts\" --fix",
-    "test": "jest",
+    "test": "NODE_ENV=test jest",
     "typeorm": "ts-node ./node_modules/.bin/typeorm -f ./src/config/db/ormconfig.ts",
     "typeorm:js": "./node_modules/.bin/typeorm -f ./build/config/db/ormconfig.js",
     "prepare": "husky install",

@@ -9,7 +9,7 @@ let envload = dotenv.config({
   path: path.join(__dirname, `../../.env.${env}`),
 });
 
-if (!envload || envload.error) {
+if ((!envload || envload.error) && env !== 'test') {
   console.log(colors.yellow(`Error - ${envload?.error?.message}`));
   console.log(colors.yellow('Checking for .env file'));
   envload = dotenv.config({

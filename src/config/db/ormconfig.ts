@@ -1,5 +1,5 @@
 import path from 'path';
-import { createConnection, Connection, DatabaseType } from 'typeorm';
+import { createConnection, Connection } from 'typeorm';
 
 import { databaseSetting } from '../constants';
 

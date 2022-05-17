@@ -36,7 +36,6 @@ Make sure docker and docker-compose is installed in your system
 
 ```
 $ docker-compose up
-
 ```
 
 Specifying env file:
@@ -45,14 +44,22 @@ Specifying env file:
 $ docker-compose [--env-file path-to-env-file] [-f <path-to-docker-compose>] up
 ```
 
-To run the tests inside docker container and watch
+### Run tests
 
 ```
-$ docker-compose --env-file [path-to-env-file] -p tests run --rm app yarn test --watchAll
+Copy and update the .env.example with .env.test
+
+# Run postgres container for test database
+$ docker-compose --env-file .env.test -f docker-compose.test.yml up -d
+
+# Run the test
+$ yarn test [--watchAll]
 ```
 
 To seed the database, first get the app container id: `docker ps`, then run:
 `$ docker exec 'container_id' yarn db:seed`
+or
+`$ docker-compose exec app yarn db:seed`
 
 ## Other available scripts
 
