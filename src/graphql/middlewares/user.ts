@@ -55,7 +55,7 @@ export const isSelf: MiddlewareFn<IGraphqlContext> = async ({ context, args }, n
 
   try {
     const isSuperAdmin = checkRoles({
-      expectedRoles: [RoleEnum.SuperAdmin],
+      expectedRoles: [RoleEnum.SuperAdmin, RoleEnum.CompanyAdmin],
       userRoles: context?.user?.roles ?? [],
     });
 
