@@ -70,6 +70,18 @@ export class AddressCreateInput extends AddressInput {}
 export class AddressUpdateInput extends AddressInput {
   @Field({ nullable: true })
   id: string;
+
+  @Field({ nullable: true })
+  streetAddress: string;
+
+  @Field({ nullable: true })
+  city: string;
+
+  @Field({ nullable: true })
+  state: string;
+
+  @Field({ nullable: true })
+  zipcode: string;
 }
 
 @InputType()
