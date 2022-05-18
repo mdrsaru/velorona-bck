@@ -40,17 +40,15 @@ export default class CompanyValidation {
       totalAmount: Joi.number(),
       taxPercent: Joi.number(),
       notes: Joi.string().allow(null, ''),
-      items: Joi.array()
-        .items(
-          Joi.object({
-            id: Joi.string().required(),
-            project_id: Joi.string().required().error(new Error(strings.oneOrMoreProjectRequired)),
-            hours: Joi.number().required().error(new Error(strings.hoursRequired)),
-            rate: Joi.number().required().error(new Error(strings.rateRequired)),
-            amount: Joi.number().required().error(new Error(strings.amountRequired)),
-          })
-        )
-        .required(),
+      items: Joi.array().items(
+        Joi.object({
+          id: Joi.string().required(),
+          project_id: Joi.string().required().error(new Error(strings.oneOrMoreProjectRequired)),
+          hours: Joi.number().required().error(new Error(strings.hoursRequired)),
+          rate: Joi.number().required().error(new Error(strings.rateRequired)),
+          amount: Joi.number().required().error(new Error(strings.amountRequired)),
+        })
+      ),
     });
   }
 }

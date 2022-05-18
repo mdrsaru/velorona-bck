@@ -1,4 +1,4 @@
-import { Index, Entity, Column, BaseEntity, ManyToOne, JoinColumn, PrimaryGeneratedColumn } from 'typeorm';
+import { Index, Entity, Column, BaseEntity, ManyToOne, JoinColumn, PrimaryGeneratedColumn, Generated } from 'typeorm';
 import { ObjectType, Field, ID, InputType, registerEnumType } from 'type-graphql';
 
 import { invoices } from '../config/db/columns';
@@ -24,7 +24,7 @@ export default class Invoice extends Base {
   @Column({
     type: 'enum',
     enum: InvoiceStatus,
-    default: InvoiceStatus.Active,
+    default: InvoiceStatus.Pending,
   })
   status: InvoiceStatus;
 
@@ -44,6 +44,13 @@ export default class Invoice extends Base {
   @Field()
   @Column()
   date: Date;
+
+  @Field()
+  @Column({
+    name: invoices.invoice_number,
+  })
+  @Generated('increment')
+  invoiceNumber: number;
 
   @Field()
   @Column({
@@ -170,7 +177,7 @@ export class InvoiceUpdateInput {
   @Field({ nullable: true })
   notes: string;
 
-  @Field((type) => [InvoiceItemUpdateInput])
+  @Field((type) => [InvoiceItemUpdateInput], { nullable: true })
   items: InvoiceItemUpdateInput[];
 }
 

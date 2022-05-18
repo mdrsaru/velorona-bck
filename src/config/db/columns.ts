@@ -43,6 +43,7 @@ export const invoices = {
   sent_as_email: 'sent_as_email',
   status: 'status',
   date: 'date',
+  invoice_number: 'invoice_number',
   payment_due: 'payment_due',
   po_number: 'po_number',
   total_amount: 'total_amount',

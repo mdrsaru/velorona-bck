@@ -121,8 +121,9 @@ export enum TaskStatus {
 }
 
 export enum InvoiceStatus {
-  Active = 'Active',
-  Inactive = 'Inactive',
+  Pending = 'Pending',
+  Received = 'Received',
+  Sent = 'Sent',
 }
 
 export enum ForgotPasswordUserType {

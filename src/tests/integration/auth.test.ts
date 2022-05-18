@@ -27,7 +27,7 @@ const LOGIN = `
 
 describe('Auth Resolver', () => {
   describe('Login', () => {
-    it('should shouldset', async () => {
+    it('should should throw not found error for company_id', async () => {
       const response: any = await graphqlRequest({
         query: LOGIN,
         variables: {

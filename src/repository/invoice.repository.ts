@@ -153,9 +153,11 @@ export default class InvoiceRepository extends BaseRepository<Invoice> implement
         notes,
       });
 
-      const invoice = await this.repo.save(update);
+      if (items && items.length) {
+        await this.invoiceItemRepository.updateMultiple(items);
+      }
 
-      await this.invoiceItemRepository.updateMultiple(items);
+      const invoice = await this.repo.save(update);
 
       return invoice;
     } catch (err) {
