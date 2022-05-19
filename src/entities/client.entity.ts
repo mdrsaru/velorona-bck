@@ -132,7 +132,7 @@ export class ClientQuery {
   @Field({ nullable: true })
   search: string;
 
-  @Field({ nullable: true })
+  @Field({ nullable: true, defaultValue: false })
   archived: boolean;
 }
 
