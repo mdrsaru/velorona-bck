@@ -41,7 +41,6 @@ export default class TaskService implements ITaskService {
 
   getAllAndCount = async (args: IPagingArgs): Promise<IPaginationData<Task>> => {
     try {
-      args.query.archived = false;
       if (args.query.user_id) {
         const user_id = args.query.user_id;
         delete args.query.user_id;
