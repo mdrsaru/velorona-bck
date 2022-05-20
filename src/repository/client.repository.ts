@@ -50,7 +50,6 @@ export default class ClientRepository extends BaseRepository<Client> implements 
           },
         ];
       }
-      console.log(_searchWhere, '\nsearchwhere\n');
 
       let [rows, count] = await this.repo.findAndCount({
         relations,

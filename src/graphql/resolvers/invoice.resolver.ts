@@ -71,6 +71,8 @@ export class InvoiceResolver {
       const date = args.date;
       const paymentDue = args.paymentDue;
       const poNumber = args.poNumber;
+      const totalHours = args.totalHours;
+      const subtotal = args.subtotal;
       const totalAmount = args.totalAmount;
       const taxPercent = args.taxPercent ?? 0;
       const notes = args.notes;
@@ -86,6 +88,8 @@ export class InvoiceResolver {
           date,
           paymentDue,
           poNumber,
+          totalHours,
+          subtotal,
           totalAmount,
           taxPercent,
           notes,
@@ -100,6 +104,8 @@ export class InvoiceResolver {
         date,
         paymentDue,
         poNumber,
+        totalHours,
+        subtotal,
         totalAmount,
         taxPercent,
         notes,
@@ -130,6 +136,8 @@ export class InvoiceResolver {
       const date = args.date;
       const paymentDue = args.paymentDue;
       const poNumber = args.poNumber;
+      const totalHours = args.totalHours;
+      const subtotal = args.subtotal;
       const totalAmount = args.totalAmount;
       const taxPercent = args.taxPercent ?? 0;
       const notes = args.notes;
@@ -144,6 +152,8 @@ export class InvoiceResolver {
           date,
           paymentDue,
           poNumber,
+          totalHours,
+          subtotal,
           totalAmount,
           taxPercent,
           notes,
@@ -157,6 +167,8 @@ export class InvoiceResolver {
         date,
         paymentDue,
         poNumber,
+        totalHours,
+        subtotal,
         totalAmount,
         taxPercent,
         notes,

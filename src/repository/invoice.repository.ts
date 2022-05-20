@@ -46,6 +46,8 @@ export default class InvoiceRepository extends BaseRepository<Invoice> implement
       const date = args.date;
       const paymentDue = args.paymentDue;
       const poNumber = args.poNumber;
+      const totalHours = args.totalHours;
+      const subtotal = args.subtotal;
       const totalAmount = args.totalAmount;
       const taxPercent = args.taxPercent ?? 0;
       const notes = args.notes;
@@ -104,6 +106,8 @@ export default class InvoiceRepository extends BaseRepository<Invoice> implement
         date,
         paymentDue,
         poNumber,
+        totalHours,
+        subtotal,
         totalAmount,
         taxPercent,
         notes,
@@ -129,6 +133,8 @@ export default class InvoiceRepository extends BaseRepository<Invoice> implement
       const date = args.date;
       const paymentDue = args.paymentDue;
       const poNumber = args.poNumber;
+      const totalHours = args.totalHours;
+      const subtotal = args.subtotal;
       const totalAmount = args.totalAmount;
       const taxPercent = args.taxPercent ?? 0;
       const notes = args.notes;
@@ -148,6 +154,8 @@ export default class InvoiceRepository extends BaseRepository<Invoice> implement
         date,
         paymentDue,
         poNumber,
+        totalHours,
+        subtotal,
         totalAmount,
         taxPercent,
         notes,

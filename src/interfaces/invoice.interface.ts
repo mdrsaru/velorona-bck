@@ -13,6 +13,7 @@ export interface IInvoice {
   date: Date;
   paymentDue: Date;
   poNumber: string;
+  totalHours: number;
   totalAmount: number;
   subtotal: number;
   taxPercent: number;
@@ -28,6 +29,8 @@ export interface IInvoiceCreateInput {
   date: Invoice['date'];
   paymentDue: Invoice['paymentDue'];
   poNumber: Invoice['poNumber'];
+  totalHours: Invoice['totalHours'];
+  subtotal: Invoice['subtotal'];
   totalAmount: Invoice['totalAmount'];
   taxPercent: Invoice['taxPercent'];
   notes?: Invoice['notes'];
@@ -38,14 +41,16 @@ export interface IInvoiceCreateInput {
 
 export interface IInvoiceUpdateInput {
   id: Invoice['id'];
-  status: Invoice['status'];
-  date: Invoice['date'];
-  paymentDue: Invoice['paymentDue'];
-  poNumber: Invoice['poNumber'];
-  totalAmount: Invoice['totalAmount'];
-  taxPercent: Invoice['taxPercent'];
-  notes: Invoice['notes'];
-  items: IInvoiceItemUpdateInput[];
+  status?: Invoice['status'];
+  date?: Invoice['date'];
+  paymentDue?: Invoice['paymentDue'];
+  poNumber?: Invoice['poNumber'];
+  totalHours?: Invoice['totalHours'];
+  subtotal?: Invoice['subtotal'];
+  totalAmount?: Invoice['totalAmount'];
+  taxPercent?: Invoice['taxPercent'];
+  notes?: Invoice['notes'];
+  items?: IInvoiceItemUpdateInput[];
 }
 
 export interface IInvoiceRepository {

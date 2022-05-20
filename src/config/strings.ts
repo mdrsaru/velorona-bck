@@ -87,4 +87,7 @@ export default {
   activeTimerNotStopped: 'Started timer has not stopped yet.',
   timesheetAlreadyExistWithSameDetail: 'Timesheet already exist with week start date or week end date or client',
   taskNotBelongToProject: 'Task does not belong to the provided project',
+  totalAmountRequired: 'Total amount required',
+  subtotalRequired: 'Subtotal required',
+  totalHoursRequired: 'Total hours required',
 };

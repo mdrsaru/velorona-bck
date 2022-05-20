@@ -46,6 +46,8 @@ export const invoices = {
   invoice_number: 'invoice_number',
   payment_due: 'payment_due',
   po_number: 'po_number',
+  total_hours: 'total_hours',
+  subtotal: 'subtotal',
   total_amount: 'total_amount',
   tax_percent: 'tax_percent',
   notes: 'notes',
