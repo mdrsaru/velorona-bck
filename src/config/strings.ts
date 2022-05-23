@@ -90,4 +90,5 @@ export default {
   totalAmountRequired: 'Total amount required',
   subtotalRequired: 'Subtotal required',
   totalHoursRequired: 'Total hours required',
+  moreThanOneClient: 'Time entries contains projects with different clients. ',
 };

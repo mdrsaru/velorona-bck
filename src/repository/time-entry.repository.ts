@@ -405,6 +405,7 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
     try {
       const created_by = args?.created_by;
       const ids = args.ids;
+      const relations = args?.relations;
 
       let query;
       if (created_by) {
@@ -413,8 +414,10 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
         query = { id: In(ids) };
       }
 
-      let timeEntries = await this.repo.find(query);
-
+      let timeEntries = await this.repo.find({
+        where: query,
+        relations: relations ?? [],
+      });
       let timeEntryId: any = [];
 
       if (timeEntries.length > 0) {

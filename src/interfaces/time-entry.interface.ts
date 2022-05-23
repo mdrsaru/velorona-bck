@@ -92,6 +92,7 @@ export interface ITimeEntryActiveInput {
 export interface ITimeEntryBulkRemove {
   ids: string[];
   created_by?: string;
+  relations?: string[];
 }
 
 export interface ITimeEntryRepository {
