@@ -64,7 +64,6 @@ describe('Project Service', () => {
       try {
         const updated = await projectService.update(update);
       } catch (err) {
-        console.log(err, 'err');
         error = err;
       }
 

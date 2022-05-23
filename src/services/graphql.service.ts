@@ -13,6 +13,7 @@ import * as addressLoader from '../loaders/dataloader/address.dataloader';
 import * as clientLoader from '../loaders/dataloader/client.dataloader';
 import * as invoiceLoader from '../loaders/dataloader/invoice.dataloader';
 import * as invoiceItemLoader from '../loaders/dataloader/invoice-item.dataloader';
+import * as taskLoader from '../loaders/dataloader/task.dataloader';
 
 import { IGraphql, IGraphqlContext } from '../interfaces/graphql.interface';
 import { ITokenService, ILogger } from '../interfaces/common.interface';
@@ -95,6 +96,7 @@ export default class GraphqlService implements IGraphql {
         activeClientByUserIdLoader: clientLoader.activeClientByUserIdLoader(),
         invoicesByIdLoader: invoiceLoader.invoicesByIdLoader(),
         itemsByInvoiceIdLoader: invoiceItemLoader.itemsByInvoiceIdLoader(),
+        usersByTaskIdLoader: taskLoader.usersByTaskIdLoader(),
       },
     };
   };

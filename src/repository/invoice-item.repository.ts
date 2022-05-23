@@ -87,7 +87,6 @@ export default class InvoiceItemRepository extends BaseRepository<InvoiceItem> i
           id: ids,
         },
       });
-      console.log(foundItems.length, items, 'kajsdkfjaskdfj\n\n');
 
       if (foundItems.length !== items.length) {
         throw new apiError.NotFoundError({
