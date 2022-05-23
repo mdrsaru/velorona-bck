@@ -107,14 +107,14 @@ export default class UserValidation {
       id: Joi.string().required().messages(messages.id),
       firstName: Joi.string().messages(messages.firstName),
       lastName: Joi.string().messages(messages.lastName),
-      middleName: Joi.string(),
+      middleName: Joi.string().allow(null, ''),
       phone: Joi.string().messages(messages.phone),
       address: Joi.object({
         streetAddress: Joi.string(),
-        aptOrSuite: Joi.string(),
-        city: Joi.string(),
-        state: Joi.string(),
-        zipcode: Joi.string(),
+        aptOrSuite: Joi.string().allow(null, ''),
+        city: Joi.string().allow(null, ''),
+        state: Joi.string().allow(null, ''),
+        zipcode: Joi.string().allow(null, ''),
       }),
     });
   }
