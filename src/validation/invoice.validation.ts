@@ -9,8 +9,8 @@ export default class CompanyValidation {
   static create() {
     return Joi.object({
       status: Joi.string(),
-      date: Joi.date().required().error(new Error(strings.dateRequired)),
-      paymentDue: Joi.date().required().error(new Error(strings.paymentDueMustBeValid)),
+      issueDate: Joi.date().required().error(new Error(strings.dateRequired)),
+      dueDate: Joi.date().required().error(new Error(strings.dueDateMustBeValid)),
       poNumber: Joi.string().required().error(new Error(strings.poNumberRequired)),
       totalHours: Joi.number().required().error(new Error(strings.totalHoursRequired)),
       subtotal: Joi.number().required().error(new Error(strings.subtotalRequired)),
@@ -34,10 +34,10 @@ export default class CompanyValidation {
 
   static update() {
     return Joi.object({
-      id: Joi.string().required().error(new Error(strings.idRequired)),
+      id: Joi.string().error(new Error(strings.idRequired)),
       status: Joi.string(),
-      date: Joi.date(),
-      paymentDue: Joi.date(),
+      issueDate: Joi.date(),
+      dueDate: Joi.date(),
       poNumber: Joi.string(),
       totalHours: Joi.number(),
       subtotal: Joi.number(),
@@ -46,7 +46,7 @@ export default class CompanyValidation {
       notes: Joi.string().allow(null, ''),
       items: Joi.array().items(
         Joi.object({
-          id: Joi.string().required(),
+          id: Joi.string(),
           project_id: Joi.string().required().error(new Error(strings.oneOrMoreProjectRequired)),
           hours: Joi.number().required().error(new Error(strings.hoursRequired)),
           rate: Joi.number().required().error(new Error(strings.rateRequired)),

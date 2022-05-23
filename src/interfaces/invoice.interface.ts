@@ -10,8 +10,8 @@ export interface IInvoice {
   status: InvoiceStatus;
   verified: boolean;
   sentAsEmail: boolean;
-  date: Date;
-  paymentDue: Date;
+  issueDate: Date;
+  dueDate: Date;
   poNumber: string;
   totalHours: number;
   totalAmount: number;
@@ -26,8 +26,8 @@ export interface IInvoice {
 
 export interface IInvoiceCreateInput {
   status: Invoice['status'];
-  date: Invoice['date'];
-  paymentDue: Invoice['paymentDue'];
+  issueDate: Invoice['issueDate'];
+  dueDate: Invoice['dueDate'];
   poNumber: Invoice['poNumber'];
   totalHours: Invoice['totalHours'];
   subtotal: Invoice['subtotal'];
@@ -42,8 +42,8 @@ export interface IInvoiceCreateInput {
 export interface IInvoiceUpdateInput {
   id: Invoice['id'];
   status?: Invoice['status'];
-  date?: Invoice['date'];
-  paymentDue?: Invoice['paymentDue'];
+  issueDate?: Invoice['issueDate'];
+  dueDate?: Invoice['dueDate'];
   poNumber?: Invoice['poNumber'];
   totalHours?: Invoice['totalHours'];
   subtotal?: Invoice['subtotal'];

@@ -3,6 +3,7 @@ import isNil from 'lodash/isNil';
 import isDate from 'lodash/isDate';
 import isString from 'lodash/isString';
 import isEmpty from 'lodash/isEmpty';
+import difference from 'lodash/difference';
 import { injectable, inject } from 'inversify';
 import { getRepository, Repository } from 'typeorm';
 import crypto from 'crypto';
@@ -21,7 +22,11 @@ import {
 } from '../interfaces/invoice.interface';
 import { IClientRepository } from '../interfaces/client.interface';
 import { ICompanyRepository } from '../interfaces/company.interface';
-import { IInvoiceItemRepository } from '../interfaces/invoice-item.interface';
+import {
+  IInvoiceItemRepository,
+  IInvoiceItemInput,
+  IInvoiceItemUpdateInput,
+} from '../interfaces/invoice-item.interface';
 
 @injectable()
 export default class InvoiceRepository extends BaseRepository<Invoice> implements IInvoiceRepository {
@@ -43,8 +48,8 @@ export default class InvoiceRepository extends BaseRepository<Invoice> implement
   create = async (args: IInvoiceCreateInput): Promise<Invoice> => {
     try {
       const status = args.status;
-      const date = args.date;
-      const paymentDue = args.paymentDue;
+      const issueDate = args.issueDate;
+      const dueDate = args.dueDate;
       const poNumber = args.poNumber;
       const totalHours = args.totalHours;
       const subtotal = args.subtotal;
@@ -57,11 +62,11 @@ export default class InvoiceRepository extends BaseRepository<Invoice> implement
 
       const errors: string[] = [];
 
-      if (isNil(date) || !isDate(date)) {
+      if (isNil(issueDate) || !isDate(issueDate)) {
         errors.push(strings.dateRequired);
       }
-      if (isNil(paymentDue) || !isDate(paymentDue)) {
-        errors.push(strings.paymentDueRequired);
+      if (isNil(dueDate) || !isDate(dueDate)) {
+        errors.push(strings.dueDateRequired);
       }
       if (isNil(poNumber) || isEmpty(poNumber)) {
         errors.push(strings.poNumberRequired);
@@ -82,9 +87,9 @@ export default class InvoiceRepository extends BaseRepository<Invoice> implement
         });
       }
 
-      if (paymentDue < date) {
+      if (dueDate < issueDate) {
         throw new apiError.ValidationError({
-          details: [strings.paymentDueMustBeValid],
+          details: [strings.dueDateMustBeValid],
         });
       }
 
@@ -103,8 +108,8 @@ export default class InvoiceRepository extends BaseRepository<Invoice> implement
       // TODO: Add transaction for rollback
       const invoice = await this.repo.save({
         status,
-        date,
-        paymentDue,
+        issueDate,
+        dueDate,
         poNumber,
         totalHours,
         subtotal,
@@ -130,8 +135,8 @@ export default class InvoiceRepository extends BaseRepository<Invoice> implement
     try {
       const id = args.id;
       const status = args.status;
-      const date = args.date;
-      const paymentDue = args.paymentDue;
+      const issueDate = args.issueDate;
+      const dueDate = args.dueDate;
       const poNumber = args.poNumber;
       const totalHours = args.totalHours;
       const subtotal = args.subtotal;
@@ -151,8 +156,8 @@ export default class InvoiceRepository extends BaseRepository<Invoice> implement
       const update = merge(found, {
         id,
         status,
-        date,
-        paymentDue,
+        issueDate,
+        dueDate,
         poNumber,
         totalHours,
         subtotal,
@@ -161,8 +166,46 @@ export default class InvoiceRepository extends BaseRepository<Invoice> implement
         notes,
       });
 
+      // TODO: Use transaction
       if (items && items.length) {
-        await this.invoiceItemRepository.updateMultiple(items);
+        const itemsToCreate: IInvoiceItemInput[] = [];
+        const itemsToUpdate: IInvoiceItemUpdateInput[] = [];
+        const itemIds: string[] = [];
+
+        items.forEach((item) => {
+          if (item.id) {
+            itemIds.push(item.id);
+            itemsToUpdate.push(item);
+          } else {
+            itemsToCreate.push(item);
+          }
+        });
+
+        const allItems = await this.invoiceItemRepository.getAll({
+          query: {
+            invoice_id: found.id,
+          },
+        });
+
+        const allItemIds = allItems.map((item) => item.id);
+        const itemsToDelete = difference(allItemIds, itemIds);
+
+        if (itemsToDelete.length) {
+          await this.invoiceItemRepository.removeMultiple({
+            ids: itemsToDelete,
+          });
+        }
+
+        if (itemsToCreate.length) {
+          await this.invoiceItemRepository.createMultiple({
+            invoice_id: found.id,
+            items: itemsToCreate,
+          });
+        }
+
+        if (itemsToUpdate.length) {
+          await this.invoiceItemRepository.updateMultiple(itemsToUpdate);
+        }
       }
 
       const invoice = await this.repo.save(update);
