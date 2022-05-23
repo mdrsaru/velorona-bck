@@ -104,7 +104,6 @@ describe('TimeEntry Service', () => {
       };
 
       const timeEntry = await timeEntryService.create(args);
-      console.log(timeEntry, 'timeentry\n\n\n\n');
 
       const id = timeEntry.id;
 
@@ -115,7 +114,6 @@ describe('TimeEntry Service', () => {
       };
 
       const updated = await timeEntryService.update(update);
-      console.log(updated, 'updated\n\n');
 
       expect(updated).toBeDefined();
       expect(updated.clientLocation).toBe(update.clientLocation);
