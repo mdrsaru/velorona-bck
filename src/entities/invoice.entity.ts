@@ -42,8 +42,16 @@ export default class Invoice extends Base {
   sentAsEmail: boolean;
 
   @Field()
-  @Column()
-  date: Date;
+  @Column({
+    name: invoices.issue_date,
+  })
+  issueDate: Date;
+
+  @Field()
+  @Column({
+    name: invoices.due_date,
+  })
+  dueDate: Date;
 
   @Field()
   @Column({
@@ -51,12 +59,6 @@ export default class Invoice extends Base {
   })
   @Generated('increment')
   invoiceNumber: number;
-
-  @Field()
-  @Column({
-    name: invoices.payment_due,
-  })
-  paymentDue: Date;
 
   @Field()
   @Column({
@@ -135,10 +137,10 @@ export class InvoiceCreateInput {
   status: InvoiceStatus;
 
   @Field()
-  date: Date;
+  issueDate: Date;
 
   @Field()
-  paymentDue: Date;
+  dueDate: Date;
 
   @Field()
   poNumber: string;
@@ -180,10 +182,10 @@ export class InvoiceUpdateInput {
   status: InvoiceStatus;
 
   @Field({ nullable: true })
-  date: Date;
+  issueDate: Date;
 
   @Field({ nullable: true })
-  paymentDue: Date;
+  dueDate: Date;
 
   @Field({ nullable: true })
   poNumber: string;

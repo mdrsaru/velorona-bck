@@ -91,7 +91,15 @@ export interface ITimeEntryActiveInput {
 
 export interface ITimeEntryBulkRemove {
   ids: string[];
-  created_by?: string;
+  created_by: string;
+  company_id: string;
+  timesheet_id: string;
+}
+
+export interface ITimeEntryBulkRemoveRepository {
+  ids: string[];
+  created_by: string;
+  company_id: string;
   relations?: string[];
 }
 
@@ -128,7 +136,7 @@ export interface ITimeEntryRepository {
   /*
   Removes multiple time entries(by created_by if the user is provided)`
   */
-  bulkRemove(args: ITimeEntryBulkRemove): Promise<TimeEntry[]>;
+  bulkRemove(args: ITimeEntryBulkRemoveRepository): Promise<TimeEntry[]>;
 }
 
 export interface ITimeEntryService {

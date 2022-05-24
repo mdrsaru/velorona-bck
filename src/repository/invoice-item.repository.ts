@@ -16,6 +16,7 @@ import {
   IInvoiceItemCreateInput,
   IInvoiceItemUpdateInput,
   IInvoiceItemRepository,
+  IInvoiceItemRemoveMultipleInput,
 } from '../interfaces/invoice-item.interface';
 import { IProjectRepository } from '../interfaces/project.interface';
 
@@ -110,6 +111,18 @@ export default class InvoiceItemRepository extends BaseRepository<InvoiceItem> i
       const entities = await this.repo.save(updates);
 
       return entities;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  removeMultiple = async (args: IInvoiceItemRemoveMultipleInput): Promise<true> => {
+    try {
+      const ids = args.ids;
+
+      const entities = await this.repo.delete(ids);
+
+      return true;
     } catch (err) {
       throw err;
     }

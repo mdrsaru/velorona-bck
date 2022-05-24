@@ -221,6 +221,9 @@ export class TimeEntryBulkDeleteInput {
   @Field(() => [String])
   ids: string[];
 
-  @Field({ nullable: true })
+  @Field()
   created_by: string;
+
+  @Field()
+  timesheet_id: string;
 }

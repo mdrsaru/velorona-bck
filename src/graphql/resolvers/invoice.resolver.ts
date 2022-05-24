@@ -68,8 +68,8 @@ export class InvoiceResolver {
 
     try {
       const status = args.status;
-      const date = args.date;
-      const paymentDue = args.paymentDue;
+      const issueDate = args.issueDate;
+      const dueDate = args.dueDate;
       const poNumber = args.poNumber;
       const totalHours = args.totalHours;
       const subtotal = args.subtotal;
@@ -85,8 +85,8 @@ export class InvoiceResolver {
         schema,
         input: {
           status,
-          date,
-          paymentDue,
+          issueDate,
+          dueDate,
           poNumber,
           totalHours,
           subtotal,
@@ -101,8 +101,8 @@ export class InvoiceResolver {
 
       const invoice: Invoice = await this.invoiceService.create({
         status,
-        date,
-        paymentDue,
+        issueDate,
+        dueDate,
         poNumber,
         totalHours,
         subtotal,
@@ -133,8 +133,8 @@ export class InvoiceResolver {
     try {
       const id = args.id;
       const status = args.status;
-      const date = args.date;
-      const paymentDue = args.paymentDue;
+      const issueDate = args.issueDate;
+      const dueDate = args.dueDate;
       const poNumber = args.poNumber;
       const totalHours = args.totalHours;
       const subtotal = args.subtotal;
@@ -149,8 +149,8 @@ export class InvoiceResolver {
         input: {
           id,
           status,
-          date,
-          paymentDue,
+          issueDate,
+          dueDate,
           poNumber,
           totalHours,
           subtotal,
@@ -164,8 +164,8 @@ export class InvoiceResolver {
       let invoice: Invoice = await this.invoiceService.update({
         id,
         status,
-        date,
-        paymentDue,
+        issueDate,
+        dueDate,
         poNumber,
         totalHours,
         subtotal,

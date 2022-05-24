@@ -28,7 +28,7 @@ import {
   ITimeEntryWeeklyDetailsRepoInput,
   IUserTotalExpenseInput,
   ITimeEntryActiveInput,
-  ITimeEntryBulkRemove,
+  ITimeEntryBulkRemoveRepository,
 } from '../interfaces/time-entry.interface';
 import { IUserRepository } from '../interfaces/user.interface';
 import { IGetOptions, IGetAllAndCountResult } from '../interfaces/paging.interface';
@@ -401,7 +401,7 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
     }
   };
 
-  async bulkRemove(args: ITimeEntryBulkRemove): Promise<TimeEntry[]> {
+  async bulkRemove(args: ITimeEntryBulkRemoveRepository): Promise<TimeEntry[]> {
     try {
       const created_by = args?.created_by;
       const ids = args.ids;

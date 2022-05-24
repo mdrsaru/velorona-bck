@@ -1,4 +1,4 @@
-import { IPagingArgs, IGetAllAndCountResult, IPaginationData } from './paging.interface';
+import { IPagingArgs, IGetAllAndCountResult, IPaginationData, IGetOptions } from './paging.interface';
 import { IEntityRemove, IEntityID } from './common.interface';
 import InvoiceItem from '../entities/invoice-item.entity';
 
@@ -36,11 +36,16 @@ export interface IInvoiceItemUpdateInput {
   amount: IInvoiceItem['amount'];
 }
 
+export interface IInvoiceItemRemoveMultipleInput {
+  ids: string[];
+}
+
 export interface IInvoiceItemRepository {
-  getAll(args: any): Promise<InvoiceItem[]>;
+  getAll(args: IGetOptions): Promise<InvoiceItem[]>;
   /**
    * Create multiple invoice itemss for the invoice_id
    */
   createMultiple(args: IInvoiceItemCreateInput): Promise<InvoiceItem[]>;
   updateMultiple(args: IInvoiceItemUpdateInput[]): Promise<InvoiceItem[]>;
+  removeMultiple(args: IInvoiceItemRemoveMultipleInput): Promise<true>;
 }

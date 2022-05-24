@@ -37,6 +37,12 @@ const messages = {
     'string.empty': strings.taskIdRequired,
     'any.required': strings.taskIdRequired,
   },
+
+  timesheet_id: {
+    'string.base': strings.timesheetIdRequired,
+    'string.empty': strings.timesheetIdRequired,
+    'any.required': strings.timesheetIdRequired,
+  },
 };
 
 export default class TimeEntryValidation {
@@ -83,6 +89,15 @@ export default class TimeEntryValidation {
           .required()
           .error(new Error(strings.endDateMustBeValidDate)),
       }),
+    });
+  }
+
+  static bulkDelete() {
+    return Joi.object({
+      ids: Joi.array().required(),
+      company_id: Joi.string().required().messages(messages.company_id),
+      created_by: Joi.string().required().messages(messages.created_by),
+      timesheet_id: Joi.string().required().messages(messages.timesheet_id),
     });
   }
 }

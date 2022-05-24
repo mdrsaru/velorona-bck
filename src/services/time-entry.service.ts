@@ -21,7 +21,6 @@ import {
 import { IUserPayRateRepository } from '../interfaces/user-payrate.interface';
 import { ITimesheetRepository } from '../interfaces/timesheet.interface';
 import { IProjectRepository } from '../interfaces/project.interface';
-import strings from '../config/strings';
 
 @injectable()
 export default class TimeEntryService implements ITimeEntryService {
@@ -281,49 +280,35 @@ export default class TimeEntryService implements ITimeEntryService {
     try {
       const ids = args.ids;
       const created_by = args?.created_by;
+      const company_id = args.company_id;
+      const timesheet_id = args.timesheet_id;
+
+      const timesheet = await this.timesheetRepository.getById({ id: timesheet_id });
 
       const timeEntries = await this.timeEntryRepository.bulkRemove({
         ids,
         created_by,
         relations: ['project'],
+        company_id,
       });
 
       let startDateObj: any = {};
-      let projectObj: any = {};
-      let dataObj: any = {};
-      let clientObj: any = {};
 
       timeEntries.forEach((timeEntry) => {
         const startDate = moment(timeEntry.startTime).startOf('isoWeek').format('YYYY-MM-DD');
         startDateObj[startDate] = true;
-        dataObj = {
-          company_id: timeEntry.company_id,
-          user_id: timeEntry.created_by,
-        };
-
-        projectObj[timeEntry.project.client_id] = true;
       });
 
-      let client: string;
-
-      Object.keys(projectObj).forEach(async (key) => {
-        client = key;
-        clientObj[key] = true;
-      });
-
-      if (Object.keys(clientObj).length > 1) {
-        throw new apiError.ConflictError({ details: [strings.moreThanOneClient] });
-      }
-
-      Object.keys(startDateObj).forEach(async (key) => {
-        await this.createUpdateTimesheet({
-          startTime: moment(key, 'YYYY-MM-DD').toDate(),
-          client_id: client,
-          company_id: dataObj.company_id,
-          user_id: dataObj.user_id,
+      if (timesheet) {
+        Object.keys(startDateObj).forEach(async (key) => {
+          await this.createUpdateTimesheet({
+            startTime: moment(key, 'YYYY-MM-DD').toDate(),
+            client_id: timesheet.client_id,
+            company_id: company_id,
+            user_id: created_by,
+          });
         });
-      });
-
+      }
       return timeEntries;
     } catch (err) {
       throw err;

@@ -72,7 +72,7 @@ export class InvoiceItemCreateInput {
 
 @InputType()
 export class InvoiceItemUpdateInput {
-  @Field()
+  @Field({ nullable: true })
   id: string;
 
   @Field()

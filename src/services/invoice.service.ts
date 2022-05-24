@@ -41,8 +41,8 @@ export default class InvoiceService implements IInvoiceService {
   create = async (args: IInvoiceCreateInput): Promise<Invoice> => {
     try {
       const status = args.status;
-      const date = args.date;
-      const paymentDue = args.paymentDue;
+      const issueDate = args.issueDate;
+      const dueDate = args.dueDate;
       const poNumber = args.poNumber;
       const totalHours = args.totalHours;
       const subtotal = args.subtotal;
@@ -55,8 +55,8 @@ export default class InvoiceService implements IInvoiceService {
 
       const invoice = await this.invoiceRepository.create({
         status,
-        date,
-        paymentDue,
+        issueDate,
+        dueDate,
         poNumber,
         totalHours,
         subtotal,
@@ -78,8 +78,8 @@ export default class InvoiceService implements IInvoiceService {
     try {
       const id = args.id;
       const status = args.status;
-      const date = args.date;
-      const paymentDue = args.paymentDue;
+      const issueDate = args.issueDate;
+      const dueDate = args.dueDate;
       const poNumber = args.poNumber;
       const totalHours = args.totalHours;
       const subtotal = args.subtotal;
@@ -91,8 +91,8 @@ export default class InvoiceService implements IInvoiceService {
       const invoice = await this.invoiceRepository.update({
         id,
         status,
-        date,
-        paymentDue,
+        issueDate,
+        dueDate,
         poNumber,
         totalHours,
         subtotal,
