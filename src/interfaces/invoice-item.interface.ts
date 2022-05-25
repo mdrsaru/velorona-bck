@@ -6,7 +6,8 @@ export interface IInvoiceItem {
   id: string;
   invoice_id: string;
   project_id: string;
-  hours: number;
+  description?: string;
+  quantity: number;
   rate: number;
   amount: number;
   createdAt: string;
@@ -15,7 +16,8 @@ export interface IInvoiceItem {
 
 export interface IInvoiceItemInput {
   project_id: IInvoiceItem['project_id'];
-  hours: IInvoiceItem['hours'];
+  description?: IInvoiceItem['description'];
+  quantity: IInvoiceItem['quantity'];
   rate: IInvoiceItem['rate'];
   amount: IInvoiceItem['amount'];
 }
@@ -31,7 +33,8 @@ export interface IInvoiceItemCreateInput {
 export interface IInvoiceItemUpdateInput {
   id: IInvoiceItem['id'];
   project_id: IInvoiceItem['project_id'];
-  hours: IInvoiceItem['hours'];
+  description?: IInvoiceItem['description'];
+  quantity: IInvoiceItem['quantity'];
   rate: IInvoiceItem['rate'];
   amount: IInvoiceItem['amount'];
 }

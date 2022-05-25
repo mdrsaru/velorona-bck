@@ -29,6 +29,8 @@ import {
   IUserTotalExpenseInput,
   ITimeEntryActiveInput,
   ITimeEntryBulkRemove,
+  IProjectItemInput,
+  IProjectItem,
 } from '../interfaces/time-entry.interface';
 import { IUserRepository } from '../interfaces/user.interface';
 import { IGetOptions, IGetAllAndCountResult } from '../interfaces/paging.interface';
@@ -177,7 +179,7 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
         .where('company_id = :company_id', { company_id })
         .andWhere('created_by = :created_by', { created_by })
         .andWhere('start_time >= :startTime', { startTime })
-        .andWhere('end_time <= :endTime', { endTime });
+        .andWhere('start_time <= :endTime', { endTime }); // using start_time for the end_time
 
       if (project_id) {
         query.andWhere('project_id = :project_id', { project_id });
@@ -201,12 +203,12 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
 
       const queryResult = await this.manager.query(
         `WITH cte_time_entry_payrate as (
-          SELECT t.${timeEntry.duration}, up.${userPayRate.amount}, ((t.${timeEntry.duration}::float / 3600) * up.${userPayRate.amount}) AS expense FROM ${entities.timeEntry} as t 
-          INNER JOIN ${entities.userPayRate} AS up ON t.${timeEntry.project_id} = up.${userPayRate.project_id}
-          INNER JOIN ${entities.projects} as p on up.${userPayRate.project_id} = p.id
-          WHERE t.${timeEntry.start_time} >= $1 AND t.${timeEntry.end_time} <= $2 AND t.${timeEntry.company_id} = $3 AND t.${timeEntry.created_by} = $4 AND up.${userPayRate.user_id} = $4 AND p.client_id = $5
+          SELECT t.${timeEntry.duration}, up.${userPayRate.amount}, ((t.${timeEntry.duration}::numeric / 3600) * up.${userPayRate.amount}) AS expense FROM ${entities.timeEntry} as t 
+          LEFT JOIN ${entities.userPayRate} AS up ON t.${timeEntry.project_id} = up.${userPayRate.project_id}
+          JOIN ${entities.projects} as p on up.${userPayRate.project_id} = p.id
+          WHERE t.${timeEntry.start_time} >= $1 AND t.${timeEntry.start_time} <= $2 AND t.${timeEntry.company_id} = $3 AND t.${timeEntry.created_by} = $4 AND up.${userPayRate.user_id} = $4 AND p.client_id = $5
         )
-        SELECT SUM(expense)::float(2) AS total_expense FROM cte_time_entry_payrate;
+        SELECT ROUND(SUM(expense)::numeric, 2) AS total_expense FROM cte_time_entry_payrate;
         `,
         [startTime, endTime, company_id, user_id, client_id]
       );
@@ -428,4 +430,37 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
       throw err;
     }
   }
+
+  getProjectItems = async (args: IProjectItemInput): Promise<IProjectItem[]> => {
+    try {
+      const startTime = args.startTime;
+      const endTime = args.endTime;
+      const company_id = args.company_id;
+      const user_id = args.user_id;
+      const client_id = args.client_id;
+
+      const queryResult = await this.manager.query(
+        `
+        SELECT t.${timeEntry.project_id},
+        COALESCE(up.${userPayRate.amount}, 0) as "hourlyRate",
+        COALESCE(SUM(t.${timeEntry.duration}), 0) AS "totalDuration",
+        ROUND(COALESCE(((SUM(t.${timeEntry.duration})::numeric / 3600) * up.${userPayRate.amount}), 0), 2) AS "totalExpense" 
+        FROM ${entities.timeEntry} as t 
+        JOIN ${entities.projects} as p on t.${timeEntry.project_id} = p.id
+        LEFT JOIN ${entities.userPayRate} up ON t.project_id = up.project_id
+        WHERE t.${timeEntry.start_time} >= $1
+        AND t.${timeEntry.start_time} <= $2
+        AND t.${timeEntry.company_id} = $3
+        AND t.${timeEntry.created_by} = $4
+        AND p.client_id = $5
+        GROUP BY t.${timeEntry.project_id}, up.${userPayRate.amount};
+        `,
+        [startTime, endTime, company_id, user_id, client_id]
+      );
+
+      return queryResult;
+    } catch (err) {
+      throw err;
+    }
+  };
 }

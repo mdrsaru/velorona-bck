@@ -114,6 +114,30 @@ export default class Timesheet extends Base {
     default: false,
   })
   isSubmitted: boolean;
+
+  @Field((type) => [ProjectItem], {
+    nullable: true,
+    description: `
+      List of projects related to time entries of a user along with the total duration, hourly rate and total expense
+      Query this field only for the single timesheet as there will be N+1 problem for list of timesheet. 
+    `,
+  })
+  projectItems: ProjectItem[];
+}
+
+@ObjectType({ description: 'Projects related to timesheet with total duration and expense' })
+export class ProjectItem {
+  @Field()
+  project_id: string;
+
+  @Field()
+  totalDuration: number;
+
+  @Field()
+  hourlyRate: number;
+
+  @Field()
+  totalExpense: number;
 }
 
 @InputType()

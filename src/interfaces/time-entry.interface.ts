@@ -94,6 +94,22 @@ export interface ITimeEntryBulkRemove {
   created_by?: string;
 }
 
+export interface IProjectItem {
+  project_id: string;
+  projectName: string;
+  totalDuration: number;
+  hourlyRate: number;
+  totalExpense: number;
+}
+
+export interface IProjectItemInput {
+  startTime: string;
+  endTime: string;
+  company_id: string;
+  user_id: string;
+  client_id: string;
+}
+
 export interface ITimeEntryRepository {
   getAllAndCount(args: IPagingArgs): Promise<IGetAllAndCountResult<TimeEntry>>;
 
@@ -128,6 +144,11 @@ export interface ITimeEntryRepository {
   Removes multiple time entries(by created_by if the user is provided)`
   */
   bulkRemove(args: ITimeEntryBulkRemove): Promise<TimeEntry[]>;
+
+  /**
+   * Get projects with total expense, total hours and hourly rate of the time entries for the given time interval.
+   */
+  getProjectItems(args: IProjectItemInput): Promise<IProjectItem[]>;
 }
 
 export interface ITimeEntryService {

@@ -20,8 +20,8 @@ export const timeEntry = {
 };
 
 export const timesheet = {
-  week_start_date: 'week-start_date',
-  week_end_date: 'week-end_date',
+  week_start_date: 'week_start_date',
+  week_end_date: 'week_end_date',
   duration: 'duration',
   total_expense: 'total_expense',
   company_id: 'company_id',
@@ -46,7 +46,7 @@ export const invoices = {
   due_date: 'due_date',
   invoice_number: 'invoice_number',
   po_number: 'po_number',
-  total_hours: 'total_hours',
+  total_quantity: 'total_quantity',
   subtotal: 'subtotal',
   total_amount: 'total_amount',
   tax_percent: 'tax_percent',
@@ -60,7 +60,7 @@ export const invoices = {
 export const invoiceItems = {
   invoice_id: 'invoice_id',
   project_id: 'project_id',
-  hours: 'hours',
+  quantity: 'quantity',
   rate: 'rate',
   amount: 'amount',
 };

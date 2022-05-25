@@ -36,11 +36,15 @@ export default class InvoiceItem extends Base {
   })
   project: Project;
 
+  @Field()
+  @Column({ nullable: true })
+  description: string;
+
   @Field((type) => Float)
   @Column({
     type: 'float',
   })
-  hours: number;
+  quantity: number;
 
   @Field((type) => Float)
   @Column({
@@ -60,8 +64,11 @@ export class InvoiceItemCreateInput {
   @Field()
   project_id: string;
 
+  @Field()
+  description: string;
+
   @Field((type) => Float)
-  hours: number;
+  quantity: number;
 
   @Field((type) => Float)
   rate: number;
@@ -78,8 +85,11 @@ export class InvoiceItemUpdateInput {
   @Field()
   project_id: string;
 
+  @Field()
+  description: string;
+
   @Field((type) => Float)
-  hours: number;
+  quantity: number;
 
   @Field((type) => Float)
   rate: number;

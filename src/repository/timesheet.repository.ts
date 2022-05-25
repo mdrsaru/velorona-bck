@@ -2,16 +2,18 @@ import { inject, injectable } from 'inversify';
 import { isNil, isString, merge } from 'lodash';
 import moment from 'moment';
 import { getRepository } from 'typeorm';
+
 import strings from '../config/strings';
+import { TYPES } from '../types';
+import { ConflictError, NotFoundError, ValidationError } from '../utils/api-error';
 import Timesheet from '../entities/timesheet.entity';
+import BaseRepository from './base.repository';
+
 import { IClientRepository } from '../interfaces/client.interface';
 import { ICompanyRepository } from '../interfaces/company.interface';
 import { IGetAllAndCountResult, IGetOptions } from '../interfaces/paging.interface';
-import { ITimesheetCreateInput, ITimesheetRepository, ITimesheetUpdateInput } from '../interfaces/timesheet.interface';
 import { IUserRepository } from '../interfaces/user.interface';
-import { TYPES } from '../types';
-import { ConflictError, NotFoundError, ValidationError } from '../utils/api-error';
-import BaseRepository from './base.repository';
+import { ITimesheetCreateInput, ITimesheetRepository, ITimesheetUpdateInput } from '../interfaces/timesheet.interface';
 
 @injectable()
 export default class TimesheetRepository extends BaseRepository<Timesheet> implements ITimesheetRepository {

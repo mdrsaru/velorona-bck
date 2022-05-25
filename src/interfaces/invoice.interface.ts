@@ -13,7 +13,7 @@ export interface IInvoice {
   issueDate: Date;
   dueDate: Date;
   poNumber: string;
-  totalHours: number;
+  totalQuantity: number;
   totalAmount: number;
   subtotal: number;
   taxPercent: number;
@@ -29,7 +29,7 @@ export interface IInvoiceCreateInput {
   issueDate: Invoice['issueDate'];
   dueDate: Invoice['dueDate'];
   poNumber: Invoice['poNumber'];
-  totalHours: Invoice['totalHours'];
+  totalQuantity: Invoice['totalQuantity'];
   subtotal: Invoice['subtotal'];
   totalAmount: Invoice['totalAmount'];
   taxPercent: Invoice['taxPercent'];
@@ -45,7 +45,7 @@ export interface IInvoiceUpdateInput {
   issueDate?: Invoice['issueDate'];
   dueDate?: Invoice['dueDate'];
   poNumber?: Invoice['poNumber'];
-  totalHours?: Invoice['totalHours'];
+  totalQuantity?: Invoice['totalQuantity'];
   subtotal?: Invoice['subtotal'];
   totalAmount?: Invoice['totalAmount'];
   taxPercent?: Invoice['taxPercent'];
