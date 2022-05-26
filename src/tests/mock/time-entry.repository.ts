@@ -17,6 +17,7 @@ import {
   ITimeEntryBulkRemove,
   IProjectItemInput,
   IProjectItem,
+  IDurationMap,
 } from '../../interfaces/time-entry.interface';
 import { timeEntries } from './data';
 import { generateUuid } from './utils';
@@ -143,4 +144,8 @@ export default class TimeEntryRepository implements ITimeEntryRepository {
   getProjectItems = async (args: IProjectItemInput): Promise<IProjectItem[]> => {
     throw new Error('Not Implemented');
   };
+
+  getDurationMap(args: IDurationMap): Promise<object> {
+    throw new Error('Not Implemented');
+  }
 }
