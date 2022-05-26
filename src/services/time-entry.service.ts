@@ -78,6 +78,7 @@ export default class TimeEntryService implements ITimeEntryService {
       const endTime = args.endTime;
       const company_id = args.company_id;
       const created_by = args.created_by;
+      const client_id = args.client_id;
 
       let startDate = moment().startOf('isoWeek').toDate();
       let endDate = moment().endOf('isoWeek').toDate();
@@ -92,6 +93,7 @@ export default class TimeEntryService implements ITimeEntryService {
         created_by,
         startTime: startDate,
         endTime: endDate,
+        client_id,
       });
 
       return timeEntry;

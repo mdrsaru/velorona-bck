@@ -72,3 +72,9 @@ export const userPayRate = {
   user_id: 'user_id',
   project_id: 'project_id',
 };
+
+export const projects = {
+  name: 'name',
+  company_id: 'company_id',
+  client_id: 'client_id',
+};

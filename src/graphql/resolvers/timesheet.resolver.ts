@@ -217,4 +217,68 @@ export class TimesheetResolver {
       });
     }
   }
+
+  @FieldResolver()
+  async durationMap(@Root() root: Timesheet, @Ctx() ctx: IGraphqlContext) {
+    const operation = 'durationMap';
+
+    try {
+      if (!root.weekStartDate || !root.weekEndDate) {
+        return {};
+      }
+
+      const startTime = root.weekStartDate + 'T00:00:00';
+      const endTime = root.weekEndDate + 'T23:59:59';
+      const client_id = root.client_id;
+      const company_id = root.company_id;
+      const user_id = root.user_id;
+
+      return this.timeEntryRepository.getDurationMap({
+        startTime,
+        endTime,
+        user_id,
+        client_id,
+        company_id,
+      });
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
+    }
+  }
+
+  @FieldResolver()
+  async timeEntries(@Root() root: Timesheet) {
+    const operation = 'durationMap';
+
+    try {
+      if (!root.weekStartDate || !root.weekEndDate) {
+        return [];
+      }
+
+      const startTime = new Date(root.weekStartDate + 'T00:00:00');
+      const endTime = new Date(root.weekEndDate + 'T23:59:59');
+      const client_id = root.client_id;
+      const company_id = root.company_id;
+      const user_id = root.user_id;
+
+      return this.timeEntryRepository.getWeeklyDetails({
+        startTime,
+        endTime,
+        created_by: user_id,
+        client_id,
+        company_id,
+      });
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
+    }
+  }
 }

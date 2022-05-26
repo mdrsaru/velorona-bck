@@ -11,7 +11,7 @@ import { getRepository, LessThanOrEqual, MoreThanOrEqual, In, IsNull, Not, getMa
 import { TYPES } from '../types';
 import strings from '../config/strings';
 import { entities } from '../config/constants';
-import { timeEntry, userPayRate } from '../config/db/columns';
+import { timeEntry, userPayRate, projects } from '../config/db/columns';
 import * as apiError from '../utils/api-error';
 import TimeEntry from '../entities/time-entry.entity';
 import { NotFoundError } from '../utils/api-error';
@@ -31,6 +31,7 @@ import {
   ITimeEntryBulkRemove,
   IProjectItemInput,
   IProjectItem,
+  IDurationMap,
 } from '../interfaces/time-entry.interface';
 import { IUserRepository } from '../interfaces/user.interface';
 import { IGetOptions, IGetAllAndCountResult } from '../interfaces/paging.interface';
@@ -122,6 +123,7 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
       const endTime = args.endTime;
       const company_id = args.company_id;
       const created_by = args.created_by;
+      const client_id = args.client_id;
       const errors: string[] = [];
 
       if (isNil(startTime) || !isDate(startTime)) {
@@ -137,18 +139,29 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
         errors.push(strings.userIdRequired);
       }
 
-      const query = {
-        company_id,
-        created_by,
-        startTime: MoreThanOrEqual(startTime),
-        endTime: LessThanOrEqual(endTime),
-      };
+      const query = this.repo
+        .createQueryBuilder(entities.timeEntry)
+        .where(`${entities.timeEntry}.company_id = :company_id`, { company_id });
 
-      const timeEntry = await this.getAll({
-        query,
-      });
+      if (client_id) {
+        query
+          .innerJoinAndSelect(`${entities.timeEntry}.project`, 'project')
+          .andWhere('project.client_id = :client_id', { client_id });
+      }
 
-      return timeEntry;
+      if (created_by) {
+        query.andWhere('created_by = :created_by', { created_by });
+      }
+      if (startTime) {
+        query.andWhere('start_time >= :startTime', { startTime });
+      }
+      if (endTime) {
+        query.andWhere('start_time <= :endTime', { endTime }); // using start_time for the end_time
+      }
+
+      const entries = await query.orderBy(`${entities.timeEntry}.start_time`, 'DESC').getMany();
+
+      return entries;
     } catch (err) {
       throw err;
     }
@@ -459,6 +472,55 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
       );
 
       return queryResult;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  getDurationMap = async (args: IDurationMap): Promise<object> => {
+    try {
+      const startTime = args.startTime;
+      const endTime = args.endTime;
+      const company_id = args.company_id;
+      const user_id = args.user_id;
+      const client_id = args.client_id;
+
+      const queryResult = await this.manager.query(
+        `
+        SELECT to_char(t.${timeEntry.start_time}, 'yyyy-mm-dd') AS date, SUM(t.${timeEntry.duration})::numeric AS date_duration 
+        FROM ${entities.timeEntry} AS t
+        JOIN ${entities.projects} AS p ON t.project_id = p.id
+        where t.${timeEntry.start_time} >= $1
+        AND t.${timeEntry.start_time} <= $2
+        AND t.${timeEntry.company_id} = $3
+        AND t.${timeEntry.created_by} = $4
+        AND p.${projects.client_id} = $5
+        GROUP BY to_char(t.${timeEntry.start_time}, 'yyyy-mm-dd');
+        `,
+        [startTime, endTime, company_id, user_id, client_id]
+      );
+
+      let resultMapByDate: { [key: string]: number } = {};
+      for (let result of queryResult) {
+        resultMapByDate[result.date] = parseInt(result.date_duration);
+      }
+
+      const startDate = moment(startTime);
+      const endDate = moment(endTime);
+      const diff = endDate.diff(startDate, 'days');
+
+      const durationMap: { [key: string]: number } = {};
+      let current = startDate;
+
+      for (let i = 0; i <= diff; i++) {
+        const date = current.format('YYYY-MM-DD');
+
+        durationMap[date] = resultMapByDate[date] || 0;
+
+        current.add(1, 'days');
+      }
+
+      return durationMap;
     } catch (err) {
       throw err;
     }

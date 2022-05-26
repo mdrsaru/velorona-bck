@@ -90,6 +90,7 @@ export class TimeEntryResolver {
       const endTime = args.endTime;
       const company_id = args.company_id;
       let created_by = args?.created_by;
+      const client_id = args?.client_id;
 
       // Show timeEntry of the logged in users if created_by is not provided
       if (!created_by) {
@@ -123,6 +124,7 @@ export class TimeEntryResolver {
         created_by,
         startTime,
         endTime,
+        client_id,
       });
 
       return timeEntry;

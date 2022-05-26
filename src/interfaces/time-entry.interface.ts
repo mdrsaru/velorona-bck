@@ -59,6 +59,15 @@ export interface ITimeEntryWeeklyDetailsInput {
   created_by: string;
   startTime?: Date;
   endTime?: Date;
+  client_id?: string;
+}
+
+export interface ITimeEntryWeeklyDetailsRepoInput {
+  company_id: string;
+  created_by: string;
+  startTime: Date;
+  endTime: Date;
+  client_id?: string;
 }
 
 export interface ITimeEntryTotalDurationInput {
@@ -75,13 +84,6 @@ export interface IUserTotalExpenseInput {
   client_id: string;
   startTime: string;
   endTime: string;
-}
-
-export interface ITimeEntryWeeklyDetailsRepoInput {
-  company_id: string;
-  created_by: string;
-  startTime: Date;
-  endTime: Date;
 }
 
 export interface ITimeEntryActiveInput {
@@ -103,6 +105,14 @@ export interface IProjectItem {
 }
 
 export interface IProjectItemInput {
+  startTime: string;
+  endTime: string;
+  company_id: string;
+  user_id: string;
+  client_id: string;
+}
+
+export interface IDurationMap {
   startTime: string;
   endTime: string;
   company_id: string;
@@ -149,6 +159,11 @@ export interface ITimeEntryRepository {
    * Get projects with total expense, total hours and hourly rate of the time entries for the given time interval.
    */
   getProjectItems(args: IProjectItemInput): Promise<IProjectItem[]>;
+
+  /**
+   * Get day wise duration map of the time entries for given time interval
+   */
+  getDurationMap(args: IDurationMap): Promise<object>;
 }
 
 export interface ITimeEntryService {
