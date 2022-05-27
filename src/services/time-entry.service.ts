@@ -309,15 +309,22 @@ export default class TimeEntryService implements ITimeEntryService {
         const startDate = moment(timeEntry.startTime).startOf('isoWeek').format('YYYY-MM-DD');
         startDateObj[startDate] = true;
       });
-
-      Object.keys(startDateObj).forEach(async (key) => {
-        await this.createUpdateTimesheet({
-          startTime: moment(key, 'YYYY-MM-DD').toDate(),
-          client_id: client_id,
-          company_id: company_id,
-          user_id: created_by,
+      try {
+        Object.keys(startDateObj).forEach(async (date) => {
+          await this.createUpdateTimesheet({
+            startTime: new Date(date),
+            client_id: client_id,
+            company_id: company_id,
+            user_id: created_by,
+          });
         });
-      });
+      } catch (err) {
+        this.logger.error({
+          operation: 'updateTimesheet',
+          message: 'Error updating timesheet while bulk delete',
+          data: err,
+        });
+      }
       return timeEntries;
     } catch (err) {
       throw err;

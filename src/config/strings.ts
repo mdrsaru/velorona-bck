@@ -90,7 +90,6 @@ export default {
   totalAmountRequired: 'Total amount required',
   subtotalRequired: 'Subtotal required',
   totalHoursRequired: 'Total hours required',
-  timesheetIdRequired: 'Timesheet id required ',
   quantityRequired: 'Quantity required',
   totalQuantityRequired: 'Total quantity required',
 };

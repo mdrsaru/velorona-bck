@@ -1,4 +1,6 @@
 import merge from 'lodash/merge';
+import isString from 'lodash/isString';
+import isNil from 'lodash/isNil';
 import { injectable, inject } from 'inversify';
 import { getRepository, Repository } from 'typeorm';
 import crypto from 'crypto';
@@ -7,7 +9,7 @@ import { TYPES } from '../types';
 import strings from '../config/strings';
 import Company from '../entities/company.entity';
 import BaseRepository from './base.repository';
-import { ConflictError, NotFoundError } from '../utils/api-error';
+import * as apiError from '../utils/api-error';
 
 import {
   ICompany,
@@ -25,19 +27,35 @@ export default class CompanyRepository extends BaseRepository<Company> implement
 
   create = async (args: ICompanyCreate): Promise<Company> => {
     try {
-      const name = args.name?.trim();
+      const name = args.name?.trim()?.replace(/\s+/g, ' ');
       const status = args.status;
       const archived = args?.archived ?? false;
 
-      let companyName = name.substr(0, 5)?.toLowerCase();
-      const length = 10 - companyName.length;
-      const randomNumber = crypto.randomBytes(length).toString('hex').slice(0, length);
+      const errors: string[] = [];
+
+      if (isNil(name) || !isString(name)) {
+        errors.push(strings.nameRequired);
+      }
+
+      if (errors.length) {
+        throw new apiError.ValidationError({
+          details: errors,
+        });
+      }
+
+      let companyName = name
+        ?.replace(/[^a-zA-Z0-9 ]/g, '')
+        ?.replace(/\s+/g, '')
+        ?.toLowerCase()
+        ?.substr(0, 6);
+      const remainingLength = 10 - companyName?.length ?? 0;
+      const randomNumber = crypto.randomBytes(10).toString('hex').slice(0, remainingLength);
 
       const companyCode: string = companyName + randomNumber;
       const found = await this.repo.find({ companyCode });
 
       if (found.length) {
-        throw new ConflictError({ details: [strings.companyCodeExists] });
+        throw new apiError.ConflictError({ details: [strings.companyCodeExists] });
       }
 
       const company = await this.repo.save({
@@ -63,7 +81,7 @@ export default class CompanyRepository extends BaseRepository<Company> implement
       const found = await this.getById({ id });
 
       if (!found) {
-        throw new NotFoundError({
+        throw new apiError.NotFoundError({
           details: ['Company not found'],
         });
       }

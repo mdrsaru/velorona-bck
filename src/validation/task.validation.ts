@@ -48,19 +48,24 @@ export default class TaskValidation {
   static create() {
     return Joi.object({
       name: Joi.string().required().messages(messages.name),
+      description: Joi.string(),
       status: Joi.string().required().messages(messages.status),
       archived: Joi.boolean(),
+      active: Joi.boolean(),
       manager_id: Joi.string().required().messages(messages.manager_id),
       company_id: Joi.string().required().messages(messages.company_id),
       project_id: Joi.string().required().messages(messages.project_id),
       user_ids: Joi.array(),
+      attachment_ids: Joi.array(),
     });
   }
   static update() {
     return Joi.object({
       id: Joi.string().required().messages(messages.id),
       name: Joi.string(),
+      description: Joi.string(),
       archived: Joi.boolean(),
+      active: Joi.boolean(),
       status: Joi.string(),
       manager_id: Joi.string(),
       company_id: Joi.string(),

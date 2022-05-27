@@ -153,7 +153,7 @@ export interface ITimeEntryRepository {
   remove(args: IEntityRemove): Promise<TimeEntry>;
 
   /*
-  Removes multiple time entries(by created_by, company_id and client provided)`
+  Removes multiple time entries of a user of particular client`
   */
   bulkRemove(args: ITimeEntryBulkRemoveInput): Promise<TimeEntry[]>;
 

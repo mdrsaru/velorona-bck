@@ -8,6 +8,11 @@ export const userRolesTable = {
   role_id: 'role_id',
 };
 
+export const taskAttachmentTable = {
+  media_id: 'media_id',
+  task_id: 'task_id',
+};
+
 export const timeEntry = {
   start_time: 'start_time',
   end_time: 'end_time',

@@ -87,34 +87,43 @@ export class TaskResolver {
     const operation = 'TaskCreate';
     try {
       const name = args.name;
+      const description = args.description;
       const status = args.status;
       const archived = args.archived;
+      const active = args?.active;
       const manager_id = args.manager_id;
       const company_id = args.company_id;
       const project_id = args.project_id;
-      const user_ids = args.user_ids;
+      const user_ids = args?.user_ids;
+      const attachment_ids = args.attachment_ids;
 
       const schema = TaskValidation.create();
       await this.joiService.validate({
         schema,
         input: {
           name,
+          description,
           status,
+          active,
           archived,
           manager_id,
           company_id,
           project_id,
           user_ids,
+          attachment_ids,
         },
       });
       let task: Task = await this.taskService.create({
         name,
+        description,
         status,
+        active,
         archived,
         manager_id,
         company_id,
         project_id,
         user_ids,
+        attachment_ids,
       });
       return task;
     } catch (err) {
@@ -135,8 +144,10 @@ export class TaskResolver {
     try {
       const id = args.id;
       const name = args.name;
+      const description = args.description;
       const status = args.status;
       const archived = args.archived;
+      const active = args.active;
       const manager_id = args.manager_id;
       const project_id = args.project_id;
       const user_ids = args.user_ids;
@@ -147,8 +158,10 @@ export class TaskResolver {
         input: {
           id,
           name,
+          description,
           status,
           archived,
+          active,
           manager_id,
           project_id,
           user_ids,
@@ -158,8 +171,10 @@ export class TaskResolver {
       let Task: Task = await this.taskService.update({
         id,
         name,
+        description,
         status,
         archived,
+        active,
         manager_id,
         project_id,
         user_ids,
