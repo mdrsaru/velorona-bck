@@ -272,6 +272,18 @@ export default class TimeEntryService implements ITimeEntryService {
         id,
       });
 
+      const project = await this.projectRepository.getById({
+        id: timeEntry.project_id,
+      });
+
+      if (project) {
+        await this.createUpdateTimesheet({
+          startTime: timeEntry.startTime,
+          client_id: project.client_id,
+          company_id: timeEntry.company_id,
+          user_id: timeEntry.created_by,
+        });
+      }
       return timeEntry;
     } catch (err) {
       throw err;
