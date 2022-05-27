@@ -11,7 +11,7 @@ import { getRepository, LessThanOrEqual, MoreThanOrEqual, In, IsNull, Not, getMa
 import { TYPES } from '../types';
 import strings from '../config/strings';
 import { entities } from '../config/constants';
-import { timeEntry, userPayRate } from '../config/db/columns';
+import { timeEntry, userPayRate, projects } from '../config/db/columns';
 import * as apiError from '../utils/api-error';
 import TimeEntry from '../entities/time-entry.entity';
 import { NotFoundError } from '../utils/api-error';
@@ -28,7 +28,10 @@ import {
   ITimeEntryWeeklyDetailsRepoInput,
   IUserTotalExpenseInput,
   ITimeEntryActiveInput,
-  ITimeEntryBulkRemoveRepository,
+  IProjectItemInput,
+  IProjectItem,
+  IDurationMap,
+  ITimeEntryBulkRemoveInput,
 } from '../interfaces/time-entry.interface';
 import { IUserRepository } from '../interfaces/user.interface';
 import { IGetOptions, IGetAllAndCountResult } from '../interfaces/paging.interface';
@@ -120,6 +123,7 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
       const endTime = args.endTime;
       const company_id = args.company_id;
       const created_by = args.created_by;
+      const client_id = args.client_id;
       const errors: string[] = [];
 
       if (isNil(startTime) || !isDate(startTime)) {
@@ -135,18 +139,29 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
         errors.push(strings.userIdRequired);
       }
 
-      const query = {
-        company_id,
-        created_by,
-        startTime: MoreThanOrEqual(startTime),
-        endTime: LessThanOrEqual(endTime),
-      };
+      const query = this.repo
+        .createQueryBuilder(entities.timeEntry)
+        .where(`${entities.timeEntry}.company_id = :company_id`, { company_id });
 
-      const timeEntry = await this.getAll({
-        query,
-      });
+      if (client_id) {
+        query
+          .innerJoinAndSelect(`${entities.timeEntry}.project`, 'project')
+          .andWhere('project.client_id = :client_id', { client_id });
+      }
 
-      return timeEntry;
+      if (created_by) {
+        query.andWhere('created_by = :created_by', { created_by });
+      }
+      if (startTime) {
+        query.andWhere('start_time >= :startTime', { startTime });
+      }
+      if (endTime) {
+        query.andWhere('start_time <= :endTime', { endTime }); // using start_time for the end_time
+      }
+
+      const entries = await query.orderBy(`${entities.timeEntry}.start_time`, 'DESC').getMany();
+
+      return entries;
     } catch (err) {
       throw err;
     }
@@ -177,7 +192,7 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
         .where('company_id = :company_id', { company_id })
         .andWhere('created_by = :created_by', { created_by })
         .andWhere('start_time >= :startTime', { startTime })
-        .andWhere('end_time <= :endTime', { endTime });
+        .andWhere('start_time <= :endTime', { endTime }); // using start_time for the end_time
 
       if (project_id) {
         query.andWhere('project_id = :project_id', { project_id });
@@ -201,12 +216,12 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
 
       const queryResult = await this.manager.query(
         `WITH cte_time_entry_payrate as (
-          SELECT t.${timeEntry.duration}, up.${userPayRate.amount}, ((t.${timeEntry.duration}::float / 3600) * up.${userPayRate.amount}) AS expense FROM ${entities.timeEntry} as t 
-          INNER JOIN ${entities.userPayRate} AS up ON t.${timeEntry.project_id} = up.${userPayRate.project_id}
-          INNER JOIN ${entities.projects} as p on up.${userPayRate.project_id} = p.id
-          WHERE t.${timeEntry.start_time} >= $1 AND t.${timeEntry.end_time} <= $2 AND t.${timeEntry.company_id} = $3 AND t.${timeEntry.created_by} = $4 AND up.${userPayRate.user_id} = $4 AND p.client_id = $5
+          SELECT t.${timeEntry.duration}, up.${userPayRate.amount}, ((t.${timeEntry.duration}::numeric / 3600) * up.${userPayRate.amount}) AS expense FROM ${entities.timeEntry} as t 
+          LEFT JOIN ${entities.userPayRate} AS up ON t.${timeEntry.project_id} = up.${userPayRate.project_id}
+          JOIN ${entities.projects} as p on up.${userPayRate.project_id} = p.id
+          WHERE t.${timeEntry.start_time} >= $1 AND t.${timeEntry.start_time} <= $2 AND t.${timeEntry.company_id} = $3 AND t.${timeEntry.created_by} = $4 AND up.${userPayRate.user_id} = $4 AND p.client_id = $5
         )
-        SELECT SUM(expense)::float(2) AS total_expense FROM cte_time_entry_payrate;
+        SELECT ROUND(SUM(expense)::numeric, 2) AS total_expense FROM cte_time_entry_payrate;
         `,
         [startTime, endTime, company_id, user_id, client_id]
       );
@@ -401,23 +416,26 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
     }
   };
 
-  async bulkRemove(args: ITimeEntryBulkRemoveRepository): Promise<TimeEntry[]> {
+  async bulkRemove(args: ITimeEntryBulkRemoveInput): Promise<TimeEntry[]> {
     try {
       const created_by = args?.created_by;
       const ids = args.ids;
-      const relations = args?.relations;
+      const client_id = args.client_id;
+      const company_id = args.company_id;
 
-      let query;
-      if (created_by) {
-        query = { created_by, id: In(ids) };
-      } else {
-        query = { id: In(ids) };
-      }
+      const query = this.repo
+        .createQueryBuilder(entities.timeEntry)
+        .where(`${entities.timeEntry}.company_id = :company_id `, { company_id })
+        .andWhere(`${entities.timeEntry}.id = ANY(:ids)`, { ids })
+        .andWhere('created_by = :created_by', { created_by })
+        .innerJoinAndSelect(`${entities.timeEntry}.project`, 'project')
+        .andWhere('project.client_id = :client_id', { client_id });
 
-      let timeEntries = await this.repo.find({
-        where: query,
-        relations: relations ?? [],
-      });
+      const timeEntries = await query
+        .select(`${entities.timeEntry}.id`)
+        .addSelect(`${entities.timeEntry}.startTime`)
+        .getMany();
+
       let timeEntryId: any = [];
 
       if (timeEntries.length > 0) {
@@ -431,4 +449,86 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
       throw err;
     }
   }
+
+  getProjectItems = async (args: IProjectItemInput): Promise<IProjectItem[]> => {
+    try {
+      const startTime = args.startTime;
+      const endTime = args.endTime;
+      const company_id = args.company_id;
+      const user_id = args.user_id;
+      const client_id = args.client_id;
+
+      const queryResult = await this.manager.query(
+        `
+        SELECT t.${timeEntry.project_id},
+        COALESCE(up.${userPayRate.amount}, 0) as "hourlyRate",
+        COALESCE(SUM(t.${timeEntry.duration}), 0) AS "totalDuration",
+        ROUND(COALESCE(((SUM(t.${timeEntry.duration})::numeric / 3600) * up.${userPayRate.amount}), 0), 2) AS "totalExpense" 
+        FROM ${entities.timeEntry} as t 
+        JOIN ${entities.projects} as p on t.${timeEntry.project_id} = p.id
+        LEFT JOIN ${entities.userPayRate} up ON t.project_id = up.project_id
+        WHERE t.${timeEntry.start_time} >= $1
+        AND t.${timeEntry.start_time} <= $2
+        AND t.${timeEntry.company_id} = $3
+        AND t.${timeEntry.created_by} = $4
+        AND p.client_id = $5
+        GROUP BY t.${timeEntry.project_id}, up.${userPayRate.amount};
+        `,
+        [startTime, endTime, company_id, user_id, client_id]
+      );
+
+      return queryResult;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  getDurationMap = async (args: IDurationMap): Promise<object> => {
+    try {
+      const startTime = args.startTime;
+      const endTime = args.endTime;
+      const company_id = args.company_id;
+      const user_id = args.user_id;
+      const client_id = args.client_id;
+
+      const queryResult = await this.manager.query(
+        `
+        SELECT to_char(t.${timeEntry.start_time}, 'yyyy-mm-dd') AS date, SUM(t.${timeEntry.duration})::numeric AS date_duration 
+        FROM ${entities.timeEntry} AS t
+        JOIN ${entities.projects} AS p ON t.project_id = p.id
+        where t.${timeEntry.start_time} >= $1
+        AND t.${timeEntry.start_time} <= $2
+        AND t.${timeEntry.company_id} = $3
+        AND t.${timeEntry.created_by} = $4
+        AND p.${projects.client_id} = $5
+        GROUP BY to_char(t.${timeEntry.start_time}, 'yyyy-mm-dd');
+        `,
+        [startTime, endTime, company_id, user_id, client_id]
+      );
+
+      let resultMapByDate: { [key: string]: number } = {};
+      for (let result of queryResult) {
+        resultMapByDate[result.date] = parseInt(result.date_duration);
+      }
+
+      const startDate = moment(startTime);
+      const endDate = moment(endTime);
+      const diff = endDate.diff(startDate, 'days');
+
+      const durationMap: { [key: string]: number } = {};
+      let current = startDate;
+
+      for (let i = 0; i <= diff; i++) {
+        const date = current.format('YYYY-MM-DD');
+
+        durationMap[date] = resultMapByDate[date] || 0;
+
+        current.add(1, 'days');
+      }
+
+      return durationMap;
+    } catch (err) {
+      throw err;
+    }
+  };
 }

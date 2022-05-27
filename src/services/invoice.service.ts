@@ -44,7 +44,7 @@ export default class InvoiceService implements IInvoiceService {
       const issueDate = args.issueDate;
       const dueDate = args.dueDate;
       const poNumber = args.poNumber;
-      const totalHours = args.totalHours;
+      const totalQuantity = args.totalQuantity;
       const subtotal = args.subtotal;
       const totalAmount = args.totalAmount;
       const taxPercent = args.taxPercent ?? 0;
@@ -58,7 +58,7 @@ export default class InvoiceService implements IInvoiceService {
         issueDate,
         dueDate,
         poNumber,
-        totalHours,
+        totalQuantity,
         subtotal,
         totalAmount,
         taxPercent,
@@ -81,7 +81,7 @@ export default class InvoiceService implements IInvoiceService {
       const issueDate = args.issueDate;
       const dueDate = args.dueDate;
       const poNumber = args.poNumber;
-      const totalHours = args.totalHours;
+      const totalQuantity = args.totalQuantity;
       const subtotal = args.subtotal;
       const totalAmount = args.totalAmount;
       const taxPercent = args.taxPercent ?? 0;
@@ -94,7 +94,7 @@ export default class InvoiceService implements IInvoiceService {
         issueDate,
         dueDate,
         poNumber,
-        totalHours,
+        totalQuantity,
         subtotal,
         totalAmount,
         taxPercent,

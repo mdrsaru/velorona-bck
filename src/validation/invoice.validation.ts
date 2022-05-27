@@ -12,7 +12,7 @@ export default class CompanyValidation {
       issueDate: Joi.date().required().error(new Error(strings.dateRequired)),
       dueDate: Joi.date().required().error(new Error(strings.dueDateMustBeValid)),
       poNumber: Joi.string().required().error(new Error(strings.poNumberRequired)),
-      totalHours: Joi.number().required().error(new Error(strings.totalHoursRequired)),
+      totalQuantity: Joi.number().required().error(new Error(strings.totalQuantityRequired)),
       subtotal: Joi.number().required().error(new Error(strings.subtotalRequired)),
       totalAmount: Joi.number().required().error(new Error(strings.totalAmountRequired)),
       taxPercent: Joi.number(),
@@ -23,7 +23,8 @@ export default class CompanyValidation {
         .items(
           Joi.object({
             project_id: Joi.string().required().error(new Error(strings.oneOrMoreProjectRequired)),
-            hours: Joi.number().required().error(new Error(strings.hoursRequired)),
+            description: Joi.string(),
+            quantity: Joi.number().required().error(new Error(strings.quantityRequired)),
             rate: Joi.number().required().error(new Error(strings.rateRequired)),
             amount: Joi.number().required().error(new Error(strings.amountRequired)),
           })
@@ -39,7 +40,7 @@ export default class CompanyValidation {
       issueDate: Joi.date(),
       dueDate: Joi.date(),
       poNumber: Joi.string(),
-      totalHours: Joi.number(),
+      totalQuantity: Joi.number(),
       subtotal: Joi.number(),
       totalAmount: Joi.number(),
       taxPercent: Joi.number(),
@@ -48,7 +49,8 @@ export default class CompanyValidation {
         Joi.object({
           id: Joi.string(),
           project_id: Joi.string().required().error(new Error(strings.oneOrMoreProjectRequired)),
-          hours: Joi.number().required().error(new Error(strings.hoursRequired)),
+          description: Joi.string(),
+          quantity: Joi.number().required().error(new Error(strings.quantityRequired)),
           rate: Joi.number().required().error(new Error(strings.rateRequired)),
           amount: Joi.number().required().error(new Error(strings.amountRequired)),
         })

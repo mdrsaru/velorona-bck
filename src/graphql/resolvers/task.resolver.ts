@@ -229,4 +229,14 @@ export class TaskResolver {
   project(@Root() root: Task, @Ctx() ctx: IGraphqlContext) {
     return ctx.loaders.projectByIdLoader.load(root.project_id);
   }
+
+  @FieldResolver()
+  manager(@Root() root: Task, @Ctx() ctx: IGraphqlContext) {
+    return ctx.loaders.usersByIdLoader.load(root.manager_id);
+  }
+
+  @FieldResolver()
+  async users(@Root() root: Task, @Ctx() ctx: IGraphqlContext) {
+    return ctx.loaders.usersByTaskIdLoader.load(root.id);
+  }
 }

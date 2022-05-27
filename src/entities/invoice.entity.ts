@@ -68,10 +68,10 @@ export default class Invoice extends Base {
 
   @Field()
   @Column({
-    name: invoices.total_hours,
+    name: invoices.total_quantity,
     type: 'float',
   })
-  totalHours: number;
+  totalQuantity: number;
 
   @Field()
   @Column({
@@ -146,7 +146,7 @@ export class InvoiceCreateInput {
   poNumber: string;
 
   @Field()
-  totalHours: number;
+  totalQuantity: number;
 
   @Field()
   subtotal: number;
@@ -191,7 +191,7 @@ export class InvoiceUpdateInput {
   poNumber: string;
 
   @Field({ nullable: true })
-  totalHours: number;
+  totalQuantity: number;
 
   @Field({ nullable: true })
   subtotal: number;

@@ -44,6 +44,7 @@
     "faker": "^6.6.6",
     "graphql": "^15.8.0",
     "graphql-middleware": "^6.1.15",
+    "graphql-type-json": "^0.3.2",
     "inversify": "^5.1.1",
     "joi": "^17.6.0",
     "jsonwebtoken": "^8.5.1",

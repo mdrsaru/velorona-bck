@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { inject, injectable } from 'inversify';
 import { Arg, Ctx, Mutation, Query, Resolver, UseMiddleware, FieldResolver, Root } from 'type-graphql';
 
@@ -21,6 +22,7 @@ import { IErrorService, IJoiService } from '../../interfaces/common.interface';
 import { IGraphqlContext } from '../../interfaces/graphql.interface';
 import { IPaginationData } from '../../interfaces/paging.interface';
 import { ITimesheetService } from '../../interfaces/timesheet.interface';
+import { ITimeEntryRepository } from '../../interfaces/time-entry.interface';
 
 @injectable()
 @Resolver((of) => Timesheet)
@@ -28,16 +30,19 @@ export class TimesheetResolver {
   private name = 'TimesheetResolver';
   private timesheetService: ITimesheetService;
   private joiService: IJoiService;
+  private timeEntryRepository: ITimeEntryRepository;
   private errorService: IErrorService;
 
   constructor(
-    @inject(TYPES.TimesheetService) timesheetService: ITimesheetService,
-    @inject(TYPES.JoiService) joiService: IJoiService,
-    @inject(TYPES.ErrorService) errorService: IErrorService
+    @inject(TYPES.TimesheetService) _timesheetService: ITimesheetService,
+    @inject(TYPES.JoiService) _joiService: IJoiService,
+    @inject(TYPES.ErrorService) _errorService: IErrorService,
+    @inject(TYPES.TimeEntryRepository) _timeEntryRepository: ITimeEntryRepository
   ) {
-    this.timesheetService = timesheetService;
-    this.joiService = joiService;
-    this.errorService = errorService;
+    this.timesheetService = _timesheetService;
+    this.joiService = _joiService;
+    this.timeEntryRepository = _timeEntryRepository;
+    this.errorService = _errorService;
   }
 
   @Query((returns) => TimeSheetPagingResult)
@@ -179,5 +184,101 @@ export class TimesheetResolver {
     }
 
     return null;
+  }
+
+  @FieldResolver()
+  projectItems(@Root() root: Timesheet, @Ctx() ctx: IGraphqlContext) {
+    const operation = 'projectItems';
+
+    try {
+      if (!root.weekStartDate || !root.weekEndDate) {
+        return [];
+      }
+
+      const startTime = root.weekStartDate + 'T00:00:00';
+      const endTime = root.weekEndDate + 'T23:59:59';
+      const client_id = root.client_id;
+      const company_id = root.company_id;
+      const user_id = root.user_id;
+
+      return this.timeEntryRepository.getProjectItems({
+        client_id,
+        company_id,
+        startTime,
+        endTime,
+        user_id,
+      });
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
+    }
+  }
+
+  @FieldResolver()
+  async durationMap(@Root() root: Timesheet, @Ctx() ctx: IGraphqlContext) {
+    const operation = 'durationMap';
+
+    try {
+      if (!root.weekStartDate || !root.weekEndDate) {
+        return {};
+      }
+
+      const startTime = root.weekStartDate + 'T00:00:00';
+      const endTime = root.weekEndDate + 'T23:59:59';
+      const client_id = root.client_id;
+      const company_id = root.company_id;
+      const user_id = root.user_id;
+
+      return this.timeEntryRepository.getDurationMap({
+        startTime,
+        endTime,
+        user_id,
+        client_id,
+        company_id,
+      });
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
+    }
+  }
+
+  @FieldResolver()
+  async timeEntries(@Root() root: Timesheet) {
+    const operation = 'durationMap';
+
+    try {
+      if (!root.weekStartDate || !root.weekEndDate) {
+        return [];
+      }
+
+      const startTime = new Date(root.weekStartDate + 'T00:00:00');
+      const endTime = new Date(root.weekEndDate + 'T23:59:59');
+      const client_id = root.client_id;
+      const company_id = root.company_id;
+      const user_id = root.user_id;
+
+      return this.timeEntryRepository.getWeeklyDetails({
+        startTime,
+        endTime,
+        created_by: user_id,
+        client_id,
+        company_id,
+      });
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
+    }
   }
 }

@@ -63,8 +63,9 @@ export default class InvoiceItemRepository extends BaseRepository<InvoiceItem> i
       const invoiceItems = items.map((item) => {
         return {
           invoice_id,
+          description: item.description || '',
           project_id: item.project_id,
-          hours: item.hours ?? 0,
+          quantity: item.quantity ?? 0,
           rate: item.rate ?? 0,
           amount: item.amount ?? 0,
         };

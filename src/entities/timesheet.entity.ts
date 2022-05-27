@@ -1,10 +1,13 @@
 import { times } from 'lodash';
 import { Field, InputType, ObjectType, registerEnumType } from 'type-graphql';
 import { Column, Entity, Index, JoinColumn, ManyToOne, Unique } from 'typeorm';
+import { GraphQLJSON } from 'graphql-type-json';
+
 import { entities, TimesheetStatus } from '../config/constants';
 import { timesheet } from '../config/db/columns';
 import { Base } from './base.entity';
 import Client from './client.entity';
+import TimeEntry from './time-entry.entity';
 import { PagingInput, PagingResult } from './common.entity';
 import Company from './company.entity';
 import User from './user.entity';
@@ -114,6 +117,48 @@ export default class Timesheet extends Base {
     default: false,
   })
   isSubmitted: boolean;
+
+  @Field((type) => [ProjectItem], {
+    nullable: true,
+    description: `
+      List of projects related to time entries of a user along with the total duration, hourly rate and total expense
+      Query this field only for the single timesheet as there will be N+1 problem for list of timesheet. 
+    `,
+  })
+  projectItems: ProjectItem[];
+
+  @Field((type) => GraphQLJSON, {
+    nullable: true,
+    description: `
+      Maps each day of the time entry with its total duration
+      Query this field only for the single timesheet as there will be N+1 problem for list of timesheet. 
+    `,
+  })
+  durationMap: object;
+
+  @Field((type) => [TimeEntry], {
+    nullable: true,
+    description: `
+      List of weekly time entries of the particular timesheet
+      Query this field only for the single timesheet as there will be N+1 problem for list of timesheet. 
+    `,
+  })
+  timeEntries: TimeEntry[];
+}
+
+@ObjectType({ description: 'Projects related to timesheet with total duration and expense' })
+export class ProjectItem {
+  @Field()
+  project_id: string;
+
+  @Field()
+  totalDuration: number;
+
+  @Field()
+  hourlyRate: number;
+
+  @Field()
+  totalExpense: number;
 }
 
 @InputType()

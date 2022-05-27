@@ -10,7 +10,7 @@ import { TimesheetStatus } from '../config/constants';
 import { IEntityRemove, IErrorService, ILogger, Maybe } from '../interfaces/common.interface';
 import { IPaginationData, IPagingArgs } from '../interfaces/paging.interface';
 import {
-  ITimeEntryBulkRemove,
+  ITimeEntryBulkRemoveInput,
   ITimeEntryCreateInput,
   ITimeEntryRepository,
   ITimeEntryService,
@@ -78,6 +78,7 @@ export default class TimeEntryService implements ITimeEntryService {
       const endTime = args.endTime;
       const company_id = args.company_id;
       const created_by = args.created_by;
+      const client_id = args.client_id;
 
       let startDate = moment().startOf('isoWeek').toDate();
       let endDate = moment().endOf('isoWeek').toDate();
@@ -92,6 +93,7 @@ export default class TimeEntryService implements ITimeEntryService {
         created_by,
         startTime: startDate,
         endTime: endDate,
+        client_id,
       });
 
       return timeEntry;
@@ -270,45 +272,52 @@ export default class TimeEntryService implements ITimeEntryService {
         id,
       });
 
+      const project = await this.projectRepository.getById({
+        id: timeEntry.project_id,
+      });
+
+      if (project) {
+        await this.createUpdateTimesheet({
+          startTime: timeEntry.startTime,
+          client_id: project.client_id,
+          company_id: timeEntry.company_id,
+          user_id: timeEntry.created_by,
+        });
+      }
       return timeEntry;
     } catch (err) {
       throw err;
     }
   };
 
-  bulkRemove = async (args: ITimeEntryBulkRemove) => {
+  bulkRemove = async (args: ITimeEntryBulkRemoveInput) => {
     try {
       const ids = args.ids;
-      const created_by = args?.created_by;
+      const created_by = args.created_by;
       const company_id = args.company_id;
-      const timesheet_id = args.timesheet_id;
-
-      const timesheet = await this.timesheetRepository.getById({ id: timesheet_id });
+      const client_id = args.client_id;
 
       const timeEntries = await this.timeEntryRepository.bulkRemove({
         ids,
         created_by,
-        relations: ['project'],
         company_id,
+        client_id,
       });
 
       let startDateObj: any = {};
-
       timeEntries.forEach((timeEntry) => {
         const startDate = moment(timeEntry.startTime).startOf('isoWeek').format('YYYY-MM-DD');
         startDateObj[startDate] = true;
       });
 
-      if (timesheet) {
-        Object.keys(startDateObj).forEach(async (key) => {
-          await this.createUpdateTimesheet({
-            startTime: moment(key, 'YYYY-MM-DD').toDate(),
-            client_id: timesheet.client_id,
-            company_id: company_id,
-            user_id: created_by,
-          });
+      Object.keys(startDateObj).forEach(async (key) => {
+        await this.createUpdateTimesheet({
+          startTime: moment(key, 'YYYY-MM-DD').toDate(),
+          client_id: client_id,
+          company_id: company_id,
+          user_id: created_by,
         });
-      }
+      });
       return timeEntries;
     } catch (err) {
       throw err;

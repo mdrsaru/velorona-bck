@@ -38,10 +38,10 @@ const messages = {
     'any.required': strings.taskIdRequired,
   },
 
-  timesheet_id: {
-    'string.base': strings.timesheetIdRequired,
-    'string.empty': strings.timesheetIdRequired,
-    'any.required': strings.timesheetIdRequired,
+  client_id: {
+    'string.base': strings.clientRequired,
+    'string.empty': strings.clientRequired,
+    'any.required': strings.clientRequired,
   },
 };
 
@@ -97,7 +97,7 @@ export default class TimeEntryValidation {
       ids: Joi.array().required(),
       company_id: Joi.string().required().messages(messages.company_id),
       created_by: Joi.string().required().messages(messages.created_by),
-      timesheet_id: Joi.string().required().messages(messages.timesheet_id),
+      client_id: Joi.string().required().messages(messages.client_id),
     });
   }
 }

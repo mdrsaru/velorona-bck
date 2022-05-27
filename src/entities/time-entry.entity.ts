@@ -193,6 +193,9 @@ export class TimeEntryWeeklyDetailsInput {
   @Field({ nullable: true })
   created_by: string;
 
+  @Field({ nullable: true })
+  client_id: string;
+
   @Field((type) => [String], {
     nullable: true,
     description: 'Sort order. Default by start time.',
@@ -225,5 +228,5 @@ export class TimeEntryBulkDeleteInput {
   created_by: string;
 
   @Field()
-  timesheet_id: string;
+  client_id: string;
 }

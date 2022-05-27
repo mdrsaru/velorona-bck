@@ -59,6 +59,15 @@ export interface ITimeEntryWeeklyDetailsInput {
   created_by: string;
   startTime?: Date;
   endTime?: Date;
+  client_id?: string;
+}
+
+export interface ITimeEntryWeeklyDetailsRepoInput {
+  company_id: string;
+  created_by: string;
+  startTime: Date;
+  endTime: Date;
+  client_id?: string;
 }
 
 export interface ITimeEntryTotalDurationInput {
@@ -77,30 +86,40 @@ export interface IUserTotalExpenseInput {
   endTime: string;
 }
 
-export interface ITimeEntryWeeklyDetailsRepoInput {
-  company_id: string;
-  created_by: string;
-  startTime: Date;
-  endTime: Date;
-}
-
 export interface ITimeEntryActiveInput {
   created_by: string;
   company_id: string;
 }
 
-export interface ITimeEntryBulkRemove {
+export interface ITimeEntryBulkRemoveInput {
   ids: string[];
   created_by: string;
   company_id: string;
-  timesheet_id: string;
+  client_id: string;
 }
 
-export interface ITimeEntryBulkRemoveRepository {
-  ids: string[];
-  created_by: string;
+export interface IProjectItem {
+  project_id: string;
+  projectName: string;
+  totalDuration: number;
+  hourlyRate: number;
+  totalExpense: number;
+}
+
+export interface IProjectItemInput {
+  startTime: string;
+  endTime: string;
   company_id: string;
-  relations?: string[];
+  user_id: string;
+  client_id: string;
+}
+
+export interface IDurationMap {
+  startTime: string;
+  endTime: string;
+  company_id: string;
+  user_id: string;
+  client_id: string;
 }
 
 export interface ITimeEntryRepository {
@@ -134,9 +153,19 @@ export interface ITimeEntryRepository {
   remove(args: IEntityRemove): Promise<TimeEntry>;
 
   /*
-  Removes multiple time entries(by created_by if the user is provided)`
+  Removes multiple time entries(by created_by, company_id and client provided)`
   */
-  bulkRemove(args: ITimeEntryBulkRemoveRepository): Promise<TimeEntry[]>;
+  bulkRemove(args: ITimeEntryBulkRemoveInput): Promise<TimeEntry[]>;
+
+  /**
+   * Get projects with total expense, total hours and hourly rate of the time entries for the given time interval.
+   */
+  getProjectItems(args: IProjectItemInput): Promise<IProjectItem[]>;
+
+  /**
+   * Get day wise duration map of the time entries for given time interval
+   */
+  getDurationMap(args: IDurationMap): Promise<object>;
 }
 
 export interface ITimeEntryService {
@@ -146,5 +175,5 @@ export interface ITimeEntryService {
   update(args: ITimeEntryUpdateInput): Promise<TimeEntry>;
   stop(args: ITimeEntryStopInput): Promise<TimeEntry>;
   remove(args: IEntityRemove): Promise<TimeEntry>;
-  bulkRemove(args: ITimeEntryBulkRemove): Promise<TimeEntry[]>;
+  bulkRemove(args: ITimeEntryBulkRemoveInput): Promise<TimeEntry[]>;
 }
