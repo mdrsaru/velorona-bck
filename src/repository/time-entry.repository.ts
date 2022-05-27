@@ -457,6 +457,7 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
         SELECT t.${timeEntry.project_id},
         COALESCE(up.${userPayRate.amount}, 0) as "hourlyRate",
         COALESCE(SUM(t.${timeEntry.duration}), 0) AS "totalDuration",
+        ROUND(COALESCE((SUM(t.${timeEntry.duration})::numeric / 3600), 0), 2) AS "totalHours",
         ROUND(COALESCE(((SUM(t.${timeEntry.duration})::numeric / 3600) * up.${userPayRate.amount}), 0), 2) AS "totalExpense" 
         FROM ${entities.timeEntry} as t 
         JOIN ${entities.projects} as p on t.${timeEntry.project_id} = p.id

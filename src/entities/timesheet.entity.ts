@@ -151,6 +151,9 @@ export class ProjectItem {
   @Field()
   project_id: string;
 
+  @Field({ description: 'Total duration in hours' })
+  totalHours: number;
+
   @Field()
   totalDuration: number;
 
