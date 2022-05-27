@@ -1,20 +1,18 @@
 import { Field, InputType, ObjectType, registerEnumType } from 'type-graphql';
-import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany } from 'typeorm';
+import { Column, Entity, Index, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany } from 'typeorm';
 
 import { Base } from './base.entity';
 import User from './user.entity';
 import Company from './company.entity';
 import Workschedule from './workschedule.entity';
-import { entities, TaskStatus } from '../config/constants';
+import { entities } from '../config/constants';
 import { PagingInput, PagingResult } from './common.entity';
-import { taskAssignmentTable } from '../config/db/columns';
+import { taskAssignmentTable, taskAttachmentTable } from '../config/db/columns';
 import TimeEntry from './time-entry.entity';
 import Project from './project.entity';
+import Media from './media.entity';
 
-registerEnumType(TaskStatus, {
-  name: 'TaskStatus',
-});
-
+const indexPrefix = 'task';
 @Entity({ name: entities.tasks })
 @ObjectType()
 export default class Task extends Base {
@@ -22,13 +20,19 @@ export default class Task extends Base {
   @Column()
   name: string;
 
-  @Field((type) => TaskStatus)
-  @Column({
-    type: 'enum',
-    enum: TaskStatus,
-    default: TaskStatus.Inactive,
-  })
-  status: TaskStatus;
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  description: string;
+
+  @Index(`${indexPrefix}_status_index`)
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  status: string;
+
+  @Index(`${indexPrefix}_active_index`)
+  @Field()
+  @Column({ name: 'active', default: true })
+  active: boolean;
 
   @Field()
   @Column({ name: 'archived', default: false })
@@ -83,6 +87,23 @@ export default class Task extends Base {
   @ManyToOne(() => Project)
   @JoinColumn({ name: 'project_id' })
   project: Project;
+
+  @Field(() => [Media])
+  @ManyToMany(() => Media)
+  @JoinTable({
+    name: entities.taskAttachments,
+
+    joinColumn: {
+      name: taskAttachmentTable.task_id,
+      referencedColumnName: 'id',
+    },
+
+    inverseJoinColumn: {
+      name: taskAttachmentTable.media_id,
+      referencedColumnName: 'id',
+    },
+  })
+  attachments: Media[];
 }
 
 @InputType()
@@ -90,8 +111,14 @@ export class TaskCreateInput {
   @Field()
   name: string;
 
-  @Field((type) => TaskStatus)
-  status: TaskStatus;
+  @Field({ nullable: true })
+  description: string;
+
+  @Field()
+  status: string;
+
+  @Field({ nullable: true })
+  active: boolean;
 
   @Field({ nullable: true })
   archived: boolean;
@@ -107,6 +134,9 @@ export class TaskCreateInput {
 
   @Field(() => [String], { nullable: true })
   user_ids: string[];
+
+  @Field(() => [String], { nullable: true })
+  attachment_ids: string[];
 }
 
 @InputType()
@@ -120,8 +150,14 @@ export class TaskUpdateInput {
   @Field({ nullable: true })
   name: string;
 
-  @Field((type) => TaskStatus, { nullable: true })
-  status: TaskStatus;
+  @Field({ nullable: true })
+  description: string;
+
+  @Field({ nullable: true })
+  status: string;
+
+  @Field({ nullable: true })
+  active: boolean;
 
   @Field({ nullable: true })
   archived: boolean;
@@ -150,8 +186,8 @@ export class TaskQuery {
   @Field({ nullable: true })
   id: string;
 
-  @Field((type) => TaskStatus, { nullable: true })
-  status: TaskStatus;
+  @Field({ nullable: true })
+  status: string;
 
   @Field()
   company_id: string;

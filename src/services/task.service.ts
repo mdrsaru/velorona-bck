@@ -71,22 +71,28 @@ export default class TaskService implements ITaskService {
   create = async (args: ITaskCreateInput) => {
     const operation = 'create';
     const name = args.name;
+    const description = args.description;
     const status = args.status;
+    const active = args.active;
     const archived = args.archived;
     const manager_id = args.manager_id;
     const company_id = args.company_id;
     const project_id = args.project_id;
     const user_ids = args.user_ids;
+    const attachment_ids = args.attachment_ids;
 
     try {
       let task = await this.taskRepository.create({
         name,
+        description,
         status,
+        active,
         archived,
         manager_id,
         company_id,
         project_id,
         user_ids,
+        attachment_ids,
       });
       return task;
     } catch (err) {
@@ -103,6 +109,8 @@ export default class TaskService implements ITaskService {
     const operation = 'update';
     const id = args?.id;
     const name = args?.name;
+    const description = args?.description;
+    const active = args?.active;
     const status = args?.status;
     const archived = args?.archived;
     const manager_id = args?.manager_id;
@@ -127,6 +135,8 @@ export default class TaskService implements ITaskService {
       let task = await this.taskRepository.update({
         id,
         name,
+        description,
+        active,
         status,
         archived,
         manager_id,

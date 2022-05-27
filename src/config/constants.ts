@@ -64,6 +64,7 @@ export const entities = {
   invoices: 'invoices',
   invoiceItems: 'invoice_items',
   timesheet: 'timesheet',
+  taskAttachments: 'task_attachments',
 };
 
 export enum CompanyStatus {
@@ -113,11 +114,6 @@ export enum TokenType {
 export enum InvitationStatus {
   Pending = 'Pending',
   Approved = 'Approved',
-}
-
-export enum TaskStatus {
-  Active = 'Active',
-  Inactive = 'Inactive',
 }
 
 export enum InvoiceStatus {

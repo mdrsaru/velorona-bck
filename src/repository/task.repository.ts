@@ -6,6 +6,7 @@ import Task from '../entities/task.entity';
 import User from '../entities/user.entity';
 import { IEntityID } from '../interfaces/common.interface';
 import { ICompanyRepository } from '../interfaces/company.interface';
+import { IMediaRepository } from '../interfaces/media.interface';
 import { IProjectRepository } from '../interfaces/project.interface';
 import { IAssignTask, ITaskCreateInput, ITaskRepository, ITaskUpdateInput } from '../interfaces/task.interface';
 import { IUserRepository } from '../interfaces/user.interface';
@@ -18,26 +19,33 @@ export default class TaskRepository extends BaseRepository<Task> implements ITas
   private userRepository: IUserRepository;
   private companyRepository: ICompanyRepository;
   private projectRepository: IProjectRepository;
+  private mediaRepository: IMediaRepository;
+
   constructor(
     @inject(TYPES.UserRepository) userRepository: IUserRepository,
     @inject(TYPES.CompanyRepository) _companyRepository: ICompanyRepository,
-    @inject(TYPES.ProjectRepository) _projectRepository: IProjectRepository
+    @inject(TYPES.ProjectRepository) _projectRepository: IProjectRepository,
+    @inject(TYPES.MediaRepository) _mediaRepository: IMediaRepository
   ) {
     super(getRepository(Task));
     this.userRepository = userRepository;
     this.companyRepository = _companyRepository;
     this.projectRepository = _projectRepository;
+    this.mediaRepository = _mediaRepository;
   }
 
   async create(args: ITaskCreateInput): Promise<Task> {
     try {
       const name = args.name?.trim();
       const status = args.status;
+      const description = args.description;
+      const active = args.active;
       const archived = args.archived;
       const manager_id = args.manager_id;
       const company_id = args.company_id;
       const project_id = args.project_id;
       const user_ids = args.user_ids;
+      const attachment_ids = args.attachment_ids;
 
       const project = await this.projectRepository.getById({ id: project_id });
 
@@ -61,13 +69,21 @@ export default class TaskRepository extends BaseRepository<Task> implements ITas
         });
       }
 
+      const existingMedia = await this.mediaRepository.getAll({
+        query: {
+          id: attachment_ids,
+        },
+      });
       const task = await this.repo.save({
         name,
+        description,
+        active,
         status,
         archived,
         manager_id,
         company_id,
         project_id,
+        attachments: existingMedia,
       });
 
       if (user_ids) {
@@ -89,7 +105,9 @@ export default class TaskRepository extends BaseRepository<Task> implements ITas
       const id = args?.id;
       const name = args.name?.trim();
       const status = args.status;
+      const description = args?.description;
       const archived = args.archived;
+      const active = args.active;
       const manager_id = args.manager_id;
       const project_id = args.project_id;
 
@@ -108,6 +126,8 @@ export default class TaskRepository extends BaseRepository<Task> implements ITas
         archived,
         manager_id,
         project_id,
+        active,
+        description,
       });
 
       let task = await this.repo.save(update);
