@@ -91,9 +91,11 @@ export interface ITimeEntryActiveInput {
   company_id: string;
 }
 
-export interface ITimeEntryBulkRemove {
+export interface ITimeEntryBulkRemoveInput {
   ids: string[];
-  created_by?: string;
+  created_by: string;
+  company_id: string;
+  client_id: string;
 }
 
 export interface IProjectItem {
@@ -151,9 +153,9 @@ export interface ITimeEntryRepository {
   remove(args: IEntityRemove): Promise<TimeEntry>;
 
   /*
-  Removes multiple time entries(by created_by if the user is provided)`
+  Removes multiple time entries of a user of particular client`
   */
-  bulkRemove(args: ITimeEntryBulkRemove): Promise<TimeEntry[]>;
+  bulkRemove(args: ITimeEntryBulkRemoveInput): Promise<TimeEntry[]>;
 
   /**
    * Get projects with total expense, total hours and hourly rate of the time entries for the given time interval.
@@ -173,5 +175,5 @@ export interface ITimeEntryService {
   update(args: ITimeEntryUpdateInput): Promise<TimeEntry>;
   stop(args: ITimeEntryStopInput): Promise<TimeEntry>;
   remove(args: IEntityRemove): Promise<TimeEntry>;
-  bulkRemove(args: ITimeEntryBulkRemove): Promise<TimeEntry[]>;
+  bulkRemove(args: ITimeEntryBulkRemoveInput): Promise<TimeEntry[]>;
 }

@@ -28,10 +28,10 @@ import {
   ITimeEntryWeeklyDetailsRepoInput,
   IUserTotalExpenseInput,
   ITimeEntryActiveInput,
-  ITimeEntryBulkRemove,
   IProjectItemInput,
   IProjectItem,
   IDurationMap,
+  ITimeEntryBulkRemoveInput,
 } from '../interfaces/time-entry.interface';
 import { IUserRepository } from '../interfaces/user.interface';
 import { IGetOptions, IGetAllAndCountResult } from '../interfaces/paging.interface';
@@ -416,19 +416,23 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
     }
   };
 
-  async bulkRemove(args: ITimeEntryBulkRemove): Promise<TimeEntry[]> {
+  async bulkRemove(args: ITimeEntryBulkRemoveInput): Promise<TimeEntry[]> {
     try {
       const created_by = args?.created_by;
       const ids = args.ids;
+      const client_id = args.client_id;
+      const company_id = args.company_id;
 
-      let query;
-      if (created_by) {
-        query = { created_by, id: In(ids) };
-      } else {
-        query = { id: In(ids) };
-      }
-
-      let timeEntries = await this.repo.find(query);
+      const timeEntries = await this.repo
+        .createQueryBuilder(entities.timeEntry)
+        .select(`${entities.timeEntry}.id`)
+        .addSelect(`${entities.timeEntry}.startTime`)
+        .where(`${entities.timeEntry}.company_id = :company_id `, { company_id })
+        .andWhere(`${entities.timeEntry}.id = ANY(:ids)`, { ids })
+        .andWhere('created_by = :created_by', { created_by })
+        .innerJoinAndSelect(`${entities.timeEntry}.project`, 'project')
+        .andWhere('project.client_id = :client_id', { client_id })
+        .getMany();
 
       let timeEntryId: any = [];
 

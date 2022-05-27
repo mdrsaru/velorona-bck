@@ -10,7 +10,7 @@ import { TimesheetStatus } from '../config/constants';
 import { IEntityRemove, IErrorService, ILogger, Maybe } from '../interfaces/common.interface';
 import { IPaginationData, IPagingArgs } from '../interfaces/paging.interface';
 import {
-  ITimeEntryBulkRemove,
+  ITimeEntryBulkRemoveInput,
   ITimeEntryCreateInput,
   ITimeEntryRepository,
   ITimeEntryService,
@@ -290,17 +290,42 @@ export default class TimeEntryService implements ITimeEntryService {
     }
   };
 
-  bulkRemove = async (args: ITimeEntryBulkRemove) => {
+  bulkRemove = async (args: ITimeEntryBulkRemoveInput) => {
     try {
       const ids = args.ids;
-      const created_by = args?.created_by;
+      const created_by = args.created_by;
+      const company_id = args.company_id;
+      const client_id = args.client_id;
 
-      const timeEntry = await this.timeEntryRepository.bulkRemove({
+      const timeEntries = await this.timeEntryRepository.bulkRemove({
         ids,
         created_by,
+        company_id,
+        client_id,
       });
 
-      return timeEntry;
+      let startDateObj: any = {};
+      timeEntries.forEach((timeEntry) => {
+        const startDate = moment(timeEntry.startTime).startOf('isoWeek').format('YYYY-MM-DD');
+        startDateObj[startDate] = true;
+      });
+      try {
+        Object.keys(startDateObj).forEach(async (date) => {
+          await this.createUpdateTimesheet({
+            startTime: new Date(date),
+            client_id: client_id,
+            company_id: company_id,
+            user_id: created_by,
+          });
+        });
+      } catch (err) {
+        this.logger.error({
+          operation: 'updateTimesheet',
+          message: 'Error updating timesheet while bulk delete',
+          data: err,
+        });
+      }
+      return timeEntries;
     } catch (err) {
       throw err;
     }
@@ -362,7 +387,6 @@ export default class TimeEntryService implements ITimeEntryService {
           duration: totalTimeInSeconds,
           totalExpense,
         });
-
         return timesheet;
       } else {
         const timesheet = await this.timesheetRepository.create({
@@ -375,7 +399,6 @@ export default class TimeEntryService implements ITimeEntryService {
           client_id,
           company_id,
         });
-
         return timesheet;
       }
     } catch (err) {

@@ -310,11 +310,25 @@ export class TimeEntryResolver {
 
     try {
       const ids = args.ids;
-      const created_by = args?.created_by;
+      const created_by = args.created_by;
+      const company_id = args.company_id;
+      const client_id = args.client_id;
 
+      const schema = TimeEntryValidation.bulkDelete();
+      await this.joiService.validate({
+        schema,
+        input: {
+          ids,
+          created_by,
+          company_id,
+          client_id,
+        },
+      });
       let timeEntry: TimeEntry[] = await this.timeEntryService.bulkRemove({
         ids,
         created_by,
+        company_id,
+        client_id,
       });
 
       return timeEntry;
