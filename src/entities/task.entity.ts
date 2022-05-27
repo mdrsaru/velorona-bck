@@ -38,6 +38,7 @@ export default class Task extends Base {
   @Column()
   manager_id: string;
 
+  @Field(() => User)
   @ManyToOne(() => User)
   @JoinColumn({ name: 'manager_id' })
   manager: User;

@@ -28,6 +28,7 @@ export interface IDataloader {
   activeClientByUserIdLoader: Dataloader<string, Client>;
   itemsByInvoiceIdLoader: Dataloader<string, InvoiceItem[]>;
   invoicesByIdLoader: Dataloader<string, Invoice>;
+  usersByTaskIdLoader: Dataloader<string, any>;
 }
 
 export interface IGraphqlContext {
