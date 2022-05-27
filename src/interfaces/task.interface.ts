@@ -1,4 +1,3 @@
-import { TaskStatus } from '../config/constants';
 import Task from '../entities/task.entity';
 import User from '../entities/user.entity';
 import { IEntityID, IEntityRemove } from './common.interface';
@@ -7,25 +6,32 @@ import { IGetAllAndCountResult, IPaginationData, IPagingArgs } from './paging.in
 export interface ITask {
   id: string;
   name: string;
-  status: TaskStatus;
+  description: string;
+  status: string;
   archived: boolean;
   users: [User];
+  active: boolean;
 }
 export interface ITaskCreateInput {
-  name: string;
-  status: TaskStatus;
-  archived?: boolean;
+  name: ITask['name'];
+  description: ITask['description'];
+  status: ITask['status'];
+  archived?: ITask['archived'];
+  active?: ITask['active'];
   manager_id: string;
   company_id: string;
   project_id: string;
   user_ids?: string[];
+  attachment_ids?: string[];
 }
 
 export interface ITaskUpdateInput {
   id: string;
-  name?: string | undefined;
-  status?: TaskStatus | undefined;
-  archived?: boolean | undefined;
+  name?: ITask['name'];
+  description?: ITask['description'];
+  status?: ITask['status'];
+  archived?: ITask['archived'];
+  active?: ITask['active'];
   manager_id?: string | undefined;
   project_id?: string | undefined;
   user_ids?: string[];
