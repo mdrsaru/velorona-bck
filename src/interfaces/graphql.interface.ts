@@ -29,6 +29,7 @@ export interface IDataloader {
   itemsByInvoiceIdLoader: Dataloader<string, InvoiceItem[]>;
   invoicesByIdLoader: Dataloader<string, Invoice>;
   usersByTaskIdLoader: Dataloader<string, any>;
+  attachmentsByTaskIdLoader: Dataloader<string, Media[]>;
 }
 
 export interface IGraphqlContext {

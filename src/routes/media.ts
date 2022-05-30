@@ -11,25 +11,12 @@ import config from '../config/constants';
 let storage = multer.diskStorage({
   destination: config.mediaDestination,
   filename: (req: Request, file: any, cb: any) => {
-    cb(
-      null,
-      file.fieldname + '-' + Date.now() + path.extname(file.originalname)
-    );
+    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
   },
 });
 
 const checkFileType = (file: any, cb: any) => {
-  switch (file.mimetype) {
-    case 'image/jpeg':
-    case 'image/png':
-    case 'image/jpg':
-    case 'image/JPG':
-    case 'image/JPEG':
-    case 'image/PNG':
-      return cb(null, true);
-    default:
-      cb('You can upload only image files! Supported types - jpeg/png/jpg');
-  }
+  return cb(null, true);
 };
 
 export const upload = multer({
@@ -42,9 +29,7 @@ export const upload = multer({
 
 const _router = () => {
   const router = Router();
-  const mediaController: MediaController = container.get<MediaController>(
-    TYPES.MediaController
-  );
+  const mediaController: MediaController = container.get<MediaController>(TYPES.MediaController);
 
   router.post('/upload', upload, mediaController.uploadImage);
   return router;

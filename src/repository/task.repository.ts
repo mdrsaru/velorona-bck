@@ -1,18 +1,21 @@
 import { inject, injectable } from 'inversify';
 import { merge } from 'lodash';
 import { getRepository, getManager } from 'typeorm';
+
 import strings from '../config/strings';
 import Task from '../entities/task.entity';
 import User from '../entities/user.entity';
+import Media from '../entities/media.entity';
 import { IEntityID } from '../interfaces/common.interface';
+import { TYPES } from '../types';
+import { NotFoundError, ValidationError } from '../utils/api-error';
+import BaseRepository from './base.repository';
+
 import { ICompanyRepository } from '../interfaces/company.interface';
 import { IMediaRepository } from '../interfaces/media.interface';
 import { IProjectRepository } from '../interfaces/project.interface';
 import { IAssignTask, ITaskCreateInput, ITaskRepository, ITaskUpdateInput } from '../interfaces/task.interface';
 import { IUserRepository } from '../interfaces/user.interface';
-import { TYPES } from '../types';
-import { NotFoundError, ValidationError } from '../utils/api-error';
-import BaseRepository from './base.repository';
 
 @injectable()
 export default class TaskRepository extends BaseRepository<Task> implements ITaskRepository {

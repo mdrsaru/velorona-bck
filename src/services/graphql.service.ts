@@ -97,6 +97,7 @@ export default class GraphqlService implements IGraphql {
         invoicesByIdLoader: invoiceLoader.invoicesByIdLoader(),
         itemsByInvoiceIdLoader: invoiceItemLoader.itemsByInvoiceIdLoader(),
         usersByTaskIdLoader: taskLoader.usersByTaskIdLoader(),
+        attachmentsByTaskIdLoader: taskLoader.attachmentsByTaskIdLoader(),
       },
     };
   };

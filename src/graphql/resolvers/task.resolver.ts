@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { Arg, Ctx, FieldResolver, Mutation, Query, Resolver, Root, UseMiddleware } from 'type-graphql';
+import { Arg, Ctx, FieldResolver, Mutation, Query, Resolver, Root, UseMiddleware, Info } from 'type-graphql';
 
 import { DeleteInput } from '../../entities/common.entity';
 import Task, {
@@ -253,5 +253,10 @@ export class TaskResolver {
   @FieldResolver()
   async users(@Root() root: Task, @Ctx() ctx: IGraphqlContext) {
     return ctx.loaders.usersByTaskIdLoader.load(root.id);
+  }
+
+  @FieldResolver()
+  async attachments(@Root() root: Task, @Ctx() ctx: IGraphqlContext) {
+    return ctx.loaders.attachmentsByTaskIdLoader.load(root.id);
   }
 }

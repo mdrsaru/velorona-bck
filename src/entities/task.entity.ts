@@ -89,7 +89,7 @@ export default class Task extends Base {
   project: Project;
 
   @Field(() => [Media])
-  @ManyToMany(() => Media)
+  @ManyToMany(() => Media, (attachment) => attachment.tasks)
   @JoinTable({
     name: entities.taskAttachments,
 
