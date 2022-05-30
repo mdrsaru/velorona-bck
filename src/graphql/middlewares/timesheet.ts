@@ -19,7 +19,7 @@ export const filterTimesheetByUser: MiddlewareFn<IGraphqlContext> = async ({ con
 
   try {
     const canAccessOtherTimesheet = checkRoles({
-      expectedRoles: [RoleEnum.SuperAdmin, RoleEnum.CompanyAdmin],
+      expectedRoles: [RoleEnum.SuperAdmin, RoleEnum.CompanyAdmin, RoleEnum.TaskManager],
       userRoles: context?.user?.roles ?? [],
     });
 
