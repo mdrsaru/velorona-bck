@@ -14,8 +14,8 @@ export interface IUserPayRate {
 }
 
 export interface IUserPayRateCreateInput {
-  startDate: IUserPayRate['startDate'];
-  endDate: IUserPayRate['endDate'];
+  startDate?: IUserPayRate['startDate'];
+  endDate?: IUserPayRate['endDate'];
   amount: IUserPayRate['amount'];
   user_id: IUserPayRate['user_id'];
   project_id: IUserPayRate['project_id'];

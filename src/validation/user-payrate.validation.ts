@@ -37,8 +37,8 @@ const messages = {
 export default class UserPayRateValidation {
   static create() {
     return Joi.object({
-      startDate: Joi.date().required().messages(messages.startDate),
-      endDate: Joi.date().required().messages(messages.endDate),
+      startDate: Joi.date(),
+      endDate: Joi.date(),
       amount: Joi.number().required().messages(messages.amount),
       user_id: Joi.string().required().messages(messages.user_id),
       project_id: Joi.string().required().messages(messages.project_id),
