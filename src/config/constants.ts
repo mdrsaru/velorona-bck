@@ -87,6 +87,12 @@ export enum TimesheetStatus {
   Approved = 'Approved',
 }
 
+export enum TaskStatus {
+  Scheduled = 'Scheduled',
+  InProgress = 'InProgress',
+  Completed = 'Completed',
+}
+
 export enum Role {
   SuperAdmin = 'SuperAdmin',
   CompanyAdmin = 'CompanyAdmin',
