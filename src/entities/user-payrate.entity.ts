@@ -13,11 +13,11 @@ import User from './user.entity';
 @Entity({ name: entities.userPayRate })
 export default class UserPayRate extends Base {
   @Field()
-  @Column({ name: userPayRate.start_date })
+  @Column({ name: userPayRate.start_date, nullable: true })
   startDate: Date;
 
   @Field()
-  @Column({ name: userPayRate.end_date })
+  @Column({ name: userPayRate.end_date, nullable: true })
   endDate: Date;
 
   @Field()
@@ -45,7 +45,7 @@ export default class UserPayRate extends Base {
 
 @InputType()
 export class UserPayRateCreateInput {
-  @Field()
+  @Field({ nullable: true })
   startDate: Date;
 
   @Field({ nullable: true })
