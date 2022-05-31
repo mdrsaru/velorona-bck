@@ -5,7 +5,7 @@ import { Base } from './base.entity';
 import User from './user.entity';
 import Company from './company.entity';
 import Workschedule from './workschedule.entity';
-import { entities } from '../config/constants';
+import { entities, TaskStatus } from '../config/constants';
 import { PagingInput, PagingResult } from './common.entity';
 import { taskAssignmentTable, taskAttachmentTable } from '../config/db/columns';
 import TimeEntry from './time-entry.entity';
@@ -13,6 +13,11 @@ import Project from './project.entity';
 import Media from './media.entity';
 
 const indexPrefix = 'task';
+
+registerEnumType(TaskStatus, {
+  name: 'TaskStatus',
+});
+
 @Entity({ name: entities.tasks })
 @ObjectType()
 export default class Task extends Base {
@@ -26,8 +31,8 @@ export default class Task extends Base {
 
   @Index(`${indexPrefix}_status_index`)
   @Field({ nullable: true })
-  @Column({ nullable: true })
-  status: string;
+  @Column('varchar', { nullable: true, default: TaskStatus.Scheduled })
+  status: TaskStatus;
 
   @Index(`${indexPrefix}_active_index`)
   @Field()
@@ -114,8 +119,8 @@ export class TaskCreateInput {
   @Field({ nullable: true })
   description: string;
 
-  @Field()
-  status: string;
+  @Field((type) => TaskStatus)
+  status: TaskStatus;
 
   @Field({ nullable: true })
   active: boolean;
@@ -153,8 +158,8 @@ export class TaskUpdateInput {
   @Field({ nullable: true })
   description: string;
 
-  @Field({ nullable: true })
-  status: string;
+  @Field((type) => TaskStatus, { nullable: true })
+  status: TaskStatus;
 
   @Field({ nullable: true })
   active: boolean;

@@ -124,14 +124,7 @@ export default class TaskService implements ITaskService {
           task_id: id,
         });
       }
-      if (status) {
-        let task: Task | undefined = await this.taskRepository.getById({ id, relations: ['users'] });
-        if (task?.users.length) {
-          throw new ForbiddenError({
-            details: [strings.notAllowedToChangeStatus],
-          });
-        }
-      }
+
       let task = await this.taskRepository.update({
         id,
         name,

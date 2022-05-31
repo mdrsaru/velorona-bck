@@ -137,7 +137,11 @@ export class TaskResolver {
   }
 
   @Mutation((returns) => Task)
-  @UseMiddleware(authenticate, authorize(RoleEnum.CompanyAdmin, RoleEnum.SuperAdmin), checkCompanyAccess)
+  @UseMiddleware(
+    authenticate,
+    authorize(RoleEnum.CompanyAdmin, RoleEnum.SuperAdmin, RoleEnum.Employee),
+    checkCompanyAccess
+  )
   async TaskUpdate(@Arg('input') args: TaskUpdateInput, @Ctx() ctx: any): Promise<Task> {
     const operation = 'TaskUpdate';
 

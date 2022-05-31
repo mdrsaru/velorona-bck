@@ -1,3 +1,4 @@
+import { TaskStatus } from '../config/constants';
 import Task from '../entities/task.entity';
 import User from '../entities/user.entity';
 import { IEntityID, IEntityRemove } from './common.interface';
@@ -7,7 +8,7 @@ export interface ITask {
   id: string;
   name: string;
   description: string;
-  status: string;
+  status: TaskStatus;
   archived: boolean;
   users: [User];
   active: boolean;
