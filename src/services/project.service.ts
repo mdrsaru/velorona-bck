@@ -53,12 +53,16 @@ export default class ProjectService implements IProjectService {
     const name = args.name;
     const client_id = args.client_id;
     const company_id = args.company_id;
+    const status = args.status;
+    const archived = args.archived;
 
     try {
       const project = await this.projectRepository.create({
         name,
         client_id,
         company_id,
+        status,
+        archived,
       });
 
       return project;
@@ -76,11 +80,15 @@ export default class ProjectService implements IProjectService {
     const operation = 'update';
     const id = args?.id;
     const name = args?.name;
+    const status = args?.status;
+    const archived = args?.archived;
 
     try {
       let project = await this.projectRepository.update({
         id,
         name,
+        status,
+        archived,
       });
 
       return project;

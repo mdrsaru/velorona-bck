@@ -31,12 +31,16 @@ export default class ProjectValidation {
       name: Joi.string().required().messages(messages.name),
       client_id: Joi.string().required().messages(messages.client),
       company_id: Joi.string().required().messages(messages.company),
+      status: Joi.string(),
+      archived: Joi.boolean(),
     });
   }
   static update() {
     return Joi.object({
       id: Joi.string().required().messages(messages.id),
       name: Joi.string().required().messages(messages.name),
+      status: Joi.string(),
+      archived: Joi.boolean(),
     });
   }
 }

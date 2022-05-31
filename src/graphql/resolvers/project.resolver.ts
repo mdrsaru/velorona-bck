@@ -68,6 +68,8 @@ export class ProjectResolver {
       const name = args.name;
       const client_id = args.client_id;
       const company_id = args.company_id;
+      const status = args.status;
+      const archived = args.archived;
 
       const schema = ProjectValidation.create();
       await this.joiService.validate({
@@ -76,6 +78,8 @@ export class ProjectResolver {
           name,
           client_id,
           company_id,
+          status,
+          archived,
         },
       });
 
@@ -83,6 +87,8 @@ export class ProjectResolver {
         name,
         client_id,
         company_id,
+        status,
+        archived,
       });
 
       return project;
@@ -105,6 +111,8 @@ export class ProjectResolver {
       const id = args.id;
       const name = args.name;
       const company_id = args.company_id;
+      const status = args.status;
+      const archived = args.archived;
 
       const schema = ProjectValidation.update();
       await this.joiService.validate({
@@ -112,12 +120,16 @@ export class ProjectResolver {
         input: {
           id,
           name,
+          status,
+          archived,
         },
       });
 
       let project: Project = await this.projectService.update({
         id,
         name,
+        status,
+        archived,
       });
 
       return project;

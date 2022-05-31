@@ -2,6 +2,7 @@ export default {
   userAlreadyExists: 'User already exists',
   idRequired: 'Id is required',
   userNotFound: 'User not found',
+  manangerNotFound: 'Manager not found',
   emailRequired: 'Email required',
   passwordRequired: 'Password required',
   firstNameRequired: 'Firstname required',

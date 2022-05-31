@@ -82,6 +82,11 @@ export enum ClientStatus {
   Inactive = 'Inactive',
 }
 
+export enum ProjectStatus {
+  Active = 'Active',
+  Inactive = 'Inactive',
+}
+
 export enum TimesheetStatus {
   Open = 'Open',
   Approved = 'Approved',
