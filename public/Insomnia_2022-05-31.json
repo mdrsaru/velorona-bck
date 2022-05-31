@@ -1,7 +1,7 @@
 {
   "_type": "export",
   "__export_format": 4,
-  "__export_date": "2022-05-26T09:37:30.016Z",
+  "__export_date": "2022-05-31T08:08:48.823Z",
   "__export_source": "insomnia.desktop.app:v2020.3.3",
   "resources": [
     {
@@ -12,7 +12,7 @@
         "params": [
           {
             "description": "",
-            "fileName": "/home/insight/Downloads/announcement.png",
+            "fileName": "/home/iw/Pictures/wallpaper03.jpg",
             "id": "pair_53a48193222c4522a9cc653a4b43a4f7",
             "name": "file",
             "type": "file",
@@ -28,7 +28,7 @@
       "isPrivate": false,
       "metaSortKey": -1647846865953,
       "method": "POST",
-      "modified": 1648185006672,
+      "modified": 1653652675665,
       "name": "mediaUpload",
       "parameters": [],
       "parentId": "fld_537a6fc35ba54d37ac83ecb96b02e59f",
@@ -38,7 +38,7 @@
       "settingRebuildPath": true,
       "settingSendCookies": true,
       "settingStoreCookies": true,
-      "url": "{{ _.api_url }}/{{version}}/media/upload",
+      "url": "{{ api_url }}/{{version}}/media/upload",
       "_type": "request"
     },
     {
@@ -71,7 +71,7 @@
       },
       "body": {
         "mimeType": "application/graphql",
-        "text": "{\"query\":\"mutation CompanyCreate($input: CompanyCreateInput!) {\\n  CompanyCreate(input: $input) {\\n    id\\n    name\\n    companyCode\\n  }\\n}\",\"variables\":{\"input\":{\"name\":\"  Vellorum\",\"status\":\"Active\"}},\"operationName\":\"CompanyCreate\"}"
+        "text": "{\"query\":\"mutation CompanyCreate($input: CompanyCreateInput!) {\\n  CompanyCreate(input: $input) {\\n    id\\n    name\\n    companyCode\\n  }\\n}\",\"variables\":{\"input\":{\"name\":\"  Vellorum\",\"status\":\"Active\",\"user\":{\"email\":\"company@company.com\"}}},\"operationName\":\"CompanyCreate\"}"
       },
       "created": 1646649815946,
       "description": "",
@@ -81,7 +81,7 @@
       "isPrivate": false,
       "metaSortKey": -1646649815946,
       "method": "POST",
-      "modified": 1652341417659,
+      "modified": 1653982521448,
       "name": "CompanyCreate",
       "parameters": [],
       "parentId": "fld_6318bfedd77b4135b257df42a9504cd0",
@@ -155,7 +155,7 @@
       "isPrivate": false,
       "metaSortKey": -1640931628378.5,
       "method": "POST",
-      "modified": 1652341443995,
+      "modified": 1653896961681,
       "name": "Company",
       "parameters": [],
       "parentId": "fld_6318bfedd77b4135b257df42a9504cd0",
@@ -899,7 +899,7 @@
       },
       "body": {
         "mimeType": "application/graphql",
-        "text": "{\"query\":\"mutation UserCreate($input: UserCreateInput!) {\\n  UserCreate(input: $input) {\\n    id\\n    fullName    \\n  }\\n}\",\"variables\":{\"input\":{\"email\":\"user@user.com\",\"phone\":\"9841773322\",\"firstName\":\"John\",\"lastName\":\"Doe\",\"status\":\"Active\",\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\",\"roles\":[\"Employee\"],\"address\":{\"streetAddress\":\"street\",\"city\":\"City\",\"state\":\"AL\",\"zipcode\":\"43215\"}}},\"operationName\":\"UserCreate\"}"
+        "text": "{\"query\":\"mutation UserCreate($input: UserCreateInput!) {\\n  UserCreate(input: $input) {\\n    id\\n    fullName    \\n  }\\n}\",\"variables\":{\"input\":{\"email\":\"user@l.com\",\"phone\":\"9841773322\",\"firstName\":\"John\",\"lastName\":\"Doe\",\"status\":\"Active\",\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\",\"roles\":[\"Employee\"],\"address\":{\"streetAddress\":\"street\",\"city\":\"City\",\"state\":\"AL\",\"zipcode\":\"43215\"}}},\"operationName\":\"UserCreate\"}"
       },
       "created": 1646814799695,
       "description": "",
@@ -909,7 +909,7 @@
       "isPrivate": false,
       "metaSortKey": -1646649815946,
       "method": "POST",
-      "modified": 1652762202414,
+      "modified": 1653983765945,
       "name": "UserCreate",
       "parameters": [],
       "parentId": "fld_9a7753c89a724a5ab6add918218e97ea",
@@ -983,7 +983,7 @@
       "isPrivate": false,
       "metaSortKey": -1642837690901,
       "method": "POST",
-      "modified": 1652341512070,
+      "modified": 1653983665116,
       "name": "UserUpdate",
       "parameters": [],
       "parentId": "fld_9a7753c89a724a5ab6add918218e97ea",
@@ -1286,7 +1286,7 @@
       "isPrivate": false,
       "metaSortKey": -1646649815946,
       "method": "POST",
-      "modified": 1653552757372,
+      "modified": 1653651275144,
       "name": "TimeEntryCreate",
       "parameters": [],
       "parentId": "fld_4b51c186049444bb8c795b2ddc65239f",
@@ -1672,7 +1672,7 @@
       },
       "body": {
         "mimeType": "application/graphql",
-        "text": "{\"query\":\"mutation TaskCreate($input: TaskCreateInput!) {\\n  TaskCreate(input: $input) {\\n    id\\n    name\\n\\t\\t\\n  }\\n}\",\"variables\":{\"input\":{\"name\":\"New Task\",\"status\":\"Active\",\"manager_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmlk::46b', 'never', 60 %}\",\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\",\"project_id\":\"{% response 'body', 'req_031f86964d3f4b09aada9dfb951fc7dc', 'b64::JC5kYXRhLlByb2plY3RDcmVhdGUuaWQ=::46b', 'never', 60 %}\"}},\"operationName\":\"TaskCreate\"}"
+        "text": "{\"query\":\"mutation TaskCreate($input: TaskCreateInput!) {\\n  TaskCreate(input: $input) {\\n    id\\n    name\\n\\t\\t\\n  }\\n}\",\"variables\":{\"input\":{\"name\":\"Ace\",\"status\":\"Active\",\"manager_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmlk::46b', 'never', 60 %}\",\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\",\"project_id\":\"{% response 'body', 'req_031f86964d3f4b09aada9dfb951fc7dc', 'b64::JC5kYXRhLlByb2plY3RDcmVhdGUuaWQ=::46b', 'never', 60 %}\",\"attachment_ids\":[\"8c1814f1-1fa8-4edd-907d-99b66d3cd209\",\"d4680a32-0250-4476-8798-c533acba3754\",\"5d0fec35-4aa6-40ae-a6be-93893e045222\"]}},\"operationName\":\"TaskCreate\"}"
       },
       "created": 1648548425777,
       "description": "",
@@ -1682,7 +1682,7 @@
       "isPrivate": false,
       "metaSortKey": -1646649815946,
       "method": "POST",
-      "modified": 1653552688823,
+      "modified": 1653897166959,
       "name": "TaskCreate",
       "parameters": [],
       "parentId": "fld_2f7c9f73ae9c4db6994b3a0ec37ef915",
@@ -1777,7 +1777,7 @@
       },
       "body": {
         "mimeType": "application/graphql",
-        "text": "{\"query\":\"query Task($input: TaskQueryInput!) {\\n  Task(input: $input) {\\n    data {\\n      id\\n      name\\n      status\\n      archived\\n      company_id\\n\\t\\t\\tproject_id\\n      \\n    }\\n  }\\n}\\n\",\"variables\":{\"input\":{\"paging\":{},\"query\":{\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\"}}},\"operationName\":\"Task\"}"
+        "text": "{\"query\":\"query Task($input: TaskQueryInput!) {\\n  Task(input: $input) {\\n    data {\\n      id\\n      name\\n      status\\n      archived\\n      company_id\\n\\t\\t\\tproject_id\\n      attachments {\\n        id\\n        name\\n        url\\n      }\\n      \\n    }\\n  }\\n}\\n\",\"variables\":{\"input\":{\"paging\":{},\"query\":{\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\"}}},\"operationName\":\"Task\"}"
       },
       "created": 1648549366660,
       "description": "",
@@ -1787,7 +1787,7 @@
       "isPrivate": false,
       "metaSortKey": -1642837690851,
       "method": "POST",
-      "modified": 1653366017525,
+      "modified": 1653982230830,
       "name": "Task",
       "parameters": [],
       "parentId": "fld_2f7c9f73ae9c4db6994b3a0ec37ef915",
@@ -2063,7 +2063,7 @@
       "isPrivate": false,
       "metaSortKey": -1646410902392.6875,
       "method": "POST",
-      "modified": 1653552895298,
+      "modified": 1653984515950,
       "name": "Login",
       "parameters": [],
       "parentId": "fld_e864bd8433684c93a335724143ac8a23",
@@ -2135,19 +2135,19 @@
         {
           "creation": "2022-03-16T07:43:51.090Z",
           "domain": "localhost",
-          "expires": "2022-06-02T08:11:41.000Z",
+          "expires": "2022-06-07T07:55:41.000Z",
           "hostOnly": true,
           "httpOnly": true,
-          "id": "7565388692722368",
+          "id": "7049027631142795",
           "key": "refreshToken",
-          "lastAccessed": "2022-05-26T08:11:41.221Z",
+          "lastAccessed": "2022-05-31T07:55:41.037Z",
           "maxAge": 604800,
           "path": "/",
-          "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNhZTJiMDFjLTg1ZTUtNGRjZC05MzY1LTFiY2ViMGRiYWE5MiIsInJvbGVzIjpbIjNmZjRhNjJmLTBlMzQtNGQxOS05YzgxLWVlMGRmZDMzNjZlMSJdLCJpYXQiOjE2NTM1NTI3MDEsImV4cCI6MTY1NDE1NzUwMX0.MYCxD_FDFJWfwTXochC3zgfMnPNAJbr8XvdNaClmA4Y"
+          "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImJmZjMzYWQwLTcxODEtNDE5MC1iZTViLThiYTZlYjgwMzgxMyIsInJvbGVzIjpbImYyZWNlNWU3LTlhNmEtNGExYS1hZWIxLTNmMTNjZjBjYmIzZiJdLCJpYXQiOjE2NTM5ODM3NDEsImV4cCI6MTY1NDU4ODU0MX0.NcPY8Sf0gFqSx3AKHoaa71WVcVyE6d4h-YVmfBjRciU"
         }
       ],
       "created": 1646649800465,
-      "modified": 1653552701222,
+      "modified": 1653983741038,
       "name": "Default Jar",
       "parentId": "wrk_4360c7a0bbfa403c86be07deeb666c4c",
       "_type": "cookie_jar"
