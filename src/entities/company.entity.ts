@@ -6,6 +6,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  Unique,
 } from 'typeorm';
 import { ObjectType, Field, ID, InputType, registerEnumType } from 'type-graphql';
 
@@ -25,7 +26,7 @@ export default class Company extends Base {
   @Field()
   @Column()
   name: string;
-
+  @Field((type) => CompanyStatus)
   @Field((type) => CompanyStatus)
   @Column({
     type: 'enum',
@@ -35,12 +36,16 @@ export default class Company extends Base {
   status: CompanyStatus;
 
   @Field()
-  @Column({ name: 'archived', default: false })
+  @Column({ default: false })
   archived: boolean;
 
   @Field()
   @Column({ unique: true, name: 'company_code' })
   companyCode: string;
+
+  @Field({ description: 'Company main admin email' })
+  @Column({ name: 'admin_email' })
+  adminEmail: string;
 
   @Field(() => [User])
   @OneToMany(() => User, (user) => user.company)
@@ -61,6 +66,48 @@ export class CompanyPagingResult {
 }
 
 @InputType()
+export class CompanyAdminAddressInput {
+  @Field({ nullable: true })
+  streetAddress?: string;
+
+  @Field({ nullable: true })
+  aptOrSuite?: string;
+
+  @Field({ nullable: true })
+  city?: string;
+
+  @Field({ nullable: true })
+  state?: string;
+
+  @Field({ nullable: true })
+  zipcode?: string;
+}
+
+@InputType()
+export class CompanyAdminInput {
+  @Field()
+  email: string;
+
+  @Field({ nullable: true })
+  firstName: string;
+
+  @Field({ nullable: true })
+  lastName: string;
+
+  @Field({ nullable: true })
+  middleName: string;
+
+  @Field({ nullable: true })
+  phone: string;
+
+  @Field({ nullable: true })
+  status: string;
+
+  @Field({ nullable: true })
+  address: CompanyAdminAddressInput;
+}
+
+@InputType()
 export class CompanyCreateInput {
   @Field()
   name: string;
@@ -70,6 +117,9 @@ export class CompanyCreateInput {
 
   @Field({ nullable: true })
   archived: boolean;
+
+  @Field()
+  user: CompanyAdminInput;
 }
 
 @InputType()

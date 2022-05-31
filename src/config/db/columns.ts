@@ -1,3 +1,11 @@
+export const company = {
+  name: 'name',
+  status: 'status',
+  archived: 'archived',
+  company_code: 'company_code',
+  admin_email: 'admin_email',
+};
+
 export const taskAssignmentTable = {
   user_id: 'user_id',
   task_id: 'task_id',

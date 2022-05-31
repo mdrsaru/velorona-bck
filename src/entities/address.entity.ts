@@ -8,7 +8,7 @@ import { PagingInput, PagingResult } from './common.entity';
 @ObjectType()
 export default class Address extends Base {
   @Field()
-  @Column({ name: 'street_address' })
+  @Column({ name: 'street_address', nullable: true })
   streetAddress: string;
 
   @Field({ nullable: true })

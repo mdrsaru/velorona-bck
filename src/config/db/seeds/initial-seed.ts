@@ -45,6 +45,7 @@ const companies = [
     name: 'Vellorum',
     status: CompanyStatus.Active,
     companyCode: 'vellorum',
+    adminEmail: 'company@admin.com',
   },
 ];
 

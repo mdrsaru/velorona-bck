@@ -92,4 +92,5 @@ export default {
   totalHoursRequired: 'Total hours required',
   quantityRequired: 'Quantity required',
   totalQuantityRequired: 'Total quantity required',
+  companyRoleNotFound: 'Company role not found',
 };

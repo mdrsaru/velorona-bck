@@ -1,6 +1,7 @@
 import { injectable } from 'inversify';
 import Joi from 'joi';
 
+import strings from '../config/strings';
 import { ValidationError, NotImplementedError } from '../utils/api-error';
 import { ICompanyCreate } from '../interfaces/company.interface';
 
@@ -26,6 +27,13 @@ const messages = {
     'string.empty': statusRequired,
     'any.required': statusRequired,
   },
+  email: {
+    'string.base': strings.emailRequired,
+    'string.empty': strings.emailRequired,
+    'string.name': strings.emailRequired,
+    'any.required': strings.emailRequired,
+    'string.email': strings.emailNotValid,
+  },
 };
 
 export default class CompanyValidation {
@@ -34,6 +42,21 @@ export default class CompanyValidation {
       name: Joi.string().required().messages(messages.name),
       status: Joi.string().required().messages(messages.status),
       archived: Joi.boolean(),
+      user: Joi.object({
+        email: Joi.string().required().messages(messages.email),
+        firstName: Joi.string(),
+        lastName: Joi.string(),
+        middleName: Joi.string(),
+        phone: Joi.string(),
+        status: Joi.string(),
+        address: Joi.object({
+          streetAddress: Joi.string(),
+          aptOrSuite: Joi.string(),
+          city: Joi.string(),
+          state: Joi.string(),
+          zipcode: Joi.string(),
+        }),
+      }),
     });
   }
 

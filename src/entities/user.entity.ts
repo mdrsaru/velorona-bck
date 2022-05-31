@@ -1,4 +1,15 @@
-import { Entity, Column, ManyToOne, JoinColumn, ManyToMany, JoinTable, OneToOne, RelationId, OneToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  ManyToOne,
+  JoinColumn,
+  ManyToMany,
+  JoinTable,
+  OneToOne,
+  RelationId,
+  OneToMany,
+  Unique,
+} from 'typeorm';
 import { ObjectType, Field, ID, InputType, registerEnumType } from 'type-graphql';
 
 import Company from './company.entity';
@@ -30,6 +41,7 @@ registerEnumType(AdminRole, {
 });
 
 @ObjectType()
+@Unique('unique_company_email', ['email', 'company_id'])
 @Entity({ name: entities.users })
 export default class User extends Base {
   @Field()
@@ -39,29 +51,30 @@ export default class User extends Base {
   @Column()
   password: string;
 
-  @Field()
-  @Column({ length: 10 })
+  @Field({ nullable: true })
+  @Column({ length: 10, nullable: true })
   phone: string;
 
-  @Field()
-  @Column({ length: 25, name: 'first_name' })
+  @Field({ nullable: true })
+  @Column({ length: 25, name: 'first_name', nullable: true })
   firstName: string;
 
   @Field({ nullable: true })
   @Column({ length: 25, nullable: true, name: 'middle_name' })
   middleName: string;
 
-  @Field()
-  @Column({ length: 25, name: 'last_name' })
+  @Field({ nullable: true })
+  @Column({ length: 25, name: 'last_name', nullable: true })
   lastName: string;
 
-  @Field()
+  @Field({ nullable: true })
   fullName: string;
 
   @Field((type) => UserStatus)
   @Column({
     type: 'enum',
     enum: UserStatus,
+    default: UserStatus.Active,
   })
   status: UserStatus;
 
@@ -102,11 +115,11 @@ export default class User extends Base {
   })
   roles: Role[];
 
-  @Field()
-  @Column()
+  @Field({ nullable: true })
+  @Column({ nullable: true })
   address_id: string;
 
-  @Field(() => Address)
+  @Field(() => Address, { nullable: true })
   @JoinColumn({ name: 'address_id' })
   @OneToOne(() => Address, {
     cascade: true,

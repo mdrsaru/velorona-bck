@@ -72,6 +72,7 @@ export class CompanyResolver {
       const name = args.name;
       const status = args.status;
       const archived = args?.archived;
+      const user = args.user;
 
       const schema = CompanyValidation.create();
       await this.joiService.validate({
@@ -80,6 +81,7 @@ export class CompanyResolver {
           name,
           status,
           archived,
+          user,
         },
       });
 
@@ -87,6 +89,7 @@ export class CompanyResolver {
         name,
         status,
         archived,
+        user,
       });
 
       return company;

@@ -37,14 +37,16 @@ export default class CompanyService implements ICompanyService {
       const name = args.name;
       const status = args.status;
       const archived = args?.archived;
+      const user = args.user;
 
-      const company = await this.companyRepository.create({
+      const result = await this.companyRepository.create({
         name,
         status,
         archived,
+        user,
       });
 
-      return company;
+      return result.company;
     } catch (err) {
       throw err;
     }
