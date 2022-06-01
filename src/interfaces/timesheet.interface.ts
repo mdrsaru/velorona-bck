@@ -5,7 +5,7 @@ import TimeEntry from '../entities/time-entry.entity';
 import Task from '../entities/task.entity';
 import Client from '../entities/client.entity';
 import Timesheet from '../entities/timesheet.entity';
-import { TimesheetStatus } from '../config/constants';
+import { TimeEntryApprovalStatus } from '../config/constants';
 
 import { IEntityID, IEntityRemove } from './common.interface';
 import { IGetAllAndCountResult, IPaginationData, IPagingArgs, IGetOptions } from './paging.interface';
@@ -16,7 +16,7 @@ export interface ITimesheet {
   weekEndDate: string;
   duration: number;
   totalExpense: number;
-  status: TimesheetStatus;
+  status: TimeEntryApprovalStatus;
   user_id: string;
   client_id: string;
   approver_id?: string;
@@ -47,6 +47,16 @@ export interface ITimesheetCreateInput {
   lastSubmittedAt?: ITimesheet['lastSubmittedAt'];
 }
 
+/**
+ * Approves all the time entries in the timesheet
+ */
+export interface ITimesheetApproveRejectInput {
+  id: ITimesheet['id'];
+  approver_id: string;
+  lastApprovedAt: ITimesheet['lastApprovedAt'];
+  status: ITimesheet['status'];
+}
+
 export interface ITimesheetUpdateInput {
   id: ITimesheet['id'];
   duration?: ITimesheet['duration'];
@@ -70,4 +80,5 @@ export interface ITimesheetRepository {
 export interface ITimesheetService {
   getAllAndCount(args: IPagingArgs): Promise<IPaginationData<Timesheet>>;
   update(args: ITimesheetUpdateInput): Promise<Timesheet>;
+  approveTimesheet(args: ITimesheetApproveRejectInput): Promise<Timesheet>;
 }

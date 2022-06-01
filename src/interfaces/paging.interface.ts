@@ -12,6 +12,7 @@ export interface IPagingArgs {
 // typeorm specific
 export interface IGetOptions extends IPagingArgs {
   relations?: string[];
+  select?: string[];
 }
 
 export interface IPagingResultArgs extends IPagingArgs {

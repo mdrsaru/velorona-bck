@@ -5,7 +5,7 @@ import { TYPES } from '../types';
 import Paging from '../utils/paging';
 import * as apiError from '../utils/api-error';
 import TimeEntry from '../entities/time-entry.entity';
-import { TimesheetStatus } from '../config/constants';
+import { TimeEntryApprovalStatus } from '../config/constants';
 
 import { IEntityRemove, IErrorService, ILogger, Maybe } from '../interfaces/common.interface';
 import { IPaginationData, IPagingArgs } from '../interfaces/paging.interface';
@@ -74,6 +74,7 @@ export default class TimeEntryService implements ITimeEntryService {
 
   getWeeklyDetails = async (args: ITimeEntryWeeklyDetailsInput): Promise<TimeEntry[]> => {
     try {
+      const timesheet_id = args.timesheet_id;
       const startTime = args.startTime;
       const endTime = args.endTime;
       const company_id = args.company_id;
@@ -89,6 +90,7 @@ export default class TimeEntryService implements ITimeEntryService {
       }
 
       const timeEntry = await this.timeEntryRepository.getWeeklyDetails({
+        timesheet_id,
         company_id,
         created_by,
         startTime: startDate,
@@ -113,7 +115,7 @@ export default class TimeEntryService implements ITimeEntryService {
     const task_id = args.task_id;
 
     try {
-      const timeEntry = await this.timeEntryRepository.create({
+      let timeEntry = await this.timeEntryRepository.create({
         startTime,
         endTime,
         clientLocation,
@@ -131,12 +133,20 @@ export default class TimeEntryService implements ITimeEntryService {
           });
 
           if (project) {
-            await this.createUpdateTimesheet({
+            let timesheet = await this.createUpdateTimesheet({
               startTime,
               client_id: project.client_id,
               company_id,
               user_id: created_by,
             });
+
+            // Update the time entry with the updated timesheet id
+            if (!timeEntry?.timesheet_id || timesheet.id !== timeEntry?.timesheet_id) {
+              timeEntry = await this.timeEntryRepository.update({
+                id: timeEntry.id,
+                timesheet_id: timesheet.id,
+              });
+            }
           }
         }
       } catch (err) {
@@ -183,66 +193,28 @@ export default class TimeEntryService implements ITimeEntryService {
         task_id,
       });
 
-      /* Create/Update timesheet if the end time is provided */
       try {
+        /* Create/Update timesheet if the end time is provided */
         if (endTime) {
           const project = await this.projectRepository.getById({
             id: timeEntry.project_id,
           });
 
           if (project) {
-            await this.createUpdateTimesheet({
+            const timesheet = await this.createUpdateTimesheet({
               startTime: startTime ?? timeEntry.startTime,
               client_id: project.client_id,
               company_id: timeEntry.company_id,
               user_id: timeEntry.created_by,
             });
-          }
-        }
-      } catch (err) {
-        this.logger.error({
-          operation,
-          message: 'Error on creating/updating timesheet',
-          data: err,
-        });
-      }
 
-      return timeEntry;
-    } catch (err) {
-      this.errorService.throwError({
-        err,
-        operation,
-        name: this.name,
-        logError: true,
-      });
-    }
-  };
-
-  stop = async (args: ITimeEntryStopInput) => {
-    const operation = 'stop';
-    try {
-      const id = args.id;
-      const endTime = args.endTime;
-
-      let timeEntry = await this.timeEntryRepository.update({
-        id,
-        endTime,
-      });
-
-      /* Create/Update timesheet if the end time is provided */
-      try {
-        if (endTime) {
-          const project = await this.projectRepository.getById({
-            id: timeEntry.project_id,
-          });
-
-          if (project) {
-            await this.createUpdateTimesheet({
-              startTime: timeEntry.startTime,
-              client_id: project.client_id,
-              company_id: timeEntry.company_id,
-              user_id: timeEntry.created_by,
-            });
+            // Update the time entry with the updated timesheet id
+            if (!timeEntry?.timesheet_id || timesheet.id !== timeEntry?.timesheet_id) {
+              timeEntry = await this.timeEntryRepository.update({
+                id: timeEntry.id,
+                timesheet_id: timesheet.id,
+              });
+            }
           }
         }
       } catch (err) {
@@ -331,6 +303,10 @@ export default class TimeEntryService implements ITimeEntryService {
     }
   };
 
+  /**
+   * Timesheet(Weekly) will be auto generated for the provided time entry related to the specified start time
+   * Will be created/updated taking the iso start week referencing the time entry start time
+   */
   createUpdateTimesheet = async (args: CreateUpdateTimesheet) => {
     try {
       const startTime = args.startTime;
@@ -394,11 +370,12 @@ export default class TimeEntryService implements ITimeEntryService {
           weekEndDate,
           duration: totalTimeInSeconds,
           totalExpense,
-          status: TimesheetStatus.Open,
+          status: TimeEntryApprovalStatus.Pending,
           user_id,
           client_id,
           company_id,
         });
+
         return timesheet;
       }
     } catch (err) {

@@ -82,11 +82,6 @@ export enum ClientStatus {
   Inactive = 'Inactive',
 }
 
-export enum TimesheetStatus {
-  Open = 'Open',
-  Approved = 'Approved',
-}
-
 export enum TaskStatus {
   Scheduled = 'Scheduled',
   InProgress = 'InProgress',
@@ -136,6 +131,12 @@ export enum ForgotPasswordUserType {
 export enum UserClientStatus {
   Active = 'Active',
   Inactive = 'Inactive',
+}
+
+export enum TimeEntryApprovalStatus {
+  Approved = 'Approved',
+  Pending = 'Pending',
+  Rejected = 'Rejected',
 }
 
 export const emailSetting = {

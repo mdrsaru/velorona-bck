@@ -3,7 +3,7 @@ import { Field, InputType, ObjectType, registerEnumType } from 'type-graphql';
 import { Column, Entity, Index, JoinColumn, ManyToOne, Unique } from 'typeorm';
 import { GraphQLJSON } from 'graphql-type-json';
 
-import { entities, TimesheetStatus } from '../config/constants';
+import { entities, TimeEntryApprovalStatus } from '../config/constants';
 import { timesheet } from '../config/db/columns';
 import { Base } from './base.entity';
 import Client from './client.entity';
@@ -12,12 +12,40 @@ import { PagingInput, PagingResult } from './common.entity';
 import Company from './company.entity';
 import User from './user.entity';
 
-registerEnumType(TimesheetStatus, {
+registerEnumType(TimeEntryApprovalStatus, {
   name: 'TimesheetStatus',
 });
 
 const indexPrefix = entities.timesheet;
 
+@ObjectType({ description: 'Time entries grouped by invoice_id' })
+export class InvoicedTimeEntry {
+  @Field()
+  invoice_id: string;
+
+  @Field((type) => [TimeEntry])
+  entries: TimeEntry[];
+}
+
+@ObjectType({ description: 'Time entries grouped by statuses' })
+export class StatusTimeEntry {
+  @Field()
+  approvalStatus: string;
+
+  @Field((type) => [TimeEntry])
+  entries: TimeEntry[];
+}
+
+@ObjectType({ description: 'Time entries grouped by statuses' })
+export class TimeEntryGroupByStatusInvoice {
+  @Field((type) => [InvoicedTimeEntry])
+  byInvoice: InvoicedTimeEntry[];
+
+  @Field((type) => [StatusTimeEntry])
+  byStatus: StatusTimeEntry[];
+}
+
+// Typeorm Entity
 @ObjectType()
 @Entity({ name: entities.timesheet })
 @Unique(`unique_user_${indexPrefix}`, ['user_id', 'client_id', 'weekStartDate', 'weekEndDate'])
@@ -50,13 +78,12 @@ export default class Timesheet extends Base {
   @Column({ name: timesheet.total_expense, type: 'float', nullable: true })
   totalExpense: number;
 
-  @Field((type) => TimesheetStatus)
+  @Field((type) => TimeEntryApprovalStatus)
   @Column({
-    type: 'enum',
-    enum: TimesheetStatus,
-    default: TimesheetStatus.Open,
+    type: 'varchar',
+    default: TimeEntryApprovalStatus.Pending,
   })
-  status: TimesheetStatus;
+  status: TimeEntryApprovalStatus;
 
   @Index(`${indexPrefix}_company_id_index`)
   @Field()
@@ -144,6 +171,15 @@ export default class Timesheet extends Base {
     `,
   })
   timeEntries: TimeEntry[];
+
+  @Field((type) => TimeEntryGroupByStatusInvoice, {
+    nullable: true,
+    description: `
+      List of weekly time entries of the particular timesheet grouped by statuses and invoice_id
+      Query this field only for the single timesheet as there will be N+1 problem for list of timesheet. 
+    `,
+  })
+  entriesGroup: TimeEntryGroupByStatusInvoice;
 }
 
 @ObjectType({ description: 'Projects related to timesheet with total duration and expense' })
@@ -165,12 +201,15 @@ export class ProjectItem {
 }
 
 @InputType()
-export class TimesheetApproveInput {
+export class TimesheetApproveRejectInput {
   @Field()
   id: string;
 
   @Field()
   company_id: string;
+
+  @Field((type) => TimeEntryApprovalStatus)
+  status: TimeEntryApprovalStatus;
 }
 
 @InputType()

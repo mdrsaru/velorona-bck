@@ -1,14 +1,20 @@
 import { Entity, Column, ManyToOne, JoinColumn, Index } from 'typeorm';
-import { ObjectType, Field, ID, InputType } from 'type-graphql';
+import { ObjectType, Field, ID, InputType, registerEnumType } from 'type-graphql';
 
-import { entities } from '../config/constants';
+import { entities, TimeEntryApprovalStatus } from '../config/constants';
 import { timeEntry } from '../config/db/columns';
 import { Base } from './base.entity';
 import Company from './company.entity';
 import User from './user.entity';
 import Project from './project.entity';
 import Task from './task.entity';
+import Invoice from './invoice.entity';
+import Timesheet from './timesheet.entity';
 import { PagingInput, PagingResult, DeleteInput } from './common.entity';
+
+registerEnumType(TimeEntryApprovalStatus, {
+  name: 'TimeEntryApprovalStatus',
+});
 
 const indexPrefix = 'time_entries';
 
@@ -72,6 +78,47 @@ export default class TimeEntry extends Base {
   @ManyToOne(() => Task)
   @JoinColumn({ name: timeEntry.task_id })
   task: Task;
+
+  @Field(() => TimeEntryApprovalStatus)
+  @Column({
+    type: 'varchar',
+    name: timeEntry.approval_status,
+    default: TimeEntryApprovalStatus.Pending,
+  })
+  approvalStatus: TimeEntryApprovalStatus;
+
+  @Field()
+  @Column({
+    default: false,
+  })
+  submitted: boolean;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  invoice_id: string;
+
+  @Field((type) => Invoice)
+  @ManyToOne(() => Invoice)
+  @JoinColumn({ name: timeEntry.invoice_id })
+  invoice: Invoice;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  approver_id: string;
+
+  @Field((type) => User)
+  @ManyToOne(() => User)
+  @JoinColumn({ name: timeEntry.approver_id })
+  approver: User;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  timesheet_id: string;
+
+  @Field((type) => Timesheet, { nullable: true })
+  @ManyToOne(() => Timesheet)
+  @JoinColumn({ name: timeEntry.timesheet_id })
+  timesheet: Timesheet;
 }
 
 @ObjectType()
@@ -221,7 +268,7 @@ export class TimeEntryBulkDeleteInput {
   @Field()
   company_id: string;
 
-  @Field(() => [String])
+  @Field((type) => [String])
   ids: string[];
 
   @Field()
@@ -229,4 +276,16 @@ export class TimeEntryBulkDeleteInput {
 
   @Field()
   client_id: string;
+}
+
+@InputType()
+export class TimeEntryApproveRejectInput {
+  @Field((type) => [String])
+  ids: string[];
+
+  @Field()
+  company_id: string;
+
+  @Field()
+  approvalStatus: TimeEntryApprovalStatus;
 }

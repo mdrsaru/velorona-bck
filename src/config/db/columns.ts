@@ -30,6 +30,11 @@ export const timeEntry = {
   company_id: 'company_id',
   created_by: 'created_by',
   task_id: 'task_id',
+  invoice_id: 'invoice_id',
+  submitted: 'submitted',
+  approval_status: 'approval_status',
+  approver_id: 'approver_id',
+  timesheet_id: 'timesheet_id',
 };
 
 export const timesheet = {
@@ -66,6 +71,7 @@ export const invoices = {
   notes: 'notes',
   company_id: 'company_id',
   client_id: 'client_id',
+  timesheet_id: 'timesheet_id',
   created_at: 'created_at',
   updated_at: 'updated_at',
 };

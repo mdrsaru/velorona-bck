@@ -32,6 +32,7 @@ import {
   IProjectItem,
   IDurationMap,
   ITimeEntryBulkRemoveInput,
+  ITimeEntriesApproveRejectInput,
 } from '../interfaces/time-entry.interface';
 import { IUserRepository } from '../interfaces/user.interface';
 import { IGetOptions, IGetAllAndCountResult } from '../interfaces/paging.interface';
@@ -60,7 +61,9 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
 
   getAllAndCount = async (args: IGetOptions): Promise<IGetAllAndCountResult<TimeEntry>> => {
     try {
-      let { query = {}, ...rest } = args;
+      let { query = {}, select = [], ...rest } = args;
+      const _select = select as (keyof TimeEntry)[];
+
       for (let key in query) {
         if (isArray(query[key])) {
           query[key] = In(query[key]);
@@ -88,6 +91,7 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
 
       const [rows, count] = await this.repo.findAndCount({
         where: query,
+        ...(_select?.length && { select: _select }),
         ...rest,
       });
 
@@ -119,6 +123,7 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
 
   getWeeklyDetails = async (args: ITimeEntryWeeklyDetailsRepoInput): Promise<TimeEntry[]> => {
     try {
+      const timesheet_id = args.timesheet_id;
       const startTime = args.startTime;
       const endTime = args.endTime;
       const company_id = args.company_id;
@@ -157,6 +162,9 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
       }
       if (endTime) {
         query.andWhere('start_time <= :endTime', { endTime }); // using start_time for the end_time
+      }
+      if (timesheet_id) {
+        query.andWhere('timesheet_id = :timesheet_id', { timesheet_id });
       }
 
       const entries = await query.orderBy(`${entities.timeEntry}.start_time`, 'DESC').getMany();
@@ -348,6 +356,7 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
       const company_id = args.company_id;
       const created_by = args.created_by;
       const task_id = args.task_id;
+      const timesheet_id = args.timesheet_id;
       let project_id = args.project_id;
       let startTime = args.startTime;
 
@@ -406,6 +415,7 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
         company_id,
         created_by,
         task_id,
+        timesheet_id,
       });
 
       let timeEntry = await this.repo.save(update);
@@ -526,6 +536,28 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
       }
 
       return durationMap;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  approveRejectTimeEntries = async (args: ITimeEntriesApproveRejectInput): Promise<boolean> => {
+    try {
+      const ids = args.ids;
+      const approver_id = args.approver_id;
+      const approvalStatus = args.approvalStatus;
+
+      await this.repo.update(
+        {
+          id: In(ids),
+        },
+        {
+          approver_id: approver_id,
+          approvalStatus,
+        }
+      );
+
+      return true;
     } catch (err) {
       throw err;
     }

@@ -6,7 +6,6 @@ import { TYPES } from '../../types';
 import strings from '../../config/strings';
 import * as apiError from '../../utils/api-error';
 import TimeEntry, {
-  TimeEntryStopInput,
   TimeEntryCreateInput,
   TimeEntryPagingResult,
   TimeEntryQueryInput,
@@ -14,6 +13,7 @@ import TimeEntry, {
   TimeEntryWeeklyDetailsInput,
   TimeEntryDeleteInput,
   TimeEntryBulkDeleteInput,
+  TimeEntryApproveRejectInput,
 } from '../../entities/time-entry.entity';
 import Paging from '../../utils/paging';
 import authenticate from '../middlewares/authenticate';
@@ -24,7 +24,7 @@ import { Role as RoleEnum } from '../../config/constants';
 
 import { IErrorService, IJoiService } from '../../interfaces/common.interface';
 import { IPaginationData } from '../../interfaces/paging.interface';
-import { ITimeEntryService } from '../../interfaces/time-entry.interface';
+import { ITimeEntryService, ITimeEntryRepository } from '../../interfaces/time-entry.interface';
 import { IGraphqlContext } from '../../interfaces/graphql.interface';
 import { checkRoleAndFilterTimeEntry } from '../middlewares/time-entry';
 
@@ -35,15 +35,18 @@ export class TimeEntryResolver {
   private timeEntryService: ITimeEntryService;
   private joiService: IJoiService;
   private errorService: IErrorService;
+  private timeEntryRepository: ITimeEntryRepository;
 
   constructor(
     @inject(TYPES.TimeEntryService) timeEntryService: ITimeEntryService,
     @inject(TYPES.JoiService) joiService: IJoiService,
-    @inject(TYPES.ErrorService) errorService: IErrorService
+    @inject(TYPES.ErrorService) errorService: IErrorService,
+    @inject(TYPES.TimeEntryRepository) _timeEntryRepository: ITimeEntryRepository
   ) {
     this.timeEntryService = timeEntryService;
     this.joiService = joiService;
     this.errorService = errorService;
+    this.timeEntryRepository = _timeEntryRepository;
   }
 
   @Query((returns) => TimeEntryPagingResult)
@@ -188,40 +191,6 @@ export class TimeEntryResolver {
   }
 
   @Mutation((returns) => TimeEntry)
-  @UseMiddleware(authenticate, checkCompanyAccess)
-  async TimeEntryStop(@Arg('input') args: TimeEntryStopInput): Promise<TimeEntry> {
-    const operation = 'TimeEntryStop';
-
-    try {
-      const id = args.id;
-      const endTime = args.endTime;
-
-      const schema = TimeEntryValidation.stop();
-      await this.joiService.validate({
-        schema,
-        input: {
-          id,
-          endTime,
-        },
-      });
-
-      let timeEntry: TimeEntry = await this.timeEntryService.update({
-        id,
-        endTime,
-      });
-
-      return timeEntry;
-    } catch (err) {
-      this.errorService.throwError({
-        err,
-        name: this.name,
-        operation,
-        logError: false,
-      });
-    }
-  }
-
-  @Mutation((returns) => TimeEntry)
   @UseMiddleware(
     authenticate,
     authorize(RoleEnum.CompanyAdmin, RoleEnum.SuperAdmin, RoleEnum.Employee, RoleEnum.TaskManager),
@@ -342,6 +311,40 @@ export class TimeEntryResolver {
     }
   }
 
+  @Mutation((returns) => Boolean)
+  @UseMiddleware(
+    authenticate,
+    authorize(RoleEnum.CompanyAdmin, RoleEnum.SuperAdmin, RoleEnum.TaskManager),
+    checkCompanyAccess
+  )
+  async TimeEntriesApproveReject(
+    @Arg('input') args: TimeEntryApproveRejectInput,
+    @Ctx() ctx: IGraphqlContext
+  ): Promise<boolean> {
+    const operation = 'TimeEntriesApproveReject';
+
+    try {
+      const ids = args.ids;
+      const approvalStatus = args.approvalStatus;
+      const approver_id = ctx?.user?.id as string;
+
+      const timeEntry = await this.timeEntryRepository.approveRejectTimeEntries({
+        ids,
+        approvalStatus,
+        approver_id,
+      });
+
+      return timeEntry;
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: false,
+      });
+    }
+  }
+
   @FieldResolver()
   company(@Root() root: TimeEntry, @Ctx() ctx: IGraphqlContext) {
     return ctx.loaders.companyByIdLoader.load(root.company_id);
@@ -360,5 +363,12 @@ export class TimeEntryResolver {
   @FieldResolver()
   task(@Root() root: TimeEntry, @Ctx() ctx: IGraphqlContext) {
     return ctx.loaders.tasksByIdLoader.load(root.task_id);
+  }
+
+  @FieldResolver()
+  async timesheet(@Root() root: TimeEntry, @Ctx() ctx: IGraphqlContext) {
+    if (root.timesheet_id) {
+      return ctx.loaders.timesheetByIdLoader.load(root.timesheet_id);
+    }
   }
 }
