@@ -93,6 +93,7 @@ export enum TimesheetStatus {
 }
 
 export enum TaskStatus {
+  UnScheduled = 'UnScheduled',
   Scheduled = 'Scheduled',
   InProgress = 'InProgress',
   Completed = 'Completed',

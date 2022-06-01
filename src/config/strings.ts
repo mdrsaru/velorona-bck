@@ -94,4 +94,5 @@ export default {
   quantityRequired: 'Quantity required',
   totalQuantityRequired: 'Total quantity required',
   companyRoleNotFound: 'Company role not found',
+  deadlineMustBeValidDate: 'Deadline must be of future date',
 };
