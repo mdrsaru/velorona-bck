@@ -17,6 +17,7 @@ import {
   ITaskAssignmentRepository,
 } from '../interfaces/task.interface';
 import { IUserRepository } from '../interfaces/user.interface';
+import { TaskStatus } from '../config/constants';
 
 @injectable()
 export default class TaskService implements ITaskService {
@@ -111,7 +112,6 @@ export default class TaskService implements ITaskService {
     const name = args?.name;
     const description = args?.description;
     const active = args?.active;
-    const status = args?.status;
     const archived = args?.archived;
     const manager_id = args?.manager_id;
     const project_id = args?.project_id;
@@ -126,7 +126,12 @@ export default class TaskService implements ITaskService {
           task_id: id,
         });
       }
-
+      let status;
+      if (args.status) {
+        status = args?.status;
+      } else if (deadline) {
+        status = TaskStatus.Scheduled;
+      }
       let task = await this.taskRepository.update({
         id,
         name,

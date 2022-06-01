@@ -31,7 +31,7 @@ export default class Task extends Base {
 
   @Index(`${indexPrefix}_status_index`)
   @Field({ nullable: true })
-  @Column('varchar', { nullable: true, default: TaskStatus.Scheduled })
+  @Column('varchar', { nullable: true, default: TaskStatus.UnScheduled })
   status: TaskStatus;
 
   @Index(`${indexPrefix}_active_index`)

@@ -124,6 +124,15 @@ export default class TaskRepository extends BaseRepository<Task> implements ITas
         });
       }
 
+      if (deadline) {
+        const today = new Date();
+        if (deadline < today) {
+          throw new ValidationError({
+            details: [strings.deadlineMustBeValidDate],
+          });
+        }
+      }
+
       const update = merge(found, {
         id,
         name,
