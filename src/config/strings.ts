@@ -2,6 +2,7 @@ export default {
   userAlreadyExists: 'User already exists',
   idRequired: 'Id is required',
   userNotFound: 'User not found',
+  manangerNotFound: 'Manager not found',
   emailRequired: 'Email required',
   passwordRequired: 'Password required',
   firstNameRequired: 'Firstname required',
@@ -94,4 +95,5 @@ export default {
   totalQuantityRequired: 'Total quantity required',
   companyRoleNotFound: 'Company role not found',
   timesheetNotFound: 'Timesheet not found',
+  deadlineMustBeValidDate: 'Deadline must be of future date',
 };

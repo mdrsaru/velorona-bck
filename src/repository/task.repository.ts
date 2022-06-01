@@ -113,6 +113,8 @@ export default class TaskRepository extends BaseRepository<Task> implements ITas
       const active = args.active;
       const manager_id = args.manager_id;
       const project_id = args.project_id;
+      const priority = args.priority;
+      const deadline = args.deadline;
 
       const found = await this.getById({ id });
 
@@ -120,6 +122,15 @@ export default class TaskRepository extends BaseRepository<Task> implements ITas
         throw new NotFoundError({
           details: ['Task not found'],
         });
+      }
+
+      if (deadline) {
+        const today = new Date();
+        if (deadline < today) {
+          throw new ValidationError({
+            details: [strings.deadlineMustBeValidDate],
+          });
+        }
       }
 
       const update = merge(found, {
@@ -131,6 +142,8 @@ export default class TaskRepository extends BaseRepository<Task> implements ITas
         project_id,
         active,
         description,
+        priority,
+        deadline,
       });
 
       let task = await this.repo.save(update);

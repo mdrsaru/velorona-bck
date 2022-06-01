@@ -58,6 +58,8 @@ export default class ProjectRepository extends BaseRepository<Project> implement
       const name = args.name;
       const client_id = args.client_id;
       const company_id = args.company_id;
+      const status = args.status;
+      const archived = args.archived;
 
       const errors: string[] = [];
 
@@ -96,6 +98,8 @@ export default class ProjectRepository extends BaseRepository<Project> implement
         name,
         client_id,
         company_id,
+        status,
+        archived,
       });
 
       return project;
@@ -108,6 +112,8 @@ export default class ProjectRepository extends BaseRepository<Project> implement
     try {
       const id = args?.id;
       const name = args.name;
+      const status = args.status;
+      const archived = args.archived;
 
       const found = await this.getById({ id });
       if (!found) {
@@ -119,6 +125,8 @@ export default class ProjectRepository extends BaseRepository<Project> implement
       const update = merge(found, {
         id,
         name,
+        status,
+        archived,
       });
 
       let project = await this.repo.save(update);

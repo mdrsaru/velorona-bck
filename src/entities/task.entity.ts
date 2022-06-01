@@ -31,7 +31,7 @@ export default class Task extends Base {
 
   @Index(`${indexPrefix}_status_index`)
   @Field({ nullable: true })
-  @Column('varchar', { nullable: true, default: TaskStatus.Scheduled })
+  @Column('varchar', { nullable: true, default: TaskStatus.UnScheduled })
   status: TaskStatus;
 
   @Index(`${indexPrefix}_active_index`)
@@ -42,6 +42,14 @@ export default class Task extends Base {
   @Field()
   @Column({ name: 'archived', default: false })
   archived: boolean;
+
+  @Field()
+  @Column({ name: 'priority ', default: false })
+  priority: boolean;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  deadline: Date;
 
   @Field()
   @Column()
@@ -166,6 +174,12 @@ export class TaskUpdateInput {
 
   @Field({ nullable: true })
   archived: boolean;
+
+  @Field({ nullable: true })
+  priority: boolean;
+
+  @Field({ nullable: true })
+  deadline: Date;
 
   @Field({ nullable: true })
   manager_id: string;
