@@ -44,6 +44,14 @@ export default class Task extends Base {
   archived: boolean;
 
   @Field()
+  @Column({ name: 'priority ', default: false })
+  priority: boolean;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  deadline: Date;
+
+  @Field()
   @Column()
   manager_id: string;
 
@@ -166,6 +174,12 @@ export class TaskUpdateInput {
 
   @Field({ nullable: true })
   archived: boolean;
+
+  @Field({ nullable: true })
+  priority: boolean;
+
+  @Field({ nullable: true })
+  deadline: Date;
 
   @Field({ nullable: true })
   manager_id: string;
