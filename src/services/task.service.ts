@@ -116,6 +116,8 @@ export default class TaskService implements ITaskService {
     const manager_id = args?.manager_id;
     const project_id = args?.project_id;
     const user_ids = args.user_ids;
+    const priority = args.priority;
+    const deadline = args.deadline;
 
     try {
       if (user_ids) {
@@ -135,7 +137,10 @@ export default class TaskService implements ITaskService {
         manager_id,
         project_id,
         user_ids,
+        priority,
+        deadline,
       });
+
       return task;
     } catch (err) {
       this.errorService.throwError({

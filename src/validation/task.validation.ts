@@ -71,6 +71,8 @@ export default class TaskValidation {
       company_id: Joi.string(),
       project_id: Joi.string(),
       user_ids: Joi.array(),
+      priority: Joi.boolean(),
+      deadline: Joi.date(),
     });
   }
   static assignTask() {

@@ -12,6 +12,8 @@ export interface ITask {
   archived: boolean;
   users: [User];
   active: boolean;
+  priority: boolean;
+  deadline: Date;
 }
 export interface ITaskCreateInput {
   name: ITask['name'];
@@ -36,6 +38,8 @@ export interface ITaskUpdateInput {
   manager_id?: string | undefined;
   project_id?: string | undefined;
   user_ids?: string[];
+  priority?: ITask['priority'];
+  deadline?: ITask['deadline'];
 }
 
 export interface IAssignTask {
