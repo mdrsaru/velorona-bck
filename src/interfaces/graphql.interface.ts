@@ -12,6 +12,7 @@ import Project from '../entities/project.entity';
 import Client from '../entities/client.entity';
 import Invoice from '../entities/invoice.entity';
 import InvoiceItem from '../entities/invoice-item.entity';
+import Timesheet from '../entities/timesheet.entity';
 
 export interface IDataloader {
   companyByIdLoader: Dataloader<string, Company>;
@@ -30,6 +31,7 @@ export interface IDataloader {
   invoicesByIdLoader: Dataloader<string, Invoice>;
   usersByTaskIdLoader: Dataloader<string, any>;
   attachmentsByTaskIdLoader: Dataloader<string, Media[]>;
+  timesheetByIdLoader: Dataloader<string, Timesheet>;
 }
 
 export interface IGraphqlContext {

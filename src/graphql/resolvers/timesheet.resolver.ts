@@ -1,9 +1,10 @@
 import moment from 'moment';
+import _ from 'lodash';
 import { inject, injectable } from 'inversify';
 import { Arg, Ctx, Mutation, Query, Resolver, UseMiddleware, FieldResolver, Root } from 'type-graphql';
 
 import { TYPES } from '../../types';
-import { Role as RoleEnum, TimesheetStatus } from '../../config/constants';
+import { Role as RoleEnum, TimeEntryApprovalStatus } from '../../config/constants';
 import Paging from '../../utils/paging';
 import authenticate from '../middlewares/authenticate';
 import authorize from '../middlewares/authorize';
@@ -11,10 +12,11 @@ import { checkCompanyAccess } from '../middlewares/company';
 import { filterTimesheetByUser } from '../middlewares/timesheet';
 
 import { DeleteInput } from '../../entities/common.entity';
+import TimeEntry from '../../entities/time-entry.entity';
 import Timesheet, {
   TimeSheetPagingResult,
   TimesheetQueryInput,
-  TimesheetApproveInput,
+  TimesheetApproveRejectInput,
   TimesheetSubmitInput,
 } from '../../entities/timesheet.entity';
 
@@ -69,18 +71,21 @@ export class TimesheetResolver {
     }
   }
 
-  @Mutation((returns) => Timesheet)
+  @Mutation((returns) => Timesheet, { description: 'Approves all the time entries in the timesheet' })
   @UseMiddleware(
     authenticate,
     authorize(RoleEnum.CompanyAdmin, RoleEnum.SuperAdmin, RoleEnum.TaskManager),
     checkCompanyAccess
   )
-  async TimesheetApprove(@Arg('input') args: TimesheetApproveInput, @Ctx() ctx: IGraphqlContext): Promise<Timesheet> {
-    const operation = 'TimesheetApprove';
+  async TimesheetApproveReject(
+    @Arg('input') args: TimesheetApproveRejectInput,
+    @Ctx() ctx: IGraphqlContext
+  ): Promise<Timesheet> {
+    const operation = 'TimesheetApproveReject';
 
     try {
       const id = args.id;
-      const status = TimesheetStatus.Approved;
+      const status = TimeEntryApprovalStatus.Approved;
       const lastApprovedAt = new Date();
       const approver_id = ctx?.user?.id;
 
@@ -265,13 +270,15 @@ export class TimesheetResolver {
       const company_id = root.company_id;
       const user_id = root.user_id;
 
-      return this.timeEntryRepository.getWeeklyDetails({
+      const entries = this.timeEntryRepository.getWeeklyDetails({
         startTime,
         endTime,
         created_by: user_id,
         client_id,
         company_id,
       });
+
+      return entries;
     } catch (err) {
       this.errorService.throwError({
         err,
@@ -281,4 +288,68 @@ export class TimesheetResolver {
       });
     }
   }
+
+  @FieldResolver()
+  async entriesGroup(@Root() root: Timesheet) {
+    const operation = 'durationMap';
+
+    try {
+      const timesheet_id = root.id;
+      const startTime = new Date(root.weekStartDate + 'T00:00:00');
+      const endTime = new Date(root.weekEndDate + 'T23:59:59');
+      const client_id = root.client_id;
+      const company_id = root.company_id;
+      const user_id = root.user_id;
+
+      const timeEntries = await this.timeEntryRepository.getWeeklyDetails({
+        timesheet_id,
+        startTime,
+        endTime,
+        created_by: user_id,
+        client_id,
+        company_id,
+      });
+
+      return groupTimeEntriesByStatusInvoice(timeEntries);
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
+    }
+  }
+}
+
+/**
+ * Group the time entries by invoice_id and approval status
+ * @returns {Object} { byInvoice: Array, byStatus: Array }
+ */
+function groupTimeEntriesByStatusInvoice(entries: TimeEntry[]) {
+  const invoicedEntries: TimeEntry[] = [];
+  const remainingEntries: TimeEntry[] = [];
+
+  for (const entry of entries) {
+    if (entry.invoice_id) {
+      invoicedEntries.push(entry);
+    } else {
+      remainingEntries.push(entry);
+    }
+  }
+
+  const byInvoice = _.chain(invoicedEntries)
+    .groupBy('invoice_id')
+    .map((value, key) => ({ invoice_id: key, entries: value }))
+    .value();
+
+  const byStatus = _.chain(remainingEntries)
+    .groupBy('approvalStatus')
+    .map((value, key) => ({ approvalStatus: key, entries: value }))
+    .value();
+
+  return {
+    byInvoice,
+    byStatus,
+  };
 }

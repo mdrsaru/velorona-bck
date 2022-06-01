@@ -144,6 +144,12 @@ export enum UserClientStatus {
   Inactive = 'Inactive',
 }
 
+export enum TimeEntryApprovalStatus {
+  Approved = 'Approved',
+  Pending = 'Pending',
+  Rejected = 'Rejected',
+}
+
 export const emailSetting = {
   testMask: process.env.EMAIL_TEST_MASK as string,
   fromEmail: process.env.EMAIL_FROM_EMAIL as string,

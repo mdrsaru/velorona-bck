@@ -6,6 +6,7 @@ import { Base } from './base.entity';
 import Client from './client.entity';
 import Company from './company.entity';
 import InvoiceItem from './invoice-item.entity';
+import Timesheet from './timesheet.entity';
 import { entities, InvoiceStatus } from '../config/constants';
 import { PagingResult, PagingInput } from './common.entity';
 import { InvoiceItemCreateInput, InvoiceItemUpdateInput } from './invoice-item.entity';
@@ -103,7 +104,7 @@ export default class Invoice extends Base {
   @Column()
   company_id: string;
 
-  @Field()
+  @Field((type) => Company)
   @ManyToOne(() => Company)
   @JoinColumn({ name: invoices.company_id })
   company: Company;
@@ -117,6 +118,15 @@ export default class Invoice extends Base {
   @ManyToOne(() => Client)
   @JoinColumn({ name: invoices.client_id })
   client: Client;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  timesheet_id: string;
+
+  @Field((type) => Timesheet, { nullable: true })
+  @ManyToOne(() => Timesheet)
+  @JoinColumn({ name: invoices.timesheet_id })
+  timesheet: Timesheet;
 
   @Field((type) => [InvoiceItem], { description: 'Invoice items' })
   items: InvoiceItem[];

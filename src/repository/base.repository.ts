@@ -17,7 +17,9 @@ export default class BaseRepository<T> implements IBaseRepository<T> {
 
   getAllAndCount = async (args: IGetOptions): Promise<IGetAllAndCountResult<T>> => {
     try {
-      let { query = {}, ...rest } = args;
+      let { query = {}, select = [], ...rest } = args;
+
+      const _select = select as (keyof T)[];
 
       // For array values to be used as In operator
       // https://github.com/typeorm/typeorm/blob/master/docs/find-options.md
@@ -26,8 +28,10 @@ export default class BaseRepository<T> implements IBaseRepository<T> {
           query[key] = In(query[key]);
         }
       }
+
       const [rows, count] = await this.repo.findAndCount({
         where: query,
+        ...(_select?.length && { select: _select }),
         ...rest,
       });
       return {
@@ -41,7 +45,9 @@ export default class BaseRepository<T> implements IBaseRepository<T> {
 
   async getAll(args: IGetOptions): Promise<T[]> {
     try {
-      let { query = {}, ...rest } = args;
+      let { query = {}, select = [], ...rest } = args;
+
+      const _select = select as (keyof T)[];
 
       // For array values to be used as In operator
       // https://github.com/typeorm/typeorm/blob/master/docs/find-options.md
@@ -53,6 +59,7 @@ export default class BaseRepository<T> implements IBaseRepository<T> {
 
       const rows = await this.repo.find({
         where: query,
+        ...(_select?.length && { select: _select }),
         ...rest,
       });
 

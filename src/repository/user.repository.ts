@@ -46,8 +46,9 @@ export default class UserRepository extends BaseRepository<User> implements IUse
 
   getAllAndCount = async (args: IGetOptions): Promise<IGetAllAndCountResult<User>> => {
     try {
-      let { query = {}, relations = [], ...rest } = args;
+      let { query = {}, select = [], relations = [], ...rest } = args;
       let { role: roleName, search, ...where } = query;
+      const _select = select as (keyof User)[];
 
       for (let key in query) {
         if (isArray(query[key])) {
@@ -88,6 +89,7 @@ export default class UserRepository extends BaseRepository<User> implements IUse
       let [rows, count] = await this.repo.findAndCount({
         relations,
         where: _where,
+        ...(_select?.length && { select: _select }),
         ...rest,
       });
 

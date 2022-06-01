@@ -1,11 +1,11 @@
+import { TimeEntryApprovalStatus } from '../config/constants';
 import Company from '../entities/company.entity';
 import Project from '../entities/project.entity';
 import User from '../entities/user.entity';
-import { IGetAllAndCountResult, IPaginationData, IPagingArgs } from './paging.interface';
-
+import Task from '../entities/task.entity';
 import TimeEntry from '../entities/time-entry.entity';
 import { IEntityID, IEntityRemove } from './common.interface';
-import Task from '../entities/task.entity';
+import { IGetAllAndCountResult, IPaginationData, IPagingArgs } from './paging.interface';
 
 export interface ITimeEntry {
   id: string;
@@ -23,6 +23,8 @@ export interface ITimeEntry {
   company: Company;
   creator: User;
   task?: Task;
+  approvalStatus: TimeEntryApprovalStatus;
+  timesheet_id?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -47,6 +49,7 @@ export interface ITimeEntryUpdateInput {
   company_id?: ITimeEntry['company_id'];
   created_by?: ITimeEntry['created_by'];
   task_id?: ITimeEntry['task_id'];
+  timesheet_id?: ITimeEntry['timesheet_id'];
 }
 
 export interface ITimeEntryStopInput {
@@ -55,6 +58,7 @@ export interface ITimeEntryStopInput {
 }
 
 export interface ITimeEntryWeeklyDetailsInput {
+  timesheet_id?: string;
   company_id: string;
   created_by: string;
   startTime?: Date;
@@ -63,6 +67,7 @@ export interface ITimeEntryWeeklyDetailsInput {
 }
 
 export interface ITimeEntryWeeklyDetailsRepoInput {
+  timesheet_id?: string;
   company_id: string;
   created_by: string;
   startTime: Date;
@@ -122,6 +127,16 @@ export interface IDurationMap {
   client_id: string;
 }
 
+export interface ITimeEntriesApproveRejectInput {
+  ids: string[];
+  approver_id: string;
+  approvalStatus: ITimeEntry['approvalStatus'];
+}
+
+export interface ITimeEntryByStatusInvoiceInput {
+  timesheet_id: string;
+}
+
 export interface ITimeEntryRepository {
   getAllAndCount(args: IPagingArgs): Promise<IGetAllAndCountResult<TimeEntry>>;
 
@@ -166,6 +181,11 @@ export interface ITimeEntryRepository {
    * Get day wise duration map of the time entries for given time interval
    */
   getDurationMap(args: IDurationMap): Promise<object>;
+
+  /**
+   * Approve/Reject entries by ids
+   */
+  approveRejectTimeEntries(args: ITimeEntriesApproveRejectInput): Promise<boolean>;
 }
 
 export interface ITimeEntryService {
@@ -173,7 +193,6 @@ export interface ITimeEntryService {
   getWeeklyDetails(args: ITimeEntryWeeklyDetailsInput): Promise<TimeEntry[]>;
   create(args: ITimeEntryCreateInput): Promise<TimeEntry>;
   update(args: ITimeEntryUpdateInput): Promise<TimeEntry>;
-  stop(args: ITimeEntryStopInput): Promise<TimeEntry>;
   remove(args: IEntityRemove): Promise<TimeEntry>;
   bulkRemove(args: ITimeEntryBulkRemoveInput): Promise<TimeEntry[]>;
 }

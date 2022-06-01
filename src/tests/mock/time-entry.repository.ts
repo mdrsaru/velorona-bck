@@ -14,10 +14,11 @@ import {
   ITimeEntryActiveInput,
   ITimeEntryTotalDurationInput,
   IUserTotalExpenseInput,
-  ITimeEntryBulkRemove,
+  ITimeEntryBulkRemoveInput,
   IProjectItemInput,
   IProjectItem,
   IDurationMap,
+  ITimeEntriesApproveRejectInput,
 } from '../../interfaces/time-entry.interface';
 import { timeEntries } from './data';
 import { generateUuid } from './utils';
@@ -137,7 +138,7 @@ export default class TimeEntryRepository implements ITimeEntryRepository {
     throw new Error('not implemented');
   };
 
-  bulkRemove = (args: ITimeEntryBulkRemove): Promise<TimeEntry[]> => {
+  bulkRemove = (args: ITimeEntryBulkRemoveInput): Promise<TimeEntry[]> => {
     throw new Error('not implemented');
   };
 
@@ -148,4 +149,8 @@ export default class TimeEntryRepository implements ITimeEntryRepository {
   getDurationMap(args: IDurationMap): Promise<object> {
     throw new Error('Not Implemented');
   }
+
+  approveRejectTimeEntries = async (args: ITimeEntriesApproveRejectInput): Promise<boolean> => {
+    throw new Error('Not implemented');
+  };
 }

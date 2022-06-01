@@ -37,7 +37,7 @@ export default class ProjectRepository extends BaseRepository<Project> implement
   }
 
   countEntities = (args: IGetOptions): Promise<number> => {
-    let { query = {}, ...rest } = args;
+    let { query = {}, select = [], ...rest } = args;
 
     // For array values to be used as In operator
     // https://github.com/typeorm/typeorm/blob/master/docs/find-options.md

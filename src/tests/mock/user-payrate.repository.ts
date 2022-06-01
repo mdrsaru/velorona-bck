@@ -45,8 +45,8 @@ export default class UserPayRateRepository implements IUserPayRateRepository {
       const userPayRate = new UserPayRate();
 
       userPayRate.id = generateUuid();
-      userPayRate.startDate = args.startDate;
-      userPayRate.endDate = args.endDate;
+      userPayRate.startDate = args.startDate ?? new Date();
+      userPayRate.endDate = args.endDate ?? new Date();
       userPayRate.amount = args.amount;
       userPayRate.user_id = args.user_id;
       userPayRate.project_id = args.project_id;

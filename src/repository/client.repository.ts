@@ -27,8 +27,9 @@ export default class ClientRepository extends BaseRepository<Client> implements 
 
   getAllAndCount = async (args: IGetOptions): Promise<IGetAllAndCountResult<Client>> => {
     try {
-      let { query = {}, relations = [], ...rest } = args;
+      let { query = {}, select = [], relations = [], ...rest } = args;
       let { search, ...where } = query;
+      const _select = select as (keyof Client)[];
 
       for (let key in query) {
         if (isArray(query[key])) {
@@ -54,6 +55,7 @@ export default class ClientRepository extends BaseRepository<Client> implements 
       let [rows, count] = await this.repo.findAndCount({
         relations,
         where: _searchWhere.length ? _searchWhere : where,
+        ...(_select?.length && { select: _select }),
         ...rest,
       });
 

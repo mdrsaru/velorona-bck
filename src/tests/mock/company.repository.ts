@@ -12,6 +12,7 @@ import { generateUuid } from './utils';
 import { companies } from '../mock/data';
 import Paging from '../../utils/paging';
 import Company from '../../entities/company.entity';
+import User from '../../entities/user.entity';
 import * as apiError from '../../utils/api-error';
 
 import { IEntityID, IEntityRemove } from '../../interfaces/common.interface';
@@ -39,7 +40,7 @@ export default class CompanyRepository implements ICompanyRepository {
     throw new Error('not implemented');
   };
 
-  create = (args: ICompanyCreate): Promise<Company> => {
+  create = (args: ICompanyCreate): Promise<{ company: Company; user: User }> => {
     try {
       const company = new Company();
 
@@ -51,9 +52,14 @@ export default class CompanyRepository implements ICompanyRepository {
       company.createdAt = company.createdAt;
       company.updatedAt = company.updatedAt;
 
+      const user = new User();
+
       this.companies.push(company);
 
-      return Promise.resolve(company);
+      return Promise.resolve({
+        company,
+        user: user,
+      });
     } catch (err) {
       throw err;
     }
