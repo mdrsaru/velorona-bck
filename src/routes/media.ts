@@ -11,7 +11,7 @@ import config from '../config/constants';
 let storage = multer.diskStorage({
   destination: config.mediaDestination,
   filename: (req: Request, file: any, cb: any) => {
-    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+    cb(null, file.originalname);
   },
 });
 
