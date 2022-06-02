@@ -157,6 +157,7 @@ export class TaskResolver {
       const user_ids = args.user_ids;
       const priority = args.priority;
       const deadline = args.deadline;
+      const attachment_ids = args.attachment_ids;
 
       const schema = TaskValidation.update();
       await this.joiService.validate({
@@ -173,6 +174,7 @@ export class TaskResolver {
           user_ids,
           priority,
           deadline,
+          attachment_ids,
         },
       });
 
@@ -188,6 +190,7 @@ export class TaskResolver {
         user_ids,
         priority,
         deadline,
+        attachment_ids,
       });
 
       return Task;
