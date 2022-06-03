@@ -114,7 +114,7 @@ export default class Invoice extends Base {
   @Column()
   client_id: string;
 
-  @Field()
+  @Field((type) => Client)
   @ManyToOne(() => Client)
   @JoinColumn({ name: invoices.client_id })
   client: Client;
@@ -143,6 +143,9 @@ export class InvoicePagingResult {
 
 @InputType()
 export class InvoiceCreateInput {
+  @Field({ nullable: true })
+  timesheet_id: string;
+
   @Field((type) => InvoiceStatus, { nullable: true })
   status: InvoiceStatus;
 

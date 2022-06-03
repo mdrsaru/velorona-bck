@@ -120,6 +120,7 @@ export interface IProjectItemInput {
 }
 
 export interface IDurationMap {
+  timesheet_id: string;
   startTime: string;
   endTime: string;
   company_id: string;
@@ -135,6 +136,11 @@ export interface ITimeEntriesApproveRejectInput {
 
 export interface ITimeEntryByStatusInvoiceInput {
   timesheet_id: string;
+}
+
+export interface IMarkApprovedTimeEntriesWithInvoice {
+  timesheet_id: string;
+  invoice_id: string;
 }
 
 export interface ITimeEntryRepository {
@@ -186,6 +192,8 @@ export interface ITimeEntryRepository {
    * Approve/Reject entries by ids
    */
   approveRejectTimeEntries(args: ITimeEntriesApproveRejectInput): Promise<boolean>;
+
+  markApprovedTimeEntriesWithInvoice(args: IMarkApprovedTimeEntriesWithInvoice): Promise<boolean>;
 }
 
 export interface ITimeEntryService {

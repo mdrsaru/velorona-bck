@@ -68,6 +68,7 @@ export class InvoiceResolver {
 
     try {
       const status = args.status;
+      const timesheet_id = args.timesheet_id;
       const issueDate = args.issueDate;
       const dueDate = args.dueDate;
       const poNumber = args.poNumber;
@@ -101,6 +102,7 @@ export class InvoiceResolver {
 
       const invoice: Invoice = await this.invoiceService.create({
         status,
+        timesheet_id,
         issueDate,
         dueDate,
         poNumber,

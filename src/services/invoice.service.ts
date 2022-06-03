@@ -40,6 +40,7 @@ export default class InvoiceService implements IInvoiceService {
 
   create = async (args: IInvoiceCreateInput): Promise<Invoice> => {
     try {
+      const timesheet_id = args.timesheet_id;
       const status = args.status;
       const issueDate = args.issueDate;
       const dueDate = args.dueDate;
@@ -54,6 +55,7 @@ export default class InvoiceService implements IInvoiceService {
       const items = args.items;
 
       const invoice = await this.invoiceRepository.create({
+        timesheet_id,
         status,
         issueDate,
         dueDate,

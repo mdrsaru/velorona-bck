@@ -5,12 +5,13 @@ import isDate from 'lodash/isDate';
 import isString from 'lodash/isString';
 import isArray from 'lodash/isArray';
 import isEmpty from 'lodash/isEmpty';
+import groupBy from 'lodash/groupBy';
 import { inject, injectable } from 'inversify';
 import { getRepository, LessThanOrEqual, MoreThanOrEqual, In, IsNull, Not, getManager, EntityManager } from 'typeorm';
 
 import { TYPES } from '../types';
 import strings from '../config/strings';
-import { entities } from '../config/constants';
+import { entities, TimeEntryApprovalStatus } from '../config/constants';
 import { timeEntry, userPayRate, projects } from '../config/db/columns';
 import * as apiError from '../utils/api-error';
 import TimeEntry from '../entities/time-entry.entity';
@@ -33,9 +34,16 @@ import {
   IDurationMap,
   ITimeEntryBulkRemoveInput,
   ITimeEntriesApproveRejectInput,
+  IMarkApprovedTimeEntriesWithInvoice,
 } from '../interfaces/time-entry.interface';
 import { IUserRepository } from '../interfaces/user.interface';
 import { IGetOptions, IGetAllAndCountResult } from '../interfaces/paging.interface';
+
+type DurationMap = {
+  [statusOrInvoiceId: string]: {
+    [date: string]: number;
+  };
+};
 
 @injectable()
 export default class TimeEntryRepository extends BaseRepository<TimeEntry> implements ITimeEntryRepository {
@@ -146,7 +154,8 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
 
       const query = this.repo
         .createQueryBuilder(entities.timeEntry)
-        .where(`${entities.timeEntry}.company_id = :company_id`, { company_id });
+        .where(`${entities.timeEntry}.company_id = :company_id`, { company_id })
+        .andWhere(`${entities.timeEntry}.end_time IS NOT NULL`);
 
       if (client_id) {
         query
@@ -476,7 +485,10 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
         FROM ${entities.timeEntry} as t 
         JOIN ${entities.projects} as p on t.${timeEntry.project_id} = p.id
         LEFT JOIN ${entities.userPayRate} up ON t.project_id = up.project_id
-        WHERE t.${timeEntry.start_time} >= $1
+        WHERE t.approval_status = 'Approved'
+        AND t.timesheet_id IS NOT NULL
+        AND t.invoice_id IS NULL
+        AND t.${timeEntry.start_time} >= $1
         AND t.${timeEntry.start_time} <= $2
         AND t.${timeEntry.company_id} = $3
         AND t.${timeEntry.created_by} = $4
@@ -494,6 +506,7 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
 
   getDurationMap = async (args: IDurationMap): Promise<object> => {
     try {
+      const timesheet_id = args.timesheet_id;
       const startTime = args.startTime;
       const endTime = args.endTime;
       const company_id = args.company_id;
@@ -502,7 +515,7 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
 
       const queryResult = await this.manager.query(
         `
-        SELECT to_char(t.${timeEntry.start_time}, 'yyyy-mm-dd') AS date, SUM(t.${timeEntry.duration})::numeric AS date_duration 
+        SELECT to_char(t.${timeEntry.start_time}, 'yyyy-mm-dd') AS date, SUM(t.${timeEntry.duration})::numeric AS date_duration, t.${timeEntry.approval_status} as "approvalStatus", t.invoice_id
         FROM ${entities.timeEntry} AS t
         JOIN ${entities.projects} AS p ON t.project_id = p.id
         where t.${timeEntry.start_time} >= $1
@@ -510,29 +523,44 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
         AND t.${timeEntry.company_id} = $3
         AND t.${timeEntry.created_by} = $4
         AND p.${projects.client_id} = $5
-        GROUP BY to_char(t.${timeEntry.start_time}, 'yyyy-mm-dd');
+        AND t.${timeEntry.timesheet_id} = $6
+        AND t.${timeEntry.end_time} IS NOT NULL
+        GROUP BY to_char(t.${timeEntry.start_time}, 'yyyy-mm-dd'), t.${timeEntry.approval_status}, t.${timeEntry.invoice_id};
         `,
-        [startTime, endTime, company_id, user_id, client_id]
+        [startTime, endTime, company_id, user_id, client_id, timesheet_id]
       );
 
-      let resultMapByDate: { [key: string]: number } = {};
-      for (let result of queryResult) {
-        resultMapByDate[result.date] = parseInt(result.date_duration);
+      const durationMap: DurationMap = {};
+
+      const invoicedEntries: any[] = [];
+      const remainingEntries: any[] = [];
+
+      for (const entry of queryResult) {
+        const duration = parseInt(entry.date_duration);
+        if (entry.invoice_id) {
+          if (entry.invoice_id in durationMap) {
+            durationMap[entry.invoice_id][entry.date] = duration;
+          } else {
+            durationMap[entry.invoice_id] = {};
+            durationMap[entry.invoice_id][entry.date] = duration;
+          }
+        } else {
+          if (entry.approvalStatus in durationMap) {
+            durationMap[entry.approvalStatus][entry.date] = duration;
+          } else {
+            durationMap[entry.approvalStatus] = {};
+            durationMap[entry.approvalStatus][entry.date] = duration;
+          }
+        }
       }
 
-      const startDate = moment(startTime);
-      const endDate = moment(endTime);
-      const diff = endDate.diff(startDate, 'days');
-
-      const durationMap: { [key: string]: number } = {};
-      let current = startDate;
-
-      for (let i = 0; i <= diff; i++) {
-        const date = current.format('YYYY-MM-DD');
-
-        durationMap[date] = resultMapByDate[date] || 0;
-
-        current.add(1, 'days');
+      const dates = getIntervalDates(startTime, endTime);
+      for (let statusOrInvoiceId in durationMap) {
+        for (let date of dates) {
+          if (!(date in durationMap[statusOrInvoiceId])) {
+            durationMap[statusOrInvoiceId][date] = 0;
+          }
+        }
       }
 
       return durationMap;
@@ -550,6 +578,7 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
       await this.repo.update(
         {
           id: In(ids),
+          invoice_id: IsNull(),
         },
         {
           approver_id: approver_id,
@@ -562,4 +591,43 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
       throw err;
     }
   };
+
+  markApprovedTimeEntriesWithInvoice = async (args: any): Promise<boolean> => {
+    try {
+      const timesheet_id = args.timesheet_id;
+      const invoice_id = args.invoice_id;
+
+      await this.repo.update(
+        {
+          timesheet_id,
+          approvalStatus: TimeEntryApprovalStatus.Approved,
+          invoice_id: IsNull(),
+        },
+        {
+          invoice_id,
+        }
+      );
+
+      return true;
+    } catch (err) {
+      throw err;
+    }
+  };
+}
+
+function getIntervalDates(startTime: string, endTime: string): string[] {
+  const dates: string[] = [];
+  const startDate = moment(startTime);
+  const endDate = moment(endTime);
+  const diff = endDate.diff(startDate, 'days');
+
+  let current = startDate;
+
+  for (let i = 0; i <= diff; i++) {
+    const date = current.format('YYYY-MM-DD');
+    dates.push(date);
+    current.add(1, 'days');
+  }
+
+  return dates;
 }

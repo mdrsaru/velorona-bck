@@ -27,26 +27,31 @@ import {
   IInvoiceItemInput,
   IInvoiceItemUpdateInput,
 } from '../interfaces/invoice-item.interface';
+import { ITimeEntryRepository } from '../interfaces/time-entry.interface';
 
 @injectable()
 export default class InvoiceRepository extends BaseRepository<Invoice> implements IInvoiceRepository {
   private clientRepository: IClientRepository;
   private companyRepository: ICompanyRepository;
   private invoiceItemRepository: IInvoiceItemRepository;
+  private timeEntryRepository: ITimeEntryRepository;
 
   constructor(
     @inject(TYPES.ClientRepository) _clientRepository: IClientRepository,
     @inject(TYPES.CompanyRepository) _companyRepository: ICompanyRepository,
-    @inject(TYPES.InvoiceItemRepository) _invoiceItemRepository: IInvoiceItemRepository
+    @inject(TYPES.InvoiceItemRepository) _invoiceItemRepository: IInvoiceItemRepository,
+    @inject(TYPES.TimeEntryRepository) _timeEntryRepository: ITimeEntryRepository
   ) {
     super(getRepository(Invoice));
     this.clientRepository = _clientRepository;
     this.companyRepository = _companyRepository;
     this.invoiceItemRepository = _invoiceItemRepository;
+    this.timeEntryRepository = _timeEntryRepository;
   }
 
   create = async (args: IInvoiceCreateInput): Promise<Invoice> => {
     try {
+      const timesheet_id = args.timesheet_id;
       const status = args.status;
       const issueDate = args.issueDate;
       const dueDate = args.dueDate;
@@ -124,6 +129,13 @@ export default class InvoiceRepository extends BaseRepository<Invoice> implement
         invoice_id: invoice.id,
         items,
       });
+
+      if (timesheet_id) {
+        await this.timeEntryRepository.markApprovedTimeEntriesWithInvoice({
+          timesheet_id,
+          invoice_id: invoice.id,
+        });
+      }
 
       return invoice;
     } catch (err) {
