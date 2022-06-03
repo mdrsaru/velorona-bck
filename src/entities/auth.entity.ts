@@ -5,6 +5,7 @@ import UserToken from './user-token.entity';
 import Company from '../entities/company.entity';
 import { ForgotPasswordUserType } from '../config/constants';
 import { AddressCreateInput } from '../entities/address.entity';
+import Media from './media.entity';
 
 registerEnumType(ForgotPasswordUserType, {
   name: 'ForgotPasswordUserType',
@@ -17,6 +18,12 @@ export class LoginResponse {
 
   @Field()
   token: string;
+
+  @Field({ nullable: true })
+  fullName: string;
+
+  @Field({ nullable: true })
+  avatar: Media;
 
   @Field()
   refreshToken: string;

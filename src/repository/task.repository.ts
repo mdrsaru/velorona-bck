@@ -125,15 +125,6 @@ export default class TaskRepository extends BaseRepository<Task> implements ITas
         });
       }
 
-      if (deadline) {
-        const today = new Date();
-        if (deadline < today) {
-          throw new ValidationError({
-            details: [strings.deadlineMustBeValidDate],
-          });
-        }
-      }
-
       const existingMedia = await this.mediaRepository.getAll({
         query: {
           id: attachment_ids,
