@@ -115,6 +115,7 @@ export default class TaskRepository extends BaseRepository<Task> implements ITas
       const project_id = args.project_id;
       const priority = args.priority;
       const deadline = args.deadline;
+      const attachment_ids = args.attachment_ids;
 
       const found = await this.getById({ id });
 
@@ -133,6 +134,11 @@ export default class TaskRepository extends BaseRepository<Task> implements ITas
         }
       }
 
+      const existingMedia = await this.mediaRepository.getAll({
+        query: {
+          id: attachment_ids,
+        },
+      });
       const update = merge(found, {
         id,
         name,
@@ -144,6 +150,7 @@ export default class TaskRepository extends BaseRepository<Task> implements ITas
         description,
         priority,
         deadline,
+        attachments: existingMedia,
       });
 
       let task = await this.repo.save(update);

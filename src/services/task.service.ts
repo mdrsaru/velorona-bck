@@ -118,6 +118,7 @@ export default class TaskService implements ITaskService {
     const user_ids = args.user_ids;
     const priority = args.priority;
     const deadline = args.deadline;
+    const attachment_ids = args.attachment_ids;
 
     try {
       if (user_ids) {
@@ -144,6 +145,7 @@ export default class TaskService implements ITaskService {
         user_ids,
         priority,
         deadline,
+        attachment_ids,
       });
 
       return task;
