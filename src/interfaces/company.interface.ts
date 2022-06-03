@@ -25,6 +25,7 @@ export interface ICompanyAdminAddressInput {
 
 export interface ICompanyAdminCreateInput {
   email: string;
+  password?: string;
   firstName?: string;
   lastName?: string;
   middleName?: string;

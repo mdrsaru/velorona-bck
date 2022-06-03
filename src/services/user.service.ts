@@ -5,7 +5,8 @@ import { TYPES } from '../types';
 import User from '../entities/user.entity';
 import Company from '../entities/company.entity';
 import { generateRandomStrings } from '../utils/strings';
-import constants, { emailSetting } from '../config/constants';
+import constants, { emailSetting, events } from '../config/constants';
+import userEmitter from '../subscribers/user.subscriber';
 
 import { IPagingArgs, IPaginationData } from '../interfaces/paging.interface';
 import { IEntityRemove, IEntityID, ITemplateService, IEmailService, ILogger } from '../interfaces/common.interface';
@@ -81,45 +82,12 @@ export default class UserService implements IUserService {
         roles,
       });
 
-      let emailBody: string = emailSetting.newUser.adminBody;
-      let company: Company | undefined;
-      if (company_id) {
-        emailBody = emailSetting.newUser.companyBody;
-        company = await this.companyRepository.getById({
-          id: company_id,
-        });
-      }
-
-      const userHtml = this.handlebarsService.compile({
-        template: emailBody,
-        data: {
-          companyCode: company?.companyCode ?? '',
-          password,
-        },
+      // Emit event for onUserCreate
+      userEmitter.emit(events.onUserCreate, {
+        company_id,
+        user: user,
+        password,
       });
-
-      // send email asynchronously
-      this.emailService
-        .sendEmail({
-          to: user.email,
-          from: emailSetting.fromEmail,
-          subject: emailSetting.newUser.subject,
-          html: userHtml,
-        })
-        .then((response) => {
-          this.logger.info({
-            operation,
-            message: `Email response for ${user.email}`,
-            data: response,
-          });
-        })
-        .catch((err) => {
-          this.logger.error({
-            operation,
-            message: 'Error sending user create email',
-            data: err,
-          });
-        });
 
       return user;
     } catch (err) {

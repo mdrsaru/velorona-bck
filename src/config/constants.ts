@@ -171,6 +171,10 @@ export const emailSetting = {
   },
 };
 
+export const events = {
+  onUserCreate: 'onUserCreate',
+};
+
 export default {
   env,
   origins,

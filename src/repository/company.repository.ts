@@ -90,7 +90,8 @@ export default class CompanyRepository extends BaseRepository<Company> implement
           adminEmail: email,
         });
 
-        const password = generateRandomStrings({ length: 8 });
+        //const password = generateRandomStrings({ length: 8 });
+        const password = args.user.password as string;
         const hashedPassword = await this.hashService.hash(password, constants.saltRounds);
 
         const roles = await this.roleRepository.getAll({
