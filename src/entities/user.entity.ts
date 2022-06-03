@@ -52,7 +52,7 @@ export default class User extends Base {
   password: string;
 
   @Field({ nullable: true })
-  @Column({ length: 10, nullable: true })
+  @Column({ nullable: true })
   phone: string;
 
   @Field({ nullable: true })

@@ -86,7 +86,7 @@ export default class AuthService implements IAuthService {
         user = await this.userRepository.getByEmailAndCompanyCode({
           email,
           companyCode,
-          relations: ['roles', 'company'],
+          relations: ['roles', 'company', 'avatar'],
         });
 
         if (user?.company?.archived) {
@@ -97,7 +97,7 @@ export default class AuthService implements IAuthService {
       } else {
         user = await this.userRepository.getByEmailAndNoCompany({
           email,
-          relations: ['roles', 'company'],
+          relations: ['roles', 'company', 'avatar'],
         });
 
         // check if the user is associated to company(fallback check)
@@ -183,13 +183,16 @@ export default class AuthService implements IAuthService {
         expiresIn: constants.refreshTokenExpiration,
         tokenType: TokenType?.refresh,
       });
-
       return {
         id: user.id,
         token: token,
         roles: user.roles,
         refreshToken: userToken.token,
         company: user.company,
+        firstName: user.firstName,
+        middleName: user?.middleName,
+        lastName: user.lastName,
+        avatar: user?.avatar,
       };
     } catch (err) {
       throw err;
@@ -370,15 +373,18 @@ export default class AuthService implements IAuthService {
 
       const user = await this.userRepository.getById({
         id: decoded.id,
-        relations: ['roles', 'company'],
+        relations: ['roles', 'company', 'avatar'],
       });
-
       return {
         id: payload.id,
         token: newAccessToken,
         refreshToken,
         roles: user?.roles ?? [],
         company: user?.company,
+        firstName: user?.firstName,
+        middleName: user?.middleName,
+        lastName: user?.lastName,
+        avatar: user?.avatar,
       };
     } catch (err) {
       throw err;

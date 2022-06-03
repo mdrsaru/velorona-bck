@@ -5,6 +5,7 @@ import { ForgotPasswordUserType } from '../config/constants';
 import { IEntityID } from './common.interface';
 import { IAddressCreateInput } from './address.interface';
 import { IUser } from './user.interface';
+import Media from '../entities/media.entity';
 
 export interface ILoginInput {
   email: string;
@@ -28,6 +29,11 @@ export interface ILoginResponse {
   roles: Role[];
   refreshToken: string;
   company?: Company;
+  firstName?: string;
+  middleName?: string;
+  lastName?: string;
+  avatar_id?: string;
+  avatar?: Media;
 }
 
 export interface IForgotPasswordResponse {

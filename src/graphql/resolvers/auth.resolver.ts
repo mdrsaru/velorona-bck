@@ -1,6 +1,6 @@
 import ms from 'ms';
 import { inject, injectable } from 'inversify';
-import { Arg, Ctx, Mutation, Query, UseMiddleware } from 'type-graphql';
+import { Arg, Ctx, FieldResolver, Mutation, Query, Resolver, Root, UseMiddleware } from 'type-graphql';
 import { CookieOptions } from 'express';
 
 import User from '../../entities/user.entity';
@@ -26,6 +26,7 @@ import { IGraphqlContext } from '../../interfaces/graphql.interface';
 import { IUserService } from '../../interfaces/user.interface';
 
 @injectable()
+@Resolver((of) => LoginResponse)
 export class AuthResolver {
   private name = 'AuthResolver';
   private authService: IAuthService;
@@ -242,5 +243,11 @@ export class AuthResolver {
         logError: true,
       });
     }
+  }
+
+  @FieldResolver()
+  fullName(@Root() root: User) {
+    const middleName = root.middleName ? ` ${root.middleName}` : '';
+    return `${root.firstName}${middleName} ${root.lastName}`;
   }
 }
