@@ -1,7 +1,14 @@
 import find from 'lodash/find';
 import ms from 'ms';
 
-import { UserStatus, Role as RoleEnum, CompanyStatus, InvitationStatus } from '../../config/constants';
+import {
+  UserStatus,
+  Role as RoleEnum,
+  CompanyStatus,
+  InvitationStatus,
+  ProjectStatus,
+  TimeEntryApprovalStatus,
+} from '../../config/constants';
 
 import User from '../../entities/user.entity';
 import Role from '../../entities/role.entity';
@@ -68,6 +75,7 @@ const _companies: ICompany[] = [
     id: 'ce351c02-3681-43df-9cdb-3a4f864dcb0b',
     name: 'Vellorum',
     companyCode: 'vellorum',
+    admin_email: 'company@admin.com',
     status: CompanyStatus.Active,
     archived: false,
     createdAt: '2022-03-08T08:01:04.776Z',
@@ -136,6 +144,8 @@ const _projects: IProject[] = [
     id: 'aed11edc-4c05-4731-8676-72e105eea64d',
     name: 'Vellorum',
     client_id: 'b97b91bd-03f1-450b-8b61-d8e033f8ac31',
+    status: ProjectStatus.Active,
+    archived: false,
     company_id: 'ce351c02-3681-43df-9cdb-3a4f864dcb0b',
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -161,6 +171,7 @@ const _timeEntries: ITimeEntry[] = [
     endTime: new Date(),
     duration: 0,
     clientLocation: 'Lalitpur',
+    approvalStatus: TimeEntryApprovalStatus.Pending,
     task_id: '12566ff8-1247-4a2a-a258-09b05268e2ce',
     project_id: projects[0].id,
     project: projects[0],
