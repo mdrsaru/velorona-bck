@@ -46,6 +46,7 @@ export default class CompanyRepository extends BaseRepository<Company> implement
       const status = args.status;
       const archived = args?.archived ?? false;
       const email = args.user.email;
+      const logo_id = args?.logo_id;
 
       const errors: string[] = [];
 
@@ -88,6 +89,7 @@ export default class CompanyRepository extends BaseRepository<Company> implement
           companyCode,
           archived,
           adminEmail: email,
+          logo_id,
         });
 
         //const password = generateRandomStrings({ length: 8 });
@@ -139,6 +141,7 @@ export default class CompanyRepository extends BaseRepository<Company> implement
       const name = args.name;
       const status = args.status;
       const archived = args?.archived;
+      const logo_id = args?.logo_id;
 
       const found = await this.getById({ id });
 
@@ -153,6 +156,7 @@ export default class CompanyRepository extends BaseRepository<Company> implement
         name,
         status,
         archived,
+        logo_id,
       });
 
       const company = await this.repo.save(update);

@@ -43,6 +43,7 @@ export default class CompanyService implements ICompanyService {
       const status = args.status;
       const archived = args?.archived;
       const user = args.user;
+      const logo_id = args?.logo_id;
 
       const password = generateRandomStrings({ length: 8 });
       user.password = password;
@@ -52,6 +53,7 @@ export default class CompanyService implements ICompanyService {
         status,
         archived,
         user,
+        logo_id,
       });
 
       // Emit event for onUserCreate
@@ -73,12 +75,14 @@ export default class CompanyService implements ICompanyService {
       const name = args.name;
       const status = args.status;
       const archived = args?.archived;
+      const logo_id = args?.logo_id;
 
       const company = await this.companyRepository.update({
         id,
         name,
         status,
         archived,
+        logo_id,
       });
 
       return company;
