@@ -17,6 +17,7 @@ import {
   InvoiceQueryInput,
   InvoiceCreateInput,
   InvoiceUpdateInput,
+  InvoicePDFInput,
 } from '../../entities/invoice.entity';
 import { IPaginationData } from '../../interfaces/paging.interface';
 import { IInvoice, IInvoiceService } from '../../interfaces/invoice.interface';
@@ -61,6 +62,27 @@ export class InvoiceResolver {
     }
   }
 
+  @Query((returns) => String)
+  @UseMiddleware(authenticate, authorize(RoleEnum.SuperAdmin, RoleEnum.CompanyAdmin), checkCompanyAccess)
+  async InvoicePDF(@Arg('input') args: InvoicePDFInput, @Ctx() ctx: any): Promise<string> {
+    const operation = 'InvoicePDF';
+
+    try {
+      const pdf = await this.invoiceService.getPDF({
+        id: args.id,
+      });
+
+      return pdf;
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
+    }
+  }
+
   @Mutation((returns) => Invoice)
   @UseMiddleware(authenticate, authorize(RoleEnum.SuperAdmin, RoleEnum.CompanyAdmin), checkCompanyAccess)
   async InvoiceCreate(@Arg('input') args: InvoiceCreateInput, @Ctx() ctx: any): Promise<Invoice> {
@@ -76,6 +98,7 @@ export class InvoiceResolver {
       const subtotal = args.subtotal;
       const totalAmount = args.totalAmount;
       const taxPercent = args.taxPercent ?? 0;
+      const taxAmount = args.taxAmount ?? 0;
       const notes = args.notes;
       const company_id = args.company_id;
       const client_id = args.client_id;
@@ -110,6 +133,7 @@ export class InvoiceResolver {
         subtotal,
         totalAmount,
         taxPercent,
+        taxAmount,
         notes,
         company_id,
         client_id,
@@ -142,6 +166,7 @@ export class InvoiceResolver {
       const subtotal = args.subtotal;
       const totalAmount = args.totalAmount;
       const taxPercent = args.taxPercent ?? 0;
+      const taxAmount = args.taxAmount ?? 0;
       const notes = args.notes;
       const items = args.items;
 
@@ -173,6 +198,7 @@ export class InvoiceResolver {
         subtotal,
         totalAmount,
         taxPercent,
+        taxAmount,
         notes,
         items,
       });

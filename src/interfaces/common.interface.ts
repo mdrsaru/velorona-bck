@@ -54,6 +54,13 @@ export interface IValidationInput {
   input: any;
 }
 
+type EmailAttachmentInput = {
+  content: string;
+  filename: string;
+  type: string;
+  disposition: string;
+};
+
 export interface IJoiService {
   validate(args: IValidationInput): any;
 }
@@ -78,6 +85,7 @@ export interface IEmailBasicArgs {
   html?: string;
   text?: string;
   templateId?: string;
+  attachments?: EmailAttachmentInput[];
 }
 
 export interface IEmailArgs extends IEmailBasicArgs {}

@@ -60,6 +60,7 @@ export default class InvoiceRepository extends BaseRepository<Invoice> implement
       const subtotal = args.subtotal;
       const totalAmount = args.totalAmount;
       const taxPercent = args.taxPercent ?? 0;
+      const taxAmount = args.taxAmount ?? 0;
       const notes = args.notes;
       const company_id = args.company_id;
       const client_id = args.client_id;
@@ -120,6 +121,7 @@ export default class InvoiceRepository extends BaseRepository<Invoice> implement
         subtotal,
         totalAmount,
         taxPercent,
+        taxAmount,
         notes,
         company_id,
         client_id,
@@ -154,6 +156,7 @@ export default class InvoiceRepository extends BaseRepository<Invoice> implement
       const subtotal = args.subtotal;
       const totalAmount = args.totalAmount;
       const taxPercent = args.taxPercent ?? 0;
+      const taxAmount = args.taxAmount ?? 0;
       const notes = args.notes;
       const items = args.items;
 
@@ -175,6 +178,7 @@ export default class InvoiceRepository extends BaseRepository<Invoice> implement
         subtotal,
         totalAmount,
         taxPercent,
+        taxAmount,
         notes,
       });
 

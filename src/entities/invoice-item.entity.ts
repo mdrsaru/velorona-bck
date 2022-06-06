@@ -36,7 +36,7 @@ export default class InvoiceItem extends Base {
   })
   project: Project;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({ nullable: true })
   description: string;
 
@@ -64,7 +64,7 @@ export class InvoiceItemCreateInput {
   @Field()
   project_id: string;
 
-  @Field()
+  @Field({ nullable: true })
   description: string;
 
   @Field((type) => Float)
@@ -85,7 +85,7 @@ export class InvoiceItemUpdateInput {
   @Field()
   project_id: string;
 
-  @Field()
+  @Field({ nullable: true })
   description: string;
 
   @Field((type) => Float)

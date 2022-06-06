@@ -1,7 +1,7 @@
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 import { injectable, inject } from 'inversify';
-import sgMail from '@sendgrid/mail';
+import sgMail, { MailDataRequired } from '@sendgrid/mail';
 
 import { TYPES } from '../types';
 import strings from '../config/strings';
@@ -61,7 +61,7 @@ export default class SendGridService implements IEmailService {
         return Promise.resolve();
       }
 
-      const msg = {
+      const msg: MailDataRequired = {
         to,
         from,
         subject,
@@ -69,6 +69,10 @@ export default class SendGridService implements IEmailService {
         html,
         cc,
       };
+
+      if (args?.attachments) {
+        msg.attachments = args.attachments;
+      }
 
       return sgMail.send(msg);
     } catch (err) {

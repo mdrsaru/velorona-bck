@@ -1,10 +1,15 @@
 import { injectable, inject } from 'inversify';
 
+import strings from '../config/strings';
+import * as apiError from '../utils/api-error';
 import { InvoiceStatus, events } from '../config/constants';
 import Invoice from '../entities/invoice.entity';
+import Client from '../entities/client.entity';
+import InvoiceItem from '../entities/invoice-item.entity';
 import Paging from '../utils/paging';
 import { TYPES } from '../types';
 import invoiceEmitter from '../subscribers/invoice.subscriber';
+import PDFService from '../services/pdf.service';
 
 import { IPagingArgs, IPaginationData } from '../interfaces/paging.interface';
 import { IEntityRemove, IEntityID } from '../interfaces/common.interface';
@@ -14,13 +19,25 @@ import {
   IInvoiceRepository,
   IInvoiceService,
 } from '../interfaces/invoice.interface';
+import { IInvoiceItemRepository } from '../interfaces/invoice-item.interface';
+import { IClientRepository } from '../interfaces/client.interface';
 
 @injectable()
 export default class InvoiceService implements IInvoiceService {
   private invoiceRepository: IInvoiceRepository;
+  private invoiceItemRepository: IInvoiceItemRepository;
+  private clientRepository: IClientRepository;
+  private pdfService: any;
 
-  constructor(@inject(TYPES.InvoiceRepository) invoiceRepository: IInvoiceRepository) {
-    this.invoiceRepository = invoiceRepository;
+  constructor(
+    @inject(TYPES.InvoiceRepository) _invoiceRepository: IInvoiceRepository,
+    @inject(TYPES.InvoiceItemRepository) _invoiceItemRepository: IInvoiceItemRepository,
+    @inject(TYPES.ClientRepository) _clientRepository: IClientRepository
+  ) {
+    this.invoiceRepository = _invoiceRepository;
+    this.pdfService = new PDFService();
+    this.invoiceItemRepository = _invoiceItemRepository;
+    this.clientRepository = _clientRepository;
   }
 
   getAllAndCount = async (args: IPagingArgs): Promise<IPaginationData<Invoice>> => {
@@ -52,6 +69,7 @@ export default class InvoiceService implements IInvoiceService {
       const subtotal = args.subtotal;
       const totalAmount = args.totalAmount;
       const taxPercent = args.taxPercent ?? 0;
+      const taxAmount = args.taxAmount ?? 0;
       const notes = args.notes;
       const company_id = args.company_id;
       const client_id = args.client_id;
@@ -67,17 +85,18 @@ export default class InvoiceService implements IInvoiceService {
         subtotal,
         totalAmount,
         taxPercent,
+        taxAmount,
         notes,
         company_id,
         client_id,
         items,
       });
 
-      //if(invoice.status === InvoiceStatus.Sent) {
-      invoiceEmitter.emit(events.sendInvoice, {
-        invoice,
-      });
-      //}
+      if (invoice.status === InvoiceStatus.Sent) {
+        invoiceEmitter.emit(events.sendInvoice, {
+          invoice,
+        });
+      }
 
       return invoice;
     } catch (err) {
@@ -96,8 +115,19 @@ export default class InvoiceService implements IInvoiceService {
       const subtotal = args.subtotal;
       const totalAmount = args.totalAmount;
       const taxPercent = args.taxPercent ?? 0;
+      const taxAmount = args.taxAmount ?? 0;
       const notes = args.notes;
       const items = args.items;
+
+      const found = await this.invoiceRepository.getById({
+        id,
+      });
+
+      if (!found) {
+        throw new apiError.NotFoundError({
+          details: [strings.invoiceNotFound],
+        });
+      }
 
       const invoice = await this.invoiceRepository.update({
         id,
@@ -109,9 +139,16 @@ export default class InvoiceService implements IInvoiceService {
         subtotal,
         totalAmount,
         taxPercent,
+        taxAmount,
         notes,
         items,
       });
+
+      if (found.status !== invoice.status && invoice.status === InvoiceStatus.Sent) {
+        invoiceEmitter.emit(events.sendInvoice, {
+          invoice,
+        });
+      }
 
       return invoice;
     } catch (err) {
@@ -128,6 +165,32 @@ export default class InvoiceService implements IInvoiceService {
       });
 
       return invoice;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  getPDF = async (args: { id: string }): Promise<string> => {
+    try {
+      const id = args.id;
+
+      const invoice = (await this.invoiceRepository.getById({
+        id,
+        relations: ['client', 'client.address'],
+      })) as Invoice;
+
+      const items: InvoiceItem[] = await this.invoiceItemRepository.getAll({
+        query: {
+          invoice_id: invoice.id,
+        },
+        relations: ['project'],
+      });
+
+      invoice.items = items;
+
+      const pdf = await this.pdfService.generateInvoicePdf(invoice);
+
+      return pdf.toString('base64');
     } catch (err) {
       throw err;
     }

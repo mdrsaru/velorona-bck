@@ -17,6 +17,7 @@ export interface IInvoice {
   totalAmount: number;
   subtotal: number;
   taxPercent: number;
+  taxAmount: number;
   notes?: string;
   company_id: string;
   client_id: string;
@@ -34,6 +35,7 @@ export interface IInvoiceCreateInput {
   subtotal: Invoice['subtotal'];
   totalAmount: Invoice['totalAmount'];
   taxPercent: Invoice['taxPercent'];
+  taxAmount?: Invoice['taxAmount'];
   notes?: Invoice['notes'];
   company_id: Invoice['company_id'];
   client_id: Invoice['client_id'];
@@ -50,6 +52,7 @@ export interface IInvoiceUpdateInput {
   subtotal?: Invoice['subtotal'];
   totalAmount?: Invoice['totalAmount'];
   taxPercent?: Invoice['taxPercent'];
+  taxAmount?: Invoice['taxAmount'];
   notes?: Invoice['notes'];
   items?: IInvoiceItemUpdateInput[];
 }
@@ -68,4 +71,5 @@ export interface IInvoiceService {
   create(args: IInvoiceCreateInput): Promise<Invoice>;
   update(args: IInvoiceUpdateInput): Promise<Invoice>;
   remove(args: IEntityRemove): Promise<Invoice>;
+  getPDF(args: { id: string }): Promise<string>;
 }

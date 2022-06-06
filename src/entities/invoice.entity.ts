@@ -1,4 +1,14 @@
-import { Index, Entity, Column, BaseEntity, ManyToOne, JoinColumn, PrimaryGeneratedColumn, Generated } from 'typeorm';
+import {
+  Index,
+  Entity,
+  Column,
+  BaseEntity,
+  ManyToOne,
+  JoinColumn,
+  PrimaryGeneratedColumn,
+  Generated,
+  OneToMany,
+} from 'typeorm';
 import { ObjectType, Field, ID, InputType, registerEnumType } from 'type-graphql';
 
 import { invoices } from '../config/db/columns';
@@ -89,6 +99,14 @@ export default class Invoice extends Base {
   taxPercent: number;
 
   @Field()
+  @Column({
+    type: 'float',
+    nullable: true,
+    default: 0,
+  })
+  taxAmount: number;
+
+  @Field()
   @Column({ nullable: true })
   notes: string;
 
@@ -122,6 +140,7 @@ export default class Invoice extends Base {
   timesheet: Timesheet;
 
   @Field((type) => [InvoiceItem], { description: 'Invoice items' })
+  @OneToMany(() => InvoiceItem, (item) => item.invoice)
   items: InvoiceItem[];
 }
 
@@ -162,6 +181,9 @@ export class InvoiceCreateInput {
 
   @Field({ nullable: true })
   taxPercent: number;
+
+  @Field({ nullable: true })
+  taxAmount: number;
 
   @Field({ nullable: true })
   notes: string;
@@ -209,10 +231,22 @@ export class InvoiceUpdateInput {
   taxPercent: number;
 
   @Field({ nullable: true })
+  taxAmount: number;
+
+  @Field({ nullable: true })
   notes: string;
 
   @Field((type) => [InvoiceItemUpdateInput], { nullable: true })
   items: InvoiceItemUpdateInput[];
+}
+
+@InputType()
+export class InvoicePDFInput {
+  @Field()
+  id: string;
+
+  @Field()
+  company_id: string;
 }
 
 @InputType()

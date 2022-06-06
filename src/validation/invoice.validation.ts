@@ -23,7 +23,7 @@ export default class CompanyValidation {
         .items(
           Joi.object({
             project_id: Joi.string().required().error(new Error(strings.oneOrMoreProjectRequired)),
-            description: Joi.string(),
+            description: Joi.string().allow(null, ''),
             quantity: Joi.number().required().error(new Error(strings.quantityRequired)),
             rate: Joi.number().required().error(new Error(strings.rateRequired)),
             amount: Joi.number().required().error(new Error(strings.amountRequired)),
@@ -49,7 +49,7 @@ export default class CompanyValidation {
         Joi.object({
           id: Joi.string(),
           project_id: Joi.string().required().error(new Error(strings.oneOrMoreProjectRequired)),
-          description: Joi.string(),
+          description: Joi.string().allow(null, ''),
           quantity: Joi.number().required().error(new Error(strings.quantityRequired)),
           rate: Joi.number().required().error(new Error(strings.rateRequired)),
           amount: Joi.number().required().error(new Error(strings.amountRequired)),

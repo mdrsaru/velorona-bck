@@ -171,7 +171,7 @@ export const emailSetting = {
   },
   invoice: {
     subject: process.env.INVOICE_EMAIL_SUBJECT || '',
-    body: process.env.INVOICE__EMAIL_BODY || '',
+    body: process.env.INVOICE_EMAIL_BODY || '',
   },
 };
 
