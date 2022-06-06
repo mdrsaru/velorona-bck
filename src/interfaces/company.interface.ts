@@ -3,6 +3,7 @@ import { IEntityRemove, IEntityID } from './common.interface';
 import Company from '../entities/company.entity';
 import User from '../entities/user.entity';
 import { CompanyStatus } from '../config/constants';
+import Media from '../entities/media.entity';
 
 export interface ICompany {
   id: string;
@@ -11,6 +12,8 @@ export interface ICompany {
   archived: boolean;
   companyCode: string;
   admin_email: string;
+  logo?: Media;
+  logo_id?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -39,6 +42,7 @@ export interface ICompanyCreate {
   status: ICompany['status'];
   archived?: ICompany['archived'];
   user: ICompanyAdminCreateInput;
+  logo_id?: ICompany['logo_id'];
 }
 
 export interface ICompanyUpdate {
@@ -46,6 +50,7 @@ export interface ICompanyUpdate {
   name: ICompany['name'];
   status: ICompany['status'];
   archived?: ICompany['archived'];
+  logo_id?: ICompany['logo_id'];
 }
 export interface ICompanyCodeInput {
   companyCode: string;

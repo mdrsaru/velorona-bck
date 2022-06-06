@@ -73,6 +73,7 @@ export class CompanyResolver {
       const status = args.status;
       const archived = args?.archived;
       const user = args.user;
+      const logo_id = args?.logo_id;
 
       const schema = CompanyValidation.create();
       await this.joiService.validate({
@@ -82,6 +83,7 @@ export class CompanyResolver {
           status,
           archived,
           user,
+          logo_id,
         },
       });
 
@@ -90,6 +92,7 @@ export class CompanyResolver {
         status,
         archived,
         user,
+        logo_id,
       });
 
       return company;
@@ -113,6 +116,7 @@ export class CompanyResolver {
       const name = args.name;
       const status = args.status;
       const archived = args?.archived;
+      const logo_id = args?.logo_id;
 
       const schema = CompanyValidation.update();
       await this.joiService.validate({
@@ -130,6 +134,7 @@ export class CompanyResolver {
         name,
         status,
         archived,
+        logo_id,
       });
 
       return company;
@@ -167,5 +172,13 @@ export class CompanyResolver {
   @FieldResolver()
   users(@Root() root: Company, @Ctx() ctx: IGraphqlContext) {
     return ctx.loaders.usersByCompanyIdLoader.load(root.id);
+  }
+
+  @FieldResolver()
+  logo(@Root() root: Company, @Ctx() ctx: IGraphqlContext) {
+    if (root.logo_id) {
+      return ctx.loaders.avatarByIdLoader.load(root.logo_id);
+    }
+    return null;
   }
 }

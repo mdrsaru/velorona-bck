@@ -1,13 +1,4 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  BaseEntity,
-  CreateDateColumn,
-  UpdateDateColumn,
-  OneToMany,
-  Unique,
-} from 'typeorm';
+import { Entity, Column, OneToMany, OneToOne, JoinColumn } from 'typeorm';
 import { ObjectType, Field, ID, InputType, registerEnumType } from 'type-graphql';
 
 import { Base } from './base.entity';
@@ -15,6 +6,7 @@ import User from './user.entity';
 import { entities, CompanyStatus } from '../config/constants';
 import { PagingResult, PagingInput } from './common.entity';
 import Workschedule from './workschedule.entity';
+import Media from './media.entity';
 
 registerEnumType(CompanyStatus, {
   name: 'CompanyStatus',
@@ -42,6 +34,15 @@ export default class Company extends Base {
   @Field()
   @Column({ unique: true, name: 'company_code' })
   companyCode: string;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  logo_id: string;
+
+  @Field(() => Media, { nullable: true })
+  @OneToOne(() => Media, { nullable: true, cascade: true })
+  @JoinColumn({ name: 'logo_id' })
+  logo: Media;
 
   @Field({ description: 'Company main admin email' })
   @Column({ name: 'admin_email' })
@@ -120,6 +121,9 @@ export class CompanyCreateInput {
 
   @Field()
   user: CompanyAdminInput;
+
+  @Field({ nullable: true })
+  logo_id: string;
 }
 
 @InputType()
@@ -135,6 +139,9 @@ export class CompanyUpdateInput {
 
   @Field({ nullable: true })
   archived: boolean;
+
+  @Field({ nullable: true })
+  logo_id: string;
 }
 
 @InputType()

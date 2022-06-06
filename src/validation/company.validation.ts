@@ -42,6 +42,7 @@ export default class CompanyValidation {
       name: Joi.string().required().messages(messages.name),
       status: Joi.string().required().messages(messages.status),
       archived: Joi.boolean(),
+      logo_id: Joi.string(),
       user: Joi.object({
         email: Joi.string().required().messages(messages.email),
         firstName: Joi.string(),
@@ -66,6 +67,7 @@ export default class CompanyValidation {
       name: Joi.string().messages(messages.name),
       status: Joi.string().messages(messages.status),
       archived: Joi.boolean(),
+      logo_id: Joi.string(),
     });
   }
 }
