@@ -19,6 +19,7 @@ import {
   IProjectItem,
   IDurationMap,
   ITimeEntriesApproveRejectInput,
+  IMarkApprovedTimeEntriesWithInvoice,
 } from '../../interfaces/time-entry.interface';
 import { timeEntries } from './data';
 import { generateUuid } from './utils';
@@ -152,5 +153,9 @@ export default class TimeEntryRepository implements ITimeEntryRepository {
 
   approveRejectTimeEntries = async (args: ITimeEntriesApproveRejectInput): Promise<boolean> => {
     throw new Error('Not implemented');
+  };
+
+  markApprovedTimeEntriesWithInvoice = async (args: IMarkApprovedTimeEntriesWithInvoice): Promise<boolean> => {
+    return true;
   };
 }

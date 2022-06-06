@@ -592,7 +592,7 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
     }
   };
 
-  markApprovedTimeEntriesWithInvoice = async (args: any): Promise<boolean> => {
+  markApprovedTimeEntriesWithInvoice = async (args: IMarkApprovedTimeEntriesWithInvoice): Promise<boolean> => {
     try {
       const timesheet_id = args.timesheet_id;
       const invoice_id = args.invoice_id;
