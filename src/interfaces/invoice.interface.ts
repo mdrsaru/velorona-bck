@@ -10,7 +10,6 @@ export interface IInvoice {
   timesheet_id?: string;
   status: InvoiceStatus;
   verified: boolean;
-  sentAsEmail: boolean;
   issueDate: Date;
   dueDate: Date;
   poNumber: string;

@@ -37,13 +37,6 @@ export default class Invoice extends Base {
 
   @Field()
   @Column({
-    name: invoices.sent_as_email,
-    default: false,
-  })
-  sentAsEmail: boolean;
-
-  @Field()
-  @Column({
     name: invoices.issue_date,
   })
   issueDate: Date;

@@ -25,7 +25,7 @@ userEmitter.on(events.onUserCreate, async (data: any) => {
   let company: Company | undefined;
 
   if (!data?.user?.email) {
-    logger.info({
+    return logger.info({
       operation,
       message: `User Email not found for sending onUserCreate email`,
       data: {},

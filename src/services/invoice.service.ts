@@ -1,16 +1,19 @@
 import { injectable, inject } from 'inversify';
 
+import { InvoiceStatus, events } from '../config/constants';
+import Invoice from '../entities/invoice.entity';
+import Paging from '../utils/paging';
+import { TYPES } from '../types';
+import invoiceEmitter from '../subscribers/invoice.subscriber';
+
+import { IPagingArgs, IPaginationData } from '../interfaces/paging.interface';
+import { IEntityRemove, IEntityID } from '../interfaces/common.interface';
 import {
   IInvoiceCreateInput,
   IInvoiceUpdateInput,
   IInvoiceRepository,
   IInvoiceService,
 } from '../interfaces/invoice.interface';
-import Invoice from '../entities/invoice.entity';
-import Paging from '../utils/paging';
-import { TYPES } from '../types';
-import { IPagingArgs, IPaginationData } from '../interfaces/paging.interface';
-import { IEntityRemove, IEntityID } from '../interfaces/common.interface';
 
 @injectable()
 export default class InvoiceService implements IInvoiceService {
@@ -69,6 +72,12 @@ export default class InvoiceService implements IInvoiceService {
         client_id,
         items,
       });
+
+      //if(invoice.status === InvoiceStatus.Sent) {
+      invoiceEmitter.emit(events.sendInvoice, {
+        invoice,
+      });
+      //}
 
       return invoice;
     } catch (err) {
