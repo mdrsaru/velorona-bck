@@ -7,9 +7,9 @@ import Invoice from '../entities/invoice.entity';
 
 export interface IInvoice {
   id: string;
+  timesheet_id?: string;
   status: InvoiceStatus;
   verified: boolean;
-  sentAsEmail: boolean;
   issueDate: Date;
   dueDate: Date;
   poNumber: string;
@@ -26,6 +26,7 @@ export interface IInvoice {
 
 export interface IInvoiceCreateInput {
   status: Invoice['status'];
+  timesheet_id?: Invoice['timesheet_id'];
   issueDate: Invoice['issueDate'];
   dueDate: Invoice['dueDate'];
   poNumber: Invoice['poNumber'];

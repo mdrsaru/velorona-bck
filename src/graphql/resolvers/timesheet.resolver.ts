@@ -239,6 +239,7 @@ export class TimesheetResolver {
       const user_id = root.user_id;
 
       return this.timeEntryRepository.getDurationMap({
+        timesheet_id: root.id,
         startTime,
         endTime,
         user_id,
@@ -271,6 +272,7 @@ export class TimesheetResolver {
       const user_id = root.user_id;
 
       const entries = this.timeEntryRepository.getWeeklyDetails({
+        timesheet_id: root.id,
         startTime,
         endTime,
         created_by: user_id,

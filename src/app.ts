@@ -5,6 +5,7 @@ import corsLoader from './loaders/cors.loader';
 import expressLoader from './loaders/express.loader';
 import graphqlLoader from './loaders/graphql.loader';
 import typeormLoader from './loaders/typeorm.loader';
+import './loaders/event.loader';
 
 const app: Application = express();
 

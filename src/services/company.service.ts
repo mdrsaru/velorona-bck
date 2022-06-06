@@ -1,11 +1,16 @@
 import { injectable, inject } from 'inversify';
 
-import { ICompanyCreate, ICompanyUpdate, ICompanyRepository, ICompanyService } from '../interfaces/company.interface';
+import { events } from '../config/constants';
 import Company from '../entities/company.entity';
 import Paging from '../utils/paging';
 import { TYPES } from '../types';
+import userEmitter from '../subscribers/user.subscriber';
+import { generateRandomStrings } from '../utils/strings';
+
 import { IPagingArgs, IPaginationData } from '../interfaces/paging.interface';
 import { IEntityRemove, IEntityID } from '../interfaces/common.interface';
+import { ICompanyCreate, ICompanyUpdate, ICompanyRepository, ICompanyService } from '../interfaces/company.interface';
+
 @injectable()
 export default class CompanyService implements ICompanyService {
   private companyRepository: ICompanyRepository;
@@ -39,11 +44,21 @@ export default class CompanyService implements ICompanyService {
       const archived = args?.archived;
       const user = args.user;
 
+      const password = generateRandomStrings({ length: 8 });
+      user.password = password;
+
       const result = await this.companyRepository.create({
         name,
         status,
         archived,
         user,
+      });
+
+      // Emit event for onUserCreate
+      userEmitter.emit(events.onUserCreate, {
+        company_id: result.company?.id,
+        user: result.user,
+        password,
       });
 
       return result.company;

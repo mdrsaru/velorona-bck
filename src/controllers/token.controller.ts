@@ -27,6 +27,8 @@ export default class TokenController {
     if (refreshToken) {
       try {
         const tokenResult = await this.authService.renewAccessToken(refreshToken);
+        const middleName = tokenResult.middleName ? ` ${tokenResult.middleName}` : '';
+        let fullName = `${tokenResult.firstName}${middleName} ${tokenResult.lastName}`;
 
         return res.status(200).send({
           message: 'Token refresh successful',
@@ -35,6 +37,8 @@ export default class TokenController {
             _id: tokenResult.id,
             roles: tokenResult.roles,
             company: tokenResult.company,
+            fullName: fullName,
+            avatar: tokenResult.avatar,
           },
         });
       } catch (err) {

@@ -37,13 +37,6 @@ export default class Invoice extends Base {
 
   @Field()
   @Column({
-    name: invoices.sent_as_email,
-    default: false,
-  })
-  sentAsEmail: boolean;
-
-  @Field()
-  @Column({
     name: invoices.issue_date,
   })
   issueDate: Date;
@@ -114,7 +107,7 @@ export default class Invoice extends Base {
   @Column()
   client_id: string;
 
-  @Field()
+  @Field((type) => Client)
   @ManyToOne(() => Client)
   @JoinColumn({ name: invoices.client_id })
   client: Client;
@@ -143,6 +136,9 @@ export class InvoicePagingResult {
 
 @InputType()
 export class InvoiceCreateInput {
+  @Field({ nullable: true })
+  timesheet_id: string;
+
   @Field((type) => InvoiceStatus, { nullable: true })
   status: InvoiceStatus;
 

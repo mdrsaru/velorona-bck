@@ -189,6 +189,9 @@ export class TaskUpdateInput {
 
   @Field(() => [String], { nullable: true })
   user_ids: string[];
+
+  @Field(() => [String], { nullable: true })
+  attachment_ids: string[];
 }
 
 @ObjectType()

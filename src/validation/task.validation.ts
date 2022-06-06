@@ -73,6 +73,7 @@ export default class TaskValidation {
       user_ids: Joi.array(),
       priority: Joi.boolean(),
       deadline: Joi.date(),
+      attachment_ids: Joi.array(),
     });
   }
   static assignTask() {

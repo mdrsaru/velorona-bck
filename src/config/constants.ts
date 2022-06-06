@@ -169,6 +169,15 @@ export const emailSetting = {
     subject: process.env.RESET_PASSWORD_EMAIL_SUBJECT || '',
     body: process.env.RESET_PASSWORD_EMAIL_BODY || '',
   },
+  invoice: {
+    subject: process.env.INVOICE_EMAIL_SUBJECT || '',
+    body: process.env.INVOICE__EMAIL_BODY || '',
+  },
+};
+
+export const events = {
+  onUserCreate: 'onUserCreate',
+  sendInvoice: 'sendInvoice',
 };
 
 export default {

@@ -2,22 +2,26 @@ import { NextFunction, Request, Response } from 'express';
 import constants from '../config/constants';
 import strings from '../config/strings';
 import { NotAuthenticatedError } from '../utils/api-error';
-import jwt from 'jsonwebtoken';
+import container from '../inversify.config';
+import { ITokenService } from '../interfaces/common.interface';
+import { TYPES } from '../types';
 
-export default (req: any, res: Response, next: NextFunction) => {
+export default async (req: any, res: Response, next: NextFunction) => {
+  const tokenService = container.get<ITokenService>(TYPES.TokenService);
   try {
-    const token = req?.headers?.authorization.split(' ')[1];
-    jwt.verify(token, constants.accessTokenSecret, (err: any, decoded: any) => {
-      if (err) {
-        throw new NotAuthenticatedError({
-          message: strings.userNotAuthenticated,
-          details: [strings.userNotAuthenticated],
-          data: err,
-        });
-      } else {
-        next();
-      }
-    });
+    let token = await tokenService.extractToken(req.headers);
+    if (token) {
+      await tokenService.verifyToken({
+        token: token,
+        secretKey: constants.accessTokenSecret,
+      });
+      next();
+    } else {
+      throw new NotAuthenticatedError({
+        message: strings.userNotAuthenticated,
+        details: [strings.userNotAuthenticated],
+      });
+    }
   } catch (err) {
     res.status(401).json({
       error: err,
