@@ -76,6 +76,7 @@ export default class AuthService implements IAuthService {
 
   login = async (args: ILoginInput): Promise<ILoginResponse> => {
     try {
+      console.log(args);
       const email = args.email?.toLowerCase()?.trim();
       const password = args.password;
       const companyCode = args.companyCode;
