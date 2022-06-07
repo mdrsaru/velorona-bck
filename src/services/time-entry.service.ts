@@ -194,8 +194,8 @@ export default class TimeEntryService implements ITimeEntryService {
       });
 
       try {
-        /* Create/Update timesheet if the end time is provided */
-        if (endTime) {
+        /* Create/Update timesheet if the start/end time is provided */
+        if (startTime || endTime) {
           const project = await this.projectRepository.getById({
             id: timeEntry.project_id,
           });

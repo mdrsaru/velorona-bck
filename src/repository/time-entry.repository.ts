@@ -359,7 +359,6 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
   update = async (args: ITimeEntryUpdateInput): Promise<TimeEntry> => {
     try {
       const id = args.id;
-      const endTime = args.endTime;
       const clientLocation = args.clientLocation;
       const approver_id = args.approver_id;
       const company_id = args.company_id;
@@ -368,6 +367,7 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
       const timesheet_id = args.timesheet_id;
       let project_id = args.project_id;
       let startTime = args.startTime;
+      let endTime = args.endTime;
 
       const errors: string[] = [];
 
@@ -400,8 +400,10 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
       }
 
       startTime = startTime ?? found.startTime;
+      endTime = endTime ?? found.endTime;
       let duration: undefined | number = undefined;
-      if (endTime) {
+
+      if (startTime && endTime) {
         if (endTime <= startTime) {
           throw new apiError.ValidationError({
             details: [strings.endDateMustBeValidDate],
