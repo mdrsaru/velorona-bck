@@ -53,7 +53,8 @@ invoiceEmitter.on(events.sendInvoice, async (data: any) => {
   const pdfBuffer = await pdfService.generateInvoicePdf(invoice);
   const pdfBase64 = pdfBuffer.toString('base64');
 
-  if (!client?.invoicingEmail && !client.email) {
+  const email = client?.invoicingEmail ?? client?.email;
+  if (!email) {
     return logger.info({
       operation,
       message: `Client email not found for sending invoice email`,
@@ -80,8 +81,7 @@ invoiceEmitter.on(events.sendInvoice, async (data: any) => {
 
   emailService
     .sendEmail({
-      //to: data.invoice.invoicingEmail,
-      to: 'vinay14@yopmail.com',
+      to: email,
       from: emailSetting.fromEmail,
       subject: emailSetting.invoice.subject,
       html: invoiceHtml,
@@ -90,7 +90,7 @@ invoiceEmitter.on(events.sendInvoice, async (data: any) => {
     .then((response) => {
       logger.info({
         operation,
-        message: `Email response for ${data?.invoice?.invoicingEmail}`,
+        message: `Email response for ${email}`,
         data: response,
       });
     })
