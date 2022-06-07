@@ -19,6 +19,7 @@ import TaskValidation from '../../validation/task.validation';
 import authorize from '../middlewares/authorize';
 import authenticate from '../middlewares/authenticate';
 import { checkCompanyAccess } from '../middlewares/company';
+import { filterTasksForEmployees } from '../middlewares/task';
 
 import { IErrorService, IJoiService } from '../../interfaces/common.interface';
 import { IPaginationData } from '../../interfaces/paging.interface';
@@ -44,7 +45,7 @@ export class TaskResolver {
   }
 
   @Query((returns) => TaskPagingResult)
-  @UseMiddleware(authenticate, checkCompanyAccess)
+  @UseMiddleware(authenticate, checkCompanyAccess, filterTasksForEmployees)
   async Task(@Arg('input') args: TaskQueryInput, @Ctx() ctx: any): Promise<IPaginationData<Task>> {
     const operation = 'Tasks';
 
