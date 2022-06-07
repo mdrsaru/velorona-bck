@@ -18,11 +18,11 @@ export default class Company extends Base {
   @Field()
   @Column()
   name: string;
+
   @Field((type) => CompanyStatus)
   @Field((type) => CompanyStatus)
   @Column({
-    type: 'enum',
-    enum: CompanyStatus,
+    type: 'varchar',
     default: CompanyStatus.Inactive,
   })
   status: CompanyStatus;

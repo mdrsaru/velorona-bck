@@ -53,15 +53,13 @@ export default class Invitation extends Base {
 
   @Field((type) => RoleEnum)
   @Column({
-    type: 'enum',
-    enum: RoleEnum,
+    type: 'varchar',
   })
   role: RoleEnum;
 
   @Field((type) => InvitationStatus)
   @Column({
-    type: 'enum',
-    enum: InvitationStatus,
+    type: 'varchar',
   })
   status: InvitationStatus;
 }

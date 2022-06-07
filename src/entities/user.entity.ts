@@ -72,8 +72,7 @@ export default class User extends Base {
 
   @Field((type) => UserStatus)
   @Column({
-    type: 'enum',
-    enum: UserStatus,
+    type: 'varchar',
     default: UserStatus.Active,
   })
   status: UserStatus;
