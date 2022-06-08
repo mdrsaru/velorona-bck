@@ -56,10 +56,10 @@ export default class Client extends Base {
 
   @Index(`${indexPrefix}_company_id_index`)
   @Field()
-  @Column({ nullable: true })
+  @Column()
   company_id: string;
 
-  @Field(() => Company, { nullable: true })
+  @Field((type) => Company)
   @ManyToOne(() => Company)
   @JoinColumn({ name: 'company_id' })
   company: Company;
