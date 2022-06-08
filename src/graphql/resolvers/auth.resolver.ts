@@ -11,8 +11,6 @@ import {
   LoginResponse,
   ResetPasswordInput,
   ResetPasswordResponse,
-  InvitationRegisterInput,
-  InvitationRegisterResponse,
 } from '../../entities/auth.entity';
 
 import { TYPES } from '../../types';
@@ -192,56 +190,6 @@ export class AuthResolver {
       return true;
     } catch (err) {
       return true;
-    }
-  }
-
-  @Mutation((returns) => InvitationRegisterResponse)
-  async RegisterWithInvitation(
-    @Ctx() ctx: any,
-    @Arg('input') args: InvitationRegisterInput
-  ): Promise<InvitationRegisterResponse> {
-    const operation = 'RegisterWithInvitation';
-    try {
-      const token = args.token;
-      const password = args.password;
-      const firstName = args.firstName;
-      const lastName = args.lastName;
-      const middleName = args.middleName;
-      const phone = args.phone;
-      const address = args.address;
-
-      const schema = AuthValidation.registerWithInvitation();
-      await this.joiService.validate({
-        schema,
-        input: {
-          token,
-          password,
-          firstName,
-          lastName,
-          middleName,
-          phone,
-          address,
-        },
-      });
-
-      const registeredResponse = await this.authService.registerWithInvitation({
-        token,
-        password,
-        firstName,
-        lastName,
-        middleName,
-        phone,
-        address,
-      });
-
-      return registeredResponse;
-    } catch (err) {
-      this.errorService.throwError({
-        err,
-        name: this.name,
-        operation,
-        logError: true,
-      });
     }
   }
 

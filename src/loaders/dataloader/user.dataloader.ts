@@ -8,7 +8,6 @@ import User from '../../entities/user.entity';
 import Role from '../../entities/role.entity';
 import { IUserRepository } from '../../interfaces/user.interface';
 import { IMediaRepository } from '../../interfaces/media.interface';
-import { IUserRecordRepository } from '../../interfaces/user-record.interface';
 
 const batchUsersByCompanyIdFn = async (ids: readonly string[]) => {
   const userRepo: IUserRepository = container.get(TYPES.UserRepository);
@@ -55,18 +54,6 @@ const batchAvatarsByIdFn = async (ids: readonly string[]) => {
   return ids.map((id) => mediaObj[id]);
 };
 
-const batchRecordByUserIdFn = async (ids: readonly string[]) => {
-  const recordRepo: IUserRecordRepository = container.get(TYPES.UserRecordRepository);
-  const query = { user_id: ids };
-  const record = await recordRepo.getAll({ query });
-  const recordObj: any = {};
-
-  record.forEach((record: any) => {
-    recordObj[record.user_id] = record;
-  });
-  return ids.map((id) => recordObj[id]);
-};
-
 const batchUsersByIdFn = async (ids: readonly string[]) => {
   const userRepo: IUserRepository = container.get(TYPES.UserRepository);
   const query = { id: ids };
@@ -83,5 +70,4 @@ const batchUsersByIdFn = async (ids: readonly string[]) => {
 export const usersByCompanyIdLoader = () => new Dataloader(batchUsersByCompanyIdFn);
 export const rolesByUserIdLoader = () => new Dataloader(batchRolesByUserIdFn);
 export const avatarByIdLoader = () => new Dataloader(batchAvatarsByIdFn);
-export const recordByUserIdLoader = () => new Dataloader(batchRecordByUserIdFn);
 export const usersByIdLoader = () => new Dataloader(batchUsersByIdFn);

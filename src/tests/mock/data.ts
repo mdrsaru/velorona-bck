@@ -5,7 +5,6 @@ import {
   UserStatus,
   Role as RoleEnum,
   CompanyStatus,
-  InvitationStatus,
   ProjectStatus,
   TimeEntryApprovalStatus,
 } from '../../config/constants';
@@ -13,7 +12,6 @@ import {
 import User from '../../entities/user.entity';
 import Role from '../../entities/role.entity';
 import Company from '../../entities/company.entity';
-import Invitation from '../../entities/invitation.entity';
 import Project from '../../entities/project.entity';
 import TimeEntry from '../../entities/time-entry.entity';
 import UserPayRate from '../../entities/user-payrate.entity';
@@ -22,7 +20,6 @@ import Address from '../../entities/address.entity';
 import { IUserPayRate } from '../../interfaces/user-payrate.interface';
 import { IUser } from '../../interfaces/user.interface';
 import { ICompany } from '../../interfaces/company.interface';
-import { IInvitation } from '../../interfaces/invitation.interface';
 import { IProject } from '../../interfaces/project.interface';
 import { ITimeEntry } from '../../interfaces/time-entry.interface';
 import { IAddress } from '../../interfaces/address.interface';
@@ -107,36 +104,6 @@ export let users = _users.map((user) => {
   _user.createdAt = user.createdAt;
   _user.updatedAt = user.updatedAt;
   return _user;
-});
-
-const _invitations: IInvitation[] = [
-  {
-    id: '38e99c9b-83e1-40ab-b0d1-768b6ef5b28f',
-    email: 'invited@user.com',
-    role: RoleEnum.Employee,
-    expiresIn: new Date(Date() + ms('50m')),
-    company_id: companies[0]?.id,
-    inviter_id: users[0]?.id,
-    status: InvitationStatus.Pending,
-    token: 'token',
-    createdAt: '2022-03-08T08:01:04.776Z',
-    updatedAt: '2022-03-08T08:01:04.776Z',
-  },
-];
-
-export let invitations = _invitations.map((inv) => {
-  const invitation: any = new Invitation();
-  invitation.id = inv.id;
-  invitation.email = inv.email;
-  invitation.company = find(_companies, { id: inv.company_id });
-  invitation.inviter = find(_users, { id: inv.inviter_id });
-  invitation.status = invitation.status;
-  invitation.token = invitation.token;
-  invitation.role = invitation.role;
-  invitation.expiresIn = invitation.expiresIn;
-  invitation.createdAt = invitation.createdAt;
-
-  return invitation;
 });
 
 const _projects: IProject[] = [

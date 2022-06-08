@@ -28,7 +28,17 @@ Builds the app for production to the `build` folder.
 
 ### `yarn docs`
 
-Generate API documentation
+Run migration
+
+### `yarn typeorm migration:run`
+
+Run migration from build
+
+### `yarn typeorm:js migration:run`
+
+Generate migration(Make sure you run migration before generating a new migration)
+
+### `yarn typeorm migration:generate -n ${MigrationClassName} -p`
 
 ## Using Docker
 
@@ -42,6 +52,12 @@ Specifying env file:
 
 ```
 $ docker-compose [--env-file path-to-env-file] [-f <path-to-docker-compose>] up
+```
+
+Run migration
+
+```
+$ docker-compose exec app yarn typeorm migration:run
 ```
 
 ### Run tests

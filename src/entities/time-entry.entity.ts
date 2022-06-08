@@ -97,7 +97,7 @@ export default class TimeEntry extends Base {
   @Column({ nullable: true })
   invoice_id: string;
 
-  @Field((type) => Invoice)
+  @Field((type) => Invoice, { nullable: true })
   @ManyToOne(() => Invoice)
   @JoinColumn({ name: timeEntry.invoice_id })
   invoice: Invoice;

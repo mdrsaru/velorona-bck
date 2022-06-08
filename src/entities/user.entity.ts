@@ -24,7 +24,6 @@ import { AdminRole, CompanyRole, entities, UserStatus, Role as RoleEnum } from '
 import Task from './task.entity';
 import Workschedule from './workschedule.entity';
 import { userRolesTable } from '../config/db/columns';
-import UserRecord from './user-record.entity';
 import UserPayRate from './user-payrate.entity';
 import Timesheet from './timesheet.entity';
 
@@ -136,7 +135,7 @@ export default class User extends Base {
   @OneToMany(() => Workschedule, (workschedule) => workschedule.user)
   workschedules: Workschedule[];
 
-  @Field({ nullable: true })
+  @Field((type) => Client, { nullable: true })
   activeClient: Client;
 
   @Field(() => UserPayRate, { nullable: true, description: 'Field for UserPayRate' })

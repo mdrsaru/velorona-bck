@@ -5,7 +5,6 @@ import { AuthResolver } from './resolvers/auth.resolver';
 import { CompanyResolver } from './resolvers/company.resolver';
 import { RoleResolver } from './resolvers/role.resolver';
 import { UserResolver } from './resolvers/user.resolver';
-import { InvitationResolver } from './resolvers/invitation.resolver';
 import { TaskResolver } from './resolvers/task.resolver';
 import { ProjectResolver } from './resolvers/project.resolver';
 import { WorkscheduleResolver } from './resolvers/workschedule.resolver';
@@ -26,7 +25,6 @@ export default buildSchema({
     RoleResolver,
     UserResolver,
     AuthResolver,
-    InvitationResolver,
     TaskResolver,
     ProjectResolver,
     WorkscheduleResolver,

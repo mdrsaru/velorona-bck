@@ -7,7 +7,6 @@ import { Base } from './base.entity';
 import { entities, ClientStatus } from '../config/constants';
 import { PagingResult, PagingInput, DeleteInput } from './common.entity';
 import { AddressCreateInput, AddressUpdateInput } from './address.entity';
-import Timesheet from './timesheet.entity';
 
 registerEnumType(ClientStatus, {
   name: 'ClientStatus',

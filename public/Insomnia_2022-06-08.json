@@ -1,7 +1,7 @@
 {
   "_type": "export",
   "__export_format": 4,
-  "__export_date": "2022-05-31T08:08:48.823Z",
+  "__export_date": "2022-06-08T07:22:33.831Z",
   "__export_source": "insomnia.desktop.app:v2020.3.3",
   "resources": [
     {
@@ -71,7 +71,7 @@
       },
       "body": {
         "mimeType": "application/graphql",
-        "text": "{\"query\":\"mutation CompanyCreate($input: CompanyCreateInput!) {\\n  CompanyCreate(input: $input) {\\n    id\\n    name\\n    companyCode\\n  }\\n}\",\"variables\":{\"input\":{\"name\":\"  Vellorum\",\"status\":\"Active\",\"user\":{\"email\":\"company@company.com\"}}},\"operationName\":\"CompanyCreate\"}"
+        "text": "{\"query\":\"mutation CompanyCreate($input: CompanyCreateInput!) {\\n  CompanyCreate(input: $input) {\\n    id\\n    name\\n    companyCode\\n  }\\n}\",\"variables\":{\"input\":{\"name\":\"  Vellorum3\",\"status\":\"Active\",\"user\":{\"email\":\"company2@yopmail.com\"}}},\"operationName\":\"CompanyCreate\"}"
       },
       "created": 1646649815946,
       "description": "",
@@ -81,7 +81,7 @@
       "isPrivate": false,
       "metaSortKey": -1646649815946,
       "method": "POST",
-      "modified": 1653982521448,
+      "modified": 1654670970266,
       "name": "CompanyCreate",
       "parameters": [],
       "parentId": "fld_6318bfedd77b4135b257df42a9504cd0",
@@ -155,7 +155,7 @@
       "isPrivate": false,
       "metaSortKey": -1640931628378.5,
       "method": "POST",
-      "modified": 1653896961681,
+      "modified": 1654253706558,
       "name": "Company",
       "parameters": [],
       "parentId": "fld_6318bfedd77b4135b257df42a9504cd0",
@@ -219,7 +219,7 @@
       },
       "body": {
         "mimeType": "application/graphql",
-        "text": "{\"query\":\"mutation UserPayRateCreate($input: UserPayRateCreateInput!) {\\n  UserPayRateCreate(input: $input) {\\n    id\\n  }\\n}\",\"variables\":{\"input\":{\"startDate\":\"2022-02-12T00:00:00.000Z\",\"endDate\":\"2022-02-19T00:00:00.000Z\",\"amount\":38,\"user_id\":\"{% response 'body', 'req_bf0873093e7749b3a20f89522783a900', 'b64::JC5kYXRhLlVzZXJDcmVhdGUuaWQ=::46b', 'never', 60 %}\",\"project_id\":\"{% response 'body', 'req_031f86964d3f4b09aada9dfb951fc7dc', 'b64::JC5kYXRhLlByb2plY3RDcmVhdGUuaWQ=::46b', 'never', 60 %}\",\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\"}},\"operationName\":\"UserPayRateCreate\"}"
+        "text": "{\"query\":\"mutation UserPayRateCreate($input: UserPayRateCreateInput!) {\\n  UserPayRateCreate(input: $input) {\\n    id\\n  }\\n}\",\"variables\":{\"input\":{\"startDate\":\"2022-02-12T00:00:00.000Z\",\"endDate\":\"2022-02-19T00:00:00.000Z\",\"amount\":38,\"user_id\":\"3bada88a-da07-4600-a94c-6c476801d422\",\"project_id\":\"{% response 'body', 'req_031f86964d3f4b09aada9dfb951fc7dc', 'b64::JC5kYXRhLlByb2plY3RDcmVhdGUuaWQ=::46b', 'never', 60 %}\",\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\"}},\"operationName\":\"UserPayRateCreate\"}"
       },
       "created": 1651133818450,
       "description": "",
@@ -229,7 +229,7 @@
       "isPrivate": false,
       "metaSortKey": -1646649815946,
       "method": "POST",
-      "modified": 1653391809335,
+      "modified": 1654168931139,
       "name": "UserPayRateCreate",
       "parameters": [],
       "parentId": "fld_311d765bde2e477e8fb96735961b4bf5",
@@ -322,7 +322,7 @@
       "isPrivate": false,
       "metaSortKey": -1646649815946,
       "method": "POST",
-      "modified": 1653552651538,
+      "modified": 1654160304652,
       "name": "ClientCreate",
       "parameters": [],
       "parentId": "fld_b3fbec9fe515490584ed85e0b519e1fc",
@@ -589,111 +589,6 @@
       "_type": "request"
     },
     {
-      "_id": "req_718f9a2be37c44a980dedaa175ff71f6",
-      "authentication": {
-        "token": "{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLnRva2Vu::46b', 'never', 60 %}",
-        "type": "bearer"
-      },
-      "body": {
-        "mimeType": "application/graphql",
-        "text": "{\"query\":\"mutation InvitationCreate($input: InvitationCreateInput!) {\\n  InvitationCreate(input: $input) {\\n    id\\n    email\\n    token\\n    expiresIn\\n  }\\n}\",\"variables\":{\"input\":{\"email\":\"employee@yopmail.com\",\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\",\"role\":\"Employee\"}},\"operationName\":\"InvitationCreate\"}"
-      },
-      "created": 1648104156404,
-      "description": "",
-      "headers": [
-        { "id": "pair_5785fa0d281e4c5980ec45d40cc212a4", "name": "Content-Type", "value": "application/json" }
-      ],
-      "isPrivate": false,
-      "metaSortKey": -1646649815946,
-      "method": "POST",
-      "modified": 1649069815476,
-      "name": "InvitationCreate",
-      "parameters": [],
-      "parentId": "fld_fd02c436781e43ebb4c95c9a1a5ef46c",
-      "settingDisableRenderRequestBody": false,
-      "settingEncodeUrl": true,
-      "settingFollowRedirects": "global",
-      "settingRebuildPath": true,
-      "settingSendCookies": true,
-      "settingStoreCookies": true,
-      "url": "{{ api_url }}/{{ version }}/graphql",
-      "_type": "request"
-    },
-    {
-      "_id": "fld_fd02c436781e43ebb4c95c9a1a5ef46c",
-      "created": 1648104156381,
-      "description": "",
-      "environment": {},
-      "environmentPropertyOrder": null,
-      "metaSortKey": -1646074569567,
-      "modified": 1648104156381,
-      "name": "Invitation",
-      "parentId": "wrk_4360c7a0bbfa403c86be07deeb666c4c",
-      "_type": "request_group"
-    },
-    {
-      "_id": "req_261f0396c3f9493fbd79c98e5efe9205",
-      "authentication": {
-        "token": "{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLnRva2Vu::46b', 'never', 60 %}",
-        "type": "bearer"
-      },
-      "body": {
-        "mimeType": "application/graphql",
-        "text": "{\"query\":\"mutation InvitationRenew($input: InvitationRenewInput!) {\\n  InvitationRenew(input: $input) {\\n    id\\n    email\\n    token\\n    expiresIn\\n  }\\n}\",\"variables\":{\"input\":{\"id\":\"{% response 'body', 'req_718f9a2be37c44a980dedaa175ff71f6', 'b64::JC5kYXRhLkludml0YXRpb25DcmVhdGUuaWQ=::46b', 'never', 60 %}\"}},\"operationName\":\"InvitationRenew\"}"
-      },
-      "created": 1648461396633,
-      "description": "",
-      "headers": [
-        { "id": "pair_5785fa0d281e4c5980ec45d40cc212a4", "name": "Content-Type", "value": "application/json" }
-      ],
-      "isPrivate": false,
-      "metaSortKey": -1646590087557.6719,
-      "method": "POST",
-      "modified": 1648539100432,
-      "name": "InvitationRenew",
-      "parameters": [],
-      "parentId": "fld_fd02c436781e43ebb4c95c9a1a5ef46c",
-      "settingDisableRenderRequestBody": false,
-      "settingEncodeUrl": true,
-      "settingFollowRedirects": "global",
-      "settingRebuildPath": true,
-      "settingSendCookies": true,
-      "settingStoreCookies": true,
-      "url": "{{ api_url }}/{{ version }}/graphql",
-      "_type": "request"
-    },
-    {
-      "_id": "req_ef730fabcc63463d91b5daac31d18c07",
-      "authentication": {
-        "token": "{% response 'body', 'req_d1297130d87b4fc7a39459364a2323fb', 'b64::JC5kYXRhLkxvZ2luLnRva2Vu::46b', 'never', 60 %}",
-        "type": "bearer"
-      },
-      "body": {
-        "mimeType": "application/graphql",
-        "text": "{\"query\":\"query Invitations($input: InvitationQueryInput!) {\\n  Invitation(input: $input) {\\n    data {\\n      id\\n      email\\n      company {\\n        id\\n        companyCode\\n      }\\n      inviter {\\n        id\\n        email\\n      }\\n      \\n    }\\n  }\\n}\",\"variables\":{\"input\":{\"query\":{\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\"}}},\"operationName\":\"Invitations\"}"
-      },
-      "created": 1648104156478,
-      "description": "",
-      "headers": [
-        { "id": "pair_5785fa0d281e4c5980ec45d40cc212a4", "name": "Content-Type", "value": "application/json" }
-      ],
-      "isPrivate": false,
-      "metaSortKey": -1640931628378.5,
-      "method": "POST",
-      "modified": 1648538431823,
-      "name": "Invitations",
-      "parameters": [],
-      "parentId": "fld_fd02c436781e43ebb4c95c9a1a5ef46c",
-      "settingDisableRenderRequestBody": false,
-      "settingEncodeUrl": true,
-      "settingFollowRedirects": "global",
-      "settingRebuildPath": true,
-      "settingSendCookies": true,
-      "settingStoreCookies": true,
-      "url": "{{ api_url }}/{{ version }}/graphql",
-      "_type": "request"
-    },
-    {
       "_id": "req_5ea9ba7dedc942ddae9a7a3504f9c5c6",
       "authentication": {
         "token": "{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLnRva2Vu::46b', 'never', 60 %}",
@@ -909,7 +804,7 @@
       "isPrivate": false,
       "metaSortKey": -1646649815946,
       "method": "POST",
-      "modified": 1653983765945,
+      "modified": 1654254945118,
       "name": "UserCreate",
       "parameters": [],
       "parentId": "fld_9a7753c89a724a5ab6add918218e97ea",
@@ -973,7 +868,7 @@
       },
       "body": {
         "mimeType": "application/graphql",
-        "text": "{\"query\":\"mutation UserUpdate($input: UserUpdateInput!) {\\n  UserUpdate(input: $input) {\\n    id\\n    firstName\\n    lastName\\n    email\\n  }\\n}\",\"variables\":{\"input\":{\"id\":\"{% response 'body', 'req_bf0873093e7749b3a20f89522783a900', 'b64::JC5kYXRhLlVzZXJDcmVhdGUuaWQ=::46b', 'never', 60 %}\",\"firstName\":\"Jane Doe\"}},\"operationName\":\"UserUpdate\"}"
+        "text": "{\"query\":\"mutation UserUpdate($input: UserUpdateInput!) {\\n  UserUpdate(input: $input) {\\n    id\\n    firstName\\n    lastName\\n    email\\n  }\\n}\",\"variables\":{\"input\":{\"id\":\"2ecf1c7c-3379-4907-8490-f1fcbfb3abed\",\"firstName\":\"John\",\"lastName\":\"Doe\"}},\"operationName\":\"UserUpdate\"}"
       },
       "created": 1646814799716,
       "description": "",
@@ -983,7 +878,7 @@
       "isPrivate": false,
       "metaSortKey": -1642837690901,
       "method": "POST",
-      "modified": 1653983665116,
+      "modified": 1654160690441,
       "name": "UserUpdate",
       "parameters": [],
       "parentId": "fld_9a7753c89a724a5ab6add918218e97ea",
@@ -1076,7 +971,7 @@
       "isPrivate": false,
       "metaSortKey": -1640931628378.5,
       "method": "POST",
-      "modified": 1653541205495,
+      "modified": 1654168919276,
       "name": "User",
       "parameters": [],
       "parentId": "fld_9a7753c89a724a5ab6add918218e97ea",
@@ -1150,7 +1045,7 @@
       "isPrivate": false,
       "metaSortKey": -1646649815946,
       "method": "POST",
-      "modified": 1653552668329,
+      "modified": 1654160309035,
       "name": "ProjectCreate",
       "parameters": [],
       "parentId": "fld_fbe855c4a4d44dcd95c633c17718429c",
@@ -1212,7 +1107,7 @@
       "isPrivate": false,
       "metaSortKey": -1646649815996,
       "method": "POST",
-      "modified": 1652766938704,
+      "modified": 1654072481076,
       "name": "TimeEntry",
       "parameters": [],
       "parentId": "fld_4b51c186049444bb8c795b2ddc65239f",
@@ -1276,7 +1171,7 @@
       },
       "body": {
         "mimeType": "application/graphql",
-        "text": "{\"query\":\"mutation TimeEntryCreate($input: TimeEntryCreateInput!) {\\n  TimeEntryCreate(input: $input) {\\n    id\\n    startTime\\n    endTime\\n    duration\\n    task {\\n      id\\n      name\\n    }\\n\\t\\tproject{\\n\\t\\t\\tid\\n\\t\\t\\tname\\n\\t\\t}\\n\\t\\tcompany{\\n\\t\\t\\tid\\n\\t\\t\\tname\\n\\t\\t}\\n\\t\\tcreated_by\\n  }\\n}\\n\",\"variables\":{\"input\":{\"task_id\":\"{% response 'body', 'req_9161a44aa9394a7dae13cba1d1bb11e1', 'b64::JC5kYXRhLlRhc2tDcmVhdGUuaWQ=::46b', 'never', 60 %}\",\"clientLocation\":\"Lalitpur\",\"project_id\":\"{% response 'body', 'req_031f86964d3f4b09aada9dfb951fc7dc', 'b64::JC5kYXRhLlByb2plY3RDcmVhdGUuaWQ=::46b', 'never', 60 %}\",\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\",\"startTime\":\"2022-05-23T12:48:00\",\"endTime\":\"2022-05-23T12:59:03\"}},\"operationName\":\"TimeEntryCreate\"}"
+        "text": "{\"query\":\"mutation TimeEntryCreate($input: TimeEntryCreateInput!) {\\n  TimeEntryCreate(input: $input) {\\n    id\\n    startTime\\n    endTime\\n    duration\\n    task {\\n      id\\n      name\\n    }\\n\\t\\tproject{\\n\\t\\t\\tid\\n\\t\\t\\tname\\n\\t\\t}\\n\\t\\tcompany{\\n\\t\\t\\tid\\n\\t\\t\\tname\\n\\t\\t}\\n\\t\\tcreated_by\\n    timesheet {\\n      id\\n      weekStartDate\\n      weekEndDate\\n    }\\n  }\\n}\\n\",\"variables\":{\"input\":{\"task_id\":\"{% response 'body', 'req_9161a44aa9394a7dae13cba1d1bb11e1', 'b64::JC5kYXRhLlRhc2tDcmVhdGUuaWQ=::46b', 'never', 60 %}\",\"clientLocation\":\"Lalitpur\",\"project_id\":\"{% response 'body', 'req_031f86964d3f4b09aada9dfb951fc7dc', 'b64::JC5kYXRhLlByb2plY3RDcmVhdGUuaWQ=::46b', 'never', 60 %}\",\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\",\"startTime\":\"2022-06-03T16:23:00\",\"endTime\":\"2022-06-03T16:59:03\"}},\"operationName\":\"TimeEntryCreate\"}"
       },
       "created": 1650358353306,
       "description": "",
@@ -1286,8 +1181,39 @@
       "isPrivate": false,
       "metaSortKey": -1646649815946,
       "method": "POST",
-      "modified": 1653651275144,
+      "modified": 1654246893577,
       "name": "TimeEntryCreate",
+      "parameters": [],
+      "parentId": "fld_4b51c186049444bb8c795b2ddc65239f",
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingFollowRedirects": "global",
+      "settingRebuildPath": true,
+      "settingSendCookies": true,
+      "settingStoreCookies": true,
+      "url": "{{ api_url }}/{{ version }}/graphql",
+      "_type": "request"
+    },
+    {
+      "_id": "req_2c4c95f491984d8287c751ea695e2a16",
+      "authentication": {
+        "token": "{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLnRva2Vu::46b', 'never', 60 %}",
+        "type": "bearer"
+      },
+      "body": {
+        "mimeType": "application/graphql",
+        "text": "{\"query\":\"mutation TimeEntryApproveReject($input: TimeEntryApproveRejectInput!) {\\n  TimeEntriesApproveReject(input: $input)\\n}\\n\",\"variables\":{\"input\":{\"ids\":[\"91b6345f-2a29-4e43-9eca-6cbbcc601874\"],\"approvalStatus\":\"Approved\",\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\"}},\"operationName\":\"TimeEntryApproveReject\"}"
+      },
+      "created": 1654055495711,
+      "description": "",
+      "headers": [
+        { "id": "pair_5785fa0d281e4c5980ec45d40cc212a4", "name": "Content-Type", "value": "application/json" }
+      ],
+      "isPrivate": false,
+      "metaSortKey": -1646646082921.7295,
+      "method": "POST",
+      "modified": 1654161016259,
+      "name": "TimeEntryApproveReject",
       "parameters": [],
       "parentId": "fld_4b51c186049444bb8c795b2ddc65239f",
       "settingDisableRenderRequestBody": false,
@@ -1317,39 +1243,8 @@
       "isPrivate": false,
       "metaSortKey": -1646634883848.918,
       "method": "POST",
-      "modified": 1652184043662,
+      "modified": 1654080450744,
       "name": "TimeEntryUpdate",
-      "parameters": [],
-      "parentId": "fld_4b51c186049444bb8c795b2ddc65239f",
-      "settingDisableRenderRequestBody": false,
-      "settingEncodeUrl": true,
-      "settingFollowRedirects": "global",
-      "settingRebuildPath": true,
-      "settingSendCookies": true,
-      "settingStoreCookies": true,
-      "url": "{{ api_url }}/{{ version }}/graphql",
-      "_type": "request"
-    },
-    {
-      "_id": "req_b9a21c3f5a0541d581629e964af040f5",
-      "authentication": {
-        "token": "{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLnRva2Vu::46b', 'never', 60 %}",
-        "type": "bearer"
-      },
-      "body": {
-        "mimeType": "application/graphql",
-        "text": "{\"query\":\"mutation TimeEntryStop($input: TimeEntryStopInput!) {\\n  TimeEntryStop(input: $input) {\\n    id\\n    startTime\\n    endTime\\n    duration\\n  }\\n}\",\"variables\":{\"input\":{\"id\":\"{% response 'body', 'req_073074e16d8b483b92800d6916c33625', 'b64::JC5kYXRhLlRpbWVFbnRyeUNyZWF0ZS5pZA==::46b', 'never', 60 %}\",\"company_id\":\"{% response 'body', 'req_031f86964d3f4b09aada9dfb951fc7dc', 'b64::JC5kYXRhLlByb2plY3RDcmVhdGUuY29tcGFueS5pZA==::46b', 'never', 60 %}\",\"endTime\":\"2022-05-05T16:54:38\"}},\"operationName\":\"TimeEntryStop\"}"
-      },
-      "created": 1651745824669,
-      "description": "",
-      "headers": [
-        { "id": "pair_5785fa0d281e4c5980ec45d40cc212a4", "name": "Content-Type", "value": "application/json" }
-      ],
-      "isPrivate": false,
-      "metaSortKey": -1646634883823.918,
-      "method": "POST",
-      "modified": 1652169926882,
-      "name": "TimeEntryStop",
       "parameters": [],
       "parentId": "fld_4b51c186049444bb8c795b2ddc65239f",
       "settingDisableRenderRequestBody": false,
@@ -1379,7 +1274,7 @@
       "isPrivate": false,
       "metaSortKey": -1646634883798.918,
       "method": "POST",
-      "modified": 1652180447552,
+      "modified": 1654160359101,
       "name": "TimeEntryDelete",
       "parameters": [],
       "parentId": "fld_4b51c186049444bb8c795b2ddc65239f",
@@ -1400,7 +1295,7 @@
       },
       "body": {
         "mimeType": "application/graphql",
-        "text": "{\"query\":\"query Timesheet($input: TimesheetQueryInput!) {\\n  Timesheet(input: $input) {\\n    paging {\\n      total\\n      startIndex\\n      endIndex\\n      hasNextPage\\n    }\\n    data {\\n      id\\n      weekStartDate\\n      weekEndDate\\n      totalExpense\\n      duration\\n      durationFormat\\n      \\n      user {\\n        id\\n        email\\n      }\\n      client {\\n        id\\n        name\\n      }\\n      company {\\n        id\\n        name\\n      }\\n    }\\n  }\\n}\\n\",\"variables\":{\"input\":{\"paging\":{\"order\":[\"weekStartDate:DESC\"]},\"query\":{\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\"}}},\"operationName\":\"Timesheet\"}"
+        "text": "{\"query\":\"query Timesheet($input: TimesheetQueryInput!) {\\n  Timesheet(input: $input) {\\n    paging {\\n      total\\n      startIndex\\n      endIndex\\n      hasNextPage\\n    }\\n    data {\\n      id\\n      weekStartDate\\n      weekEndDate\\n      totalExpense\\n      duration\\n      durationFormat\\n      \\n      user {\\n        id\\n        email\\n      }\\n      client {\\n        id\\n        name\\n      }\\n      company {\\n        id\\n        name\\n      }\\n    }\\n  }\\n}\\n\\n\",\"variables\":{\"input\":{\"paging\":{\"order\":[\"weekStartDate:DESC\"]},\"query\":{\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\"}}},\"operationName\":\"Timesheet\"}"
       },
       "created": 1652180462185,
       "description": "",
@@ -1410,7 +1305,7 @@
       "isPrivate": false,
       "metaSortKey": -1646649815996,
       "method": "POST",
-      "modified": 1653468118885,
+      "modified": 1654249827998,
       "name": "Timesheet",
       "parameters": [],
       "parentId": "fld_35043879d48b4bc9b5c1c3627c471e10",
@@ -1443,7 +1338,7 @@
       },
       "body": {
         "mimeType": "application/graphql",
-        "text": "{\"query\":\"query Timesheet($input: TimesheetQueryInput!) {\\n  Timesheet(input: $input) {\\n    paging {\\n      total\\n      startIndex\\n      endIndex\\n      hasNextPage\\n    }\\n    data {\\n      id\\n      weekStartDate\\n      weekEndDate\\n      totalExpense\\n      duration\\n      durationFormat\\n      \\n      user {\\n        id\\n        email\\n      }\\n      client {\\n        id\\n        name\\n      }\\n      company {\\n        id\\n        name\\n      }\\n      projectItems {\\n        project_id\\n        totalDuration\\n        totalExpense\\n        hourlyRate\\n      }\\n      durationMap\\n      timeEntries {\\n        id\\n        startTime\\n        endTime\\n        duration\\n      }\\n    }\\n  }\\n}\\n\",\"variables\":{\"input\":{\"paging\":{\"order\":[\"weekStartDate:DESC\"]},\"query\":{\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\",\"id\":\"f4f72837-bffd-4613-ac89-ed4dde5617dd\"}}},\"operationName\":\"Timesheet\"}"
+        "text": "{\"query\":\"query Timesheet($input: TimesheetQueryInput!) {\\n  Timesheet(input: $input) {\\n    paging {\\n      total\\n      startIndex\\n      endIndex\\n      hasNextPage\\n    }\\n    data {\\n      id\\n      weekStartDate\\n      weekEndDate\\n      totalExpense\\n      duration\\n      durationFormat\\n      \\n      user {\\n        id\\n        email\\n      }\\n      client {\\n        id\\n        name\\n      }\\n      company {\\n        id\\n        name\\n      }\\n      projectItems {\\n        project_id\\n        totalDuration\\n        totalExpense\\n        hourlyRate\\n      }\\n      durationMap\\n      entriesGroup {\\n        byInvoice {\\n          invoice_id\\n          entries {\\n            ...timeEntry\\n          }\\n        }\\n        byStatus {\\n          approvalStatus\\n          entries {\\n            ...timeEntry\\n          }\\n        }\\n      }\\n\\n    }\\n  }\\n}\\n\\nfragment timeEntry on TimeEntry {\\n  id\\n  startTime\\n  endTime\\n  duration\\n  approvalStatus\\n}\",\"variables\":{\"input\":{\"paging\":{\"order\":[\"weekStartDate:DESC\"]},\"query\":{\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\",\"id\":\"9cb313ed-308e-4561-a8ec-8ed81f2d1bcd\"}}},\"operationName\":\"Timesheet\"}"
       },
       "created": 1653468110415,
       "description": "",
@@ -1453,7 +1348,7 @@
       "isPrivate": false,
       "metaSortKey": -1646649815989.75,
       "method": "POST",
-      "modified": 1653557672703,
+      "modified": 1654249838066,
       "name": "TimesheetById",
       "parameters": [],
       "parentId": "fld_35043879d48b4bc9b5c1c3627c471e10",
@@ -1672,7 +1567,7 @@
       },
       "body": {
         "mimeType": "application/graphql",
-        "text": "{\"query\":\"mutation TaskCreate($input: TaskCreateInput!) {\\n  TaskCreate(input: $input) {\\n    id\\n    name\\n\\t\\t\\n  }\\n}\",\"variables\":{\"input\":{\"name\":\"Ace\",\"status\":\"Active\",\"manager_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmlk::46b', 'never', 60 %}\",\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\",\"project_id\":\"{% response 'body', 'req_031f86964d3f4b09aada9dfb951fc7dc', 'b64::JC5kYXRhLlByb2plY3RDcmVhdGUuaWQ=::46b', 'never', 60 %}\",\"attachment_ids\":[\"8c1814f1-1fa8-4edd-907d-99b66d3cd209\",\"d4680a32-0250-4476-8798-c533acba3754\",\"5d0fec35-4aa6-40ae-a6be-93893e045222\"]}},\"operationName\":\"TaskCreate\"}"
+        "text": "{\"query\":\"mutation TaskCreate($input: TaskCreateInput!) {\\n  TaskCreate(input: $input) {\\n    id\\n    name\\n\\t\\t\\n  }\\n}\",\"variables\":{\"input\":{\"name\":\"Task 4\",\"status\":\"Scheduled\",\"manager_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmlk::46b', 'never', 60 %}\",\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\",\"project_id\":\"{% response 'body', 'req_031f86964d3f4b09aada9dfb951fc7dc', 'b64::JC5kYXRhLlByb2plY3RDcmVhdGUuaWQ=::46b', 'never', 60 %}\",\"attachment_ids\":[\"8c1814f1-1fa8-4edd-907d-99b66d3cd209\",\"d4680a32-0250-4476-8798-c533acba3754\",\"5d0fec35-4aa6-40ae-a6be-93893e045222\"]}},\"operationName\":\"TaskCreate\"}"
       },
       "created": 1648548425777,
       "description": "",
@@ -1682,7 +1577,7 @@
       "isPrivate": false,
       "metaSortKey": -1646649815946,
       "method": "POST",
-      "modified": 1653897166959,
+      "modified": 1654230357282,
       "name": "TaskCreate",
       "parameters": [],
       "parentId": "fld_2f7c9f73ae9c4db6994b3a0ec37ef915",
@@ -1756,7 +1651,7 @@
       "isPrivate": false,
       "metaSortKey": -1642837690876,
       "method": "POST",
-      "modified": 1649234597053,
+      "modified": 1654160355643,
       "name": "TaskDelete",
       "parameters": [],
       "parentId": "fld_2f7c9f73ae9c4db6994b3a0ec37ef915",
@@ -1787,7 +1682,7 @@
       "isPrivate": false,
       "metaSortKey": -1642837690851,
       "method": "POST",
-      "modified": 1653982230830,
+      "modified": 1654081473271,
       "name": "Task",
       "parameters": [],
       "parentId": "fld_2f7c9f73ae9c4db6994b3a0ec37ef915",
@@ -2063,7 +1958,7 @@
       "isPrivate": false,
       "metaSortKey": -1646410902392.6875,
       "method": "POST",
-      "modified": 1653984515950,
+      "modified": 1654253695517,
       "name": "Login",
       "parameters": [],
       "parentId": "fld_e864bd8433684c93a335724143ac8a23",
@@ -2135,19 +2030,19 @@
         {
           "creation": "2022-03-16T07:43:51.090Z",
           "domain": "localhost",
-          "expires": "2022-06-07T07:55:41.000Z",
+          "expires": "2022-06-10T10:54:54.000Z",
           "hostOnly": true,
           "httpOnly": true,
-          "id": "7049027631142795",
+          "id": "9089203509113826",
           "key": "refreshToken",
-          "lastAccessed": "2022-05-31T07:55:41.037Z",
+          "lastAccessed": "2022-06-03T10:54:54.059Z",
           "maxAge": 604800,
           "path": "/",
-          "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImJmZjMzYWQwLTcxODEtNDE5MC1iZTViLThiYTZlYjgwMzgxMyIsInJvbGVzIjpbImYyZWNlNWU3LTlhNmEtNGExYS1hZWIxLTNmMTNjZjBjYmIzZiJdLCJpYXQiOjE2NTM5ODM3NDEsImV4cCI6MTY1NDU4ODU0MX0.NcPY8Sf0gFqSx3AKHoaa71WVcVyE6d4h-YVmfBjRciU"
+          "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQxYmZhZGExLTI2ZTMtNGNkOC1iYzU3LTcwZmI2NDBiNTM4ZiIsInJvbGVzIjpbIjcyMWI4NjhhLWE4M2ItNGMzZC1hNzVlLWUwNzU5Y2JmODc2YSJdLCJpYXQiOjE2NTQyNTM2OTQsImV4cCI6MTY1NDg1ODQ5NH0.YYR-76A-D1gvkoYqiO1rjj87xHB2hr-ZKYb-Bvllelo"
         }
       ],
       "created": 1646649800465,
-      "modified": 1653983741038,
+      "modified": 1654253694059,
       "name": "Default Jar",
       "parentId": "wrk_4360c7a0bbfa403c86be07deeb666c4c",
       "_type": "cookie_jar"
@@ -2199,14 +2094,14 @@
       "created": 1647333407999,
       "data": {
         "api_url": "http://localhost:8080",
-        "email": "manager@admin.com",
+        "email": "manager@user.com",
         "password": "password",
         "version": "v1"
       },
       "dataPropertyOrder": { "&": ["api_url", "version", "email", "password"] },
       "isPrivate": false,
       "metaSortKey": 1646649833393,
-      "modified": 1652341351842,
+      "modified": 1654069927356,
       "name": "Local(Manager)",
       "parentId": "env_2121b271f08ea9ff6a364be633b863d913907d01",
       "_type": "environment"
