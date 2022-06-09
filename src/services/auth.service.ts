@@ -25,6 +25,8 @@ import {
   IForgotPasswordResponse,
   IInvitationRegisterInput,
   IInvitationRegisterResponse,
+  IChangePasswordInput,
+  IChangePasswordResponse,
 } from '../interfaces/auth.interface';
 import {
   IEmailService,
@@ -322,6 +324,31 @@ export default class AuthService implements IAuthService {
       } else {
         throw new NotAuthenticatedError({ details: [strings.tokenInvalid] });
       }
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  changePassword = async (args: IChangePasswordInput): Promise<IChangePasswordResponse> => {
+    try {
+      const user_id = args.user_id;
+      const oldPassword = args.oldPassword;
+      const newPassword = args.newPassword;
+
+      let user = await this.userRepository.getById({ id: user_id });
+
+      let compare;
+      if (user) {
+        compare = await this.hashService.compare(oldPassword, user?.password);
+        if (compare) {
+          await this.userRepository.update({ id: user.id, password: newPassword });
+        } else {
+          throw new ValidationError({ details: ['You enter the wrong old password'] });
+        }
+      }
+      return {
+        message: 'Password changed sucessfully',
+      };
     } catch (err) {
       throw err;
     }

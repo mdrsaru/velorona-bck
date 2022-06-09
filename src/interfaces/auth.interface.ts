@@ -23,6 +23,12 @@ export interface IResetPasswordInput {
   token?: any;
   password: string;
 }
+
+export interface IChangePasswordInput {
+  user_id: string;
+  oldPassword: string;
+  newPassword: string;
+}
 export interface ILoginResponse {
   id: string;
   token: string;
@@ -44,6 +50,9 @@ export interface IResetPasswordResponse {
   message: string;
 }
 
+export interface IChangePasswordResponse {
+  message: string;
+}
 export interface IInvitationRegisterInput {
   token: string;
   password: string;
@@ -62,6 +71,7 @@ export interface IAuthService {
   login(args: ILoginInput): Promise<ILoginResponse>;
   forgotPassword(args: IForgotPasswordInput): Promise<IForgotPasswordResponse>;
   resetPassword(args: IResetPasswordInput): Promise<IResetPasswordResponse>;
+  changePassword(args: IChangePasswordInput): Promise<IChangePasswordResponse>;
   renewAccessToken(refreshToken: string): Promise<ILoginResponse>;
   logout(refreshToken: string): Promise<boolean>;
   registerWithInvitation(args: IInvitationRegisterInput): Promise<IInvitationRegisterResponse>;
