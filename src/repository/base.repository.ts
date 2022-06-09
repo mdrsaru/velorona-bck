@@ -71,9 +71,13 @@ export default class BaseRepository<T> implements IBaseRepository<T> {
 
   async getById(args: IEntityID): Promise<T | undefined> {
     try {
+      const select = (args.select ?? []) as (keyof T)[];
+
       const row = await this.repo.findOne(args.id, {
         relations: args?.relations ?? [],
+        ...(select?.length && { select }),
       });
+
       return row;
     } catch (err) {
       throw err;

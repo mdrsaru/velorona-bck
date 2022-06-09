@@ -24,6 +24,7 @@ export interface ITimeEntry {
   creator: User;
   task?: Task;
   approvalStatus: TimeEntryApprovalStatus;
+  hourlyRate: number;
   timesheet_id?: string;
   createdAt: Date;
   updatedAt: Date;
@@ -81,14 +82,21 @@ export interface ITimeEntryTotalDurationInput {
   startTime: string;
   endTime: string;
   project_id?: string;
+  invoiced?: boolean;
+  timesheet_id?: string;
 }
 
+/**
+ * Total expense for invoiced/all_time_entries
+ */
 export interface IUserTotalExpenseInput {
   company_id: string;
   user_id: string;
   client_id: string;
   startTime: string;
   endTime: string;
+  timesheet_id?: string;
+  invoiced?: boolean;
 }
 
 export interface ITimeEntryActiveInput {

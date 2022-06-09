@@ -133,6 +133,7 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
       const isSubmitted = args.isSubmitted;
       const lastSubmittedAt = args.lastSubmittedAt;
       const approver_id = args.approver_id;
+      const invoicedDuration = args.invoicedDuration;
 
       const errors: string[] = [];
 
@@ -172,6 +173,7 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
         isSubmitted,
         approver_id,
         lastSubmittedAt,
+        invoicedDuration,
       });
 
       let timesheet = await this.repo.save(update);

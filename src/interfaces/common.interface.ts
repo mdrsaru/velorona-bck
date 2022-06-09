@@ -7,6 +7,7 @@ export type Maybe<T> = T | undefined;
 export interface IEntityID {
   id: string;
   relations?: string[];
+  select?: string[];
 }
 
 export interface IEntityRemove extends IEntityID {}

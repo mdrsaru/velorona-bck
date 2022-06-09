@@ -35,6 +35,7 @@ export const timeEntry = {
   approval_status: 'approval_status',
   approver_id: 'approver_id',
   timesheet_id: 'timesheet_id',
+  hourly_rate: 'hourly_rate',
 };
 
 export const timesheet = {
@@ -49,6 +50,7 @@ export const timesheet = {
   last_approved_at: 'last_approved_at',
   is_submitted: 'is_submitted',
   last_submitted_at: 'last_submitted_at',
+  invoiced_duration: 'invoiced_duration',
 };
 
 export const usersClients = {

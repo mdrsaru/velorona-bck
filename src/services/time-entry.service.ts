@@ -326,13 +326,13 @@ export default class TimeEntryService implements ITimeEntryService {
       });
       const totalTimeInHours = totalTimeInSeconds / 3600;
 
-      const totalExpense = await this.timeEntryRepository.getUserTotalExpense({
-        company_id,
-        user_id,
-        client_id,
-        startTime: startDate.format('YYYY-MM-DDTHH:mm:ss'),
-        endTime: endDate.format('YYYY-MM-DDTHH:mm:ss'),
-      });
+      //const totalExpense = await this.timeEntryRepository.getUserTotalExpense({
+      //company_id,
+      //user_id,
+      //client_id,
+      //startTime: startDate.format('YYYY-MM-DDTHH:mm:ss'),
+      //endTime: endDate.format('YYYY-MM-DDTHH:mm:ss'),
+      //});
 
       const weekStartDate = startDate.format('YYYY-MM-DD');
       const weekEndDate = endDate.format('YYYY-MM-DD');
@@ -361,7 +361,7 @@ export default class TimeEntryService implements ITimeEntryService {
         const timesheet = await this.timesheetRepository.update({
           id,
           duration: totalTimeInSeconds,
-          totalExpense,
+          //totalExpense,
         });
         return timesheet;
       } else {
@@ -369,7 +369,7 @@ export default class TimeEntryService implements ITimeEntryService {
           weekStartDate,
           weekEndDate,
           duration: totalTimeInSeconds,
-          totalExpense,
+          //totalExpense,
           status: TimeEntryApprovalStatus.Pending,
           user_id,
           client_id,
