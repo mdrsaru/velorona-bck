@@ -78,6 +78,21 @@ export default class Timesheet extends Base {
   @Column({ name: timesheet.total_expense, type: 'float', nullable: true })
   totalExpense: number;
 
+  @Field({
+    nullable: true,
+    description: 'Total duration for the invoiced time entries',
+  })
+  @Column({
+    name: timesheet.invoiced_duration,
+    type: 'int',
+    nullable: true,
+    default: 0,
+  })
+  invoicedDuration: number;
+
+  @Field({ nullable: true, description: 'Invoiced duration format in HH:mm:ss' })
+  invoicedDurationFormat: string;
+
   @Field((type) => TimeEntryApprovalStatus)
   @Column({
     type: 'varchar',

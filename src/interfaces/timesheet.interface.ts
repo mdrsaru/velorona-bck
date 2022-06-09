@@ -16,6 +16,7 @@ export interface ITimesheet {
   weekEndDate: string;
   duration: number;
   totalExpense: number;
+  invoicedDuration: number;
   status: TimeEntryApprovalStatus;
   user_id: string;
   client_id: string;
@@ -36,7 +37,7 @@ export interface ITimesheetCreateInput {
   weekStartDate: ITimesheet['weekStartDate'];
   weekEndDate: ITimesheet['weekEndDate'];
   duration: ITimesheet['duration'];
-  totalExpense: ITimesheet['totalExpense'];
+  totalExpense?: ITimesheet['totalExpense'];
   status?: ITimesheet['status'];
   user_id: ITimesheet['user_id'];
   client_id: ITimesheet['client_id'];
@@ -61,6 +62,7 @@ export interface ITimesheetUpdateInput {
   id: ITimesheet['id'];
   duration?: ITimesheet['duration'];
   totalExpense?: ITimesheet['totalExpense'];
+  invoicedDuration?: ITimesheet['invoicedDuration'];
   status?: ITimesheet['status'];
   approver_id?: ITimesheet['approver_id'];
   lastApprovedAt?: ITimesheet['lastApprovedAt'];

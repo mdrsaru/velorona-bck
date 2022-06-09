@@ -141,27 +141,16 @@ export class TimesheetResolver {
   @FieldResolver()
   durationFormat(@Root() root: Timesheet) {
     if (root.duration) {
-      const hours = Math.floor(root.duration / 3600);
-      const mins = Math.floor((root.duration % 3600) / 60);
-      const seconds = Math.floor((root.duration % 3600) % 60);
+      return formatDuration(root.duration);
+    }
 
-      let _hours = hours + '';
-      let _mins = mins + '';
-      let _seconds = seconds + '';
+    return null;
+  }
 
-      if (hours < 10) {
-        _hours = '0' + hours;
-      }
-
-      if (mins < 10) {
-        _mins = '0' + mins;
-      }
-
-      if (seconds < 10) {
-        _seconds = '0' + seconds;
-      }
-
-      return `${_hours}:${_mins}:${_seconds}`;
+  @FieldResolver()
+  invoicedDurationFormat(@Root() root: Timesheet) {
+    if (root.duration) {
+      return formatDuration(root.invoicedDuration);
     }
 
     return null;
@@ -354,4 +343,28 @@ function groupTimeEntriesByStatusInvoice(entries: TimeEntry[]) {
     byInvoice,
     byStatus,
   };
+}
+
+function formatDuration(duration: number) {
+  const hours = Math.floor(duration / 3600);
+  const mins = Math.floor((duration % 3600) / 60);
+  const seconds = Math.floor((duration % 3600) % 60);
+
+  let _hours = hours + '';
+  let _mins = mins + '';
+  let _seconds = seconds + '';
+
+  if (hours < 10) {
+    _hours = '0' + hours;
+  }
+
+  if (mins < 10) {
+    _mins = '0' + mins;
+  }
+
+  if (seconds < 10) {
+    _seconds = '0' + seconds;
+  }
+
+  return `${_hours}:${_mins}:${_seconds}`;
 }

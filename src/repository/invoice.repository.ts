@@ -13,6 +13,7 @@ import strings from '../config/strings';
 import Invoice from '../entities/invoice.entity';
 import BaseRepository from './base.repository';
 import * as apiError from '../utils/api-error';
+import { timesheet as timesheetColumns } from '../config/db/columns';
 
 import {
   IInvoice,
@@ -28,6 +29,7 @@ import {
   IInvoiceItemUpdateInput,
 } from '../interfaces/invoice-item.interface';
 import { ITimeEntryRepository } from '../interfaces/time-entry.interface';
+import { ITimesheetRepository } from '../interfaces/timesheet.interface';
 
 @injectable()
 export default class InvoiceRepository extends BaseRepository<Invoice> implements IInvoiceRepository {
@@ -35,18 +37,21 @@ export default class InvoiceRepository extends BaseRepository<Invoice> implement
   private companyRepository: ICompanyRepository;
   private invoiceItemRepository: IInvoiceItemRepository;
   private timeEntryRepository: ITimeEntryRepository;
+  private timesheetRepository: ITimesheetRepository;
 
   constructor(
     @inject(TYPES.ClientRepository) _clientRepository: IClientRepository,
     @inject(TYPES.CompanyRepository) _companyRepository: ICompanyRepository,
     @inject(TYPES.InvoiceItemRepository) _invoiceItemRepository: IInvoiceItemRepository,
-    @inject(TYPES.TimeEntryRepository) _timeEntryRepository: ITimeEntryRepository
+    @inject(TYPES.TimeEntryRepository) _timeEntryRepository: ITimeEntryRepository,
+    @inject(TYPES.TimesheetRepository) _timesheetRepository: ITimesheetRepository
   ) {
     super(getRepository(Invoice));
     this.clientRepository = _clientRepository;
     this.companyRepository = _companyRepository;
     this.invoiceItemRepository = _invoiceItemRepository;
     this.timeEntryRepository = _timeEntryRepository;
+    this.timesheetRepository = _timesheetRepository;
   }
 
   create = async (args: IInvoiceCreateInput): Promise<Invoice> => {
@@ -132,11 +137,50 @@ export default class InvoiceRepository extends BaseRepository<Invoice> implement
         items,
       });
 
+      /**
+       * As invoice is generated for particular timesheet, need to mark all the time entries with the invoice_id
+       */
       if (timesheet_id) {
         await this.timeEntryRepository.markApprovedTimeEntriesWithInvoice({
           timesheet_id,
           invoice_id: invoice.id,
         });
+
+        const timesheet = await this.timesheetRepository.getById({
+          id: timesheet_id,
+          select: ['weekStartDate', 'weekEndDate', 'user_id'],
+        });
+
+        // Update timesheet total expense and total invoiced hours
+        if (timesheet) {
+          const startTime = timesheet.weekStartDate + ' 00:00:00';
+          const endTime = timesheet.weekEndDate + ' 00:00:00';
+
+          const totalExpense = await this.timeEntryRepository.getUserTotalExpense({
+            company_id,
+            user_id: timesheet.user_id,
+            client_id,
+            startTime,
+            endTime,
+            timesheet_id,
+            invoiced: true,
+          });
+
+          const invoicedDuration = await this.timeEntryRepository.getTotalTimeInSeconds({
+            company_id,
+            user_id: timesheet.user_id,
+            startTime,
+            endTime,
+            invoiced: true,
+            timesheet_id,
+          });
+
+          await this.timesheetRepository.update({
+            id: timesheet_id,
+            totalExpense,
+            invoicedDuration,
+          });
+        }
       }
 
       return invoice;

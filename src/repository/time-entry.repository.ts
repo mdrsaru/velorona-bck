@@ -21,6 +21,7 @@ import BaseRepository from './base.repository';
 import { ICompanyRepository } from '../interfaces/company.interface';
 import { IProjectRepository } from '../interfaces/project.interface';
 import { ITaskRepository } from '../interfaces/task.interface';
+import { IUserPayRateRepository } from '../interfaces/user-payrate.interface';
 import {
   ITimeEntryCreateInput,
   ITimeEntryRepository,
@@ -51,19 +52,22 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
   private companyRepository: ICompanyRepository;
   private projectRepository: IProjectRepository;
   private taskRepository: ITaskRepository;
+  private userPayRateRepository: IUserPayRateRepository;
   private manager: EntityManager;
 
   constructor(
     @inject(TYPES.CompanyRepository) _companyRepository: ICompanyRepository,
     @inject(TYPES.ProjectRepository) _projectRepository: IProjectRepository,
     @inject(TYPES.UserRepository) userRepository: IUserRepository,
-    @inject(TYPES.TaskRepository) _taskRepository: ITaskRepository
+    @inject(TYPES.TaskRepository) _taskRepository: ITaskRepository,
+    @inject(TYPES.UserPayRateRepository) _userPayRateRepository: IUserPayRateRepository
   ) {
     super(getRepository(TimeEntry));
     this.userRepository = userRepository;
     this.projectRepository = _projectRepository;
     this.companyRepository = _companyRepository;
     this.taskRepository = _taskRepository;
+    this.userPayRateRepository = _userPayRateRepository;
     this.manager = getManager();
   }
 
@@ -191,6 +195,7 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
       const company_id = args.company_id;
       const project_id = args.project_id;
       const created_by = args.user_id;
+      const invoiced = args.invoiced ?? false;
       const errors: string[] = [];
 
       if (isNil(startTime) || isEmpty(startTime)) {
@@ -215,6 +220,10 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
         query.andWhere('project_id = :project_id', { project_id });
       }
 
+      if (invoiced) {
+        query.andWhere('invoice_id IS NOT NULL');
+      }
+
       const { totalTime } = await query.getRawOne();
 
       return totalTime ?? 0;
@@ -230,17 +239,29 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
       const company_id = args.company_id;
       const user_id = args.user_id;
       const client_id = args.client_id;
+      const timesheet_id = args.timesheet_id;
+      const invoiced = args.invoiced || false;
+
+      let where = ` WHERE t.${timeEntry.start_time} >= $1 AND t.${timeEntry.start_time} <= $2 AND t.${timeEntry.company_id} = $3 AND t.${timeEntry.created_by} = $4 AND p.client_id = $5`;
+      const parameters = [startTime, endTime, company_id, user_id, client_id];
+      if (timesheet_id) {
+        where += ` AND t.${timeEntry.timesheet_id} = $6`;
+        parameters.push(timesheet_id);
+      }
+
+      if (invoiced) {
+        where += ` AND t.${timeEntry.invoice_id} IS NOT NULL`;
+      }
 
       const queryResult = await this.manager.query(
-        `WITH cte_time_entry_payrate as (
-          SELECT t.${timeEntry.duration}, up.${userPayRate.amount}, ((t.${timeEntry.duration}::numeric / 3600) * up.${userPayRate.amount}) AS expense FROM ${entities.timeEntry} as t 
-          LEFT JOIN ${entities.userPayRate} AS up ON t.${timeEntry.project_id} = up.${userPayRate.project_id}
-          JOIN ${entities.projects} as p on up.${userPayRate.project_id} = p.id
-          WHERE t.${timeEntry.start_time} >= $1 AND t.${timeEntry.start_time} <= $2 AND t.${timeEntry.company_id} = $3 AND t.${timeEntry.created_by} = $4 AND up.${userPayRate.user_id} = $4 AND p.client_id = $5
+        `WITH cte_time_entry_rate as (
+          SELECT t.${timeEntry.duration}, t.${timeEntry.hourly_rate}, ((t.${timeEntry.duration}::numeric / 3600) * t.${timeEntry.hourly_rate}) AS expense FROM ${entities.timeEntry} as t 
+          JOIN ${entities.projects} as p on t.${timeEntry.project_id} = p.id
+          ${where}
         )
-        SELECT ROUND(SUM(expense)::numeric, 2) AS total_expense FROM cte_time_entry_payrate;
+        SELECT ROUND(SUM(expense)::numeric, 2) AS total_expense FROM cte_time_entry_rate;
         `,
-        [startTime, endTime, company_id, user_id, client_id]
+        parameters
       );
 
       return queryResult?.[0]?.total_expense ?? 0;
@@ -339,6 +360,15 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
         duration = endDate.diff(startDate, 'seconds');
       }
 
+      const payRate = await this.userPayRateRepository.getAll({
+        query: {
+          project_id,
+          user_id: created_by,
+        },
+      });
+
+      const hourlyRate = payRate?.[0]?.amount ?? 0;
+
       const timeEntry = await this.repo.save({
         startTime,
         endTime,
@@ -348,6 +378,7 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
         company_id,
         created_by,
         task_id,
+        hourlyRate,
       });
 
       return timeEntry;

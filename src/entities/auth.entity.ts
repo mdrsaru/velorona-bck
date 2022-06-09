@@ -91,33 +91,3 @@ export class ChangePasswordResponse {
   @Field()
   message: string;
 }
-
-@InputType()
-export class InvitationRegisterInput {
-  @Field()
-  token: string;
-
-  @Field()
-  password: string;
-
-  @Field()
-  firstName: string;
-
-  @Field()
-  lastName: string;
-
-  @Field({ nullable: true })
-  middleName: string;
-
-  @Field()
-  phone: string;
-
-  @Field((type) => AddressCreateInput)
-  address: AddressCreateInput;
-}
-
-@ObjectType()
-export class InvitationRegisterResponse {
-  @Field()
-  id: string;
-}

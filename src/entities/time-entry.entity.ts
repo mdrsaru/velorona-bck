@@ -119,6 +119,14 @@ export default class TimeEntry extends Base {
   @ManyToOne(() => Timesheet)
   @JoinColumn({ name: timeEntry.timesheet_id })
   timesheet: Timesheet;
+
+  @Field()
+  @Column({
+    type: 'float',
+    name: timeEntry.hourly_rate,
+    default: 0,
+  })
+  hourlyRate: number;
 }
 
 @ObjectType()
