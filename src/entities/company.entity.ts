@@ -1,4 +1,4 @@
-import { Entity, Column, OneToMany, OneToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, OneToMany, OneToOne, JoinColumn, Index } from 'typeorm';
 import { ObjectType, Field, ID, InputType, registerEnumType } from 'type-graphql';
 
 import { Base } from './base.entity';
@@ -12,25 +12,30 @@ registerEnumType(CompanyStatus, {
   name: 'CompanyStatus',
 });
 
+const indexPrefix = 'companies';
+
 @Entity({ name: entities.companies })
 @ObjectType()
 export default class Company extends Base {
   @Field()
   @Column()
   name: string;
+
+  @Index(`${indexPrefix}_status`)
   @Field((type) => CompanyStatus)
   @Field((type) => CompanyStatus)
   @Column({
-    type: 'enum',
-    enum: CompanyStatus,
+    type: 'varchar',
     default: CompanyStatus.Inactive,
   })
   status: CompanyStatus;
 
+  @Index(`${indexPrefix}_archived`)
   @Field()
   @Column({ default: false })
   archived: boolean;
 
+  @Index(`${indexPrefix}_company_code`)
   @Field()
   @Column({ unique: true, name: 'company_code' })
   companyCode: string;

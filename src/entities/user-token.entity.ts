@@ -16,8 +16,7 @@ export default class UserToken extends Base {
   @Field((type) => TokenType)
   @Index()
   @Column({
-    type: 'enum',
-    enum: TokenType,
+    type: 'varchar',
     name: 'token_type',
   })
   tokenType: TokenType;

@@ -5,7 +5,6 @@ import constants, {
   TokenType,
   Role as RoleEnum,
   UserStatus,
-  InvitationStatus,
   ForgotPasswordUserType,
   emailSetting,
 } from '../config/constants';
@@ -23,8 +22,6 @@ import {
   ILoginResponse,
   IResetPasswordResponse,
   IForgotPasswordResponse,
-  IInvitationRegisterInput,
-  IInvitationRegisterResponse,
   IChangePasswordInput,
   IChangePasswordResponse,
 } from '../interfaces/auth.interface';
@@ -39,7 +36,6 @@ import {
 import { IUserRepository } from '../interfaces/user.interface';
 import { IUserTokenService } from '../interfaces/user-token.interface';
 import { IRoleRepository } from '../interfaces/role.interface';
-import { IInvitationRepository } from '../interfaces/invitation.interface';
 
 @injectable()
 export default class AuthService implements IAuthService {
@@ -50,7 +46,6 @@ export default class AuthService implements IAuthService {
   private emailService: IEmailService;
   private userTokenService: IUserTokenService;
   private roleRepository: IRoleRepository;
-  private invitationRepository: IInvitationRepository;
   private handlebarsService: ITemplateService;
   private logger: ILogger;
 
@@ -62,7 +57,6 @@ export default class AuthService implements IAuthService {
     @inject(TYPES.UserTokenService) userTokenService: IUserTokenService,
     @inject(TYPES.LoggerFactory) loggerFactory: (name: string) => ILogger,
     @inject(TYPES.RoleRepository) _roleRepository: IRoleRepository,
-    @inject(TYPES.InvitationRepository) _invitationRepository: IInvitationRepository,
     @inject(TYPES.HandlebarsService) _handlebarsService: ITemplateService
   ) {
     this.userRepository = _userRepository;
@@ -72,7 +66,6 @@ export default class AuthService implements IAuthService {
     this.userTokenService = userTokenService;
     this.logger = loggerFactory(this.name);
     this.roleRepository = _roleRepository;
-    this.invitationRepository = _invitationRepository;
     this.handlebarsService = _handlebarsService;
   }
 
@@ -426,83 +419,5 @@ export default class AuthService implements IAuthService {
         token: refreshToken,
       })
       .then((data) => (data ? true : false));
-  };
-
-  registerWithInvitation = async (args: IInvitationRegisterInput): Promise<IInvitationRegisterResponse> => {
-    const operation = 'registerWithInvitation';
-
-    try {
-      const token = args.token;
-      const password = args.password;
-      const firstName = args.firstName;
-      const lastName = args.lastName;
-      const middleName = args.middleName;
-      const phone = args.phone;
-      const address = args.address;
-      const status = UserStatus.Active;
-
-      const invitation = await this.invitationRepository.getSingleEntity({
-        query: { token },
-      });
-
-      if (!invitation) {
-        throw new apiError.NotFoundError({
-          details: [strings.invitationNotFound],
-        });
-      }
-
-      const role = invitation.role;
-      const email = invitation.email;
-      const company_id = invitation.company_id;
-      const expiresIn = invitation.expiresIn;
-
-      if (new Date() > expiresIn) {
-        throw new apiError.ValidationError({
-          details: [strings.invitationExpired],
-        });
-      }
-
-      if (!company_id) {
-        throw new apiError.ValidationError({
-          details: [strings.companyNotFound],
-        });
-      }
-
-      const roles = await this.roleRepository.getAll({
-        query: {
-          name: role,
-        },
-      });
-
-      const user = await this.userRepository.create({
-        email,
-        password,
-        firstName,
-        lastName,
-        middleName,
-        phone,
-        status,
-        address,
-        company_id,
-        roles: roles.map((r) => r.id),
-      });
-
-      await this.invitationRepository.update({
-        id: invitation.id,
-        status: InvitationStatus.Approved,
-      });
-
-      this.logger.info({
-        operation,
-        message: 'Invitation approved',
-        data: { id: invitation.id, company_id, email },
-      });
-
-      return {
-        id: user.id,
-      };
-    } catch (err) {
-      throw err;
-    }
   };
 }

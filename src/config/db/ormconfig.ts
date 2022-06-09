@@ -10,7 +10,7 @@ const connectionConfig = {
   username: databaseSetting.username,
   password: databaseSetting.password,
   database: databaseSetting.name,
-  synchronize: databaseSetting.synchronize,
+  synchronize: false,
   logging: databaseSetting.logging,
   entities: [path.join(__dirname, '../..', 'entities/**/*.entity.{ts,js}')],
   migrations: [path.join(__dirname, 'migrations/**/*.{ts,js}')],

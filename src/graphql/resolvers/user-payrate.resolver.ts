@@ -38,7 +38,10 @@ export class UserPayRateResolver {
   }
 
   @Query((returns) => UserPayRatePagingResult)
-  @UseMiddleware(authenticate, authorize(RoleEnum.CompanyAdmin, RoleEnum.TaskManager, RoleEnum.SuperAdmin))
+  @UseMiddleware(
+    authenticate,
+    authorize(RoleEnum.CompanyAdmin, RoleEnum.TaskManager, RoleEnum.SuperAdmin, RoleEnum.Employee)
+  )
   async UserPayRate(
     @Arg('input', { nullable: true }) args: UserPayRateQueryInput,
     @Ctx() ctx: any

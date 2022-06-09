@@ -14,7 +14,6 @@ const COMMON = {
   RoleRepository: Symbol('RoleRepository'),
   AddressService: Symbol('AddressService'),
   AddressRepository: Symbol('AddressRepository'),
-  UserRecordRepository: Symbol('UserRecordRepository'),
   HandlebarsService: Symbol('HandlebarsService'),
   UserClientRepository: Symbol('UserClientRepository'),
 };
@@ -84,11 +83,6 @@ const MEDIA = {
   MediaRepository: Symbol('MediaRepository'),
 };
 
-const INVITATION = {
-  InvitationService: Symbol('InvitationService'),
-  InvitationRepository: Symbol('InvitationRepository'),
-};
-
 const CLIENT = {
   ClientService: Symbol('ClientService'),
   ClientRepository: Symbol('ClientRepository'),
@@ -126,7 +120,6 @@ const TYPES = {
   ...AUTH,
   ...USER_TOKEN,
   ...MEDIA,
-  ...INVITATION,
   ...TASK,
   ...TASK_ASSIGNMENT,
   ...PROJECT,

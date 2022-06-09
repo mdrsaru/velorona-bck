@@ -49,9 +49,7 @@ export const entities = {
   roles: 'roles',
   addresses: 'addresses',
   userTokens: 'user_tokens',
-  userRecord: 'user_record',
   media: 'media',
-  invitations: 'invitations',
   tasks: 'tasks',
   taskAssignment: 'task_assignment',
   projects: 'projects',
@@ -123,11 +121,6 @@ export enum TokenType {
   resetPassword = 'resetPassword',
 }
 
-export enum InvitationStatus {
-  Pending = 'Pending',
-  Approved = 'Approved',
-}
-
 export enum InvoiceStatus {
   Pending = 'Pending',
   Received = 'Received',
@@ -156,10 +149,6 @@ export const emailSetting = {
   fromName: process.env.EMAIL_FROM_NAME as string,
   sendGridApi: process.env.SENDGRID_API as string,
   emailEnabled: process.env.EMAIL_ENABLED === 'true',
-  newInvitation: {
-    subject: process.env.NEW_INVITATION_EMAIL_SUBJECT || '',
-    body: process.env.NEW_INVITATION_EMAIL_BODY || '',
-  },
   newUser: {
     subject: process.env.NEW_USER_EMAIL_SUBJECT || '',
     adminBody: process.env.NEW_ADMIN_USER_EMAIL_BODY || '',
@@ -186,7 +175,6 @@ export default {
   port: process.env.PORT,
   baseUrl: process.env.BASE_URL,
   appName: process.env.APP_NAME || 'Vellorum_API',
-  invitationExpiresIn: '2 days',
   refreshTokenCookieName: process.env.REFRESH_TOKEN_COOKIE_NAME || 'refreshToken',
   saltRounds: process.env.SALT_ROUNDS || 10,
   verificationEmailTokenExpiration: process.env.VERIFICATION_EMAIL_EXPIRATION || '1d',

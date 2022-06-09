@@ -33,8 +33,7 @@ export default class Invoice extends Base {
   @Index(`${indexPrefix}_status`)
   @Field((type) => InvoiceStatus)
   @Column({
-    type: 'enum',
-    enum: InvoiceStatus,
+    type: 'varchar',
     default: InvoiceStatus.Pending,
   })
   status: InvoiceStatus;

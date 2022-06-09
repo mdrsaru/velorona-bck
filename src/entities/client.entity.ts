@@ -7,7 +7,6 @@ import { Base } from './base.entity';
 import { entities, ClientStatus } from '../config/constants';
 import { PagingResult, PagingInput, DeleteInput } from './common.entity';
 import { AddressCreateInput, AddressUpdateInput } from './address.entity';
-import Timesheet from './timesheet.entity';
 
 registerEnumType(ClientStatus, {
   name: 'ClientStatus',
@@ -39,8 +38,7 @@ export default class Client extends Base {
 
   @Field((type) => ClientStatus)
   @Column({
-    type: 'enum',
-    enum: ClientStatus,
+    type: 'varchar',
     default: ClientStatus.Active,
   })
   status: ClientStatus;
@@ -58,10 +56,10 @@ export default class Client extends Base {
 
   @Index(`${indexPrefix}_company_id_index`)
   @Field()
-  @Column({ nullable: true })
+  @Column()
   company_id: string;
 
-  @Field(() => Company, { nullable: true })
+  @Field((type) => Company)
   @ManyToOne(() => Company)
   @JoinColumn({ name: 'company_id' })
   company: Company;

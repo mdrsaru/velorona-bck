@@ -26,8 +26,7 @@ export default class Role extends Base {
   @Field((type) => RoleEnum)
   @Index()
   @Column({
-    type: 'enum',
-    enum: RoleEnum,
+    type: 'varchar',
     default: RoleEnum.CompanyAdmin,
   })
   name: RoleEnum;
