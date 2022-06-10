@@ -83,7 +83,11 @@ export class TaskResolver {
   }
 
   @Mutation((returns) => Task)
-  @UseMiddleware(authenticate, authorize(RoleEnum.CompanyAdmin, RoleEnum.SuperAdmin), checkCompanyAccess)
+  @UseMiddleware(
+    authenticate,
+    authorize(RoleEnum.CompanyAdmin, RoleEnum.SuperAdmin, RoleEnum.Employee),
+    checkCompanyAccess
+  )
   async TaskCreate(@Arg('input') args: TaskCreateInput, @Ctx() ctx: any): Promise<Task> {
     const operation = 'TaskCreate';
     try {
@@ -97,6 +101,8 @@ export class TaskResolver {
       const project_id = args.project_id;
       const user_ids = args?.user_ids;
       const attachment_ids = args.attachment_ids;
+      const created_by = ctx.user.id;
+      const deadline = args.deadline;
 
       const schema = TaskValidation.create();
       await this.joiService.validate({
@@ -112,6 +118,7 @@ export class TaskResolver {
           project_id,
           user_ids,
           attachment_ids,
+          deadline,
         },
       });
       let task: Task = await this.taskService.create({
@@ -125,6 +132,8 @@ export class TaskResolver {
         project_id,
         user_ids,
         attachment_ids,
+        created_by,
+        deadline,
       });
       return task;
     } catch (err) {
@@ -138,11 +147,7 @@ export class TaskResolver {
   }
 
   @Mutation((returns) => Task)
-  @UseMiddleware(
-    authenticate,
-    authorize(RoleEnum.CompanyAdmin, RoleEnum.SuperAdmin, RoleEnum.Employee),
-    checkCompanyAccess
-  )
+  @UseMiddleware(authenticate, authorize(RoleEnum.CompanyAdmin, RoleEnum.SuperAdmin), checkCompanyAccess)
   async TaskUpdate(@Arg('input') args: TaskUpdateInput, @Ctx() ctx: any): Promise<Task> {
     const operation = 'TaskUpdate';
 
@@ -262,6 +267,13 @@ export class TaskResolver {
   @FieldResolver()
   manager(@Root() root: Task, @Ctx() ctx: IGraphqlContext) {
     return ctx.loaders.usersByIdLoader.load(root.manager_id);
+  }
+
+  @FieldResolver()
+  creator(@Root() root: Task, @Ctx() ctx: IGraphqlContext) {
+    if (root.created_by) {
+      return ctx.loaders.usersByIdLoader.load(root.created_by);
+    }
   }
 
   @FieldResolver()

@@ -5,7 +5,7 @@ import moment from 'moment';
 import TimeEntry from '../../entities/time-entry.entity';
 
 import { IEntityID, IEntityRemove } from '../../interfaces/common.interface';
-import { IGetAllAndCountResult, IPagingArgs } from '../../interfaces/paging.interface';
+import { IGetAllAndCountResult, IPagingArgs, IGetOptions } from '../../interfaces/paging.interface';
 import {
   ITimeEntryCreateInput,
   ITimeEntryRepository,
@@ -157,5 +157,9 @@ export default class TimeEntryRepository implements ITimeEntryRepository {
 
   markApprovedTimeEntriesWithInvoice = async (args: IMarkApprovedTimeEntriesWithInvoice): Promise<boolean> => {
     return true;
+  };
+
+  countEntities = (args: IGetOptions): Promise<number> => {
+    return Promise.resolve(this.timeEntries?.length ?? 0);
   };
 }

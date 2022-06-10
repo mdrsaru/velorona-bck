@@ -47,8 +47,10 @@ export default class TaskRepository extends BaseRepository<Task> implements ITas
       const manager_id = args.manager_id;
       const company_id = args.company_id;
       const project_id = args.project_id;
+      const created_by = args.created_by;
       const user_ids = args.user_ids;
       const attachment_ids = args.attachment_ids;
+      const deadline = args.deadline;
 
       const project = await this.projectRepository.getById({ id: project_id });
 
@@ -72,6 +74,13 @@ export default class TaskRepository extends BaseRepository<Task> implements ITas
         });
       }
 
+      const creator = await this.userRepository.getById({ id: created_by });
+      if (!creator) {
+        throw new NotFoundError({
+          details: [strings.userNotFound],
+        });
+      }
+
       const existingMedia = await this.mediaRepository.getAll({
         query: {
           id: attachment_ids,
@@ -86,7 +95,9 @@ export default class TaskRepository extends BaseRepository<Task> implements ITas
         manager_id,
         company_id,
         project_id,
+        created_by,
         attachments: existingMedia,
+        deadline,
       });
 
       if (user_ids) {
