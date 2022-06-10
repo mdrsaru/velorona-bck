@@ -118,4 +118,21 @@ export default class BaseRepository<T> implements IBaseRepository<T> {
       throw err;
     }
   }
+
+  countEntities = (args: IGetOptions): Promise<number> => {
+    let { query = {}, select = [], ...rest } = args;
+
+    // For array values to be used as In operator
+    // https://github.com/typeorm/typeorm/blob/master/docs/find-options.md
+    for (let key in query) {
+      if (isArray(query[key])) {
+        query[key] = In(query[key]);
+      }
+    }
+
+    return this.repo.count({
+      where: query,
+      ...rest,
+    });
+  };
 }

@@ -325,13 +325,15 @@ export class TimeEntryResolver {
 
     try {
       const ids = args.ids;
+      const timesheet_id = args.timesheet_id;
       const approvalStatus = args.approvalStatus;
       const approver_id = ctx?.user?.id as string;
 
-      const timeEntry = await this.timeEntryRepository.approveRejectTimeEntries({
+      const timeEntry = await this.timeEntryService.approveRejectTimeEntries({
         ids,
         approvalStatus,
         approver_id,
+        timesheet_id,
       });
 
       return timeEntry;

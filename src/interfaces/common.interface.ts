@@ -105,6 +105,7 @@ export interface IBaseRepository<T> {
   getById(args: IEntityID): Promise<T | undefined>;
   getSingleEntity(args: ISingleEntityQuery): Promise<T | undefined>;
   remove(args: IEntityRemove): Promise<T>;
+  countEntities(args: IGetOptions): Promise<number>;
 }
 
 export interface ITokenVerificationInput {

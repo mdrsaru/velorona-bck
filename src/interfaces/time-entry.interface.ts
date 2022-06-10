@@ -5,7 +5,7 @@ import User from '../entities/user.entity';
 import Task from '../entities/task.entity';
 import TimeEntry from '../entities/time-entry.entity';
 import { IEntityID, IEntityRemove } from './common.interface';
-import { IGetAllAndCountResult, IPaginationData, IPagingArgs } from './paging.interface';
+import { IGetAllAndCountResult, IPaginationData, IPagingArgs, IGetOptions } from './paging.interface';
 
 export interface ITimeEntry {
   id: string;
@@ -140,6 +140,7 @@ export interface ITimeEntriesApproveRejectInput {
   ids: string[];
   approver_id: string;
   approvalStatus: ITimeEntry['approvalStatus'];
+  timesheet_id?: string;
 }
 
 export interface ITimeEntryByStatusInvoiceInput {
@@ -202,6 +203,8 @@ export interface ITimeEntryRepository {
   approveRejectTimeEntries(args: ITimeEntriesApproveRejectInput): Promise<boolean>;
 
   markApprovedTimeEntriesWithInvoice(args: IMarkApprovedTimeEntriesWithInvoice): Promise<boolean>;
+
+  countEntities(args: IGetOptions): Promise<number>;
 }
 
 export interface ITimeEntryService {
@@ -211,4 +214,5 @@ export interface ITimeEntryService {
   update(args: ITimeEntryUpdateInput): Promise<TimeEntry>;
   remove(args: IEntityRemove): Promise<TimeEntry>;
   bulkRemove(args: ITimeEntryBulkRemoveInput): Promise<TimeEntry[]>;
+  approveRejectTimeEntries(args: ITimeEntriesApproveRejectInput): Promise<boolean>;
 }

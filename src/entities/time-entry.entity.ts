@@ -292,6 +292,9 @@ export class TimeEntryApproveRejectInput {
   ids: string[];
 
   @Field()
+  timesheet_id: string;
+
+  @Field()
   company_id: string;
 
   @Field()

@@ -4,7 +4,7 @@ import { inject, injectable } from 'inversify';
 import { Arg, Ctx, Mutation, Query, Resolver, UseMiddleware, FieldResolver, Root } from 'type-graphql';
 
 import { TYPES } from '../../types';
-import { Role as RoleEnum, TimeEntryApprovalStatus } from '../../config/constants';
+import { Role as RoleEnum, TimeEntryApprovalStatus, TimesheetStatus } from '../../config/constants';
 import Paging from '../../utils/paging';
 import authenticate from '../middlewares/authenticate';
 import authorize from '../middlewares/authorize';
@@ -61,42 +61,6 @@ export class TimesheetResolver {
       let result: IPaginationData<Timesheet> = await this.timesheetService.getAllAndCount(pagingArgs);
 
       return result;
-    } catch (err) {
-      this.errorService.throwError({
-        err,
-        name: this.name,
-        operation,
-        logError: true,
-      });
-    }
-  }
-
-  @Mutation((returns) => Timesheet, { description: 'Approves all the time entries in the timesheet' })
-  @UseMiddleware(
-    authenticate,
-    authorize(RoleEnum.CompanyAdmin, RoleEnum.SuperAdmin, RoleEnum.TaskManager),
-    checkCompanyAccess
-  )
-  async TimesheetApproveReject(
-    @Arg('input') args: TimesheetApproveRejectInput,
-    @Ctx() ctx: IGraphqlContext
-  ): Promise<Timesheet> {
-    const operation = 'TimesheetApproveReject';
-
-    try {
-      const id = args.id;
-      const status = TimeEntryApprovalStatus.Approved;
-      const lastApprovedAt = new Date();
-      const approver_id = ctx?.user?.id;
-
-      const timesheet = await this.timesheetService.update({
-        id,
-        status,
-        lastApprovedAt,
-        approver_id,
-      });
-
-      return timesheet;
     } catch (err) {
       this.errorService.throwError({
         err,
@@ -178,6 +142,11 @@ export class TimesheetResolver {
     }
 
     return null;
+  }
+
+  @FieldResolver()
+  totalExpense(@Root() root: Timesheet) {
+    return root?.totalExpense ?? 0;
   }
 
   @FieldResolver()

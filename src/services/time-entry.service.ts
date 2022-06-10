@@ -5,7 +5,8 @@ import { TYPES } from '../types';
 import Paging from '../utils/paging';
 import * as apiError from '../utils/api-error';
 import TimeEntry from '../entities/time-entry.entity';
-import { TimeEntryApprovalStatus } from '../config/constants';
+import { TimesheetStatus, events } from '../config/constants';
+import timesheetEmitter from '../subscribers/timesheet.subscriber';
 
 import { IEntityRemove, IErrorService, ILogger, Maybe } from '../interfaces/common.interface';
 import { IPaginationData, IPagingArgs } from '../interfaces/paging.interface';
@@ -17,6 +18,7 @@ import {
   ITimeEntryStopInput,
   ITimeEntryUpdateInput,
   ITimeEntryWeeklyDetailsInput,
+  ITimeEntriesApproveRejectInput,
 } from '../interfaces/time-entry.interface';
 import { IUserPayRateRepository } from '../interfaces/user-payrate.interface';
 import { ITimesheetRepository } from '../interfaces/timesheet.interface';
@@ -361,7 +363,6 @@ export default class TimeEntryService implements ITimeEntryService {
         const timesheet = await this.timesheetRepository.update({
           id,
           duration: totalTimeInSeconds,
-          //totalExpense,
         });
         return timesheet;
       } else {
@@ -369,8 +370,7 @@ export default class TimeEntryService implements ITimeEntryService {
           weekStartDate,
           weekEndDate,
           duration: totalTimeInSeconds,
-          //totalExpense,
-          status: TimeEntryApprovalStatus.Pending,
+          status: TimesheetStatus.Pending,
           user_id,
           client_id,
           company_id,
@@ -378,6 +378,34 @@ export default class TimeEntryService implements ITimeEntryService {
 
         return timesheet;
       }
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  approveRejectTimeEntries = async (args: ITimeEntriesApproveRejectInput): Promise<boolean> => {
+    try {
+      const ids = args.ids;
+      const approver_id = args.approver_id;
+      const approvalStatus = args.approvalStatus;
+      const timesheet_id = args.timesheet_id;
+
+      const result = await this.timeEntryRepository.approveRejectTimeEntries({
+        ids,
+        approver_id,
+        approvalStatus,
+        timesheet_id,
+      });
+
+      if (timesheet_id) {
+        timesheetEmitter.emit(events.onTimeEntriesApprove, {
+          timesheet_id,
+          approver_id,
+          lastApprovedAt: new Date(),
+        });
+      }
+
+      return result;
     } catch (err) {
       throw err;
     }

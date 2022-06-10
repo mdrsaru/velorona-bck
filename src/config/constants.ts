@@ -86,8 +86,9 @@ export enum ProjectStatus {
 }
 
 export enum TimesheetStatus {
-  Open = 'Open',
+  Pending = 'Pending',
   Approved = 'Approved',
+  PartiallyApproved = 'PartiallyApproved',
 }
 
 export enum TaskStatus {
@@ -167,6 +168,7 @@ export const emailSetting = {
 export const events = {
   onUserCreate: 'onUserCreate',
   sendInvoice: 'sendInvoice',
+  onTimeEntriesApprove: 'onTimeEntriesApprove',
 };
 
 export default {

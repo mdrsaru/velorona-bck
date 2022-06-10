@@ -3,7 +3,7 @@ import { Field, InputType, ObjectType, registerEnumType } from 'type-graphql';
 import { Column, Entity, Index, JoinColumn, ManyToOne, Unique } from 'typeorm';
 import { GraphQLJSON } from 'graphql-type-json';
 
-import { entities, TimeEntryApprovalStatus } from '../config/constants';
+import { entities, TimesheetStatus } from '../config/constants';
 import { timesheet } from '../config/db/columns';
 import { Base } from './base.entity';
 import Client from './client.entity';
@@ -12,7 +12,7 @@ import { PagingInput, PagingResult } from './common.entity';
 import Company from './company.entity';
 import User from './user.entity';
 
-registerEnumType(TimeEntryApprovalStatus, {
+registerEnumType(TimesheetStatus, {
   name: 'TimesheetStatus',
 });
 
@@ -93,12 +93,12 @@ export default class Timesheet extends Base {
   @Field({ nullable: true, description: 'Invoiced duration format in HH:mm:ss' })
   invoicedDurationFormat: string;
 
-  @Field((type) => TimeEntryApprovalStatus)
+  @Field((type) => TimesheetStatus)
   @Column({
     type: 'varchar',
-    default: TimeEntryApprovalStatus.Pending,
+    default: TimesheetStatus.Pending,
   })
-  status: TimeEntryApprovalStatus;
+  status: TimesheetStatus;
 
   @Index(`${indexPrefix}_company_id_index`)
   @Field()
@@ -223,8 +223,8 @@ export class TimesheetApproveRejectInput {
   @Field()
   company_id: string;
 
-  @Field((type) => TimeEntryApprovalStatus)
-  status: TimeEntryApprovalStatus;
+  @Field((type) => TimesheetStatus)
+  status: TimesheetStatus;
 }
 
 @InputType()
