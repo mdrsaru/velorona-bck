@@ -131,7 +131,7 @@ export default class AuthService implements IAuthService {
 
       if (user.archived) {
         throw new NotAuthenticatedError({
-          details: [strings.emailPasswordNotCorrect],
+          details: [strings.userArchived],
           data: {
             archived: true,
           },
