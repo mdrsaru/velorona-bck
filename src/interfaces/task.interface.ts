@@ -1,5 +1,6 @@
 import { TaskStatus } from '../config/constants';
 import Task from '../entities/task.entity';
+import TimeEntry from '../entities/time-entry.entity';
 import User from '../entities/user.entity';
 import { IEntityID, IEntityRemove } from './common.interface';
 import { IGetAllAndCountResult, IPaginationData, IPagingArgs } from './paging.interface';
@@ -49,8 +50,12 @@ export interface IAssignTask {
   task_id: string;
 }
 
+export interface ITaskPaginationData extends IPaginationData<Task> {
+  activeTimeEntry?: TimeEntry;
+}
+
 export interface ITaskService {
-  getAllAndCount(filters?: any): Promise<IPaginationData<Task>>;
+  getAllAndCount(filters?: any): Promise<ITaskPaginationData>;
   create(args: ITaskCreateInput): Promise<Task>;
   update(args: ITaskUpdateInput): Promise<Task>;
   remove(args: IEntityRemove): Promise<Task>;

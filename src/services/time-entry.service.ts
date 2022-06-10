@@ -8,10 +8,11 @@ import TimeEntry from '../entities/time-entry.entity';
 import { TimeEntryApprovalStatus } from '../config/constants';
 
 import { IEntityRemove, IErrorService, ILogger, Maybe } from '../interfaces/common.interface';
-import { IPaginationData, IPagingArgs } from '../interfaces/paging.interface';
+import { IPagingArgs } from '../interfaces/paging.interface';
 import {
   ITimeEntryBulkRemoveInput,
   ITimeEntryCreateInput,
+  ITimeEntryPaginationData,
   ITimeEntryRepository,
   ITimeEntryService,
   ITimeEntryStopInput,
@@ -48,7 +49,7 @@ export default class TimeEntryService implements ITimeEntryService {
     this.projectRepository = _projectRepository;
   }
 
-  getAllAndCount = async (args: IPagingArgs): Promise<IPaginationData<TimeEntry>> => {
+  getAllAndCount = async (args: IPagingArgs): Promise<ITimeEntryPaginationData> => {
     try {
       const { rows, count } = await this.timeEntryRepository.getAllAndCount(args);
 

@@ -151,6 +151,10 @@ export interface IMarkApprovedTimeEntriesWithInvoice {
   invoice_id: string;
 }
 
+export interface ITimeEntryPaginationData extends IPaginationData<TimeEntry> {
+  activeEntry?: TimeEntry;
+}
+
 export interface ITimeEntryRepository {
   getAllAndCount(args: IPagingArgs): Promise<IGetAllAndCountResult<TimeEntry>>;
 
@@ -205,7 +209,7 @@ export interface ITimeEntryRepository {
 }
 
 export interface ITimeEntryService {
-  getAllAndCount(args: IPagingArgs): Promise<IPaginationData<TimeEntry>>;
+  getAllAndCount(args: IPagingArgs): Promise<ITimeEntryPaginationData>;
   getWeeklyDetails(args: ITimeEntryWeeklyDetailsInput): Promise<TimeEntry[]>;
   create(args: ITimeEntryCreateInput): Promise<TimeEntry>;
   update(args: ITimeEntryUpdateInput): Promise<TimeEntry>;

@@ -15,15 +15,18 @@ import {
   ITaskService,
   ITaskUpdateInput,
   ITaskAssignmentRepository,
+  ITaskPaginationData,
 } from '../interfaces/task.interface';
 import { IUserRepository } from '../interfaces/user.interface';
 import { TaskStatus } from '../config/constants';
+import { ITimeEntryRepository } from '../interfaces/time-entry.interface';
 
 @injectable()
 export default class TaskService implements ITaskService {
   private name = 'TaskService';
   private taskRepository: ITaskRepository;
   private taskAssignmentRepository: ITaskAssignmentRepository;
+  private timeEntryRepository: ITimeEntryRepository;
   private logger: ILogger;
   private errorService: IErrorService;
 
@@ -32,18 +35,21 @@ export default class TaskService implements ITaskService {
     @inject(TYPES.LoggerFactory) loggerFactory: (name: string) => ILogger,
     @inject(TYPES.ErrorService) errorService: IErrorService,
     @inject(TYPES.UserRepository) _userRepository: IUserRepository,
-    @inject(TYPES.TaskAssignmentRepository) _taskAssignmentRepository: ITaskAssignmentRepository
+    @inject(TYPES.TaskAssignmentRepository) _taskAssignmentRepository: ITaskAssignmentRepository,
+    @inject(TYPES.TimeEntryRepository) _timeEntryRepository: ITimeEntryRepository
   ) {
     this.taskRepository = taskRepository;
     this.logger = loggerFactory(this.name);
     this.errorService = errorService;
     this.taskAssignmentRepository = _taskAssignmentRepository;
+    this.timeEntryRepository = _timeEntryRepository;
   }
 
-  getAllAndCount = async (args: IPagingArgs): Promise<IPaginationData<Task>> => {
+  getAllAndCount = async (args: IPagingArgs): Promise<ITaskPaginationData> => {
     try {
+      let user_id;
       if (args.query.user_id) {
-        const user_id = args.query.user_id;
+        user_id = args.query.user_id;
         delete args.query.user_id;
 
         const taskAssignmentByUser = await this.taskAssignmentRepository.getTaskAssignmentByUser({
@@ -54,7 +60,16 @@ export default class TaskService implements ITaskService {
       }
 
       const { rows, count } = await this.taskRepository.getAllAndCount(args);
+      const activeEntry = await this.timeEntryRepository.getActiveEntry({
+        company_id: args?.query?.company_id ?? undefined,
+        created_by: user_id ?? undefined,
+      });
 
+      let activeTask = {
+        timeEntry_id: activeEntry?.id,
+        task_id: activeEntry?.task_id,
+        startTime: activeEntry?.startTime,
+      };
       const paging = Paging.getPagingResult({
         ...args,
         total: count,
@@ -63,6 +78,7 @@ export default class TaskService implements ITaskService {
       return {
         paging,
         data: rows,
+        activeTimeEntry: activeEntry,
       };
     } catch (err) {
       throw err;
