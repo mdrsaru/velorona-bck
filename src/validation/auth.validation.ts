@@ -15,6 +15,12 @@ const messages = {
     'string.name': strings.passwordRequired,
     'any.required': strings.passwordRequired,
   },
+  oldPassword: {
+    'string.base': strings.oldPasswordRequired,
+    'string.empty': strings.oldPasswordRequired,
+    'string.name': strings.oldPasswordRequired,
+    'any.required': strings.oldPasswordRequired,
+  },
   token: {
     'string.base': strings.tokenRequired,
     'string.empty': strings.tokenRequired,
@@ -32,6 +38,12 @@ const messages = {
     'string.empty': strings.companyRequired,
     'string.name': strings.companyRequired,
     'any.required': strings.companyRequired,
+  },
+  user_id: {
+    'string.base': strings.userIdRequired,
+    'string.empty': strings.userIdRequired,
+    'string.name': strings.userIdRequired,
+    'any.required': strings.userIdRequired,
   },
 };
 
@@ -55,6 +67,13 @@ export default class AuthValidation {
     return Joi.object({
       token: Joi.string().required().messages(messages.token),
       password: Joi.string().required().messages(messages.password),
+    });
+  }
+  static changePassword() {
+    return Joi.object({
+      user_id: Joi.string().required().messages(messages.user_id),
+      oldPassword: Joi.string().required().messages(messages.oldPassword),
+      newPassword: Joi.string().required().messages(messages.password),
     });
   }
 

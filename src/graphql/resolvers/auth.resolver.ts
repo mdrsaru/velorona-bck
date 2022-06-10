@@ -10,7 +10,8 @@ import {
   LoginInput,
   LoginResponse,
   ResetPasswordInput,
-  ResetPasswordResponse,
+  ChangePasswordInput,
+  ChangePasswordResponse,
 } from '../../entities/auth.entity';
 
 import { TYPES } from '../../types';
@@ -165,6 +166,41 @@ export class AuthResolver {
       });
 
       return result.message;
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
+    }
+  }
+
+  @Mutation((returns) => ChangePasswordResponse)
+  async ChangePassword(@Arg('input') args: ChangePasswordInput, @Ctx() ctx: IGraphqlContext) {
+    const operation = 'ChangePassword';
+    try {
+      const user_id = args.user_id;
+      const oldPassword = args.oldPassword;
+      const newPassword = args.newPassword;
+
+      const schema = AuthValidation.changePassword();
+      await this.joiService.validate({
+        schema,
+        input: {
+          user_id,
+          oldPassword,
+          newPassword,
+        },
+      });
+
+      const result = await this.authService.changePassword({
+        user_id,
+        oldPassword,
+        newPassword,
+      });
+
+      return result;
     } catch (err) {
       this.errorService.throwError({
         err,

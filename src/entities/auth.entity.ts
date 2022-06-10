@@ -73,3 +73,21 @@ export class ResetPasswordInput {
   @Field()
   password: string;
 }
+
+@InputType()
+export class ChangePasswordInput {
+  @Field()
+  user_id: string;
+
+  @Field()
+  oldPassword: string;
+
+  @Field()
+  newPassword: string;
+}
+
+@ObjectType()
+export class ChangePasswordResponse {
+  @Field()
+  message: string;
+}

@@ -5,6 +5,7 @@ export default {
   manangerNotFound: 'Manager not found',
   emailRequired: 'Email required',
   passwordRequired: 'Password required',
+  oldPasswordRequired: 'Old Password required',
   firstNameRequired: 'Firstname required',
   lastNameRequired: 'Lastname required',
   emailNotValid: 'Email not valid',
