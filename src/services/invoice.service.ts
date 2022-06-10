@@ -6,6 +6,7 @@ import { InvoiceStatus, events } from '../config/constants';
 import Invoice from '../entities/invoice.entity';
 import Client from '../entities/client.entity';
 import InvoiceItem from '../entities/invoice-item.entity';
+import Address from '../entities/address.entity';
 import Paging from '../utils/paging';
 import { TYPES } from '../types';
 import invoiceEmitter from '../subscribers/invoice.subscriber';
@@ -21,23 +22,27 @@ import {
 } from '../interfaces/invoice.interface';
 import { IInvoiceItemRepository } from '../interfaces/invoice-item.interface';
 import { IClientRepository } from '../interfaces/client.interface';
+import { IUserRepository } from '../interfaces/user.interface';
 
 @injectable()
 export default class InvoiceService implements IInvoiceService {
   private invoiceRepository: IInvoiceRepository;
   private invoiceItemRepository: IInvoiceItemRepository;
   private clientRepository: IClientRepository;
+  private userRepository: IUserRepository;
   private pdfService: any;
 
   constructor(
     @inject(TYPES.InvoiceRepository) _invoiceRepository: IInvoiceRepository,
     @inject(TYPES.InvoiceItemRepository) _invoiceItemRepository: IInvoiceItemRepository,
-    @inject(TYPES.ClientRepository) _clientRepository: IClientRepository
+    @inject(TYPES.ClientRepository) _clientRepository: IClientRepository,
+    @inject(TYPES.UserRepository) _userRepository: IUserRepository
   ) {
     this.invoiceRepository = _invoiceRepository;
     this.pdfService = new PDFService();
     this.invoiceItemRepository = _invoiceItemRepository;
     this.clientRepository = _clientRepository;
+    this.userRepository = _userRepository;
   }
 
   getAllAndCount = async (args: IPagingArgs): Promise<IPaginationData<Invoice>> => {
@@ -176,7 +181,7 @@ export default class InvoiceService implements IInvoiceService {
 
       const invoice = (await this.invoiceRepository.getById({
         id,
-        relations: ['client', 'client.address'],
+        relations: ['client', 'client.address', 'company'],
       })) as Invoice;
 
       const items: InvoiceItem[] = await this.invoiceItemRepository.getAll({
@@ -186,9 +191,28 @@ export default class InvoiceService implements IInvoiceService {
         relations: ['project'],
       });
 
+      let companyAddress: Address | undefined;
+      if (invoice?.company?.adminEmail) {
+        const user = await this.userRepository.getAll({
+          query: {
+            email: invoice.company.adminEmail,
+            company_id: invoice.company?.id,
+          },
+          select: ['id'],
+          relations: ['address'],
+        });
+
+        if (user.length) {
+          companyAddress = user?.[0]?.address;
+        }
+      }
+
       invoice.items = items;
 
-      const pdf = await this.pdfService.generateInvoicePdf(invoice);
+      const pdf = await this.pdfService.generateInvoicePdf({
+        invoice,
+        companyAddress,
+      });
 
       return pdf.toString('base64');
     } catch (err) {

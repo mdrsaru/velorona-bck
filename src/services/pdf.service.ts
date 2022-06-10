@@ -3,16 +3,23 @@ import PDFDocument from 'pdfkit';
 import { injectable } from 'inversify';
 import fs from 'fs';
 import blobStream from 'blob-stream';
+import path from 'path';
 
+import Address from '../entities/address.entity';
 import Invoice from '../entities/invoice.entity';
 import InvoiceItem from '../entities/invoice-item.entity';
+
+type GenerateInvoicePdf = {
+  invoice: Invoice;
+  companyAddress: Address | undefined;
+};
 
 export default class PDFService {
   private name = 'PDFService';
 
   constructor() {}
 
-  generateInvoicePdf(invoice: Invoice): Promise<any> {
+  generateInvoicePdf(args: GenerateInvoicePdf): Promise<any> {
     type TableArgs = {
       doc: any;
       y: number;
@@ -42,30 +49,25 @@ export default class PDFService {
             .text(args.amount, 0, args.y, { align: 'right' });
         };
 
-        const clientAddress = invoice?.client?.address;
-        const address = [];
-        if (clientAddress?.streetAddress) {
-          address.push(clientAddress.streetAddress);
-        }
-        if (clientAddress?.city) {
-          address.push(clientAddress.city);
-        }
-        if (clientAddress?.state) {
-          address.push(clientAddress.state);
-        }
+        const invoice = args.invoice;
 
+        const company = invoice?.company;
+        const clientAddress = generateAddress(invoice?.client?.address);
+        const companyAddress = generateAddress(args.companyAddress);
+
+        const logo = path.join(__dirname, '../../public/logo.png');
+
+        // Header
         doc
-          //.image('logo.png', 50, 45, { width: 50 })
+          .image(logo, 50, 45, { width: 100 })
           .fillColor('#444444')
-          .fontSize(20)
-          .text(invoice?.client?.name ?? '', 50, 67)
           .fontSize(25)
-          .text('Invoice', 200, 60, { align: 'right' })
           .font('Helvetica-Bold')
+          .text('Invoice', 200, 60, { align: 'right' })
           .fontSize(10)
-          .text(invoice?.client?.name ?? '', 200, 85, { align: 'right' })
+          .text(company?.name ?? '', 200, 88, { align: 'right' })
           .font('Helvetica')
-          .text(address.join(', '), 200, 100, { align: 'right' })
+          .text(companyAddress, 200, 100, { align: 'right' })
           .moveDown();
 
         // Invoice information
@@ -77,6 +79,9 @@ export default class PDFService {
           .fontSize(10)
           .text('Bill to', 50, customerInformationTop)
           .font('Helvetica-Bold')
+          .text(invoice?.client?.name, 50, customerInformationTop + 15)
+          .font('Helvetica')
+          .text(clientAddress, 50, customerInformationTop + 30)
           .text(invoice?.client?.name, 50, customerInformationTop + 15)
           .font('Helvetica-Bold')
           .text('Invoice Number: ', 380, customerInformationTop)
@@ -92,7 +97,7 @@ export default class PDFService {
           .text(moment(invoice.dueDate).format('YYYY-MM-DD'), 480, customerInformationTop + 30)
           .font('Helvetica-Bold')
           .text('Amount Due: ', 380, customerInformationTop + 45)
-          .text(`$ ${invoice.totalAmount}`, 480, customerInformationTop + 45)
+          .text(`$${invoice.totalAmount}`, 480, customerInformationTop + 45)
           .moveDown();
 
         this.generateHr(doc, 270);
@@ -124,9 +129,9 @@ export default class PDFService {
             y: position,
             item: items[i]?.project?.name,
             description: items[i]?.description,
-            quantity: items[i]?.quantity,
-            price: items[i]?.rate,
-            amount: items[i]?.amount,
+            quantity: `$${items[i]?.quantity}`,
+            price: `$${items[i]?.rate}`,
+            amount: `$${items[i]?.amount}`,
           });
 
           this.generateHr(doc, position + 25);
@@ -141,7 +146,7 @@ export default class PDFService {
           description: '',
           quantity: '',
           price: 'Subtotal',
-          amount: invoice.subtotal,
+          amount: `$${invoice.subtotal}`,
         });
 
         const taxPosition = subtotalPosition + 20;
@@ -153,7 +158,7 @@ export default class PDFService {
           description: '',
           quantity: '',
           price: 'Tax amount',
-          amount: invoice?.taxAmount ?? 0,
+          amount: `$${invoice.taxAmount ?? 0}`,
         });
 
         const paidToDatePosition = taxPosition + 20;
@@ -164,8 +169,15 @@ export default class PDFService {
           description: '',
           quantity: '',
           price: 'Total',
-          amount: invoice?.totalAmount ?? 0,
+          amount: `$${invoice?.totalAmount}`,
         });
+
+        if (invoice.notes) {
+          const footerPosition = paidToDatePosition + 50;
+          doc.fontSize(10).font('Helvetica-Bold').text('Notes:', 50, footerPosition);
+
+          doc.fontSize(10).font('Helvetica').text(invoice.notes, 85, footerPosition);
+        }
 
         let buffers: any = [];
 
@@ -184,4 +196,25 @@ export default class PDFService {
   generateHr(doc: any, y: number) {
     doc.strokeColor('#aaaaaa').lineWidth(0.7).moveTo(50, y).lineTo(550, y).stroke();
   }
+}
+
+function generateAddress(address: Address | undefined) {
+  if (!address) {
+    return '';
+  }
+
+  const addressList = [];
+  if (address?.streetAddress) {
+    addressList.push(address.streetAddress);
+  }
+
+  if (address?.city) {
+    addressList.push(address.city);
+  }
+
+  if (address?.state) {
+    addressList.push(address.state);
+  }
+
+  return addressList.join(', ');
 }
