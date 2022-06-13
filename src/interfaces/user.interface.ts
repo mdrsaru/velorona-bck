@@ -68,7 +68,7 @@ export interface IUserUpdate {
   archived?: boolean;
 }
 
-export interface IUserArchive {
+export interface IUserArchiveOrUnArchive {
   id: string;
   archived: boolean;
 }
@@ -95,7 +95,7 @@ export interface IUserService {
   getAllAndCount(args: IPagingArgs): Promise<IPaginationData<User>>;
   create(args: IUserCreate): Promise<User>;
   update(args: IUserUpdate): Promise<User>;
-  userArchive(args: IUserArchive): Promise<User>;
+  userArchiveOrUnArchive(args: IUserArchiveOrUnArchive): Promise<User>;
   remove(args: IEntityRemove): Promise<User>;
   getById(args: IEntityID): Promise<User | undefined>;
   changeProfilePicture(args: IChangeProfilePictureInput): Promise<User>;

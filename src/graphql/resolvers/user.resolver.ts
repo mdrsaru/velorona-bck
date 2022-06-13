@@ -19,7 +19,7 @@ import User, {
   UserQueryInput,
   ChangeProfilePictureInput,
   UserAdminCreateInput,
-  UserArchiveInput,
+  UserArchiveOrUnArchiveInput,
 } from '../../entities/user.entity';
 
 import { IPaginationData } from '../../interfaces/paging.interface';
@@ -234,8 +234,8 @@ export class UserResolver {
 
   @Mutation((returns) => User)
   @UseMiddleware(authenticate, authorize(RoleEnum.CompanyAdmin, RoleEnum.SuperAdmin), checkCompanyAccess)
-  async UserArchive(@Arg('input') args: UserArchiveInput): Promise<User> {
-    const operation = 'UserArchive';
+  async UserArchiveOrUnArchive(@Arg('input') args: UserArchiveOrUnArchiveInput): Promise<User> {
+    const operation = 'UserArchiveUnArchive';
 
     try {
       const id = args.id;
@@ -250,7 +250,7 @@ export class UserResolver {
         },
       });
 
-      let user: User = await this.userService.userArchive({
+      let user: User = await this.userService.userArchiveOrUnArchive({
         id,
         archived,
       });

@@ -210,7 +210,7 @@ export class UserAdminCreateInput {
 }
 
 @InputType()
-export class UserArchiveInput {
+export class UserArchiveOrUnArchiveInput {
   @Field()
   id: string;
 
