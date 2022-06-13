@@ -10,7 +10,7 @@ import userEmitter from '../subscribers/user.subscriber';
 
 import { IPagingArgs, IPaginationData } from '../interfaces/paging.interface';
 import { IEntityRemove, IEntityID, ITemplateService, IEmailService, ILogger } from '../interfaces/common.interface';
-import { IChangeProfilePictureInput, IUserArchive, IUserRepository } from '../interfaces/user.interface';
+import { IChangeProfilePictureInput, IUserArchiveOrUnArchive, IUserRepository } from '../interfaces/user.interface';
 import { IUserCreate, IUserUpdate, IUserService } from '../interfaces/user.interface';
 import { ICompanyRepository } from '../interfaces/company.interface';
 
@@ -125,7 +125,7 @@ export default class UserService implements IUserService {
     }
   };
 
-  userArchive = async (args: IUserArchive): Promise<User> => {
+  userArchiveOrUnArchive = async (args: IUserArchiveOrUnArchive): Promise<User> => {
     try {
       const id = args.id;
       const archived = args?.archived;
