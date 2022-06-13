@@ -264,6 +264,9 @@ export class UserQuery {
 
   @Field({ nullable: true, defaultValue: false })
   archived: boolean;
+
+  @Field({ nullable: true })
+  status: UserStatus;
 }
 
 @InputType()
