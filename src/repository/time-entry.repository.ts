@@ -36,6 +36,7 @@ import {
   ITimeEntryBulkRemoveInput,
   ITimeEntriesApproveRejectInput,
   IMarkApprovedTimeEntriesWithInvoice,
+  ITimeEntryHourlyRateInput,
 } from '../interfaces/time-entry.interface';
 import { IUserRepository } from '../interfaces/user.interface';
 import { IGetOptions, IGetAllAndCountResult } from '../interfaces/paging.interface';
@@ -517,7 +518,7 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
         ROUND(COALESCE(((SUM(t.${timeEntry.duration})::numeric / 3600) * up.${userPayRate.amount}), 0), 2) AS "totalExpense" 
         FROM ${entities.timeEntry} as t 
         JOIN ${entities.projects} as p on t.${timeEntry.project_id} = p.id
-        LEFT JOIN ${entities.userPayRate} up ON t.project_id = up.project_id
+        LEFT JOIN ${entities.userPayRate} up ON t.project_id = up.project_id AND t.created_by = up.user_id
         WHERE t.approval_status = 'Approved'
         AND t.timesheet_id IS NOT NULL
         AND t.invoice_id IS NULL
@@ -638,6 +639,26 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
         },
         {
           invoice_id,
+        }
+      );
+
+      return true;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  updateHourlyRate = async (args: ITimeEntryHourlyRateInput): Promise<boolean> => {
+    try {
+      const updated = await this.repo.update(
+        {
+          project_id: args.project_id,
+          company_id: args.company_id,
+          created_by: args.created_by,
+          invoice_id: IsNull(),
+        },
+        {
+          hourlyRate: args.hourlyRate,
         }
       );
 

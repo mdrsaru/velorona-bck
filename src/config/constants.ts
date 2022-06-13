@@ -169,6 +169,7 @@ export const events = {
   onUserCreate: 'onUserCreate',
   sendInvoice: 'sendInvoice',
   onTimeEntriesApprove: 'onTimeEntriesApprove',
+  onPayRateCreateUpdate: 'onPayRateCreateUpdate',
 };
 
 export default {

@@ -156,59 +156,55 @@ export interface ITimeEntryPaginationData extends IPaginationData<TimeEntry> {
   activeEntry?: TimeEntry;
 }
 
+export interface ITimeEntryHourlyRateInput {
+  project_id: string;
+  created_by: string;
+  company_id: string;
+  hourlyRate: number;
+}
+
 export interface ITimeEntryRepository {
   getAllAndCount(args: IPagingArgs): Promise<IGetAllAndCountResult<TimeEntry>>;
-
   getAll(args: any): Promise<TimeEntry[]>;
-
   getById(args: IEntityID): Promise<TimeEntry | undefined>;
-
   /**
    * Get active time entry. i.e entry of user for which end_time is null
    */
   getActiveEntry(args: ITimeEntryActiveInput): Promise<TimeEntry | undefined>;
-
   /*
   Calculate total time in seconds of users time entry for the given interval
   */
   getTotalTimeInSeconds(args: ITimeEntryTotalDurationInput): Promise<number>;
-
   /**
    * Get user's total expense for the time entries related to all project for the given time interval
    */
   getUserTotalExpense(args: IUserTotalExpenseInput): Promise<number>;
-
   getWeeklyDetails(args: ITimeEntryWeeklyDetailsRepoInput): Promise<TimeEntry[]>;
-
   create(args: ITimeEntryCreateInput): Promise<TimeEntry>;
-
   update(args: ITimeEntryUpdateInput): Promise<TimeEntry>;
-
   remove(args: IEntityRemove): Promise<TimeEntry>;
-
   /*
   Removes multiple time entries of a user of particular client`
   */
   bulkRemove(args: ITimeEntryBulkRemoveInput): Promise<TimeEntry[]>;
-
   /**
    * Get projects with total expense, total hours and hourly rate of the time entries for the given time interval.
    */
   getProjectItems(args: IProjectItemInput): Promise<IProjectItem[]>;
-
   /**
    * Get day wise duration map of the time entries for given time interval
    */
   getDurationMap(args: IDurationMap): Promise<object>;
-
   /**
    * Approve/Reject entries by ids
    */
   approveRejectTimeEntries(args: ITimeEntriesApproveRejectInput): Promise<boolean>;
-
   markApprovedTimeEntriesWithInvoice(args: IMarkApprovedTimeEntriesWithInvoice): Promise<boolean>;
-
   countEntities(args: IGetOptions): Promise<number>;
+  /**
+   * Update hourly rate of non invoiced entries
+   */
+  updateHourlyRate(args: ITimeEntryHourlyRateInput): Promise<boolean>;
 }
 
 export interface ITimeEntryService {

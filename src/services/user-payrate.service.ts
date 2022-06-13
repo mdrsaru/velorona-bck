@@ -1,7 +1,10 @@
+import isNil from 'lodash/isNil';
 import { inject, injectable } from 'inversify';
 
 import { TYPES } from '../types';
 import Paging from '../utils/paging';
+import { events } from '../config/constants';
+import { payRateEmitter } from '../subscribers/emitters';
 
 import { IEntityRemove, IErrorService, ILogger } from '../interfaces/common.interface';
 import { IPaginationData, IPagingArgs } from '../interfaces/paging.interface';
@@ -65,6 +68,17 @@ export default class UserPayRateService implements IUserPayRateService {
         user_id,
         project_id,
       });
+
+      /**
+       * Emit payrate emitter
+       * Check path: src/subscribers/payrate.subscriber.ts
+       */
+      payRateEmitter.emit(events.onPayRateCreateUpdate, {
+        created_by: user_id,
+        project_id,
+        hourlyRate: amount,
+      });
+
       return userPayRate;
     } catch (err) {
       this.errorService.throwError({
@@ -94,6 +108,19 @@ export default class UserPayRateService implements IUserPayRateService {
         user_id,
         project_id,
       });
+
+      if (!isNil(amount)) {
+        /**
+         * Emit payrate emitter
+         * Check path: src/subscribers/payrate.subscriber.ts
+         */
+        payRateEmitter.emit(events.onPayRateCreateUpdate, {
+          created_by: userPayRate.user_id,
+          project_id: userPayRate.project_id,
+          hourlyRate: userPayRate.amount,
+        });
+      }
+
       return userPayRate;
     } catch (err) {
       this.errorService.throwError({
