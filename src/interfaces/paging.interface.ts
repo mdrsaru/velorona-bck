@@ -1,3 +1,5 @@
+import TimeEntry from '../entities/time-entry.entity';
+
 export interface IOrder {
   [field: string]: string;
 }
@@ -29,7 +31,6 @@ export interface IPagingResult {
 export interface IPaginationData<T> {
   paging: IPagingResult;
   data: T[];
-  activeEntry?: T;
 }
 
 export interface IGetAllAndCountResult<T> {

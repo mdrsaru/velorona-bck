@@ -206,7 +206,6 @@ export class TaskUpdateInput {
   @Field(() => [String], { nullable: true })
   attachment_ids: string[];
 }
-
 @ObjectType()
 export class TaskPagingResult {
   @Field()
@@ -214,6 +213,9 @@ export class TaskPagingResult {
 
   @Field(() => [Task])
   data: Task[];
+
+  @Field(() => TimeEntry, { nullable: true })
+  activeTimeEntry: TimeEntry;
 }
 
 @InputType()
