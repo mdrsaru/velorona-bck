@@ -1,5 +1,5 @@
 import { Field, InputType, ObjectType, registerEnumType } from 'type-graphql';
-import { Column, Entity, Index, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany } from 'typeorm';
+import { Column, Entity, Index, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne } from 'typeorm';
 
 import { Base } from './base.entity';
 import User from './user.entity';
@@ -50,6 +50,16 @@ export default class Task extends Base {
   @Field({ nullable: true })
   @Column({ nullable: true })
   deadline: Date;
+
+  @Index(`${indexPrefix}_created_by`)
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  created_by: string;
+
+  @Field(() => User, { nullable: true })
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({ name: 'created_by' })
+  creator: User;
 
   @Field()
   @Column()
@@ -135,6 +145,9 @@ export class TaskCreateInput {
 
   @Field({ nullable: true })
   archived: boolean;
+
+  @Field({ nullable: true })
+  deadline: Date;
 
   @Field()
   manager_id: string;

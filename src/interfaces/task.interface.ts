@@ -14,6 +14,7 @@ export interface ITask {
   active: boolean;
   priority: boolean;
   deadline: Date;
+  created_by: string;
   attachment_ids: string[];
 }
 export interface ITaskCreateInput {
@@ -26,6 +27,8 @@ export interface ITaskCreateInput {
   company_id: string;
   project_id: string;
   user_ids?: string[];
+  created_by: ITask['created_by'];
+  deadline?: ITask['deadline'];
   attachment_ids?: string[];
 }
 

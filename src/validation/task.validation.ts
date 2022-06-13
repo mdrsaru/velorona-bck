@@ -51,6 +51,7 @@ export default class TaskValidation {
       description: Joi.string().allow(null, ''),
       status: Joi.string().required().messages(messages.status),
       archived: Joi.boolean(),
+      deadline: Joi.date(),
       active: Joi.boolean(),
       manager_id: Joi.string().required().messages(messages.manager_id),
       company_id: Joi.string().required().messages(messages.company_id),
