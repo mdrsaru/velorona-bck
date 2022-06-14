@@ -53,7 +53,7 @@ export default class TaskValidation {
       archived: Joi.boolean(),
       deadline: Joi.date(),
       active: Joi.boolean(),
-      manager_id: Joi.string().required().messages(messages.manager_id),
+      manager_id: Joi.string(),
       company_id: Joi.string().required().messages(messages.company_id),
       project_id: Joi.string().required().messages(messages.project_id),
       user_ids: Joi.array(),

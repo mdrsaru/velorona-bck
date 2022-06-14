@@ -24,7 +24,7 @@ export interface ITaskCreateInput {
   status: ITask['status'];
   archived?: ITask['archived'];
   active?: ITask['active'];
-  manager_id: string;
+  manager_id?: string;
   company_id: string;
   project_id: string;
   user_ids?: string[];
