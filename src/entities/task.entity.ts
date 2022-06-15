@@ -61,12 +61,12 @@ export default class Task extends Base {
   @JoinColumn({ name: 'created_by' })
   creator: User;
 
-  @Field()
-  @Column()
+  @Field({ nullable: true })
+  @Column({ nullable: true })
   manager_id: string;
 
-  @Field(() => User)
-  @ManyToOne(() => User)
+  @Field(() => User, { nullable: true })
+  @ManyToOne(() => User, { nullable: true })
   @JoinColumn({ name: 'manager_id' })
   manager: User;
 
@@ -237,6 +237,12 @@ export class TaskQuery {
 
   @Field({ nullable: true, defaultValue: false })
   archived: boolean;
+
+  @Field({ nullable: true })
+  active: boolean;
+
+  @Field({ nullable: true })
+  created_by: string;
 }
 
 @InputType()

@@ -266,7 +266,9 @@ export class TaskResolver {
 
   @FieldResolver()
   manager(@Root() root: Task, @Ctx() ctx: IGraphqlContext) {
-    return ctx.loaders.usersByIdLoader.load(root.manager_id);
+    if (root?.manager_id) {
+      return ctx.loaders.usersByIdLoader.load(root.manager_id);
+    }
   }
 
   @FieldResolver()
