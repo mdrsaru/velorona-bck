@@ -20,6 +20,7 @@ import {
   IDurationMap,
   ITimeEntriesApproveRejectInput,
   IMarkApprovedTimeEntriesWithInvoice,
+  ITimeEntryHourlyRateInput,
 } from '../../interfaces/time-entry.interface';
 import { timeEntries } from './data';
 import { generateUuid } from './utils';
@@ -161,5 +162,9 @@ export default class TimeEntryRepository implements ITimeEntryRepository {
 
   countEntities = (args: IGetOptions): Promise<number> => {
     return Promise.resolve(this.timeEntries?.length ?? 0);
+  };
+
+  updateHourlyRate = async (args: ITimeEntryHourlyRateInput): Promise<boolean> => {
+    throw new Error('Not implemented');
   };
 }
