@@ -62,22 +62,25 @@ export default class TaskRepository extends BaseRepository<Task> implements ITas
         }
       }
 
-      let { created_by, user_id, ...where } = query;
-      if (user_id) {
+      if (query.user_id || query.created_by) {
         relations.push('users');
       }
 
       const _where = (qb: SelectQueryBuilder<User>) => {
-        const a = qb.where(where);
-
-        if (created_by && user_id) {
-          a.andWhere(
+        if (query.created_by && query.user_id) {
+          let { created_by, user_id, ...where } = query;
+          qb.where(where).andWhere(
             new Brackets((qb) => {
               qb.where('created_by=:created_by', {
-                created_by: query?.created_by ?? '',
+                created_by: created_by ?? '',
               }).orWhere('user_id=:user_id', { user_id: user_id });
             })
           );
+        } else if (query.user_id) {
+          let { created_by, user_id, ...where } = query;
+          qb.where(where).andWhere('user_id=:user_id', { user_id: user_id });
+        } else {
+          qb.where(query);
         }
       };
 

@@ -240,6 +240,9 @@ export class TaskQuery {
   archived: boolean;
 
   @Field({ nullable: true })
+  active: boolean;
+
+  @Field({ nullable: true })
   created_by: string;
 }
 

@@ -132,6 +132,9 @@ export class ClientQuery {
 
   @Field({ nullable: true, defaultValue: false })
   archived: boolean;
+
+  @Field({ nullable: true })
+  status: string;
 }
 
 @InputType()

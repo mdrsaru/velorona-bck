@@ -64,7 +64,7 @@ export class TaskResolver {
   }
 
   @Query((returns) => [User])
-  @UseMiddleware(authenticate, checkCompanyAccess)
+  @UseMiddleware(authenticate, checkCompanyAccess, authorize(RoleEnum.CompanyAdmin, RoleEnum.SuperAdmin))
   async AssignedUser(@Arg('input', { nullable: true }) args: AssignedUserQueryInput, @Ctx() ctx: any): Promise<User[]> {
     const operation = 'Tasks';
 
@@ -266,7 +266,7 @@ export class TaskResolver {
 
   @FieldResolver()
   manager(@Root() root: Task, @Ctx() ctx: IGraphqlContext) {
-    if (root.manager_id) {
+    if (root?.manager_id) {
       return ctx.loaders.usersByIdLoader.load(root.manager_id);
     }
   }

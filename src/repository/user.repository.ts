@@ -79,10 +79,10 @@ export default class UserRepository extends BaseRepository<User> implements IUse
 
       // Using function based where query since it needs inner join where clause
       const _where = (qb: SelectQueryBuilder<User>) => {
-        const a = qb.where(_searchWhere.length ? _searchWhere : where);
+        const queryBuilder = qb.where(_searchWhere.length ? _searchWhere : where);
 
         if (roleName) {
-          a.andWhere('role_id = :roleId', { roleId: role?.id ?? '' });
+          queryBuilder.andWhere('role_id = :roleId', { roleId: role?.id ?? '' });
         }
       };
 
