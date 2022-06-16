@@ -61,6 +61,7 @@ export default class Task extends Base {
   @JoinColumn({ name: 'created_by' })
   creator: User;
 
+  @Index(`${indexPrefix}_manager_id`)
   @Field({ nullable: true })
   @Column({ nullable: true })
   manager_id: string;
@@ -149,7 +150,7 @@ export class TaskCreateInput {
   @Field({ nullable: true })
   deadline: Date;
 
-  @Field()
+  @Field({ nullable: true })
   manager_id: string;
 
   @Field()

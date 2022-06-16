@@ -1,6 +1,6 @@
 import { inject, injectable } from 'inversify';
-import { merge } from 'lodash';
-import { getRepository, getManager } from 'typeorm';
+import { isArray, merge } from 'lodash';
+import { getRepository, getManager, In, SelectQueryBuilder, ILike, NotBrackets, Brackets } from 'typeorm';
 
 import strings from '../config/strings';
 import Task from '../entities/task.entity';
@@ -14,8 +14,16 @@ import BaseRepository from './base.repository';
 import { ICompanyRepository } from '../interfaces/company.interface';
 import { IMediaRepository } from '../interfaces/media.interface';
 import { IProjectRepository } from '../interfaces/project.interface';
-import { IAssignTask, ITaskCreateInput, ITaskRepository, ITaskUpdateInput } from '../interfaces/task.interface';
+import {
+  IAssignTask,
+  ITaskAssignmentRepository,
+  ITaskCreateInput,
+  ITaskRepository,
+  ITaskUpdateInput,
+} from '../interfaces/task.interface';
 import { IUserRepository } from '../interfaces/user.interface';
+import { IGetAllAndCountResult, IGetOptions } from '../interfaces/paging.interface';
+import TaskAssignmentRepository from './task-assignment.repository';
 
 @injectable()
 export default class TaskRepository extends BaseRepository<Task> implements ITaskRepository {
@@ -23,19 +31,73 @@ export default class TaskRepository extends BaseRepository<Task> implements ITas
   private companyRepository: ICompanyRepository;
   private projectRepository: IProjectRepository;
   private mediaRepository: IMediaRepository;
+  private taskAssignmentRepository: ITaskAssignmentRepository;
 
   constructor(
     @inject(TYPES.UserRepository) userRepository: IUserRepository,
     @inject(TYPES.CompanyRepository) _companyRepository: ICompanyRepository,
     @inject(TYPES.ProjectRepository) _projectRepository: IProjectRepository,
-    @inject(TYPES.MediaRepository) _mediaRepository: IMediaRepository
+    @inject(TYPES.MediaRepository) _mediaRepository: IMediaRepository,
+    @inject(TYPES.TaskAssignmentRepository) _taskAssignmentRepository: ITaskAssignmentRepository
   ) {
     super(getRepository(Task));
     this.userRepository = userRepository;
     this.companyRepository = _companyRepository;
     this.projectRepository = _projectRepository;
     this.mediaRepository = _mediaRepository;
+    this.taskAssignmentRepository = _taskAssignmentRepository;
   }
+
+  getAllAndCount = async (args: IGetOptions): Promise<IGetAllAndCountResult<Task>> => {
+    try {
+      let { query = {}, select = [], relations = [], ...rest } = args;
+
+      const _select = select as (keyof Task)[];
+
+      // For array values to be used as In operator
+      // https://github.com/typeorm/typeorm/blob/master/docs/find-options.md
+      for (let key in query) {
+        if (isArray(query[key])) {
+          query[key] = In(query[key]);
+        }
+      }
+
+      if (query.user_id || query.created_by) {
+        relations.push('users');
+      }
+
+      const _where = (qb: SelectQueryBuilder<User>) => {
+        if (query.created_by && query.user_id) {
+          let { created_by, user_id, ...where } = query;
+          qb.where(where).andWhere(
+            new Brackets((qb) => {
+              qb.where('created_by=:created_by', {
+                created_by: created_by ?? '',
+              }).orWhere('user_id=:user_id', { user_id: user_id });
+            })
+          );
+        } else if (query.user_id) {
+          let { created_by, user_id, ...where } = query;
+          qb.where(where).andWhere('user_id=:user_id', { user_id: user_id });
+        } else {
+          qb.where(query);
+        }
+      };
+
+      const [rows, count] = await this.repo.findAndCount({
+        relations,
+        where: _where,
+        ...(_select?.length && { select: _select }),
+        ...rest,
+      });
+      return {
+        count,
+        rows,
+      };
+    } catch (err) {
+      throw err;
+    }
+  };
 
   async create(args: ITaskCreateInput): Promise<Task> {
     try {
@@ -67,13 +129,14 @@ export default class TaskRepository extends BaseRepository<Task> implements ITas
         });
       }
 
-      const manager = await this.userRepository.getById({ id: manager_id });
-      if (!manager) {
-        throw new NotFoundError({
-          details: [strings.userNotFound],
-        });
+      if (manager_id) {
+        const manager = await this.userRepository.getById({ id: manager_id });
+        if (!manager) {
+          throw new NotFoundError({
+            details: [strings.userNotFound],
+          });
+        }
       }
-
       const creator = await this.userRepository.getById({ id: created_by });
       if (!creator) {
         throw new NotFoundError({

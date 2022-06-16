@@ -64,7 +64,7 @@ export class TaskResolver {
   }
 
   @Query((returns) => [User])
-  @UseMiddleware(authenticate, checkCompanyAccess)
+  @UseMiddleware(authenticate, checkCompanyAccess, authorize(RoleEnum.CompanyAdmin, RoleEnum.SuperAdmin))
   async AssignedUser(@Arg('input', { nullable: true }) args: AssignedUserQueryInput, @Ctx() ctx: any): Promise<User[]> {
     const operation = 'Tasks';
 

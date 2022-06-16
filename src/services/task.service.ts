@@ -47,29 +47,12 @@ export default class TaskService implements ITaskService {
 
   getAllAndCount = async (args: IPagingArgs): Promise<ITaskPaginationData> => {
     try {
-      let user_id;
-      if (args.query.user_id) {
-        user_id = args.query.user_id;
-        delete args.query.user_id;
-
-        const taskAssignmentByUser = await this.taskAssignmentRepository.getTaskAssignmentByUser({
-          user_id,
-        });
-
-        args.query.id = taskAssignmentByUser.map((t) => t.task_id);
-      }
-
       const { rows, count } = await this.taskRepository.getAllAndCount(args);
       const activeEntry = await this.timeEntryRepository.getActiveEntry({
         company_id: args?.query?.company_id ?? undefined,
-        created_by: user_id ?? undefined,
+        created_by: args?.query?.user_id ?? undefined,
       });
 
-      let activeTask = {
-        timeEntry_id: activeEntry?.id,
-        task_id: activeEntry?.task_id,
-        startTime: activeEntry?.startTime,
-      };
       const paging = Paging.getPagingResult({
         ...args,
         total: count,
