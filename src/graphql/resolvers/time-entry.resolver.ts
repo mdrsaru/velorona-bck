@@ -14,6 +14,7 @@ import TimeEntry, {
   TimeEntryDeleteInput,
   TimeEntryBulkDeleteInput,
   TimeEntryApproveRejectInput,
+  TotalDurationCountInput,
 } from '../../entities/time-entry.entity';
 import Paging from '../../utils/paging';
 import authenticate from '../middlewares/authenticate';
@@ -69,6 +70,26 @@ export class TimeEntryResolver {
 
       let result: IPaginationData<TimeEntry> = await this.timeEntryService.getAllAndCount(pagingArgs);
 
+      return result;
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
+    }
+  }
+
+  @Query((returns) => Number)
+  @UseMiddleware(authenticate, checkCompanyAccess)
+  async TotalDuration(
+    @Arg('input', { nullable: true }) args: TotalDurationCountInput,
+    @Ctx() ctx: any
+  ): Promise<number> {
+    const operation = 'User';
+    try {
+      let result: number = await this.timeEntryRepository.totalDuration(args);
       return result;
     } catch (err) {
       this.errorService.throwError({

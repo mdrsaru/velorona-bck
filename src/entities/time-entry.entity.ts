@@ -300,3 +300,15 @@ export class TimeEntryApproveRejectInput {
   @Field()
   approvalStatus: TimeEntryApprovalStatus;
 }
+
+@InputType()
+export class TotalDurationCountInput {
+  @Field()
+  company_id: string;
+
+  @Field({ nullable: true })
+  user_id: string;
+
+  @Field({ nullable: true })
+  manager_id: string;
+}

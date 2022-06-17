@@ -10,6 +10,8 @@ import { checkCompanyAccess } from '../middlewares/company';
 import ProjectValidation from '../../validation/project.validation';
 import { DeleteInput } from '../../entities/common.entity';
 import Project, {
+  ActiveProjectCountInput,
+  ProjectCountInput,
   ProjectCreateInput,
   ProjectPagingResult,
   ProjectQueryInput,
@@ -18,7 +20,7 @@ import Project, {
 
 import { IPaginationData } from '../../interfaces/paging.interface';
 import { IErrorService, IJoiService } from '../../interfaces/common.interface';
-import { IProject, IProjectService } from '../../interfaces/project.interface';
+import { IProject, IProjectRepository, IProjectService } from '../../interfaces/project.interface';
 import { IGraphqlContext } from '../../interfaces/graphql.interface';
 
 @injectable()
@@ -28,15 +30,18 @@ export class ProjectResolver {
   private projectService: IProjectService;
   private joiService: IJoiService;
   private errorService: IErrorService;
+  private projectRepository: IProjectRepository;
 
   constructor(
     @inject(TYPES.ProjectService) _projectService: IProjectService,
     @inject(TYPES.JoiService) _joiService: IJoiService,
-    @inject(TYPES.ErrorService) _errorService: IErrorService
+    @inject(TYPES.ErrorService) _errorService: IErrorService,
+    @inject(TYPES.ProjectRepository) _projectRepository: IProjectRepository
   ) {
     this.projectService = _projectService;
     this.joiService = _joiService;
     this.errorService = _errorService;
+    this.projectRepository = _projectRepository;
   }
 
   @Query((returns) => ProjectPagingResult)
@@ -49,6 +54,63 @@ export class ProjectResolver {
 
       let result: IPaginationData<Project> = await this.projectService.getAllAndCount(pagingArgs);
 
+      return result;
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
+    }
+  }
+
+  @Query((returns) => Number)
+  @UseMiddleware(authenticate, checkCompanyAccess)
+  async ProjectCount(@Arg('input', { nullable: true }) args: ProjectCountInput, @Ctx() ctx: any): Promise<Number> {
+    const operation = 'Project Count';
+    try {
+      let result: Number = await this.projectRepository.countEntities({ query: args });
+      return result;
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
+    }
+  }
+
+  @Query((returns) => Number)
+  @UseMiddleware(authenticate, checkCompanyAccess)
+  async ProjectInvolvedCount(
+    @Arg('input', { nullable: true }) args: ProjectCountInput,
+    @Ctx() ctx: any
+  ): Promise<Number> {
+    const operation = 'Project Involved Count';
+    try {
+      let result: Number = await this.projectRepository.countProjectInvolved(args);
+      return result;
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
+    }
+  }
+
+  @Query((returns) => Number)
+  @UseMiddleware(authenticate, checkCompanyAccess)
+  async ActiveProjectInvolvedCount(
+    @Arg('input', { nullable: true }) args: ActiveProjectCountInput,
+    @Ctx() ctx: any
+  ): Promise<Number> {
+    const operation = 'Project Involved Count';
+    try {
+      let result: Number = await this.projectRepository.countActiveProjectInvolved(args);
       return result;
     } catch (err) {
       this.errorService.throwError({

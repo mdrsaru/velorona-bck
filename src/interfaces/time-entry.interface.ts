@@ -163,6 +163,11 @@ export interface ITimeEntryHourlyRateInput {
   hourlyRate: number;
 }
 
+export interface ITotalDurationInput {
+  company_id: string;
+  user_id?: string;
+  manager_id?: string;
+}
 export interface ITimeEntryRepository {
   getAllAndCount(args: IPagingArgs): Promise<IGetAllAndCountResult<TimeEntry>>;
   getAll(args: any): Promise<TimeEntry[]>;
@@ -205,6 +210,7 @@ export interface ITimeEntryRepository {
    * Update hourly rate of non invoiced entries
    */
   updateHourlyRate(args: ITimeEntryHourlyRateInput): Promise<boolean>;
+  totalDuration(args: ITotalDurationInput): Promise<number>;
 }
 
 export interface ITimeEntryService {

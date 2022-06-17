@@ -4,27 +4,35 @@ import merge from 'lodash/merge';
 import find from 'lodash/find';
 import isArray from 'lodash/isArray';
 import { inject, injectable } from 'inversify';
-import { getRepository, Repository, In } from 'typeorm';
+import { getRepository, Repository, In, SelectQueryBuilder, EntityManager, getManager, QueryResult } from 'typeorm';
 
 import * as apiError from '../utils/api-error';
 import { TYPES } from '../types';
-import { Role as RoleEnum } from '../config/constants';
+import { entities, Role as RoleEnum } from '../config/constants';
 import strings from '../config/strings';
 import Project from '../entities/project.entity';
 import BaseRepository from './base.repository';
 
 import { ICompanyRepository } from '../interfaces/company.interface';
 import { IUserRepository } from '../interfaces/user.interface';
-import { IProjectCreateInput, IProjectRepository, IProjectUpdateInput } from '../interfaces/project.interface';
+import {
+  IActiveProjectCountInput,
+  IProjectCountInput,
+  IProjectCreateInput,
+  IProjectRepository,
+  IProjectUpdateInput,
+} from '../interfaces/project.interface';
 import { IClientRepository } from '../interfaces/client.interface';
 import { IGetOptions } from '../interfaces/paging.interface';
+import { taskAssignmentTable, projects, company } from '../config/db/columns';
+import project from '../config/inversify/project';
 
 @injectable()
 export default class ProjectRepository extends BaseRepository<Project> implements IProjectRepository {
   private companyRepository: ICompanyRepository;
   private userRepository: IUserRepository;
   private clientRepository: IClientRepository;
-
+  private manager: EntityManager;
   constructor(
     @inject(TYPES.CompanyRepository) _companyRepository: ICompanyRepository,
     @inject(TYPES.UserRepository) _userRepository: IUserRepository,
@@ -34,6 +42,7 @@ export default class ProjectRepository extends BaseRepository<Project> implement
     this.companyRepository = _companyRepository;
     this.userRepository = _userRepository;
     this.clientRepository = _clientRepository;
+    this.manager = getManager();
   }
 
   countEntities = (args: IGetOptions): Promise<number> => {
@@ -51,6 +60,68 @@ export default class ProjectRepository extends BaseRepository<Project> implement
       where: query,
       ...rest,
     });
+  };
+
+  countProjectInvolved = async (args: IProjectCountInput): Promise<number> => {
+    try {
+      let company_id = args.company_id;
+      let user_id = args.user_id;
+
+      let queryResult;
+
+      queryResult = await this.manager.query(
+        `SELECT count(*)
+          FROM projects AS p
+          JOIN tasks AS t ON t.project_id = p.id
+          LEFT JOIN task_assignment AS ta ON ta.task_id = t.id
+          where p.company_id = $1
+          AND ta.user_id =$2
+        `,
+        [company_id, user_id]
+      );
+
+      return queryResult?.[0]?.count ?? 0;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  countActiveProjectInvolved = async (args: IActiveProjectCountInput): Promise<number> => {
+    try {
+      let manager_id = args.manager_id;
+      let company_id = args.company_id;
+      let user_id = args.user_id;
+      let archived = args.archived;
+      let status = args.status;
+
+      let queryResult;
+      if (manager_id) {
+        queryResult = await this.manager.query(
+          `
+          SELECT count(*)
+          FROM ${entities.projects} AS p
+          JOIN ${entities.tasks} AS t ON t.project_id = p.id
+          where p.company_id = $1 AND p.archived = $2 AND p.status =$3 
+          where t.manager_id = $4
+          `,
+          [company_id, archived, status, manager_id]
+        );
+      } else {
+        queryResult = await this.manager.query(
+          `SELECT count(*)
+          FROM projects AS p
+          JOIN tasks AS t ON t.project_id = p.id
+          LEFT JOIN task_assignment AS ta ON ta.task_id = t.id
+          where p.company_id = $1 AND p.archived = $2 AND p.status =$3 
+          AND ta.user_id =$4
+        `,
+          [company_id, archived, status, user_id]
+        );
+      }
+      return queryResult?.[0]?.count ?? 0;
+    } catch (err) {
+      throw err;
+    }
   };
 
   create = async (args: IProjectCreateInput): Promise<Project> => {

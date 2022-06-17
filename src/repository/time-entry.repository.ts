@@ -37,6 +37,7 @@ import {
   ITimeEntriesApproveRejectInput,
   IMarkApprovedTimeEntriesWithInvoice,
   ITimeEntryHourlyRateInput,
+  ITotalDurationInput,
 } from '../interfaces/time-entry.interface';
 import { IUserRepository } from '../interfaces/user.interface';
 import { IGetOptions, IGetAllAndCountResult } from '../interfaces/paging.interface';
@@ -184,6 +185,36 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
       const entries = await query.orderBy(`${entities.timeEntry}.start_time`, 'DESC').getMany();
 
       return entries;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  totalDuration = async (args: ITotalDurationInput): Promise<number> => {
+    try {
+      const company_id = args.company_id;
+      const user_id = args?.user_id;
+      const manager_id = args?.manager_id;
+      const errors: string[] = [];
+
+      if (isNil(company_id) || !isDate(company_id)) {
+        errors.push(strings.companyIdRequired);
+      }
+
+      const query = this.repo
+        .createQueryBuilder(entities.timeEntry)
+        .select('SUM(duration)', 'totalTime')
+        .where('company_id = :company_id', { company_id });
+
+      if (user_id) {
+        query.andWhere('created_by = :user_id', { user_id });
+      }
+
+      if (manager_id) {
+        query.andWhere('approver_id = :manager_id', { manager_id });
+      }
+      const { totalTime } = await query.getRawOne();
+      return totalTime ?? 0;
     } catch (err) {
       throw err;
     }

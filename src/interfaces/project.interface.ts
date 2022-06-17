@@ -1,9 +1,8 @@
 import Project from '../entities/project.entity';
 import { IPagingArgs, IGetAllAndCountResult, IPaginationData } from './paging.interface';
-import { IEntityRemove, IEntityID } from './common.interface';
+import { IEntityRemove, IEntityID, ICountInput } from './common.interface';
 import { IGetOptions } from './paging.interface';
 import { ProjectStatus } from '../config/constants';
-
 export interface IProject {
   id: string;
   name: string;
@@ -30,6 +29,15 @@ export interface IProjectUpdateInput {
   archived?: IProject['archived'];
 }
 
+export interface IProjectCountInput extends ICountInput {
+  user_id?: string;
+}
+
+export interface IActiveProjectCountInput extends IProjectCountInput {
+  manager_id?: string;
+  archived: boolean;
+  status: string;
+}
 export interface IProjectRepository {
   getAllAndCount(args: IPagingArgs): Promise<IGetAllAndCountResult<Project>>;
   getAll(args: IGetOptions): Promise<Project[]>;
@@ -38,6 +46,8 @@ export interface IProjectRepository {
   create(args: IProjectCreateInput): Promise<Project>;
   update(args: IProjectUpdateInput): Promise<Project>;
   remove(args: IEntityRemove): Promise<Project>;
+  countProjectInvolved(args: IProjectCountInput): Promise<number>;
+  countActiveProjectInvolved(args: IActiveProjectCountInput): Promise<number>;
 }
 
 export interface IProjectService {

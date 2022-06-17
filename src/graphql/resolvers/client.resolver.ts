@@ -15,11 +15,12 @@ import Client, {
   ClientCreateInput,
   ClientUpdateInput,
   ClientDeleteInput,
+  ClientCountInput,
 } from '../../entities/client.entity';
 import { PagingInput, MessageResponse } from '../../entities/common.entity';
 
 import { IPaginationData } from '../../interfaces/paging.interface';
-import { IClient, IClientService } from '../../interfaces/client.interface';
+import { IClient, IClientService, IClientRepository } from '../../interfaces/client.interface';
 import { IErrorService, IJoiService } from '../../interfaces/common.interface';
 import { IGraphqlContext } from '../../interfaces/graphql.interface';
 
@@ -30,15 +31,18 @@ export class ClientResolver {
   private clientService: IClientService;
   private joiService: IJoiService;
   private errorService: IErrorService;
+  private clientRepository: IClientRepository;
 
   constructor(
     @inject(TYPES.ClientService) clientService: IClientService,
     @inject(TYPES.JoiService) joiService: IJoiService,
-    @inject(TYPES.ErrorService) errorService: IErrorService
+    @inject(TYPES.ErrorService) errorService: IErrorService,
+    @inject(TYPES.ClientRepository) clientRepository: IClientRepository
   ) {
     this.clientService = clientService;
     this.joiService = joiService;
     this.errorService = errorService;
+    this.clientRepository = clientRepository;
   }
 
   @Query((returns) => ClientPagingResult)
@@ -50,6 +54,23 @@ export class ClientResolver {
       const pagingArgs = Paging.createPagingPayload(args);
       let result: IPaginationData<Client> = await this.clientService.getAllAndCount(pagingArgs);
 
+      return result;
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
+    }
+  }
+
+  @Query((returns) => Number)
+  @UseMiddleware(authenticate, checkCompanyAccess)
+  async ClientCount(@Arg('input', { nullable: true }) args: ClientCountInput, @Ctx() ctx: any): Promise<Number> {
+    const operation = 'User';
+    try {
+      let result: Number = await this.clientRepository.countEntities({ query: args });
       return result;
     } catch (err) {
       this.errorService.throwError({

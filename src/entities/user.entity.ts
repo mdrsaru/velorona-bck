@@ -286,3 +286,12 @@ export class UserQueryInput {
   @Field({ nullable: true })
   query: UserQuery;
 }
+
+@InputType()
+export class UserCountInput {
+  @Field()
+  company_id: string;
+
+  @Field({ nullable: true, defaultValue: false })
+  archived: string;
+}

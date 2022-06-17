@@ -1,5 +1,5 @@
-import { IPagingArgs, IGetAllAndCountResult, IPaginationData } from './paging.interface';
-import { IEntityRemove, IEntityID, ISingleEntityQuery } from './common.interface';
+import { IPagingArgs, IGetAllAndCountResult, IPaginationData, IGetOptions } from './paging.interface';
+import { IEntityRemove, IEntityID, ISingleEntityQuery, ICountInput } from './common.interface';
 import { IAddressInput } from './address.interface';
 import Client from '../entities/client.entity';
 import { ClientStatus } from '../config/constants';
@@ -35,10 +35,13 @@ export interface IClientUpdateInput {
   address: IAddressInput;
 }
 
+export interface IClientCountInput extends ICountInput {}
+
 export interface IClientRepository {
   getAllAndCount(args: IPagingArgs): Promise<IGetAllAndCountResult<Client>>;
   getAll(args: any): Promise<Client[]>;
   getSingleEntity(args: ISingleEntityQuery): Promise<Client | undefined>;
+  countEntities(args: IGetOptions): Promise<number>;
   getById(args: IEntityID): Promise<Client | undefined>;
   create(args: IClientCreateInput): Promise<Client>;
   update(args: IClientUpdateInput): Promise<Client>;
