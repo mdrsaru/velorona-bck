@@ -45,8 +45,11 @@ export class ActivityLogQuery {
   @Field({ nullable: true })
   id: string;
 
-  @Field({ nullable: true })
+  @Field()
   company_id: string;
+
+  @Field({ nullable: true })
+  user_id: string;
 }
 
 @InputType()

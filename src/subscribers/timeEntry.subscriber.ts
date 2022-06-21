@@ -45,7 +45,7 @@ timeEntryEmitter.on(events.onTimeEntryStop, async (args: TimeEntryStop) => {
   }
 
   const totalTime = secondsToHms(duration);
-  let message = `<p> tracked time ${totalTime} on task <b>${task?.name}</b></p>`;
+  let message = ` tracked time ${totalTime} on task <b>${task?.name}</b>`;
 
   let activityLogData = {
     message: message,

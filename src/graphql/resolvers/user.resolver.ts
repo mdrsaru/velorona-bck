@@ -20,13 +20,15 @@ import User, {
   ChangeProfilePictureInput,
   UserAdminCreateInput,
   UserArchiveOrUnArchiveInput,
+  UserCountInput,
 } from '../../entities/user.entity';
 
 import { IPaginationData } from '../../interfaces/paging.interface';
-import { IUserService } from '../../interfaces/user.interface';
+import { IUserRepository, IUserService } from '../../interfaces/user.interface';
 import { IGraphqlContext } from '../../interfaces/graphql.interface';
 import { IErrorService, IJoiService } from '../../interfaces/common.interface';
 import Media from '../../entities/media.entity';
+import UserRepository from '../../tests/mock/user.repository';
 
 @injectable()
 @Resolver((of) => User)
@@ -37,15 +39,18 @@ export class UserResolver {
   private errorService: IErrorService;
   private companyLoader: any;
   private loader: any;
+  private userRepository: IUserRepository;
 
   constructor(
     @inject(TYPES.UserService) _userService: IUserService,
     @inject(TYPES.JoiService) _joiService: IJoiService,
-    @inject(TYPES.ErrorService) _errorService: IErrorService
+    @inject(TYPES.ErrorService) _errorService: IErrorService,
+    @inject(TYPES.UserRepository) _userRepository: IUserRepository
   ) {
     this.userService = _userService;
     this.joiService = _joiService;
     this.errorService = _errorService;
+    this.userRepository = _userRepository;
   }
 
   @Query((returns) => UserPagingResult)
@@ -56,6 +61,23 @@ export class UserResolver {
     try {
       const pagingArgs = Paging.createPagingPayload(args);
       let result: IPaginationData<User> = await this.userService.getAllAndCount(pagingArgs);
+      return result;
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
+    }
+  }
+
+  @Query((returns) => Number)
+  @UseMiddleware(authenticate, checkCompanyAccess)
+  async UserCount(@Arg('input', { nullable: true }) args: UserCountInput, @Ctx() ctx: any): Promise<Number> {
+    const operation = 'User';
+    try {
+      let result: Number = await this.userRepository.countEntities({ query: args });
       return result;
     } catch (err) {
       this.errorService.throwError({
