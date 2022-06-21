@@ -113,6 +113,11 @@ const TIMESHEET = {
   TimesheetController: Symbol('TimesheetController'),
 };
 
+const ACTIVITY_LOG = {
+  ActivityLogRepository: Symbol('ActivityLogRepository'),
+  ActivityLogService: Symbol('ActivityLogService'),
+  ActivityLogController: Symbol('ActivityLogController'),
+};
 const TYPES = {
   ...COMMON,
   ...COMPANY,
@@ -131,6 +136,7 @@ const TYPES = {
   ...INVOICE,
   ...INVOICE_ITEMS,
   ...TIMESHEET,
+  ...ACTIVITY_LOG,
 };
 
 export { TYPES };

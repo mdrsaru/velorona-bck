@@ -6,6 +6,10 @@ import container from '../inversify.config';
 import { ILogger } from '../interfaces/common.interface';
 import { ITimesheetRepository } from '../interfaces/timesheet.interface';
 import { ITimeEntryRepository } from '../interfaces/time-entry.interface';
+import { IUserRepository } from '../interfaces/user.interface';
+import { IActivityLogRepository } from '../interfaces/activityLog.interface';
+import UserRepository from '../tests/mock/user.repository';
+import moment from 'moment';
 
 type TimesheetApprove = {
   timesheet_id: string;
@@ -18,6 +22,10 @@ timesheetEmitter.on(events.onTimeEntriesApprove, async (args: TimesheetApprove) 
 
   const timesheetRepository: ITimesheetRepository = container.get<ITimesheetRepository>(TYPES.TimesheetRepository);
   const timeEntryRepository: ITimeEntryRepository = container.get<ITimeEntryRepository>(TYPES.TimeEntryRepository);
+  const userRepository: IUserRepository = container.get<IUserRepository>(TYPES.UserRepository);
+  const activityLogRepository: IActivityLogRepository = container.get<IActivityLogRepository>(
+    TYPES.ActivityLogRepository
+  );
   const logger = container.get<ILogger>(TYPES.Logger);
   logger.init('timesheet.subscriber');
 
@@ -46,8 +54,8 @@ timesheetEmitter.on(events.onTimeEntriesApprove, async (args: TimesheetApprove) 
         timesheet_id,
       },
     });
-
     let status: TimesheetStatus;
+
     if (approvedEntriesCount === allTimeEntries) {
       status = TimesheetStatus.Approved;
     } else if (approvedEntriesCount) {
@@ -62,6 +70,52 @@ timesheetEmitter.on(events.onTimeEntriesApprove, async (args: TimesheetApprove) 
       approver_id,
       lastApprovedAt,
     });
+
+    const timesheet = await timesheetRepository.getById({ id: timesheet_id });
+    const approver = await userRepository.getById({ id: approver_id });
+    let date =
+      moment(timesheet?.weekStartDate).format('MMM D') + ' - ' + moment(timesheet?.weekEndDate).format('MMM D');
+    let company_id = timesheet?.company_id;
+    let employee, activityLogData: any;
+    if (timesheet) {
+      employee = await userRepository.getById({ id: timesheet?.user_id });
+    }
+
+    if (status === TimesheetStatus.Approved) {
+      let message = ` appproved <b>Timesheet of ${employee?.firstName} ${employee?.lastName} </b> for ${date}`;
+      activityLogData = {
+        message: message,
+        type: TimesheetStatus.Approved,
+        company_id: company_id,
+        user_id: approver_id,
+      };
+    } else if (status === TimesheetStatus.PartiallyApproved) {
+      let message = `partially approved <b> Timesheet of ${employee?.firstName} ${employee?.lastName} </b> for ${date}`;
+      activityLogData = {
+        message: message,
+        type: TimesheetStatus.PartiallyApproved,
+        company_id: company_id,
+        user_id: approver_id,
+      };
+    }
+
+    try {
+      await activityLogRepository.create(activityLogData);
+
+      logger.info({
+        operation,
+        message: `TimeEntry reject or accept by appover`,
+        data: activityLogData,
+      });
+    } catch (err) {
+      logger.error({
+        operation,
+        message: 'Error creating activity Log',
+        data: {
+          err,
+        },
+      });
+    }
 
     logger.info({
       operation,
