@@ -134,3 +134,30 @@ export class ProjectQueryInput {
   @Field()
   query: ProjectQuery;
 }
+
+@InputType()
+export class ProjectCountInput {
+  @Field()
+  company_id: string;
+
+  @Field({ nullable: true })
+  user_id: string;
+}
+
+@InputType()
+export class ActiveProjectCountInput {
+  @Field()
+  company_id: string;
+
+  @Field({ nullable: true, defaultValue: false })
+  archived: boolean;
+
+  @Field({ nullable: true, defaultValue: ProjectStatus.Active })
+  status: string;
+
+  @Field({ nullable: true })
+  user_id: string;
+
+  @Field({ nullable: true })
+  manager_id: string;
+}

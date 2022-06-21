@@ -151,3 +151,12 @@ export class ClientDeleteInput extends DeleteInput {
   @Field()
   company_id: string;
 }
+
+@InputType()
+export class ClientCountInput {
+  @Field()
+  company_id: string;
+
+  @Field({ nullable: true, defaultValue: false })
+  archived: string;
+}

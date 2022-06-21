@@ -132,3 +132,7 @@ export interface ISingleEntityQuery {
   query: any;
   relations?: string[];
 }
+
+export interface ICountInput {
+  company_id: string;
+}
