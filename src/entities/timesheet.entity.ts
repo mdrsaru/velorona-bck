@@ -258,6 +258,12 @@ export class TimesheetQuery {
 
   @Field()
   company_id: string;
+
+  @Field({ nullable: true })
+  search: string;
+
+  @Field({ nullable: true })
+  status: string;
 }
 
 @InputType()

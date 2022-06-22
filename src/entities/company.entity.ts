@@ -159,6 +159,12 @@ export class CompanyQuery {
 
   @Field({ nullable: true })
   archived: boolean;
+
+  @Field({ nullable: true })
+  search: string;
+
+  @Field({ nullable: true })
+  status: string;
 }
 
 @InputType()

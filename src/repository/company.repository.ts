@@ -2,7 +2,7 @@ import merge from 'lodash/merge';
 import isString from 'lodash/isString';
 import isNil from 'lodash/isNil';
 import { injectable, inject } from 'inversify';
-import { getRepository, Repository, getManager, EntityManager } from 'typeorm';
+import { getRepository, Repository, getManager, EntityManager, In, ILike } from 'typeorm';
 import crypto from 'crypto';
 
 import { TYPES } from '../types';
@@ -23,6 +23,8 @@ import {
 } from '../interfaces/company.interface';
 import { IHashService } from '../interfaces/common.interface';
 import { IRoleRepository } from '../interfaces/role.interface';
+import { IGetAllAndCountResult, IGetOptions } from '../interfaces/paging.interface';
+import { isArray } from 'lodash';
 
 @injectable()
 export default class CompanyRepository extends BaseRepository<Company> implements ICompanyRepository {
@@ -39,6 +41,45 @@ export default class CompanyRepository extends BaseRepository<Company> implement
     this.manager = getManager();
     this.roleRepository = _roleRepository;
   }
+
+  getAllAndCount = async (args: IGetOptions): Promise<IGetAllAndCountResult<Company>> => {
+    try {
+      let { query = {}, select = [], relations = [], ...rest } = args;
+      let { role: roleName, search, ...where } = query;
+      const _select = select as (keyof Company)[];
+
+      for (let key in query) {
+        if (isArray(query[key])) {
+          query[key] = In(query[key]);
+        }
+      }
+
+      let _searchWhere: any = [];
+
+      if (search) {
+        _searchWhere = [
+          {
+            name: ILike(`%${search}`),
+            ...where,
+          },
+        ];
+      }
+
+      let [rows, count] = await this.repo.findAndCount({
+        relations,
+        where: _searchWhere.length ? _searchWhere : where,
+        ...(_select?.length && { select: _select }),
+        ...rest,
+      });
+
+      return {
+        count,
+        rows,
+      };
+    } catch (err) {
+      throw err;
+    }
+  };
 
   create = async (args: ICompanyCreate): Promise<{ company: Company; user: User }> => {
     try {
