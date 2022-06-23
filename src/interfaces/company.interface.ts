@@ -1,6 +1,6 @@
-import { IPagingArgs, IGetAllAndCountResult, IPaginationData } from './paging.interface';
+import { IPagingArgs, IGetAllAndCountResult, IPaginationData, IGetOptions } from './paging.interface';
 import { IEntityRemove, IEntityID } from './common.interface';
-import Company from '../entities/company.entity';
+import Company, { CompanyGrowthOutput } from '../entities/company.entity';
 import User from '../entities/user.entity';
 import { CompanyStatus } from '../config/constants';
 import Media from '../entities/media.entity';
@@ -55,14 +55,17 @@ export interface ICompanyUpdate {
 export interface ICompanyCodeInput {
   companyCode: string;
 }
+
 export interface ICompanyRepository {
   getAllAndCount(args: IPagingArgs): Promise<IGetAllAndCountResult<Company>>;
   getAll(args: any): Promise<Company[]>;
   getById(args: IEntityID): Promise<Company | undefined>;
+  countEntities(args: IGetOptions): Promise<number>;
   create(args: ICompanyCreate): Promise<{ company: Company; user: User }>;
   update(args: ICompanyUpdate): Promise<Company>;
   remove(args: IEntityRemove): Promise<Company>;
   getByCompanyCode(args: ICompanyCodeInput): Promise<Company | undefined>;
+  companyGrowth(args?: any): Promise<CompanyGrowthOutput[]>;
 }
 
 export interface ICompanyService {

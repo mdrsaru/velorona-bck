@@ -295,3 +295,9 @@ export class UserCountInput {
   @Field({ nullable: true, defaultValue: false })
   archived: string;
 }
+
+@InputType()
+export class UserCountByAdminInput {
+  @Field({ nullable: true })
+  company_id: string;
+}

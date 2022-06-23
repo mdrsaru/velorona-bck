@@ -4,7 +4,7 @@ import { Resolver, Query, Ctx, Arg, Mutation, UseMiddleware, FieldResolver, Root
 import { TYPES } from '../../types';
 import Paging from '../../utils/paging';
 import User from '../../entities/user.entity';
-import Company from '../../entities/company.entity';
+import Company, { CompanyCountInput, CompanyGrowthOutput } from '../../entities/company.entity';
 import { Role as RoleEnum } from '../../config/constants';
 import CompanyValidation from '../../validation/company.validation';
 import authenticate from '../middlewares/authenticate';
@@ -18,9 +18,10 @@ import {
 import { PagingInput, DeleteInput, MessageResponse } from '../../entities/common.entity';
 
 import { IPaginationData } from '../../interfaces/paging.interface';
-import { ICompany, ICompanyService } from '../../interfaces/company.interface';
+import { ICompanyRepository, ICompanyService } from '../../interfaces/company.interface';
 import { IErrorService, IJoiService } from '../../interfaces/common.interface';
 import { IGraphqlContext } from '../../interfaces/graphql.interface';
+import { groupBy } from 'lodash';
 
 @injectable()
 @Resolver((of) => Company)
@@ -29,15 +30,18 @@ export class CompanyResolver {
   private companyService: ICompanyService;
   private joiService: IJoiService;
   private errorService: IErrorService;
+  private companyRepository: ICompanyRepository;
 
   constructor(
     @inject(TYPES.CompanyService) companyService: ICompanyService,
     @inject(TYPES.JoiService) joiService: IJoiService,
-    @inject(TYPES.ErrorService) errorService: IErrorService
+    @inject(TYPES.ErrorService) errorService: IErrorService,
+    @inject(TYPES.CompanyRepository) _companyRepostitory: ICompanyRepository
   ) {
     this.companyService = companyService;
     this.joiService = joiService;
     this.errorService = errorService;
+    this.companyRepository = _companyRepostitory;
   }
 
   @Query((returns) => CompanyPagingResult)
@@ -52,6 +56,43 @@ export class CompanyResolver {
       const pagingArgs = Paging.createPagingPayload(args);
       let result: IPaginationData<Company> = await this.companyService.getAllAndCount(pagingArgs);
 
+      return result;
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
+    }
+  }
+
+  @Query((returns) => Number)
+  @UseMiddleware(authenticate, authorize(RoleEnum.SuperAdmin))
+  async CompanyCount(@Arg('input', { nullable: true }) args: CompanyCountInput, @Ctx() ctx: any): Promise<Number> {
+    const operation = 'Project Count';
+    try {
+      let result: Number = await this.companyRepository.countEntities({ query: args });
+      return result;
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
+    }
+  }
+
+  @Query((returns) => [CompanyGrowthOutput])
+  @UseMiddleware(authenticate, authorize(RoleEnum.SuperAdmin))
+  async CompanyGrowth(
+    @Arg('input', { nullable: true }) args: CompanyCountInput,
+    @Ctx() ctx: any
+  ): Promise<CompanyGrowthOutput[]> {
+    const operation = 'Project Count';
+    try {
+      let result: CompanyGrowthOutput[] = await this.companyRepository.companyGrowth({ query: args });
       return result;
     } catch (err) {
       this.errorService.throwError({
