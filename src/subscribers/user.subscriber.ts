@@ -1,5 +1,5 @@
 import { userEmitter } from './emitters';
-import { emailSetting, events } from '../config/constants';
+import constants, { emailSetting, events } from '../config/constants';
 import { TYPES } from '../types';
 import container from '../inversify.config';
 import Company from '../entities/company.entity';
@@ -44,6 +44,7 @@ userEmitter.on(events.onUserCreate, async (data: any) => {
     data: {
       companyCode: company?.companyCode ?? '',
       password: data?.password,
+      loginUrl: constants.frontEndUrl,
     },
   });
 
