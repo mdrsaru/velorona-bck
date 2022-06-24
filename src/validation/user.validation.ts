@@ -1,6 +1,7 @@
 import Joi from 'joi';
 import { isEmpty } from 'lodash';
 import strings from '../config/strings';
+import { Role as RoleEnum } from '../config/constants';
 
 const messages = {
   id: {
@@ -62,6 +63,13 @@ const messages = {
     'any.required': strings.payRateRequired,
     'any.message': strings.payRateRequired,
   },
+  type: {
+    'string.base': strings.userTypeRequired,
+    'string.empty': strings.userTypeRequired,
+    'string.name': strings.userTypeRequired,
+    'any.required': strings.userTypeRequired,
+    'any.message': strings.userTypeRequired,
+  },
 };
 
 export default class UserValidation {
@@ -73,6 +81,11 @@ export default class UserValidation {
       middleName: Joi.string().allow('', null),
       phone: Joi.string().required().messages(messages.phone),
       company_id: Joi.string().required(),
+      type: Joi.when('roles', {
+        is: Joi.array().has(RoleEnum.Employee),
+        then: Joi.string().required().messages(messages.type),
+        otherwise: Joi.string(),
+      }),
       address: Joi.object({
         streetAddress: Joi.string().required(),
         aptOrSuite: Joi.string().allow('', null),
@@ -116,6 +129,7 @@ export default class UserValidation {
         state: Joi.string().allow(null, ''),
         zipcode: Joi.string().allow(null, ''),
       }),
+      type: Joi.string(),
     });
   }
 

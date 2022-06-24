@@ -20,7 +20,7 @@ import Client from './client.entity';
 import { Base } from './base.entity';
 import { PagingInput, PagingResult } from './common.entity';
 import Address, { AddressCreateInput, AddressUpdateInput } from './address.entity';
-import { AdminRole, CompanyRole, entities, UserStatus, Role as RoleEnum } from '../config/constants';
+import { AdminRole, CompanyRole, entities, UserStatus, Role as RoleEnum, UserType } from '../config/constants';
 import Task from './task.entity';
 import Workschedule from './workschedule.entity';
 import { userRolesTable } from '../config/db/columns';
@@ -37,6 +37,10 @@ registerEnumType(CompanyRole, {
 
 registerEnumType(AdminRole, {
   name: 'AdminRole',
+});
+
+registerEnumType(UserType, {
+  name: 'UserType',
 });
 
 @ObjectType()
@@ -75,6 +79,13 @@ export default class User extends Base {
     default: UserStatus.Active,
   })
   status: UserStatus;
+
+  @Field((type) => UserType, { nullable: true })
+  @Column({
+    type: 'varchar',
+    nullable: true,
+  })
+  type: UserType;
 
   @Field()
   @Column({ name: 'archived', default: false })
@@ -172,6 +183,9 @@ export class UserCreateInput {
   @Field((type) => UserStatus)
   status: UserStatus;
 
+  @Field((type) => UserType, { nullable: true })
+  type: UserType;
+
   @Field()
   company_id: string;
 
@@ -246,6 +260,9 @@ export class UserUpdateInput {
 
   @Field((type) => AddressUpdateInput, { nullable: true })
   address: AddressUpdateInput;
+
+  @Field((type) => UserType, { nullable: true })
+  type: UserType;
 }
 
 @InputType()
@@ -267,6 +284,9 @@ export class UserQuery {
 
   @Field({ nullable: true })
   status: UserStatus;
+
+  @Field({ nullable: true })
+  type: UserType;
 }
 
 @InputType()

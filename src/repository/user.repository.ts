@@ -13,7 +13,7 @@ import User from '../entities/user.entity';
 import Role from '../entities/role.entity';
 import BaseRepository from './base.repository';
 import * as apiError from '../utils/api-error';
-
+import { Role as RoleEnum } from '../config/constants';
 import { IHashService } from '../interfaces/common.interface';
 import {
   IUser,
@@ -115,6 +115,7 @@ export default class UserRepository extends BaseRepository<User> implements IUse
       const address = args?.address;
       const roles = args.roles;
       const archived = args?.archived ?? false;
+      const type = args?.type;
 
       const errors: string[] = [];
 
@@ -169,8 +170,7 @@ export default class UserRepository extends BaseRepository<User> implements IUse
         });
       }
       const hashedPassword = await this.hashService.hash(password, config.saltRounds);
-
-      const user = await this.repo.save({
+      const userData: any = {
         email,
         password: hashedPassword,
         firstName,
@@ -182,7 +182,11 @@ export default class UserRepository extends BaseRepository<User> implements IUse
         address,
         roles: existingRoles,
         archived,
-      });
+      };
+      if (roles.includes(RoleEnum.Employee)) {
+        userData.type = type;
+      }
+      const user = await this.repo.save(userData);
 
       return user;
     } catch (err) {
@@ -202,9 +206,10 @@ export default class UserRepository extends BaseRepository<User> implements IUse
       const password = args?.password;
       const avatar_id = args?.avatar_id;
       const archived = args?.archived;
+      const type = args?.type;
 
       const found = await this.repo.findOne(id, {
-        relations: ['address'],
+        relations: ['address', 'roles'],
       });
 
       if (!found) {
@@ -218,7 +223,7 @@ export default class UserRepository extends BaseRepository<User> implements IUse
         hashedPassword = await this.hashService.hash(password, config.saltRounds);
       }
 
-      const update = merge(found, {
+      const updateData: any = {
         id,
         firstName,
         lastName,
@@ -232,7 +237,16 @@ export default class UserRepository extends BaseRepository<User> implements IUse
           ...address,
         },
         archived,
+      };
+
+      const role = found?.roles.some(function (role) {
+        return role.name === RoleEnum.Employee;
       });
+
+      if (role) {
+        updateData.type = type;
+      }
+      const update = merge(found, updateData);
 
       const user = await this.repo.save(update);
 

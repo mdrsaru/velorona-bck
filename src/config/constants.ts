@@ -75,6 +75,11 @@ export enum UserStatus {
   Inactive = 'Inactive',
 }
 
+export enum UserType {
+  CheckIn = 'CheckIn',
+  Timesheet = 'Timesheet',
+}
+
 export enum ClientStatus {
   Active = 'Active',
   Inactive = 'Inactive',

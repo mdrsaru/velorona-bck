@@ -27,7 +27,7 @@ import { IErrorService, IJoiService } from '../../interfaces/common.interface';
 import { IPaginationData } from '../../interfaces/paging.interface';
 import { ITimeEntryService, ITimeEntryRepository } from '../../interfaces/time-entry.interface';
 import { IGraphqlContext } from '../../interfaces/graphql.interface';
-import { checkRoleAndFilterTimeEntry } from '../middlewares/time-entry';
+import { checkRoleAndcreateTimeEntry, checkRoleAndFilterTimeEntry } from '../middlewares/time-entry';
 
 @injectable()
 @Resolver((of) => TimeEntry)
@@ -163,7 +163,7 @@ export class TimeEntryResolver {
   }
 
   @Mutation((returns) => TimeEntry)
-  @UseMiddleware(authenticate, checkCompanyAccess)
+  @UseMiddleware(authenticate, checkCompanyAccess, checkRoleAndcreateTimeEntry)
   async TimeEntryCreate(@Arg('input') args: TimeEntryCreateInput, @Ctx() ctx: any): Promise<TimeEntry> {
     const operation = 'TimeEntryCreate';
 
