@@ -63,6 +63,7 @@ export const entities = {
   invoiceItems: 'invoice_items',
   timesheet: 'timesheet',
   taskAttachments: 'task_attachments',
+  activityLogs: 'activity_log',
 };
 
 export enum CompanyStatus {
@@ -170,6 +171,8 @@ export const events = {
   sendInvoice: 'sendInvoice',
   onTimeEntriesApprove: 'onTimeEntriesApprove',
   onPayRateCreateUpdate: 'onPayRateCreateUpdate',
+  onTimeEntryStop: 'onTimeEntryStop',
+  onTimeSheetApproveOrReject: 'onTimeSheetApproveOrReject',
 };
 
 export default {
