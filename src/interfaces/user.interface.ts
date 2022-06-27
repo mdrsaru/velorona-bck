@@ -2,7 +2,7 @@ import { IPagingArgs, IGetAllAndCountResult, IPaginationData, IGetOptions } from
 import { IEntityRemove, IEntityID, ISingleEntityQuery, ICountInput } from './common.interface';
 import User from '../entities/user.entity';
 import Role from '../entities/role.entity';
-import { UserStatus } from '../config/constants';
+import { UserStatus, UserType } from '../config/constants';
 import { IAddress, IAddressCreateInput, IAddressUpdateInput } from './address.interface';
 
 export interface IUser {
@@ -17,6 +17,7 @@ export interface IUser {
   address?: IAddress;
   roles: Role[];
   company_id?: string;
+  type?: UserType;
   archived: boolean;
   createdAt: string;
   updatedAt: string;
@@ -40,6 +41,7 @@ export interface IUserCreate {
   middleName?: IUser['middleName'];
   phone: IUser['phone'];
   status: IUser['status'];
+  type?: IUser['type'];
   roles: string[];
   company_id?: string;
   address?: IAddressCreateInput;
@@ -66,6 +68,7 @@ export interface IUserUpdate {
   password?: string;
   avatar_id?: string;
   archived?: boolean;
+  type?: IUser['type'];
 }
 
 export interface IUserArchiveOrUnArchive {

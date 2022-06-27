@@ -67,6 +67,7 @@ export default class UserService implements IUserService {
       const company_id = args.company_id;
       const address = args?.address;
       const roles = args.roles;
+      const type = args?.type;
       const password = generateRandomStrings({ length: 8 });
 
       const user = await this.userRepository.create({
@@ -80,6 +81,7 @@ export default class UserService implements IUserService {
         company_id,
         address,
         roles,
+        type,
       });
 
       // Emit event for onUserCreate
@@ -106,6 +108,7 @@ export default class UserService implements IUserService {
       const address = args?.address;
       const password = args?.password;
       const archived = args?.archived;
+      const type = args?.type;
 
       const user = await this.userRepository.update({
         id,
@@ -117,6 +120,7 @@ export default class UserService implements IUserService {
         address,
         password,
         archived,
+        type,
       });
 
       return user;

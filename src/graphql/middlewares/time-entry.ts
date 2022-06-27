@@ -3,8 +3,10 @@ import { IGraphqlContext } from '../../interfaces/graphql.interface';
 import container from '../../inversify.config';
 import { IErrorService } from '../../interfaces/common.interface';
 import { TYPES } from '../../types';
-import { Role as RoleEnum } from '../../config/constants';
+import { Role as RoleEnum, UserType } from '../../config/constants';
 import { checkRoles } from '../../utils/roles';
+import * as apiError from '../../utils/api-error';
+import strings from '../../config/strings';
 
 const name = 'time-entry.middleware';
 
@@ -25,6 +27,36 @@ export const checkRoleAndFilterTimeEntry: MiddlewareFn<IGraphqlContext> = async 
 
     if (!isSuperAdminORCompanyAdmin) {
       args.input.created_by = created_by;
+    }
+
+    await next();
+  } catch (err) {
+    errorService.throwError({
+      err,
+      name,
+      operation,
+      logError: true,
+    });
+  }
+};
+
+export const checkRoleAndcreateTimeEntry: MiddlewareFn<IGraphqlContext> = async ({ context, args }, next: NextFn) => {
+  const operation = 'checkRoleAndcreateTimeEntry';
+  const errorService = container.get<IErrorService>(TYPES.ErrorService);
+
+  try {
+    const type = context.user?.type;
+    // Check only if user is not super admin and employee
+
+    const isSuperAdminOREmployee = checkRoles({
+      expectedRoles: [RoleEnum.SuperAdmin, RoleEnum.Employee],
+      userRoles: context?.user?.roles ?? [],
+    });
+
+    if (!isSuperAdminOREmployee || type !== UserType.Timesheet) {
+      throw new apiError.ForbiddenError({
+        details: [strings.notAllowedToPerformAction],
+      });
     }
 
     await next();

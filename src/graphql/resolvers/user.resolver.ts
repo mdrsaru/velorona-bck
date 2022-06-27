@@ -124,6 +124,7 @@ export class UserResolver {
       const status = args.status;
       const company_id = args.company_id;
       const roles = args.roles;
+      const type = args?.type;
       const address = {
         streetAddress: args.address.streetAddress,
         aptOrSuite: args.address.aptOrSuite,
@@ -144,6 +145,7 @@ export class UserResolver {
           company_id,
           address,
           roles,
+          type,
         },
       });
 
@@ -157,6 +159,7 @@ export class UserResolver {
         company_id,
         address,
         roles,
+        type,
       });
 
       return user;
@@ -240,6 +243,7 @@ export class UserResolver {
       const status = args.status;
       const phone = args.phone;
       const address = args.address;
+      const type = args.type;
 
       const schema = UserValidation.update();
       await this.joiService.validate({
@@ -251,6 +255,7 @@ export class UserResolver {
           middleName,
           phone,
           address,
+          type,
         },
       });
 
@@ -262,6 +267,7 @@ export class UserResolver {
         status,
         phone,
         address,
+        type,
       });
 
       return user;
