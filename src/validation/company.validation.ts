@@ -47,7 +47,7 @@ export default class CompanyValidation {
         email: Joi.string().required().messages(messages.email),
         firstName: Joi.string(),
         lastName: Joi.string(),
-        middleName: Joi.string(),
+        middleName: Joi.string().allow('', null),
         phone: Joi.string(),
         status: Joi.string(),
         address: Joi.object({

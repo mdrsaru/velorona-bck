@@ -5,7 +5,7 @@ import isString from 'lodash/isString';
 import isEmpty from 'lodash/isEmpty';
 import difference from 'lodash/difference';
 import { injectable, inject } from 'inversify';
-import { getRepository, Repository } from 'typeorm';
+import { Brackets, getRepository, In, SelectQueryBuilder } from 'typeorm';
 import crypto from 'crypto';
 
 import { TYPES } from '../types';
@@ -13,7 +13,6 @@ import strings from '../config/strings';
 import Invoice from '../entities/invoice.entity';
 import BaseRepository from './base.repository';
 import * as apiError from '../utils/api-error';
-import { timesheet as timesheetColumns } from '../config/db/columns';
 
 import {
   IInvoice,
@@ -30,6 +29,8 @@ import {
 } from '../interfaces/invoice-item.interface';
 import { ITimeEntryRepository } from '../interfaces/time-entry.interface';
 import { ITimesheetRepository } from '../interfaces/timesheet.interface';
+import { IGetAllAndCountResult, IGetOptions } from '../interfaces/paging.interface';
+import { isArray } from 'lodash';
 
 @injectable()
 export default class InvoiceRepository extends BaseRepository<Invoice> implements IInvoiceRepository {
@@ -53,6 +54,52 @@ export default class InvoiceRepository extends BaseRepository<Invoice> implement
     this.timeEntryRepository = _timeEntryRepository;
     this.timesheetRepository = _timesheetRepository;
   }
+
+  getAllAndCount = async (args: IGetOptions): Promise<IGetAllAndCountResult<Invoice>> => {
+    try {
+      let { query = {}, select = [], relations = [], ...rest } = args;
+      let { role: roleName, search, ...where } = query;
+      const _select = select as (keyof Invoice)[];
+
+      for (let key in query) {
+        if (isArray(query[key])) {
+          query[key] = In(query[key]);
+        }
+      }
+
+      if (search) {
+        relations.push('client');
+      }
+
+      // Using function based where query since it needs inner join where clause
+      const _where = (qb: SelectQueryBuilder<Invoice>) => {
+        const queryBuilder = qb.where(where);
+        if (search) {
+          queryBuilder.andWhere(
+            new Brackets((qb) => {
+              qb.where('name = :search', { search: search ?? '' }).orWhere('"invoicingEmail" = :search', {
+                search: search ?? '',
+              });
+            })
+          );
+        }
+      };
+
+      let [rows, count] = await this.repo.findAndCount({
+        relations,
+        where: _where,
+        ...(_select?.length && { select: _select }),
+        ...rest,
+      });
+
+      return {
+        count,
+        rows,
+      };
+    } catch (err) {
+      throw err;
+    }
+  };
 
   create = async (args: IInvoiceCreateInput): Promise<Invoice> => {
     try {

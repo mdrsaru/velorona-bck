@@ -119,6 +119,9 @@ export class ProjectQuery {
   @Field({ nullable: true })
   client_id: string;
 
+  @Field({ nullable: true })
+  search: string;
+
   @Field({ nullable: true, defaultValue: false })
   archived: boolean;
 

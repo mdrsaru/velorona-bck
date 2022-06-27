@@ -1,7 +1,7 @@
 import { inject, injectable } from 'inversify';
-import { isNil, isString, merge } from 'lodash';
+import { isArray, isNil, isString, merge } from 'lodash';
 import moment from 'moment';
-import { getRepository } from 'typeorm';
+import { Brackets, getRepository, In, SelectQueryBuilder } from 'typeorm';
 
 import strings from '../config/strings';
 import { TYPES } from '../types';
@@ -30,6 +30,53 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
     this.clientRepository = _clientRepository;
     this.companyRepository = _companyRepository;
   }
+
+  getAllAndCount = async (args: IGetOptions): Promise<IGetAllAndCountResult<Timesheet>> => {
+    try {
+      let { query = {}, select = [], relations = [], ...rest } = args;
+      let { role: roleName, search, ...where } = query;
+      const _select = select as (keyof Timesheet)[];
+
+      for (let key in query) {
+        if (isArray(query[key])) {
+          query[key] = In(query[key]);
+        }
+      }
+
+      if (search) {
+        relations.push('client', 'user');
+      }
+
+      // Using function based where query since it needs inner join where clause
+      const _where = (qb: SelectQueryBuilder<Timesheet>) => {
+        const queryBuilder = qb.where(where);
+
+        if (search) {
+          queryBuilder.andWhere(
+            new Brackets((qb) => {
+              qb.where('first_name = :search', { search: search ?? '' }).orWhere('name=:search', {
+                search: search ?? '',
+              });
+            })
+          );
+        }
+      };
+
+      let [rows, count] = await this.repo.findAndCount({
+        relations,
+        where: _where,
+        ...(_select?.length && { select: _select }),
+        ...rest,
+      });
+
+      return {
+        count,
+        rows,
+      };
+    } catch (err) {
+      throw err;
+    }
+  };
 
   create = async (args: ITimesheetCreateInput): Promise<Timesheet> => {
     try {
