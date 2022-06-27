@@ -26,67 +26,52 @@ import JoiService from '../../services/joi.service';
 import TokenService from '../../services/jwt.service';
 import SendGridService from '../../services/sendgrid.service';
 import HandlebarsService from '../../services/handlebars.service';
+import WebhookController from '../../controllers/webhook.controller';
 
-export const app = new ContainerModule(
-  (bind: interfaces.Bind, unbind: interfaces.Unbind) => {
-    bind<IAppService>(TYPES.AppService).to(AppService);
-    bind<AppController>(TYPES.AppController).to(AppController);
-  }
-);
+export const app = new ContainerModule((bind: interfaces.Bind, unbind: interfaces.Unbind) => {
+  bind<IAppService>(TYPES.AppService).to(AppService);
+  bind<AppController>(TYPES.AppController).to(AppController);
+});
 
-export const logger = new ContainerModule(
-  (bind: interfaces.Bind, unbind: interfaces.Unbind) => {
-    bind<ILogger>(TYPES.Logger).to(WinstonLogger);
-    bind<interfaces.Factory<ILogger>>(TYPES.LoggerFactory).toFactory<ILogger>(
-      (context: interfaces.Context) => {
-        return (name: string) => {
-          let logger = context.container.get<ILogger>(TYPES.Logger);
-          logger.init(name);
-          return logger;
-        };
-      }
-    );
-  }
-);
+export const logger = new ContainerModule((bind: interfaces.Bind, unbind: interfaces.Unbind) => {
+  bind<ILogger>(TYPES.Logger).to(WinstonLogger);
+  bind<interfaces.Factory<ILogger>>(TYPES.LoggerFactory).toFactory<ILogger>((context: interfaces.Context) => {
+    return (name: string) => {
+      let logger = context.container.get<ILogger>(TYPES.Logger);
+      logger.init(name);
+      return logger;
+    };
+  });
+});
 
-export const graphql = new ContainerModule(
-  (bind: interfaces.Bind, unbind: interfaces.Unbind) => {
-    bind<IGraphql>(TYPES.GraphqlService).to(GraphqlService);
-  }
-);
+export const graphql = new ContainerModule((bind: interfaces.Bind, unbind: interfaces.Unbind) => {
+  bind<IGraphql>(TYPES.GraphqlService).to(GraphqlService);
+});
 
-export const hash = new ContainerModule(
-  (bind: interfaces.Bind, unbind: interfaces.Unbind) => {
-    bind<IHashService>(TYPES.HashService).to(BcryptService);
-  }
-);
+export const hash = new ContainerModule((bind: interfaces.Bind, unbind: interfaces.Unbind) => {
+  bind<IHashService>(TYPES.HashService).to(BcryptService);
+});
 
-export const token = new ContainerModule(
-  (bind: interfaces.Bind, unbind: interfaces.Unbind) => {
-    bind<ITokenService>(TYPES.TokenService).to(TokenService);
-  }
-);
+export const token = new ContainerModule((bind: interfaces.Bind, unbind: interfaces.Unbind) => {
+  bind<ITokenService>(TYPES.TokenService).to(TokenService);
+});
 
-export const email = new ContainerModule(
-  (bind: interfaces.Bind, unbind: interfaces.Unbind) => {
-    bind<IEmailService>(TYPES.EmailService).to(SendGridService);
-  }
-);
+export const email = new ContainerModule((bind: interfaces.Bind, unbind: interfaces.Unbind) => {
+  bind<IEmailService>(TYPES.EmailService).to(SendGridService);
+});
 
-export const handlebars = new ContainerModule(
-  (bind: interfaces.Bind, unbind: interfaces.Unbind) => {
-    bind<ITemplateService>(TYPES.HandlebarsService).to(HandlebarsService);
-  }
-);
+export const handlebars = new ContainerModule((bind: interfaces.Bind, unbind: interfaces.Unbind) => {
+  bind<ITemplateService>(TYPES.HandlebarsService).to(HandlebarsService);
+});
 
-export const error = new ContainerModule(
-  (bind: interfaces.Bind, unbind: interfaces.Unbind) => {
-    bind<IErrorService>(TYPES.ErrorService).to(ErrorService);
-  }
-);
+export const error = new ContainerModule((bind: interfaces.Bind, unbind: interfaces.Unbind) => {
+  bind<IErrorService>(TYPES.ErrorService).to(ErrorService);
+});
 
-export const joi = new ContainerModule(
-  (bind: interfaces.Bind, unbind: interfaces.Unbind) => {
-    bind<IJoiService>(TYPES.JoiService).to(JoiService);
-  }
-);
+export const joi = new ContainerModule((bind: interfaces.Bind, unbind: interfaces.Unbind) => {
+  bind<IJoiService>(TYPES.JoiService).to(JoiService);
+});
+
+export const webhook = new ContainerModule((bind: interfaces.Bind, unbind: interfaces.Unbind) => {
+  bind<WebhookController>(TYPES.WebhookController).to(WebhookController);
+});

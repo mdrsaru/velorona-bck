@@ -7,6 +7,7 @@ import Company from '../entities/company.entity';
 import { generateRandomStrings } from '../utils/strings';
 import constants, { emailSetting, events } from '../config/constants';
 import userEmitter from '../subscribers/user.subscriber';
+import companyEmitter from '../subscribers/company.subscriber';
 
 import { IPagingArgs, IPaginationData } from '../interfaces/paging.interface';
 import { IEntityRemove, IEntityID, ITemplateService, IEmailService, ILogger } from '../interfaces/common.interface';
@@ -91,6 +92,13 @@ export default class UserService implements IUserService {
         password,
       });
 
+      // Emit event for updateCompanySubscriptionUsage
+      if (user.company_id) {
+        companyEmitter.emit(events.updateCompanySubscriptionUsage, {
+          company_id: user.company_id,
+        });
+      }
+
       return user;
     } catch (err) {
       throw err;
@@ -107,7 +115,6 @@ export default class UserService implements IUserService {
       const phone = args.phone;
       const address = args?.address;
       const password = args?.password;
-      const archived = args?.archived;
       const type = args?.type;
 
       const user = await this.userRepository.update({
@@ -119,7 +126,6 @@ export default class UserService implements IUserService {
         phone,
         address,
         password,
-        archived,
         type,
       });
 
@@ -139,11 +145,19 @@ export default class UserService implements IUserService {
         archived,
       });
 
+      // Emit event for updateCompanySubscriptionUsage
+      if (user.company_id) {
+        companyEmitter.emit(events.updateCompanySubscriptionUsage, {
+          company_id: user.company_id,
+        });
+      }
+
       return user;
     } catch (err) {
       throw err;
     }
   };
+
   remove = (args: IEntityRemove): Promise<User> => {
     throw new Error('not implemented');
   };
@@ -156,6 +170,7 @@ export default class UserService implements IUserService {
       throw err;
     }
   };
+
   changeProfilePicture = async (args: IChangeProfilePictureInput): Promise<User> => {
     try {
       const id = args.id;

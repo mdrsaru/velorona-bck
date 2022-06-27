@@ -1,5 +1,5 @@
 import { IPagingArgs, IGetAllAndCountResult, IPaginationData, IGetOptions } from './paging.interface';
-import { IEntityRemove, IEntityID } from './common.interface';
+import { IEntityRemove, IEntityID, ISingleEntityQuery } from './common.interface';
 import Company, { CompanyGrowthOutput } from '../entities/company.entity';
 import User from '../entities/user.entity';
 import { CompanyStatus } from '../config/constants';
@@ -14,6 +14,11 @@ export interface ICompany {
   admin_email: string;
   logo?: Media;
   logo_id?: string;
+  plan?: string;
+  stripeCustomerId?: string;
+  subscriptionId?: string;
+  subscriptionItemId?: string;
+  subscriptionStatus?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -47,11 +52,17 @@ export interface ICompanyCreate {
 
 export interface ICompanyUpdate {
   id: string;
-  name: ICompany['name'];
-  status: ICompany['status'];
+  name?: ICompany['name'];
+  status?: ICompany['status'];
   archived?: ICompany['archived'];
   logo_id?: ICompany['logo_id'];
+  plan?: ICompany['plan'];
+  stripeCustomerId?: ICompany['stripeCustomerId'];
+  subscriptionId?: ICompany['subscriptionId'];
+  subscriptionItemId?: ICompany['subscriptionItemId'];
+  subscriptionStatus?: ICompany['subscriptionStatus'];
 }
+
 export interface ICompanyCodeInput {
   companyCode: string;
 }
@@ -66,6 +77,7 @@ export interface ICompanyRepository {
   remove(args: IEntityRemove): Promise<Company>;
   getByCompanyCode(args: ICompanyCodeInput): Promise<Company | undefined>;
   companyGrowth(args?: any): Promise<CompanyGrowthOutput[]>;
+  getSingleEntity(args: ISingleEntityQuery): Promise<Company | undefined>;
 }
 
 export interface ICompanyService {

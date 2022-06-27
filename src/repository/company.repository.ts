@@ -197,6 +197,11 @@ export default class CompanyRepository extends BaseRepository<Company> implement
       const status = args.status;
       const archived = args?.archived;
       const logo_id = args?.logo_id;
+      const plan = args?.plan;
+      const stripeCustomerId = args?.stripeCustomerId;
+      const subscriptionId = args?.subscriptionId;
+      const subscriptionItemId = args?.subscriptionItemId;
+      const subscriptionStatus = args?.subscriptionStatus;
 
       const found = await this.getById({ id });
 
@@ -212,6 +217,11 @@ export default class CompanyRepository extends BaseRepository<Company> implement
         status,
         archived,
         logo_id,
+        plan,
+        subscriptionId,
+        stripeCustomerId,
+        subscriptionItemId,
+        subscriptionStatus,
       });
 
       const company = await this.repo.save(update);
