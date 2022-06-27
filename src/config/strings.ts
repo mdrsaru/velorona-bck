@@ -94,4 +94,5 @@ export default {
   timesheetNotFound: 'Timesheet not found',
   deadlineMustBeValidDate: 'Deadline must be of future date',
   userArchived: 'User has been archived',
+  messageRequired: 'Message Required',
 };

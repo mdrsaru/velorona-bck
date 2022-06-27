@@ -4,7 +4,16 @@ import merge from 'lodash/merge';
 import find from 'lodash/find';
 import isArray from 'lodash/isArray';
 import { inject, injectable } from 'inversify';
-import { getRepository, Repository, In, SelectQueryBuilder, EntityManager, getManager, QueryResult } from 'typeorm';
+import {
+  getRepository,
+  Repository,
+  In,
+  SelectQueryBuilder,
+  EntityManager,
+  getManager,
+  QueryResult,
+  ILike,
+} from 'typeorm';
 
 import * as apiError from '../utils/api-error';
 import { TYPES } from '../types';
@@ -23,7 +32,7 @@ import {
   IProjectUpdateInput,
 } from '../interfaces/project.interface';
 import { IClientRepository } from '../interfaces/client.interface';
-import { IGetOptions } from '../interfaces/paging.interface';
+import { IGetAllAndCountResult, IGetOptions } from '../interfaces/paging.interface';
 import { taskAssignmentTable, projects, company } from '../config/db/columns';
 import project from '../config/inversify/project';
 
@@ -44,6 +53,45 @@ export default class ProjectRepository extends BaseRepository<Project> implement
     this.clientRepository = _clientRepository;
     this.manager = getManager();
   }
+
+  getAllAndCount = async (args: IGetOptions): Promise<IGetAllAndCountResult<Project>> => {
+    try {
+      let { query = {}, select = [], relations = [], ...rest } = args;
+      let { role: roleName, search, ...where } = query;
+      const _select = select as (keyof Project)[];
+
+      for (let key in query) {
+        if (isArray(query[key])) {
+          query[key] = In(query[key]);
+        }
+      }
+
+      let _searchWhere: any = [];
+
+      if (search) {
+        _searchWhere = [
+          {
+            name: ILike(`%${search}`),
+            ...where,
+          },
+        ];
+      }
+
+      let [rows, count] = await this.repo.findAndCount({
+        relations,
+        where: _searchWhere.length ? _searchWhere : where,
+        ...(_select?.length && { select: _select }),
+        ...rest,
+      });
+
+      return {
+        count,
+        rows,
+      };
+    } catch (err) {
+      throw err;
+    }
+  };
 
   countEntities = (args: IGetOptions): Promise<number> => {
     let { query = {}, select = [], ...rest } = args;

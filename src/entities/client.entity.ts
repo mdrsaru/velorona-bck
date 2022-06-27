@@ -27,6 +27,7 @@ export default class Client extends Base {
   @Column()
   email: string;
 
+  @Index(`${indexPrefix}_invoicing_email_index`)
   @Field()
   @Column()
   invoicingEmail: string;

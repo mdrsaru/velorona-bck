@@ -258,6 +258,12 @@ export class InvoiceQuery {
 
   @Field({ nullable: true })
   client_id: string;
+
+  @Field({ nullable: true })
+  search: string;
+
+  @Field({ nullable: true })
+  status: string;
 }
 
 @InputType()

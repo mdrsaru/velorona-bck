@@ -5,8 +5,8 @@ import { TYPES } from '../types';
 import Paging from '../utils/paging';
 import * as apiError from '../utils/api-error';
 import TimeEntry from '../entities/time-entry.entity';
-import { TimesheetStatus, events } from '../config/constants';
-import timesheetEmitter from '../subscribers/timesheet.subscriber';
+import { TimesheetStatus, events, TimeEntryApprovalStatus } from '../config/constants';
+import timesheetEmitter from '../subscribers/timeEntry.subscriber';
 
 import { IEntityRemove, IErrorService, ILogger, Maybe } from '../interfaces/common.interface';
 import { IPagingArgs } from '../interfaces/paging.interface';
@@ -24,6 +24,7 @@ import {
 import { IUserPayRateRepository } from '../interfaces/user-payrate.interface';
 import { ITimesheetRepository } from '../interfaces/timesheet.interface';
 import { IProjectRepository } from '../interfaces/project.interface';
+import { timeEntryEmitter } from '../subscribers/emitters';
 
 @injectable()
 export default class TimeEntryService implements ITimeEntryService {
@@ -195,7 +196,6 @@ export default class TimeEntryService implements ITimeEntryService {
         created_by,
         task_id,
       });
-
       try {
         /* Create/Update timesheet if the start/end time is provided */
         if (startTime || endTime) {
@@ -228,6 +228,15 @@ export default class TimeEntryService implements ITimeEntryService {
         });
       }
 
+      if (endTime) {
+        // Emit event for onTimeEntryStop
+        timeEntryEmitter.emit(events.onTimeEntryStop, {
+          created_by: timeEntry.created_by,
+          task_id: timeEntry.task_id,
+          duration: timeEntry.duration,
+          company_id: timeEntry.company_id,
+        });
+      }
       return timeEntry;
     } catch (err) {
       this.errorService.throwError({
