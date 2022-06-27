@@ -21,6 +21,7 @@ import User, {
   UserAdminCreateInput,
   UserArchiveOrUnArchiveInput,
   UserCountInput,
+  UserCountByAdminInput,
 } from '../../entities/user.entity';
 
 import { IPaginationData } from '../../interfaces/paging.interface';
@@ -75,6 +76,26 @@ export class UserResolver {
   @Query((returns) => Number)
   @UseMiddleware(authenticate, checkCompanyAccess)
   async UserCount(@Arg('input', { nullable: true }) args: UserCountInput, @Ctx() ctx: any): Promise<Number> {
+    const operation = 'User';
+    try {
+      let result: Number = await this.userRepository.countEntities({ query: args });
+      return result;
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
+    }
+  }
+
+  @Query((returns) => Number)
+  @UseMiddleware(authenticate, authorize(RoleEnum.SuperAdmin))
+  async UserCountByAdmin(
+    @Arg('input', { nullable: true }) args: UserCountByAdminInput,
+    @Ctx() ctx: any
+  ): Promise<Number> {
     const operation = 'User';
     try {
       let result: Number = await this.userRepository.countEntities({ query: args });

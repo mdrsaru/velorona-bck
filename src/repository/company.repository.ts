@@ -6,9 +6,9 @@ import { getRepository, Repository, getManager, EntityManager, In, ILike } from 
 import crypto from 'crypto';
 
 import { TYPES } from '../types';
-import constants, { UserStatus, Role as RoleEnum } from '../config/constants';
+import constants, { UserStatus, Role as RoleEnum, entities } from '../config/constants';
 import strings from '../config/strings';
-import Company from '../entities/company.entity';
+import Company, { CompanyGrowthOutput } from '../entities/company.entity';
 import User from '../entities/user.entity';
 import BaseRepository from './base.repository';
 import * as apiError from '../utils/api-error';
@@ -23,6 +23,7 @@ import {
 } from '../interfaces/company.interface';
 import { IHashService } from '../interfaces/common.interface';
 import { IRoleRepository } from '../interfaces/role.interface';
+import company from '../config/inversify/company';
 import { IGetAllAndCountResult, IGetOptions } from '../interfaces/paging.interface';
 import { isArray } from 'lodash';
 
@@ -41,6 +42,19 @@ export default class CompanyRepository extends BaseRepository<Company> implement
     this.manager = getManager();
     this.roleRepository = _roleRepository;
   }
+
+  companyGrowth = async (args?: any): Promise<CompanyGrowthOutput[]> => {
+    let queryResult;
+
+    queryResult = await this.manager.query(
+      `SELECT count(*),date_trunc('month', created_at) as "createdAt"
+        FROM companies AS p
+       group by date_trunc('month', created_at) 
+       order by date_trunc('month', created_at) 
+      `
+    );
+    return queryResult;
+  };
 
   getAllAndCount = async (args: IGetOptions): Promise<IGetAllAndCountResult<Company>> => {
     try {

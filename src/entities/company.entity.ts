@@ -175,3 +175,18 @@ export class CompanyQueryInput {
   @Field({ nullable: true })
   query: CompanyQuery;
 }
+
+@InputType()
+export class CompanyCountInput {
+  @Field({ nullable: true })
+  companyCode: string;
+}
+
+@ObjectType()
+export class CompanyGrowthOutput {
+  @Field({ nullable: true })
+  count: string;
+
+  @Field({ nullable: true })
+  createdAt: Date;
+}
