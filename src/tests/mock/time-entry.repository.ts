@@ -21,6 +21,7 @@ import {
   ITimeEntriesApproveRejectInput,
   IMarkApprovedTimeEntriesWithInvoice,
   ITimeEntryHourlyRateInput,
+  ITotalDurationInput,
 } from '../../interfaces/time-entry.interface';
 import { timeEntries } from './data';
 import { generateUuid } from './utils';
@@ -167,4 +168,8 @@ export default class TimeEntryRepository implements ITimeEntryRepository {
   updateHourlyRate = async (args: ITimeEntryHourlyRateInput): Promise<boolean> => {
     throw new Error('Not implemented');
   };
+
+  totalDuration(args: ITotalDurationInput): Promise<number> {
+    throw new Error('Not implemented');
+  }
 }

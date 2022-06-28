@@ -15,7 +15,7 @@ import { ConflictError, NotFoundError } from '../../utils/api-error';
 
 import { IEntityID, IEntityRemove, ISingleEntityQuery } from '../../interfaces/common.interface';
 import { IUser, IUserCreate, IUserUpdate, IEmailQuery, IEmailCompanyQuery } from '../../interfaces/user.interface';
-import { IPaginationData, IPagingArgs, IGetAllAndCountResult } from '../../interfaces/paging.interface';
+import { IPaginationData, IPagingArgs, IGetAllAndCountResult, IGetOptions } from '../../interfaces/paging.interface';
 
 const date = '2022-03-08T08:01:04.776Z';
 
@@ -114,4 +114,8 @@ export default class UserRepository implements IUserRepository {
   getByEmailAndCompanyCode = (args: IEmailCompanyQuery): Promise<User | undefined> => {
     throw new Error('not implemented');
   };
+
+  countEntities(args: IGetOptions): Promise<number> {
+    throw new Error('Not implemented');
+  }
 }
