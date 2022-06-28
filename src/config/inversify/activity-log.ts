@@ -1,12 +1,10 @@
 import { ContainerModule, interfaces } from 'inversify';
+import { ActivityLogResolver } from '../../graphql/resolvers/activity-log';
+import { IActivityLogRepository, IActivityLogService } from '../../interfaces/activity-log.interface';
+import ActivityLogRepository from '../../repository/activity-log.repository';
+import ActivityLogService from '../../services/activity-log.service';
 
 import { TYPES } from '../../types';
-
-import { IActivityLogRepository, IActivityLogService } from '../../interfaces/activityLog.interface';
-
-import { ActivityLogResolver } from '../../graphql/resolvers/activityLog';
-import ActivityLogRepository from '../../repository/activityLog.repository';
-import ActivityLogService from '../../services/activityLog.service';
 
 const activityLog = new ContainerModule((bind: interfaces.Bind, unbind: interfaces.Unbind) => {
   bind<IActivityLogRepository>(TYPES.ActivityLogRepository).to(ActivityLogRepository);

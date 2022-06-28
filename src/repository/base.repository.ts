@@ -86,16 +86,21 @@ export default class BaseRepository<T> implements IBaseRepository<T> {
 
   async getSingleEntity(args: ISingleEntityQuery): Promise<T | undefined> {
     try {
-      const query = args.query;
+      let { query = {}, select = [], ...rest } = args;
+
+      const _select = select as (keyof T)[];
+
       if (!query) {
         throw new ValidationError({
           details: ['Argument query is required'],
         });
       }
       const row = await this.repo.findOne({
-        where: args.query,
-        relations: args?.relations ?? [],
+        where: query,
+        ...(_select?.length && { select: _select }),
+        ...rest,
       });
+
       return row;
     } catch (err) {
       throw err;

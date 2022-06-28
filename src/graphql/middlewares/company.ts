@@ -2,7 +2,7 @@ import find from 'lodash/find';
 import { MiddlewareFn, NextFn } from 'type-graphql';
 
 import { TYPES } from '../../types';
-import { Role as RoleEnum } from '../../config/constants';
+import { Role as RoleEnum, subscriptionStatus } from '../../config/constants';
 import strings from '../../config/strings';
 import container from '../../inversify.config';
 import * as apiError from '../../utils/api-error';
@@ -43,4 +43,22 @@ export const checkCompanyAccess: MiddlewareFn<IGraphqlContext> = async ({ contex
       logError: true,
     });
   }
+};
+
+/**
+ * Checks if the company has subscribed to the plan or not
+ */
+const checkPlan = (plan: string): MiddlewareFn<IGraphqlContext> => {
+  return async ({ context }, next: NextFn) => {
+    const companyPlan = context?.user?.company?.plan;
+    const _subscriptionStatus = context?.user?.company?.subscriptionStatus;
+
+    if (companyPlan !== plan || _subscriptionStatus !== subscriptionStatus.active) {
+      throw new apiError.ForbiddenError({
+        details: [strings.featureNotSubscribed],
+      });
+    }
+
+    await next();
+  };
 };

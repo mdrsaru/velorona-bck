@@ -131,6 +131,7 @@ export interface ITemplateService {
 export interface ISingleEntityQuery {
   query: any;
   relations?: string[];
+  select?: string[];
 }
 
 export interface ICountInput {

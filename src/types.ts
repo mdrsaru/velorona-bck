@@ -16,6 +16,7 @@ const COMMON = {
   AddressRepository: Symbol('AddressRepository'),
   HandlebarsService: Symbol('HandlebarsService'),
   UserClientRepository: Symbol('UserClientRepository'),
+  WebhookController: Symbol('WebhookController'),
 };
 
 const COMPANY = {
@@ -118,6 +119,22 @@ const ACTIVITY_LOG = {
   ActivityLogService: Symbol('ActivityLogService'),
   ActivityLogController: Symbol('ActivityLogController'),
 };
+
+const SUBSCRIPTION = {
+  SubscriptionService: Symbol('SubscriptionService'),
+  SubscriptionResolver: Symbol('SubscriptionResolver'),
+};
+
+const STRIPE = {
+  StripeService: Symbol('StripeService'),
+};
+
+const ATTACHED_TIMESHEET = {
+  AttachedTimesheetRepository: Symbol('AttachedTimesheetRepository'),
+  AttachedTimesheetService: Symbol('AttachedTimesheetService'),
+  AttachedTimesheetController: Symbol('AttachedTimesheetController'),
+};
+
 const TYPES = {
   ...COMMON,
   ...COMPANY,
@@ -137,6 +154,9 @@ const TYPES = {
   ...INVOICE_ITEMS,
   ...TIMESHEET,
   ...ACTIVITY_LOG,
+  ...SUBSCRIPTION,
+  ...STRIPE,
+  ...ATTACHED_TIMESHEET,
 };
 
 export { TYPES };

@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { Container, interfaces } from 'inversify';
 
-import { app, logger, graphql, hash, error, joi, token, email, handlebars } from './config/inversify/common';
+import { app, logger, graphql, hash, error, joi, token, email, handlebars, webhook } from './config/inversify/common';
 import company from './config/inversify/company';
 import role from './config/inversify/role';
 import user from './config/inversify/user';
@@ -19,7 +19,10 @@ import userpayrate from './config/inversify/user-payrate';
 import invoice from './config/inversify/invoice';
 import invoiceItem from './config/inversify/invoice-item';
 import timesheet from './config/inversify/timesheet';
-import activityLog from './config/inversify/activityLog';
+import activityLog from './config/inversify/activity-log';
+import subscription from './config/inversify/subscription';
+import stripe from './config/inversify/stripe';
+import attachedTimesheet from './config/inversify/attached-timesheet';
 
 const container = new Container({ skipBaseClassChecks: true });
 
@@ -52,6 +55,10 @@ container.load(
   invoiceItem,
   timesheet,
   activityLog,
+  subscription,
+  stripe,
+  webhook,
+  attachedTimesheet,
 );
 
 export default container;
