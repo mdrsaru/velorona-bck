@@ -77,7 +77,7 @@ export enum UserStatus {
 }
 
 export enum UserType {
-  CheckIn = 'CheckIn',
+  CICO = 'CICO', // Check-In-Check-Out
   Timesheet = 'Timesheet',
 }
 
@@ -178,6 +178,28 @@ export const events = {
   onPayRateCreateUpdate: 'onPayRateCreateUpdate',
   onTimeEntryStop: 'onTimeEntryStop',
   onTimeSheetApproveOrReject: 'onTimeSheetApproveOrReject',
+  updateCompanySubscriptionUsage: 'updateCompanySubscriptionUsage',
+};
+
+export const stripeSetting = {
+  publishableKey: process.env.STRIPE_PUBLISHABLE_KEY as string,
+  secretKey: process.env.STRIPE_SECRET_KEY as string,
+  webhookSecret: process.env.STRIPE_WEBHOOK_SECRET as string,
+};
+
+export const plans = {
+  Starter: 'Starter',
+  Professional: 'Professional',
+};
+
+export const stripePrices = {
+  flatPrice: process.env.FLAT_PLAN_PRICE as string,
+  perUser: process.env.PER_USER_PLAN_PRICE as string,
+};
+
+export const subscriptionStatus = {
+  active: 'active',
+  inactive: 'inactive',
 };
 
 export default {

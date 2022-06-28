@@ -3,7 +3,7 @@ import { ObjectType, Field, ID, InputType, registerEnumType } from 'type-graphql
 
 import { Base } from './base.entity';
 import User from './user.entity';
-import { entities, CompanyStatus } from '../config/constants';
+import { entities, CompanyStatus, plans } from '../config/constants';
 import { PagingResult, PagingInput } from './common.entity';
 import Workschedule from './workschedule.entity';
 import Media from './media.entity';
@@ -60,6 +60,26 @@ export default class Company extends Base {
   @Field(() => Workschedule, { nullable: true })
   @OneToMany(() => Workschedule, (workschedule) => workschedule.tasks)
   workschedules: Workschedule[];
+
+  @Field({ nullable: true })
+  @Column({ name: 'stripe_customer_id', type: 'varchar', nullable: true })
+  stripeCustomerId: string;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true, type: 'varchar', default: plans.Starter })
+  plan: string;
+
+  @Field({ nullable: true, description: 'Stripe subscription Id' })
+  @Column({ name: 'subscription_id', type: 'varchar', nullable: true })
+  subscriptionId: string;
+
+  @Field({ nullable: true, description: 'Stripe subscription Item Id for the metered billing' })
+  @Column({ name: 'subscription_item_id', type: 'varchar', nullable: true })
+  subscriptionItemId: string;
+
+  @Field({ nullable: true, description: 'Status of subscription' })
+  @Column({ name: 'subscription_status', type: 'varchar', nullable: true })
+  subscriptionStatus: string;
 }
 
 @ObjectType()

@@ -95,4 +95,8 @@ export default {
   deadlineMustBeValidDate: 'Deadline must be of future date',
   userArchived: 'User has been archived',
   messageRequired: 'Message Required',
+  customerRequired: 'Customer required',
+  pricesRequired: 'Some of the prices are missing',
+  companyAlreadySubscribed: 'Company already subscribed to Professional plan',
+  featureNotSubscribed: 'Company has not subscribed to the Professional plan to use this feature.',
 };
