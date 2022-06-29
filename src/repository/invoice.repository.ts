@@ -126,11 +126,8 @@ export default class InvoiceRepository extends BaseRepository<Invoice> implement
       if (isNil(dueDate) || !isDate(dueDate)) {
         errors.push(strings.dueDateRequired);
       }
-      if (isNil(poNumber) || isEmpty(poNumber)) {
-        errors.push(strings.poNumberRequired);
-      }
-      if (isNil(totalAmount) || isEmpty(poNumber)) {
-        errors.push(strings.poNumberRequired);
+      if (isNil(totalAmount)) {
+        errors.push(strings.totalAmountRequired);
       }
       if (isNil(company_id) || isEmpty(company_id)) {
         errors.push(strings.companyRequired);
