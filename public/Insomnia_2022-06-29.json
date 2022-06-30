@@ -1,9 +1,62 @@
 {
   "_type": "export",
   "__export_format": 4,
-  "__export_date": "2022-06-09T11:49:09.327Z",
-  "__export_source": "insomnia.desktop.app:v2022.3.0",
+  "__export_date": "2022-06-29T04:03:10.824Z",
+  "__export_source": "insomnia.desktop.app:v2022.4.2",
   "resources": [
+    {
+      "_id": "req_c538fb1fd0ce4c738ad4a1f2d6c660fc",
+      "parentId": "fld_93eae6bb4b5f4869b47adbab99e786de",
+      "modified": 1656393500852,
+      "created": 1655794883502,
+      "url": "{{ api_url }}/{{ version }}/graphql",
+      "name": "Get all",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/graphql",
+        "text": "{\"query\":\"query ActivityLog($input: ActivityLogQueryInput!) {\\n  ActivityLog(input: $input) {\\n    data {\\n    id\\n\\t\\t\\ttype\\n\\t\\t\\tmessage\\n\\t\\t\\tuser{\\n\\t\\t\\tid\\n\\t\\t\\t\\tfullName\\n\\t\\t\\t}\\n      }\\n    \\n    paging {\\n      total\\n      startIndex\\n      endIndex\\n      hasNextPage\\n    }\\n  }\\n}\",\"variables\":{\"input\":{\"paging\":{},\"query\":{\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\"}}},\"operationName\":\"ActivityLog\"}"
+      },
+      "parameters": [],
+      "headers": [
+        { "name": "Content-Type", "value": "application/json", "id": "pair_77840fd940d1462ba7f42e90130b63b3" }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLnRva2Vu::46b', 'never', 60 %}"
+      },
+      "metaSortKey": -1655794883502,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "fld_93eae6bb4b5f4869b47adbab99e786de",
+      "parentId": "wrk_4360c7a0bbfa403c86be07deeb666c4c",
+      "modified": 1655794880883,
+      "created": 1655794880883,
+      "name": "Activity Log",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1655794880883,
+      "_type": "request_group"
+    },
+    {
+      "_id": "wrk_4360c7a0bbfa403c86be07deeb666c4c",
+      "parentId": null,
+      "modified": 1646649798710,
+      "created": 1646649798710,
+      "name": "Vellorum",
+      "description": "",
+      "scope": "design",
+      "_type": "workspace"
+    },
     {
       "_id": "req_fc8baa37bf9a4055b6ff5a68a4e2b145",
       "parentId": "fld_537a6fc35ba54d37ac83ecb96b02e59f",
@@ -52,16 +105,6 @@
       "environmentPropertyOrder": null,
       "metaSortKey": -1648181427849,
       "_type": "request_group"
-    },
-    {
-      "_id": "wrk_4360c7a0bbfa403c86be07deeb666c4c",
-      "parentId": null,
-      "modified": 1646649798710,
-      "created": 1646649798710,
-      "name": "Vellorum",
-      "description": "",
-      "scope": "design",
-      "_type": "workspace"
     },
     {
       "_id": "req_e145abea342745bc9a8c999acbcb903e",
@@ -199,6 +242,68 @@
         "type": "bearer"
       },
       "metaSortKey": -1640931628378.5,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_3eccff346b894011a7213c4bcc8a8f77",
+      "parentId": "fld_6318bfedd77b4135b257df42a9504cd0",
+      "modified": 1656320841275,
+      "created": 1655958685396,
+      "url": "{{ api_url }}/{{ version }}/graphql",
+      "name": "CompanyCount",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/graphql",
+        "text": "{\"query\":\"query CompanyCount($input: CompanyCountInput) {\\n  CompanyCount(input: $input) \\n}\",\"variables\":{\"input\":{}},\"operationName\":\"CompanyCount\"}"
+      },
+      "parameters": [],
+      "headers": [
+        { "id": "pair_5785fa0d281e4c5980ec45d40cc212a4", "name": "Content-Type", "value": "application/json" }
+      ],
+      "authentication": {
+        "token": "{% response 'body', 'req_d1297130d87b4fc7a39459364a2323fb', 'b64::JC5kYXRhLkxvZ2luLnRva2Vu::46b', 'never', 60 %}",
+        "type": "bearer"
+      },
+      "metaSortKey": -1640931628328.5,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_05d36594e1b1412686e84f109b826c67",
+      "parentId": "fld_6318bfedd77b4135b257df42a9504cd0",
+      "modified": 1656390810259,
+      "created": 1655960810569,
+      "url": "{{ api_url }}/{{ version }}/graphql",
+      "name": "CompanyGrowth",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/graphql",
+        "text": "{\"query\":\"query CompanyGrowth($input: CompanyCountInput) {\\n  CompanyGrowth(input: $input) {\\n\\t\\tcount\\n\\t\\tcreatedAt\\n\\t}\\n}\",\"variables\":{\"input\":{}},\"operationName\":\"CompanyGrowth\"}"
+      },
+      "parameters": [],
+      "headers": [
+        { "id": "pair_5785fa0d281e4c5980ec45d40cc212a4", "name": "Content-Type", "value": "application/json" }
+      ],
+      "authentication": {
+        "token": "{% response 'body', 'req_d1297130d87b4fc7a39459364a2323fb', 'b64::JC5kYXRhLkxvZ2luLnRva2Vu::46b', 'never', 60 %}",
+        "type": "bearer"
+      },
+      "metaSortKey": -1640901846126.586,
       "isPrivate": false,
       "settingStoreCookies": true,
       "settingSendCookies": true,
@@ -440,6 +545,173 @@
         "type": "bearer"
       },
       "metaSortKey": -1640931628378.5,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_d34b08cf56cc4d3aac3b94e38d025600",
+      "parentId": "fld_b3fbec9fe515490584ed85e0b519e1fc",
+      "modified": 1655959183875,
+      "created": 1655356802535,
+      "url": "{{ api_url }}/{{ version }}/graphql",
+      "name": "ClientCount",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/graphql",
+        "text": "{\"query\":\"query ClientCount($input: ClientCountInput) {\\n  ClientCount(input: $input) \\n}\",\"variables\":{\"input\":{\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\"}},\"operationName\":\"ClientCount\"}"
+      },
+      "parameters": [],
+      "headers": [
+        { "id": "pair_5785fa0d281e4c5980ec45d40cc212a4", "name": "Content-Type", "value": "application/json" }
+      ],
+      "authentication": {
+        "token": "{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLnRva2Vu::46b', 'never', 60 %}",
+        "type": "bearer"
+      },
+      "metaSortKey": -1640931628328.5,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_7b121bdfe2954812b52ae60234425087",
+      "parentId": "fld_d39b8c6afddc4b47ad9c1dcab07d78a7",
+      "modified": 1656475213887,
+      "created": 1656390834579,
+      "url": "{{ api_url }}/{{ version }}/graphql",
+      "name": "AttachedTimesheetCreate",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/graphql",
+        "text": "{\"query\":\"mutation AttachedTimesheetCreate($input: AttachedTimesheetCreateInput!) {\\n  AttachedTimesheetCreate(input: $input) {\\n    id\\n\\t\\tdescription\\n  }\\n}\\n\",\"variables\":{\"input\":{\"description\":\"Vellorum\",\"date\":\"2022-07-28\",\"totalCost\":340,\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\",\"attachment_id\":\"{% response 'body', 'req_fc8baa37bf9a4055b6ff5a68a4e2b145', 'b64::JC5kYXRhLmlk::46b', 'never', 60 %}\"}},\"operationName\":\"AttachedTimesheetCreate\"}"
+      },
+      "parameters": [],
+      "headers": [
+        { "id": "pair_5785fa0d281e4c5980ec45d40cc212a4", "name": "Content-Type", "value": "application/json" }
+      ],
+      "authentication": {
+        "token": "{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLnRva2Vu::46b', 'never', 60 %}",
+        "type": "bearer"
+      },
+      "metaSortKey": -1646649815946,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "fld_d39b8c6afddc4b47ad9c1dcab07d78a7",
+      "parentId": "wrk_4360c7a0bbfa403c86be07deeb666c4c",
+      "modified": 1656390834577,
+      "created": 1656390834577,
+      "name": "AttachedTimesheet",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1646470045250.625,
+      "_type": "request_group"
+    },
+    {
+      "_id": "req_fa6f425a0a054437a9a3ec85a41a630b",
+      "parentId": "fld_d39b8c6afddc4b47ad9c1dcab07d78a7",
+      "modified": 1656475216713,
+      "created": 1656390834584,
+      "url": "{{ api_url }}/{{ version }}/graphql",
+      "name": "AttachedTimesheetUpdate",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/graphql",
+        "text": "{\"query\":\"mutation AttachedTimesheetUpdate($input: AttachedTimesheetUpdateInput!) {\\n  AttachedTimesheetUpdate(input: $input) {\\n    id\\n  description\\n\\t\\ttotalCost\\n\\t\\tdate\\n\\t\\tattachments{\\n\\t\\t\\tid\\n\\t\\t}\\n  }\\n}\\n\",\"variables\":{\"input\":{\"id\":\"{% response 'body', 'req_7b121bdfe2954812b52ae60234425087', 'b64::JC5kYXRhLkF0dGFjaGVkVGltZXNoZWV0Q3JlYXRlLmlk::46b', 'never', 60 %}\",\"description\":\"Insightworkshop Updated\",\"totalCost\":500,\"date\":\"2022-03-20\",\"attachment_id\":\"{% response 'body', 'req_fc8baa37bf9a4055b6ff5a68a4e2b145', 'b64::JC5kYXRhLmlk::46b', 'never', 60 %}\",\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\"}},\"operationName\":\"AttachedTimesheetUpdate\"}"
+      },
+      "parameters": [],
+      "headers": [
+        { "id": "pair_5785fa0d281e4c5980ec45d40cc212a4", "name": "Content-Type", "value": "application/json" }
+      ],
+      "authentication": {
+        "token": "{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLnRva2Vu::46b', 'never', 60 %}",
+        "type": "bearer"
+      },
+      "metaSortKey": -1642837690901,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_032a55bd36b34bf8b8aa7c97d1322904",
+      "parentId": "fld_d39b8c6afddc4b47ad9c1dcab07d78a7",
+      "modified": 1656475220255,
+      "created": 1656390834591,
+      "url": "{{ api_url }}/{{ version }}/graphql",
+      "name": "AttachedTimesheet",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/graphql",
+        "text": "{\"query\":\"query AttachedTimesheet($input:AttachedTimesheetQueryInput!) {\\n  AttachedTimesheet(input: $input) {\\n    data {\\n      id\\n      description\\n\\t\\t\\tdate\\n\\t\\t\\ttotalCost\\n     company_id\\n\\t\\t\\tcompany{\\n\\t\\t\\t\\tid\\n\\t\\t\\t\\tname\\n\\t\\t\\t}\\n\\t\\t\\tattachment_id\\n\\t\\t\\tattachments{\\n\\t\\t\\t\\tid\\n\\t\\t\\t}\\n    }\\n    paging {\\n      total\\n      startIndex\\n      endIndex\\n      hasNextPage\\n    }\\n  }\\n}\",\"variables\":{\"input\":{\"paging\":{},\"query\":{\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\"}}},\"operationName\":\"AttachedTimesheet\"}"
+      },
+      "parameters": [],
+      "headers": [
+        { "id": "pair_5785fa0d281e4c5980ec45d40cc212a4", "name": "Content-Type", "value": "application/json" }
+      ],
+      "authentication": {
+        "token": "{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLnRva2Vu::46b', 'never', 60 %}",
+        "type": "bearer"
+      },
+      "metaSortKey": -1640931628378.5,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_def24fb4c2434c88a138214042537de7",
+      "parentId": "fld_d39b8c6afddc4b47ad9c1dcab07d78a7",
+      "modified": 1656475222727,
+      "created": 1656404804359,
+      "url": "{{ api_url }}/{{ version }}/graphql",
+      "name": "AttachedTimesheetDelete",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/graphql",
+        "text": "{\"query\":\"mutation AttachedTimesheetDelete($input: DeleteInput!) {\\n  AttachedTimesheetDelete(input: $input) {\\n    id\\n   description\\n\\t\\t\\n  }\\n}\",\"variables\":{\"input\":{\"id\":\"{% response 'body', 'req_7b121bdfe2954812b52ae60234425087', 'b64::JC5kYXRhLkF0dGFjaGVkVGltZXNoZWV0Q3JlYXRlLmlk::46b', 'never', 60 %}\"}},\"operationName\":\"AttachedTimesheetDelete\"}"
+      },
+      "parameters": [],
+      "headers": [
+        { "id": "pair_5785fa0d281e4c5980ec45d40cc212a4", "name": "Content-Type", "value": "application/json" }
+      ],
+      "authentication": {
+        "token": "{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLnRva2Vu::46b', 'never', 60 %}",
+        "type": "bearer"
+      },
+      "metaSortKey": -1640931628328.5,
       "isPrivate": false,
       "settingStoreCookies": true,
       "settingSendCookies": true,
@@ -1025,6 +1297,68 @@
       "_type": "request"
     },
     {
+      "_id": "req_2b56ffd5db664daca5f04325278620ab",
+      "parentId": "fld_9a7753c89a724a5ab6add918218e97ea",
+      "modified": 1655959640524,
+      "created": 1655355929902,
+      "url": "{{ api_url }}/{{ version }}/graphql",
+      "name": "UserCount",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/graphql",
+        "text": "{\"query\":\"query UserCount($input: UserCountInput) {\\n  UserCount(input: $input) \\n}\",\"variables\":{\"input\":{\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\"}},\"operationName\":\"UserCount\"}"
+      },
+      "parameters": [],
+      "headers": [
+        { "id": "pair_5785fa0d281e4c5980ec45d40cc212a4", "name": "Content-Type", "value": "application/json" }
+      ],
+      "authentication": {
+        "token": "{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLnRva2Vu::46b', 'never', 60 %}",
+        "type": "bearer"
+      },
+      "metaSortKey": -1640872063924.6719,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_eb9a239822bd4c08a8d08ce65bca11bf",
+      "parentId": "fld_9a7753c89a724a5ab6add918218e97ea",
+      "modified": 1655963230436,
+      "created": 1655959647630,
+      "url": "{{ api_url }}/{{ version }}/graphql",
+      "name": "UserCountByAdmin",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/graphql",
+        "text": "{\"query\":\"query UserCountByAdmin($input: UserCountByAdminInput) {\\n  UserCountByAdmin(input: $input) \\n}\",\"variables\":{\"input\":{\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\"}},\"operationName\":\"UserCountByAdmin\"}"
+      },
+      "parameters": [],
+      "headers": [
+        { "id": "pair_5785fa0d281e4c5980ec45d40cc212a4", "name": "Content-Type", "value": "application/json" }
+      ],
+      "authentication": {
+        "token": "{% response 'body', 'req_d1297130d87b4fc7a39459364a2323fb', 'b64::JC5kYXRhLkxvZ2luLnRva2Vu::46b', 'never', 60 %}",
+        "type": "bearer"
+      },
+      "metaSortKey": -1640842281697.7578,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
       "_id": "req_7567047e6e924a31b44383e0231aa2a5",
       "parentId": "fld_9a7753c89a724a5ab6add918218e97ea",
       "modified": 1649234001605,
@@ -1097,6 +1431,99 @@
       "environmentPropertyOrder": null,
       "metaSortKey": -1643917429474.5,
       "_type": "request_group"
+    },
+    {
+      "_id": "req_890430f54d734f539581469eda25576a",
+      "parentId": "fld_fbe855c4a4d44dcd95c633c17718429c",
+      "modified": 1655808739339,
+      "created": 1655357189084,
+      "url": "{{ api_url }}/{{ version }}/graphql",
+      "name": "ProjectCount",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/graphql",
+        "text": "{\"query\":\"query ProjectCount($input: ProjectCountInput) {\\n  ProjectCount(input: $input) \\n}\",\"variables\":{\"input\":{\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\"}},\"operationName\":\"ProjectCount\"}"
+      },
+      "parameters": [],
+      "headers": [
+        { "id": "pair_5785fa0d281e4c5980ec45d40cc212a4", "name": "Content-Type", "value": "application/json" }
+      ],
+      "authentication": {
+        "token": "{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLnRva2Vu::46b', 'never', 60 %}",
+        "type": "bearer"
+      },
+      "metaSortKey": -1646649815971,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_2c9c664daa2641548b189ed2731d4f1c",
+      "parentId": "fld_fbe855c4a4d44dcd95c633c17718429c",
+      "modified": 1655871821720,
+      "created": 1655454887074,
+      "url": "{{ api_url }}/{{ version }}/graphql",
+      "name": "ProjectInvolvedCount",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/graphql",
+        "text": "{\"query\":\"query ProjectInvolvedCount($input: ProjectCountInput) {\\n  ProjectInvolvedCount(input: $input) \\n}\",\"variables\":{\"input\":{\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\",\"user_id\":\"2f5f3435-70d6-49d0-bc4e-74729e65fb35\"}},\"operationName\":\"ProjectInvolvedCount\"}"
+      },
+      "parameters": [],
+      "headers": [
+        { "id": "pair_5785fa0d281e4c5980ec45d40cc212a4", "name": "Content-Type", "value": "application/json" }
+      ],
+      "authentication": {
+        "token": "{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLnRva2Vu::46b', 'never', 60 %}",
+        "type": "bearer"
+      },
+      "metaSortKey": -1646649815964.75,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_7c64dbf867fc4e73b6a477b7a0eca30b",
+      "parentId": "fld_fbe855c4a4d44dcd95c633c17718429c",
+      "modified": 1655871833896,
+      "created": 1655709050357,
+      "url": "{{ api_url }}/{{ version }}/graphql",
+      "name": "ActiveProjectInvolvedCount",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/graphql",
+        "text": "{\"query\":\"query ActiveProjectInvolvedCount($input: ActiveProjectCountInput) {\\n  ActiveProjectInvolvedCount(input: $input) \\n}\",\"variables\":{\"input\":{\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\",\"user_id\":\"2f5f3435-70d6-49d0-bc4e-74729e65fb35\"}},\"operationName\":\"ActiveProjectInvolvedCount\"}"
+      },
+      "parameters": [],
+      "headers": [
+        { "id": "pair_5785fa0d281e4c5980ec45d40cc212a4", "name": "Content-Type", "value": "application/json" }
+      ],
+      "authentication": {
+        "token": "{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLnRva2Vu::46b', 'never', 60 %}",
+        "type": "bearer"
+      },
+      "metaSortKey": -1646649815961.625,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
     },
     {
       "_id": "req_031f86964d3f4b09aada9dfb951fc7dc",
@@ -1307,6 +1734,37 @@
       "environmentPropertyOrder": null,
       "metaSortKey": -1643809572469.875,
       "_type": "request_group"
+    },
+    {
+      "_id": "req_4fd0cd4120ec46368d2b1919dca5225e",
+      "parentId": "fld_4b51c186049444bb8c795b2ddc65239f",
+      "modified": 1655871529998,
+      "created": 1655451122187,
+      "url": "{{ api_url }}/{{ version }}/graphql",
+      "name": "TotalDuration",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/graphql",
+        "text": "{\"query\":\"query TotalDuration($input: TotalDurationCountInput) {\\n  TotalDuration(input: $input) \\n}\",\"variables\":{\"input\":{\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\",\"user_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmlk::46b', 'never', 60 %}\"}},\"operationName\":\"TotalDuration\"}"
+      },
+      "parameters": [],
+      "headers": [
+        { "id": "pair_5785fa0d281e4c5980ec45d40cc212a4", "name": "Content-Type", "value": "application/json" }
+      ],
+      "authentication": {
+        "token": "{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLnRva2Vu::46b', 'never', 60 %}",
+        "type": "bearer"
+      },
+      "metaSortKey": -1646649815983.5,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
     },
     {
       "_id": "req_63926731743c4fd18bcc82e343f3f125",

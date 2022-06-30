@@ -5,11 +5,11 @@ import container from '../inversify.config';
 
 import { ILogger } from '../interfaces/common.interface';
 import { ITimeEntryRepository } from '../interfaces/time-entry.interface';
-import { IActivityLogRepository } from '../interfaces/activityLog.interface';
-import ActivityLogRepository from '../repository/activityLog.repository';
+import { IActivityLogRepository } from '../interfaces/activity-log.interface';
+import ActivityLogRepository from '../repository/activity-log.repository';
 import { ITaskRepository } from '../interfaces/task.interface';
 import { IUserRepository } from '../interfaces/user.interface';
-import activityLog from '../config/inversify/activityLog';
+import activityLog from '../config/inversify/activity-log';
 
 type TimeEntryStop = {
   created_by: string;

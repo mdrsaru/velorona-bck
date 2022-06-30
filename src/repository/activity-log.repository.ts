@@ -1,6 +1,6 @@
 import { isNil, isString } from 'lodash';
 import strings from '../config/strings';
-import { IActivityLogCreateInput, IActivityLogRepository } from '../interfaces/activityLog.interface';
+import { IActivityLogCreateInput, IActivityLogRepository } from '../interfaces/activity-log.interface';
 import ActivityLog from '../entities/activity-log.entity';
 
 import * as apiError from '../utils/api-error';

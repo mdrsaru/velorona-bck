@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { IActivityLogRepository, IActivityLogService } from '../interfaces/activityLog.interface';
+import { IActivityLogRepository, IActivityLogService } from '../interfaces/activity-log.interface';
 import { IErrorService, ILogger } from '../interfaces/common.interface';
 import { IPaginationData, IPagingArgs } from '../interfaces/paging.interface';
 import { TYPES } from '../types';

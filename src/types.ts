@@ -129,6 +129,12 @@ const STRIPE = {
   StripeService: Symbol('StripeService'),
 };
 
+const ATTACHED_TIMESHEET = {
+  AttachedTimesheetRepository: Symbol('AttachedTimesheetRepository'),
+  AttachedTimesheetService: Symbol('AttachedTimesheetService'),
+  AttachedTimesheetController: Symbol('AttachedTimesheetController'),
+};
+
 const TYPES = {
   ...COMMON,
   ...COMPANY,
@@ -150,6 +156,7 @@ const TYPES = {
   ...ACTIVITY_LOG,
   ...SUBSCRIPTION,
   ...STRIPE,
+  ...ATTACHED_TIMESHEET,
 };
 
 export { TYPES };
