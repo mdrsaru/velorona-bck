@@ -17,6 +17,8 @@ import {
   IAttachedTimesheetRepository,
   IAttachedTimesheetUpdateInput,
 } from '../interfaces/attached-timesheet.interface';
+import { IUserRepository } from '../interfaces/user.interface';
+import { ITimesheetRepository } from '../interfaces/timesheet.interface';
 
 @injectable()
 export default class AttachedTimesheetRepository
@@ -25,23 +27,29 @@ export default class AttachedTimesheetRepository
 {
   private mediaRepository: IMediaRepository;
   private companyRepository: ICompanyRepository;
+  private userRepository: IUserRepository;
+  private timesheetRepository: ITimesheetRepository;
 
   constructor(
     @inject(TYPES.MediaRepository) _mediaRepository: IMediaRepository,
-    @inject(TYPES.CompanyRepository) _companyRepository: ICompanyRepository
+    @inject(TYPES.CompanyRepository) _companyRepository: ICompanyRepository,
+    @inject(TYPES.UserRepository) _userRepository: IUserRepository,
+    @inject(TYPES.TimesheetRepository) _timesheetRepository: ITimesheetRepository
   ) {
     super(getRepository(AttachedTimesheet));
     this.mediaRepository = _mediaRepository;
     this.companyRepository = _companyRepository;
+    this.userRepository = _userRepository;
+    this.timesheetRepository = _timesheetRepository;
   }
 
   async create(args: IAttachedTimesheetCreateInput): Promise<AttachedTimesheet> {
     try {
       const description = args.description;
-      const date = args.date;
-      const totalCost = args.totalCost;
       const attachment_id = args.attachment_id;
       const company_id = args.company_id;
+      const created_by = args.created_by;
+      const timesheet_id = args.timesheet_id;
 
       const company = await this.companyRepository.getById({ id: company_id });
       if (!company) {
@@ -50,12 +58,26 @@ export default class AttachedTimesheetRepository
         });
       }
 
+      const creator = await this.userRepository.getById({ id: created_by });
+      if (!creator) {
+        throw new NotFoundError({
+          details: [strings.userNotFound],
+        });
+      }
+
+      const timesheet = await this.timesheetRepository.getById({ id: timesheet_id });
+      if (!timesheet) {
+        throw new NotFoundError({
+          details: [strings.timesheetNotFound],
+        });
+      }
+
       const attachedTimesheet = await this.repo.save({
         description,
-        totalCost,
-        date,
         company_id,
         attachment_id,
+        created_by,
+        timesheet_id,
       });
 
       return attachedTimesheet;
@@ -68,8 +90,6 @@ export default class AttachedTimesheetRepository
     try {
       const id = args.id;
       const description = args?.description;
-      const date = args?.date;
-      const totalCost = args?.totalCost;
       const attachment_id = args?.attachment_id;
 
       const found = await this.getById({ id });
@@ -83,8 +103,6 @@ export default class AttachedTimesheetRepository
       const update = merge(found, {
         id,
         description,
-        totalCost,
-        date,
         attachment_id,
       });
 

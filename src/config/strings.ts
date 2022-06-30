@@ -100,4 +100,6 @@ export default {
   companyAlreadySubscribed: 'Company already subscribed to Professional plan',
   featureNotSubscribed: 'Company has not subscribed to the Professional plan to use this feature.',
   descriptionRequired: 'Description Required',
+  timesheetIdRequired: 'Timesheet Id required',
+  attachmentRequired: 'Attachment Required',
 };

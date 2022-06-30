@@ -3,7 +3,7 @@ import { Connection } from 'typeorm';
 import { Factory, Seeder } from 'typeorm-seeding';
 import { faker } from '@faker-js/faker';
 
-import constants from '../../constants';
+import constants, { UserType } from '../../constants';
 
 import User from '../../../entities/user.entity';
 import Role from '../../../entities/role.entity';
@@ -148,11 +148,17 @@ export default class InitialDatabaseSeed implements Seeder {
       let manager: User | undefined = undefined;
 
       for (let i = 1; i < users.length; i++) {
-        const newUser = await factory(User)().create({
+        const _user: { [key: string]: any } = {
           roles: [createdRoles[i]],
           email: users[i].email,
           company_id,
-        });
+        };
+
+        if (users[i].email === 'employee@user.com') {
+          _user.type = UserType.Timesheet;
+        }
+
+        const newUser = await factory(User)().create(_user);
 
         createdUsers.push(newUser);
 

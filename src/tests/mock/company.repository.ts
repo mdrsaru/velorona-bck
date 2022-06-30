@@ -11,13 +11,13 @@ import strings from '../../config/strings';
 import { generateUuid } from './utils';
 import { companies } from '../mock/data';
 import Paging from '../../utils/paging';
-import Company from '../../entities/company.entity';
+import Company, { CompanyGrowthOutput } from '../../entities/company.entity';
 import User from '../../entities/user.entity';
 import * as apiError from '../../utils/api-error';
 
-import { IEntityID, IEntityRemove } from '../../interfaces/common.interface';
+import { IEntityID, IEntityRemove, ISingleEntityQuery } from '../../interfaces/common.interface';
 import { ICompany, ICompanyCreate, ICompanyUpdate, ICompanyCodeInput } from '../../interfaces/company.interface';
-import { IPaginationData, IPagingArgs, IGetAllAndCountResult } from '../../interfaces/paging.interface';
+import { IPaginationData, IPagingArgs, IGetAllAndCountResult, IGetOptions } from '../../interfaces/paging.interface';
 
 const date = '2022-03-08T08:01:04.776Z';
 
@@ -99,4 +99,16 @@ export default class CompanyRepository implements ICompanyRepository {
     const found = find(this.companies, { companyCode: args.companyCode });
     return found;
   };
+
+  companyGrowth = (args?: any): Promise<CompanyGrowthOutput[]> => {
+    throw new Error('not implemented');
+  };
+
+  getSingleEntity = (args: ISingleEntityQuery): Promise<Company | undefined> => {
+    throw new Error('not implemented');
+  };
+
+  countEntities(args: IGetOptions): Promise<number> {
+    throw new Error('not implemented');
+  }
 }

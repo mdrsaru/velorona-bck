@@ -14,7 +14,13 @@ import Project from '../../entities/project.entity';
 import * as apiError from '../../utils/api-error';
 
 import { IEntityID, IEntityRemove, ISingleEntityQuery } from '../../interfaces/common.interface';
-import { IProject, IProjectCreateInput, IProjectUpdateInput } from '../../interfaces/project.interface';
+import {
+  IProject,
+  IProjectCreateInput,
+  IProjectUpdateInput,
+  IProjectCountInput,
+  IActiveProjectCountInput,
+} from '../../interfaces/project.interface';
 import { IPaginationData, IPagingArgs, IGetAllAndCountResult, IGetOptions } from '../../interfaces/paging.interface';
 
 const date = '2022-03-08T08:01:04.776Z';
@@ -88,4 +94,12 @@ export default class ProjectRepository implements IProjectRepository {
   remove = (args: IEntityRemove): Promise<Project> => {
     throw new Error('not implemented');
   };
+
+  countProjectInvolved(args: IProjectCountInput): Promise<number> {
+    throw new Error('not implemented');
+  }
+
+  countActiveProjectInvolved(args: IActiveProjectCountInput): Promise<number> {
+    throw new Error('not implemented');
+  }
 }

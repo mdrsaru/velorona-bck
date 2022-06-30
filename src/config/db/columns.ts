@@ -99,3 +99,10 @@ export const projects = {
   company_id: 'company_id',
   client_id: 'client_id',
 };
+
+export const attachedTimesheets = {
+  company_id: 'company_id',
+  created_by: 'created_by',
+  attachment_id: 'attachment_id',
+  timesheet_id: 'timesheet_id',
+};

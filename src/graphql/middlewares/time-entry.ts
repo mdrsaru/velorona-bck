@@ -40,8 +40,8 @@ export const checkRoleAndFilterTimeEntry: MiddlewareFn<IGraphqlContext> = async 
   }
 };
 
-export const checkRoleAndcreateTimeEntry: MiddlewareFn<IGraphqlContext> = async ({ context, args }, next: NextFn) => {
-  const operation = 'checkRoleAndcreateTimeEntry';
+export const canCreateTimeEntry: MiddlewareFn<IGraphqlContext> = async ({ context, args }, next: NextFn) => {
+  const operation = 'canCreateTimeEntry';
   const errorService = container.get<IErrorService>(TYPES.ErrorService);
 
   try {

@@ -66,6 +66,7 @@ export default class Invoice extends Base {
   @Field()
   @Column({
     name: invoices.po_number,
+    nullable: true,
   })
   poNumber: string;
 

@@ -40,20 +40,20 @@ export default class AttachedTimesheetService implements IAttachedTimesheetServi
   create = async (args: IAttachedTimesheetCreateInput): Promise<AttachedTimesheet> => {
     try {
       const description = args.description;
-      const date = args.date;
-      const totalCost = args.totalCost;
       const attachment_id = args.attachment_id;
       const company_id = args.company_id;
+      const created_by = args.created_by;
+      const timesheet_id = args.timesheet_id;
 
-      const AttachedTimesheet = await this.attachedTimesheetRepository.create({
+      const attachedTimesheet = await this.attachedTimesheetRepository.create({
         description,
-        totalCost,
-        date,
         attachment_id,
         company_id,
+        created_by,
+        timesheet_id,
       });
 
-      return AttachedTimesheet;
+      return attachedTimesheet;
     } catch (err) {
       throw err;
     }
@@ -63,15 +63,11 @@ export default class AttachedTimesheetService implements IAttachedTimesheetServi
     try {
       const id = args.id;
       const description = args?.description;
-      const date = args?.date;
-      const totalCost = args?.totalCost;
       const attachment_id = args?.attachment_id;
 
       const AttachedTimesheet = await this.attachedTimesheetRepository.update({
         id,
         description,
-        totalCost,
-        date,
         attachment_id,
       });
 

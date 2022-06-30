@@ -3,30 +3,30 @@ import { IEntityRemove, IEntityID, ISingleEntityQuery, ICountInput } from './com
 import Media from '../entities/media.entity';
 import AttachedTimesheet from '../entities/attached-timesheet.entity';
 import Company from '../entities/company.entity';
+import Timesheet from '../entities/timesheet.entity';
 
 export interface IAttachedTimesheet {
   id: string;
-  date: Date;
-  totalCost: Number;
   description: string;
   attachment_id: string;
   attachment: Media[];
   company_id: string;
   company: Company[];
+  created_by: string;
+  timesheet_id: string;
+  timesheet: Timesheet[];
 }
 
 export interface IAttachedTimesheetCreateInput {
-  date: IAttachedTimesheet['date'];
-  totalCost: IAttachedTimesheet['totalCost'];
   description?: IAttachedTimesheet['description'];
   attachment_id: string;
   company_id: IAttachedTimesheet['company_id'];
+  created_by: IAttachedTimesheet['created_by'];
+  timesheet_id: IAttachedTimesheet['timesheet_id'];
 }
 
 export interface IAttachedTimesheetUpdateInput {
   id: string;
-  date?: IAttachedTimesheet['date'];
-  totalCost?: IAttachedTimesheet['totalCost'];
   description?: IAttachedTimesheet['description'];
   attachment_id?: string;
 }

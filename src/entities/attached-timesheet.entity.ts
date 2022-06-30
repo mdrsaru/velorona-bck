@@ -1,26 +1,20 @@
 import { Field, InputType, ObjectType } from 'type-graphql';
 import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany, OneToOne } from 'typeorm';
 import { entities } from '../config/constants';
+import { attachedTimesheets } from '../config/db/columns';
 import { Base } from './base.entity';
 import { PagingInput, PagingResult } from './common.entity';
 import Company from './company.entity';
 import Media from './media.entity';
+import Timesheet from './timesheet.entity';
+import User from './user.entity';
 
-const indexPrefix = 'AttachedTimesheet';
-@Entity({ name: entities.attachedTimesheet })
+const indexPrefix = 'Timesheet';
+@Entity({ name: entities.timesheetAttachments })
 @ObjectType()
 export default class AttachedTimesheet extends Base {
-  @Index(`${indexPrefix}_date_index`)
   @Field()
   @Column()
-  date: Date;
-
-  @Field()
-  @Column({ name: 'total_cost' })
-  totalCost: Number;
-
-  @Field({ nullable: true })
-  @Column({ nullable: true })
   description: string;
 
   @Field()
@@ -29,7 +23,7 @@ export default class AttachedTimesheet extends Base {
 
   @Field(() => Media)
   @ManyToOne(() => Media)
-  @JoinColumn({ name: 'attachment_id' })
+  @JoinColumn({ name: attachedTimesheets.attachment_id })
   attachments: Media;
 
   @Index(`${indexPrefix}_company_id_index`)
@@ -39,8 +33,28 @@ export default class AttachedTimesheet extends Base {
 
   @Field((type) => Company)
   @ManyToOne(() => Company)
-  @JoinColumn({ name: 'company_id' })
+  @JoinColumn({ name: attachedTimesheets.company_id })
   company: Company;
+
+  @Index(`${indexPrefix}_created_by_index`)
+  @Field()
+  @Column()
+  created_by: string;
+
+  @Field((type) => User)
+  @ManyToOne(() => User)
+  @JoinColumn({ name: attachedTimesheets.created_by })
+  creator: User;
+
+  @Index(`${indexPrefix}_timesheet_id_index`)
+  @Field()
+  @Column()
+  timesheet_id: string;
+
+  @Field((type) => Timesheet)
+  @ManyToOne(() => Timesheet)
+  @JoinColumn({ name: attachedTimesheets.timesheet_id })
+  timesheet: Timesheet;
 }
 
 @ObjectType()
@@ -57,17 +71,14 @@ export class AttachedTimesheetCreateInput {
   @Field()
   description: string;
 
-  @Field({ nullable: true })
-  date: Date;
-
   @Field()
-  totalCost: number;
-
-  @Field({ nullable: true })
   attachment_id: string;
 
   @Field()
   company_id: string;
+
+  @Field()
+  timesheet_id: string;
 }
 
 @InputType()
@@ -77,12 +88,6 @@ export class AttachedTimesheetUpdateInput {
 
   @Field({ nullable: true })
   description: string;
-
-  @Field({ nullable: true })
-  date: Date;
-
-  @Field({ nullable: true })
-  totalCost: number;
 
   @Field({ nullable: true })
   attachment_id: string;
@@ -98,6 +103,12 @@ export class AttachedTimesheetQuery {
 
   @Field()
   company_id: string;
+
+  @Field({ nullable: true })
+  created_by: string;
+
+  @Field({ nullable: true })
+  timesheet_id: string;
 }
 
 @InputType()

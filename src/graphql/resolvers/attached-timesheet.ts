@@ -18,6 +18,7 @@ import { checkCompanyAccess } from '../middlewares/company';
 import { Role as RoleEnum } from '../../config/constants';
 import AttachedTimesheetValidation from '../../validation/attached-timesheet.validation';
 import { DeleteInput } from '../../entities/common.entity';
+import { timesheetByIdLoader } from '../../loaders/dataloader/timesheet.dataloader';
 
 @injectable()
 @Resolver((of) => AttachedTimesheet)
@@ -72,32 +73,31 @@ export class AttachedTimesheetResolver {
     @Ctx() ctx: any
   ): Promise<AttachedTimesheet> {
     const operation = 'AttachedTimesheetCreate';
-
+    console.log(ctx?.user?.id, 'ctx');
     try {
       const description = args.description;
-      const date = args.date;
-      const totalCost = args.totalCost;
       const attachment_id = args.attachment_id;
       const company_id = args.company_id;
+      const created_by = ctx?.user?.id;
+      const timesheet_id = args.timesheet_id;
 
       const schema = AttachedTimesheetValidation.create();
       await this.joiService.validate({
         schema,
         input: {
           description,
-          totalCost,
-          date,
           attachment_id,
           company_id,
+          timesheet_id,
         },
       });
 
       let AttachedTimesheet: AttachedTimesheet = await this.attachedTimesheetService.create({
         description,
-        totalCost,
-        date,
         attachment_id,
         company_id,
+        created_by,
+        timesheet_id,
       });
 
       return AttachedTimesheet;
@@ -112,7 +112,12 @@ export class AttachedTimesheetResolver {
   }
 
   @Mutation((returns) => AttachedTimesheet)
-  @UseMiddleware(authenticate, authenticate, authorize(RoleEnum.SuperAdmin, RoleEnum.CompanyAdmin), checkCompanyAccess)
+  @UseMiddleware(
+    authenticate,
+    authenticate,
+    authorize(RoleEnum.SuperAdmin, RoleEnum.CompanyAdmin, RoleEnum.Employee),
+    checkCompanyAccess
+  )
   async AttachedTimesheetUpdate(
     @Arg('input') args: AttachedTimesheetUpdateInput,
     @Ctx() ctx: any
@@ -122,8 +127,6 @@ export class AttachedTimesheetResolver {
     try {
       const id = args.id;
       const description = args?.description;
-      const date = args?.date;
-      const totalCost = args?.totalCost;
       const attachment_id = args?.attachment_id;
 
       const schema = AttachedTimesheetValidation.update();
@@ -132,8 +135,6 @@ export class AttachedTimesheetResolver {
         input: {
           id,
           description,
-          totalCost,
-          date,
           attachment_id,
         },
       });
@@ -141,8 +142,6 @@ export class AttachedTimesheetResolver {
       let AttachedTimesheet: AttachedTimesheet = await this.attachedTimesheetService.update({
         id,
         description,
-        totalCost,
-        date,
         attachment_id,
       });
 
@@ -187,5 +186,15 @@ export class AttachedTimesheetResolver {
   @FieldResolver()
   async company(@Root() root: AttachedTimesheet, @Ctx() ctx: IGraphqlContext) {
     return await ctx.loaders.companyByIdLoader.load(root.company_id);
+  }
+
+  @FieldResolver()
+  async creator(@Root() root: AttachedTimesheet, @Ctx() ctx: IGraphqlContext) {
+    return await ctx.loaders.usersByIdLoader.load(root.created_by);
+  }
+
+  @FieldResolver()
+  async timesheet(@Root() root: AttachedTimesheet, @Ctx() ctx: IGraphqlContext) {
+    return await ctx.loaders.timesheetByIdLoader.load(root.timesheet_id);
   }
 }
