@@ -12,8 +12,10 @@ export default class ClientValidation {
       invoicingEmail: Joi.string().required().error(new Error(strings.invoicingEmailRequired)),
       company_id: Joi.string().required().error(new Error(strings.companyRequired)),
       status: Joi.string(),
+      phone: Joi.string().required().error(new Error(strings.phoneRequired)),
       archived: Joi.boolean(),
       address: Joi.object({
+        country: Joi.string().required().error(new Error(strings.countryRequired)),
         streetAddress: Joi.string().required().error(new Error(strings.streetAddressRequired)),
         aptOrSuite: Joi.string(),
         city: Joi.string(),
@@ -30,6 +32,7 @@ export default class ClientValidation {
       name: Joi.string(),
       status: Joi.string(),
       archived: Joi.boolean(),
+      phone: Joi.string(),
       address: Joi.object({
         streetAddress: Joi.string(),
         aptOrSuite: Joi.string(),
