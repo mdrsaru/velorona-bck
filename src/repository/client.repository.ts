@@ -78,6 +78,7 @@ export default class ClientRepository extends BaseRepository<Client> implements 
       const address = args.address;
       const company_id = args.company_id;
       const streetAddress = args.address?.streetAddress;
+      const phone = args.phone;
 
       const errors: string[] = [];
 
@@ -92,6 +93,9 @@ export default class ClientRepository extends BaseRepository<Client> implements 
       }
       if (isNil(streetAddress) || !isString(streetAddress)) {
         errors.push(strings.streetAddressRequired);
+      }
+      if (isNil(phone) || !isString(phone)) {
+        errors.push(strings.phoneRequired);
       }
       if (isNil(company_id) || !isString(company_id)) {
         errors.push(strings.companyRequired);
@@ -133,6 +137,7 @@ export default class ClientRepository extends BaseRepository<Client> implements 
         archived,
         address,
         company_id,
+        phone,
       });
 
       return client;
@@ -148,6 +153,7 @@ export default class ClientRepository extends BaseRepository<Client> implements 
       const status = args.status;
       const archived = args?.archived ?? false;
       const address = args.address;
+      const phone = args.phone;
       const streetAddress = args.address?.streetAddress;
 
       const errors: string[] = [];
@@ -175,6 +181,7 @@ export default class ClientRepository extends BaseRepository<Client> implements 
         name,
         status,
         archived,
+        phone,
         ...(!!address && {
           address: {
             ...(found.address ?? {}),

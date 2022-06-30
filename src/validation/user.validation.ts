@@ -87,6 +87,7 @@ export default class UserValidation {
         otherwise: Joi.string(),
       }),
       address: Joi.object({
+        country: Joi.string().required().allow('', null),
         streetAddress: Joi.string().required(),
         aptOrSuite: Joi.string().allow('', null),
         city: Joi.string().allow('', null),
@@ -105,6 +106,7 @@ export default class UserValidation {
       middleName: Joi.string().allow('', null),
       phone: Joi.string().required().messages(messages.phone),
       address: Joi.object({
+        country: Joi.string().required().allow('', null),
         streetAddress: Joi.string().required().allow('', null),
         aptOrSuite: Joi.string().allow('', null),
         city: Joi.string().allow('', null),
@@ -123,6 +125,7 @@ export default class UserValidation {
       middleName: Joi.string().allow(null, ''),
       phone: Joi.string().messages(messages.phone),
       address: Joi.object({
+        country: Joi.string().allow('', null),
         streetAddress: Joi.string().allow('', null),
         aptOrSuite: Joi.string().allow(null, ''),
         city: Joi.string().allow(null, ''),

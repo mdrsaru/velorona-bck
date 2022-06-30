@@ -126,6 +126,7 @@ export class UserResolver {
       const roles = args.roles;
       const type = args?.type;
       const address = {
+        country: args.address.country,
         streetAddress: args.address.streetAddress,
         aptOrSuite: args.address.aptOrSuite,
         city: args.address.city,
@@ -187,6 +188,7 @@ export class UserResolver {
       const status = args.status;
       const roles = args.roles;
       const address = {
+        country: args.address.country,
         streetAddress: args.address.streetAddress,
         aptOrSuite: args.address.aptOrSuite,
         city: args.address.city,

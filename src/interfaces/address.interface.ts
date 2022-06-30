@@ -10,6 +10,7 @@ export interface IAddress {
 }
 
 export interface IAddressInput {
+  country: string;
   streetAddress: string;
   aptOrSuite?: string;
   city: string;
