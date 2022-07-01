@@ -117,6 +117,7 @@ export default class TimeEntryService implements ITimeEntryService {
     const company_id = args.company_id;
     const created_by = args.created_by;
     const task_id = args.task_id;
+    const entryType = args.entryType;
 
     try {
       let timeEntry = await this.timeEntryRepository.create({
@@ -127,6 +128,7 @@ export default class TimeEntryService implements ITimeEntryService {
         company_id,
         created_by,
         task_id,
+        entryType,
       });
 
       /* Create/Update timesheet if the end time is provided */

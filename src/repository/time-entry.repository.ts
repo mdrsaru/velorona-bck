@@ -311,6 +311,7 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
       const company_id = args.company_id;
       const created_by = args.created_by;
       const task_id = args.task_id;
+      const entryType = args.entryType;
 
       const errors: string[] = [];
 
@@ -411,6 +412,7 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
         created_by,
         task_id,
         hourlyRate,
+        entryType,
       });
 
       return timeEntry;
