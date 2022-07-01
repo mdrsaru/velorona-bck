@@ -1,7 +1,7 @@
 import { Entity, Column, ManyToOne, JoinColumn, Index } from 'typeorm';
 import { ObjectType, Field, ID, InputType, registerEnumType } from 'type-graphql';
 
-import { entities, TimeEntryApprovalStatus } from '../config/constants';
+import { entities, TimeEntryApprovalStatus, UserType } from '../config/constants';
 import { timeEntry } from '../config/db/columns';
 import { Base } from './base.entity';
 import Company from './company.entity';
@@ -14,6 +14,10 @@ import { PagingInput, PagingResult, DeleteInput } from './common.entity';
 
 registerEnumType(TimeEntryApprovalStatus, {
   name: 'TimeEntryApprovalStatus',
+});
+
+registerEnumType(UserType, {
+  name: 'EntryType',
 });
 
 const indexPrefix = 'time_entries';
@@ -127,6 +131,10 @@ export default class TimeEntry extends Base {
     default: 0,
   })
   hourlyRate: number;
+
+  @Field(() => UserType)
+  @Column({ name: 'entry_type', type: 'varchar', default: UserType.Timesheet })
+  entryType: UserType;
 }
 
 @ObjectType()
@@ -229,6 +237,9 @@ export class TimeEntryQuery {
 
   @Field({ nullable: true, defaultValue: false, description: 'Filter null endTime data' })
   needActiveTimeEntry: boolean;
+
+  @Field(() => UserType, { nullable: true, defaultValue: UserType.Timesheet })
+  entryType: UserType;
 }
 
 @InputType()
