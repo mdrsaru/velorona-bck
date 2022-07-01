@@ -45,6 +45,9 @@ export class AddressPagingResult {
 
 @InputType()
 export class AddressInput {
+  @Field({ nullable: true })
+  country: string;
+
   @Field()
   country: string;
 
