@@ -207,6 +207,9 @@ export default class UserRepository extends BaseRepository<User> implements IUse
       const avatar_id = args?.avatar_id;
       const archived = args?.archived;
       const type = args?.type;
+      const startDate = args?.startDate;
+      const endDate = args?.endDate;
+      const timesheet_attachment = args?.timesheet_attachment;
 
       const found = await this.repo.findOne(id, {
         relations: ['address', 'roles'],
