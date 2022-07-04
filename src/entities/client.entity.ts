@@ -48,6 +48,10 @@ export default class Client extends Base {
   @Column()
   address_id: string;
 
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  phone: string;
+
   @Field()
   @JoinColumn({ name: 'address_id' })
   @ManyToOne(() => Address, {
@@ -97,6 +101,9 @@ export class ClientCreateInput {
 
   @Field()
   company_id: string;
+
+  @Field()
+  phone: string;
 }
 
 @InputType()
@@ -118,6 +125,9 @@ export class ClientUpdateInput {
 
   @Field({ nullable: true })
   address: AddressInput;
+
+  @Field({ nullable: true })
+  phone: string;
 }
 
 @InputType()

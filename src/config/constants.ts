@@ -64,6 +64,7 @@ export const entities = {
   timesheet: 'timesheet',
   taskAttachments: 'task_attachments',
   activityLogs: 'activity_log',
+  timesheetAttachments: 'timesheet_attachments',
 };
 
 export enum CompanyStatus {

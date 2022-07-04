@@ -19,9 +19,10 @@ import userpayrate from './config/inversify/user-payrate';
 import invoice from './config/inversify/invoice';
 import invoiceItem from './config/inversify/invoice-item';
 import timesheet from './config/inversify/timesheet';
-import activityLog from './config/inversify/activityLog';
+import activityLog from './config/inversify/activity-log';
 import subscription from './config/inversify/subscription';
 import stripe from './config/inversify/stripe';
+import attachedTimesheet from './config/inversify/attached-timesheet';
 
 const container = new Container({ skipBaseClassChecks: true });
 
@@ -57,6 +58,7 @@ container.load(
   subscription,
   stripe,
   webhook,
+  attachedTimesheet,
 );
 
 export default container;

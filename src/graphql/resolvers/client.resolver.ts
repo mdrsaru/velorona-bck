@@ -95,6 +95,7 @@ export class ClientResolver {
       const address = args.address;
       const company_id = args.company_id;
       const archived = args.archived;
+      const phone = args.phone;
 
       const schema = ClientValidation.create();
       await this.joiService.validate({
@@ -107,6 +108,7 @@ export class ClientResolver {
           status,
           archived,
           address,
+          phone,
         },
       });
 
@@ -118,6 +120,7 @@ export class ClientResolver {
         status,
         archived,
         address,
+        phone,
       });
 
       return client;
@@ -143,6 +146,7 @@ export class ClientResolver {
       const address = args.address;
       const company_id = args.company_id;
       const archived = args.archived;
+      const phone = args.phone;
 
       const schema = ClientValidation.update();
       await this.joiService.validate({
@@ -154,6 +158,7 @@ export class ClientResolver {
           status,
           archived,
           address,
+          phone,
         },
       });
 
@@ -163,6 +168,7 @@ export class ClientResolver {
         status,
         archived,
         address,
+        phone,
       });
 
       return client;

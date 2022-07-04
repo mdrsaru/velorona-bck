@@ -46,6 +46,7 @@ export default class ClientService implements IClientService {
       const status = args.status;
       const archived = args?.archived;
       const address = args?.address;
+      const phone = args.phone;
 
       const client = await this.clientRepository.create({
         name,
@@ -55,6 +56,7 @@ export default class ClientService implements IClientService {
         status,
         archived,
         address,
+        phone,
       });
 
       return client;
@@ -70,6 +72,7 @@ export default class ClientService implements IClientService {
       const status = args.status;
       const archived = args?.archived;
       const address = args?.address;
+      const phone = args?.phone;
 
       const client = await this.clientRepository.update({
         id,
@@ -77,6 +80,7 @@ export default class ClientService implements IClientService {
         status,
         archived,
         address,
+        phone,
       });
 
       return client;

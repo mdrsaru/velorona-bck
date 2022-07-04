@@ -8,6 +8,7 @@ export interface IClient {
   id: string;
   name: string;
   email: string;
+  phone: string;
   invoicingEmail: string;
   status: ClientStatus;
   archived: boolean;
@@ -21,6 +22,7 @@ export interface IClientCreateInput {
   name: IClient['name'];
   status: IClient['status'];
   email: IClient['email'];
+  phone: IClient['phone'];
   invoicingEmail: IClient['invoicingEmail'];
   archived?: IClient['archived'];
   company_id: IClient['company_id'];
@@ -32,6 +34,7 @@ export interface IClientUpdateInput {
   name: IClient['name'];
   status: IClient['status'];
   archived?: IClient['archived'];
+  phone?: IClient['phone'];
   address: IAddressInput;
 }
 

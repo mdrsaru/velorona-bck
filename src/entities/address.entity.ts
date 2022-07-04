@@ -1,9 +1,10 @@
 import { Field, InputType, ObjectType } from 'type-graphql';
-import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
+import { Column, Entity, Index, JoinColumn, OneToOne } from 'typeorm';
 import { entities } from '../config/constants';
 import { Base } from './base.entity';
 import { PagingInput, PagingResult } from './common.entity';
 
+const indexPrefix = 'address';
 @Entity({ name: entities.addresses })
 @ObjectType()
 export default class Address extends Base {
@@ -27,13 +28,10 @@ export default class Address extends Base {
   @Column({ nullable: true })
   zipcode: string;
 
-  //@Field()
-  //@Column({ nullable: true })
-  //user_id: string;
-
-  //@OneToOne(() => User, (user) => user.address)
-  //@JoinColumn({ name: 'user_id' })
-  //user: User;
+  @Index(`${indexPrefix}_country`)
+  @Field({ nullable: true })
+  @Column({ nullable: true, length: 70 })
+  country: string;
 }
 
 @ObjectType()
@@ -47,6 +45,12 @@ export class AddressPagingResult {
 
 @InputType()
 export class AddressInput {
+  @Field({ nullable: true })
+  country: string;
+
+  @Field()
+  country: string;
+
   @Field()
   streetAddress: string;
 
@@ -72,6 +76,9 @@ export class AddressUpdateInput extends AddressInput {
   id: string;
 
   @Field({ nullable: true })
+  country: string;
+
+  @Field({ nullable: true })
   streetAddress: string;
 
   @Field({ nullable: true })
@@ -88,6 +95,9 @@ export class AddressUpdateInput extends AddressInput {
 export class AddressQuery {
   @Field({ nullable: true })
   id: string;
+
+  @Field({ nullable: true })
+  country: string;
 }
 
 @InputType()

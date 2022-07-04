@@ -1,7 +1,7 @@
 import { inject, injectable } from 'inversify';
 import { Arg, Ctx, FieldResolver, Query, Resolver, Root, UseMiddleware } from 'type-graphql';
 import ActivityLog, { ActivityLogPagingResult, ActivityLogQueryInput } from '../../entities/activity-log.entity';
-import { IActivityLogService } from '../../interfaces/activityLog.interface';
+import { IActivityLogService } from '../../interfaces/activity-log.interface';
 import { IErrorService } from '../../interfaces/common.interface';
 import { IPaginationData } from '../../interfaces/paging.interface';
 import { TYPES } from '../../types';

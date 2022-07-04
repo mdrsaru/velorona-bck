@@ -164,7 +164,7 @@ export class TimeEntryResolver {
 
   @Mutation((returns) => TimeEntry)
   @UseMiddleware(authenticate, checkCompanyAccess, canCreateTimeEntry)
-  async TimeEntryCreate(@Arg('input') args: TimeEntryCreateInput, @Ctx() ctx: any): Promise<TimeEntry> {
+  async TimeEntryCreate(@Arg('input') args: TimeEntryCreateInput, @Ctx() ctx: IGraphqlContext): Promise<TimeEntry> {
     const operation = 'TimeEntryCreate';
 
     try {
@@ -173,8 +173,9 @@ export class TimeEntryResolver {
       const clientLocation = args.clientLocation;
       const project_id = args.project_id;
       const company_id = args.company_id;
-      const created_by = ctx.user.id;
       const task_id = args.task_id;
+      const entryType = ctx?.user?.type;
+      const created_by = ctx?.user?.id as string;
 
       const schema = TimeEntryValidation.create();
       await this.joiService.validate({
@@ -198,6 +199,7 @@ export class TimeEntryResolver {
         company_id,
         created_by,
         task_id,
+        entryType,
       });
 
       return timeEntry;

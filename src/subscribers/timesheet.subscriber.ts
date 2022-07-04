@@ -7,7 +7,7 @@ import { ILogger } from '../interfaces/common.interface';
 import { ITimesheetRepository } from '../interfaces/timesheet.interface';
 import { ITimeEntryRepository } from '../interfaces/time-entry.interface';
 import { IUserRepository } from '../interfaces/user.interface';
-import { IActivityLogRepository } from '../interfaces/activityLog.interface';
+import { IActivityLogRepository } from '../interfaces/activity-log.interface';
 import UserRepository from '../tests/mock/user.repository';
 import moment from 'moment';
 

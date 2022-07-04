@@ -1,4 +1,4 @@
-import { TimeEntryApprovalStatus } from '../config/constants';
+import { TimeEntryApprovalStatus, UserType } from '../config/constants';
 import Company from '../entities/company.entity';
 import Project from '../entities/project.entity';
 import User from '../entities/user.entity';
@@ -26,6 +26,7 @@ export interface ITimeEntry {
   approvalStatus: TimeEntryApprovalStatus;
   hourlyRate: number;
   timesheet_id?: string;
+  entryType?: UserType;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -38,6 +39,7 @@ export interface ITimeEntryCreateInput {
   company_id: ITimeEntry['company_id'];
   created_by: ITimeEntry['created_by'];
   task_id: ITimeEntry['task_id'];
+  entryType: ITimeEntry['entryType'];
 }
 
 export interface ITimeEntryUpdateInput {

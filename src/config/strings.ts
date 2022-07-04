@@ -68,6 +68,7 @@ export default {
   userStatusActive: 'User is already associated with another client',
   userNotEmployee: 'User is not an Employee',
   userNotClient: 'User is not a client',
+  countryRequired: 'Country required',
   streetAddressRequired: 'Street address required',
   invoicingEmailRequired: 'Invoicing email required',
   clientExists: 'Client with the email address already exists',
@@ -99,4 +100,7 @@ export default {
   pricesRequired: 'Some of the prices are missing',
   companyAlreadySubscribed: 'Company already subscribed to Professional plan',
   featureNotSubscribed: 'Company has not subscribed to the Professional plan to use this feature.',
+  descriptionRequired: 'Description Required',
+  timesheetIdRequired: 'Timesheet Id required',
+  attachmentRequired: 'Attachment Required',
 };
