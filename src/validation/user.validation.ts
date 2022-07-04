@@ -81,6 +81,13 @@ export default class UserValidation {
       middleName: Joi.string().allow('', null),
       phone: Joi.string().required().messages(messages.phone),
       company_id: Joi.string().required(),
+      timesheet_attachment: Joi.boolean(),
+      startDate: Joi.when('roles', {
+        is: Joi.array().has(RoleEnum.Employee),
+        then: Joi.date().required().messages(messages.startDate),
+        otherwise: Joi.date(),
+      }),
+      endDate: Joi.date(),
       type: Joi.when('roles', {
         is: Joi.array().has(RoleEnum.Employee),
         then: Joi.string().required().messages(messages.type),
@@ -124,6 +131,9 @@ export default class UserValidation {
       lastName: Joi.string().messages(messages.lastName),
       middleName: Joi.string().allow(null, ''),
       phone: Joi.string().messages(messages.phone),
+      startDate: Joi.date(),
+      endDate: Joi.date(),
+      timesheet_attachment: Joi.boolean(),
       address: Joi.object({
         country: Joi.string().allow('', null),
         streetAddress: Joi.string().allow('', null),

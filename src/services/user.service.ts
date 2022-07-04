@@ -69,6 +69,9 @@ export default class UserService implements IUserService {
       const address = args?.address;
       const roles = args.roles;
       const type = args?.type;
+      const startDate = args?.startDate;
+      const endDate = args?.endDate;
+      const timesheet_attachment = args?.timesheet_attachment;
       const password = generateRandomStrings({ length: 8 });
 
       const user = await this.userRepository.create({
@@ -83,6 +86,9 @@ export default class UserService implements IUserService {
         address,
         roles,
         type,
+        startDate,
+        endDate,
+        timesheet_attachment,
       });
 
       // Emit event for onUserCreate
@@ -116,6 +122,9 @@ export default class UserService implements IUserService {
       const address = args?.address;
       const password = args?.password;
       const type = args?.type;
+      const startDate = args?.startDate;
+      const endDate = args?.endDate;
+      const timesheet_attachment = args?.timesheet_attachment;
 
       const user = await this.userRepository.update({
         id,
@@ -127,6 +136,9 @@ export default class UserService implements IUserService {
         address,
         password,
         type,
+        startDate,
+        endDate,
+        timesheet_attachment,
       });
 
       return user;
