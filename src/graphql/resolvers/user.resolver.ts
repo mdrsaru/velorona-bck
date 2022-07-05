@@ -125,6 +125,9 @@ export class UserResolver {
       const company_id = args.company_id;
       const roles = args.roles;
       const type = args?.type;
+      const startDate = args?.startDate;
+      const endDate = args?.endDate;
+      const timesheet_attachment = args?.timesheet_attachment;
       const address = {
         country: args.address.country,
         streetAddress: args.address.streetAddress,
@@ -147,6 +150,9 @@ export class UserResolver {
           address,
           roles,
           type,
+          startDate,
+          endDate,
+          timesheet_attachment,
         },
       });
 
@@ -161,6 +167,9 @@ export class UserResolver {
         address,
         roles,
         type,
+        startDate,
+        endDate,
+        timesheet_attachment,
       });
 
       return user;
@@ -246,6 +255,9 @@ export class UserResolver {
       const phone = args.phone;
       const address = args.address;
       const type = args.type;
+      const startDate = args.startDate;
+      const endDate = args.endDate;
+      const timesheet_attachment = args.timesheet_attachment;
 
       const schema = UserValidation.update();
       await this.joiService.validate({
@@ -258,6 +270,9 @@ export class UserResolver {
           phone,
           address,
           type,
+          startDate,
+          endDate,
+          timesheet_attachment,
         },
       });
 
@@ -270,6 +285,9 @@ export class UserResolver {
         phone,
         address,
         type,
+        startDate,
+        endDate,
+        timesheet_attachment,
       });
 
       return user;

@@ -51,20 +51,20 @@ export default class WorkscheduleService implements IWorkscheduleService {
 
   create = async (args: IWorkscheduleCreateInput) => {
     const operation = 'create';
-    const date = args.date;
-    const from = args.from;
-    const to = args.to;
-    const task_id = args.task_id;
-    const user_id = args.user_id;
+    const startDate = args.startDate;
+    const endDate = args.endDate;
+    const payrollAllocatedHours = args.payrollAllocatedHours;
+    const payrollUsageHours = args.payrollUsageHours;
+    const status = args.status;
     const company_id = args.company_id;
 
     try {
       const project = await this.workscheduleRepository.create({
-        date,
-        from,
-        to,
-        task_id,
-        user_id,
+        startDate,
+        endDate,
+        payrollAllocatedHours,
+        payrollUsageHours,
+        status,
         company_id,
       });
 
@@ -82,21 +82,21 @@ export default class WorkscheduleService implements IWorkscheduleService {
   update = async (args: IWorkscheduleUpdateInput) => {
     const operation = 'update';
     const id = args.id;
-    const date = args.date;
-    const from = args.from;
-    const to = args.to;
-    const task_id = args.task_id;
-    const user_id = args.user_id;
+    const startDate = args.startDate;
+    const endDate = args.endDate;
+    const payrollAllocatedHours = args.payrollAllocatedHours;
+    const payrollUsageHours = args.payrollUsageHours;
+    const status = args.status;
     const company_id = args.company_id;
 
     try {
       let project = await this.workscheduleRepository.update({
         id,
-        date,
-        from,
-        to,
-        task_id,
-        user_id,
+        startDate,
+        endDate,
+        payrollAllocatedHours,
+        payrollUsageHours,
+        status,
         company_id,
       });
 

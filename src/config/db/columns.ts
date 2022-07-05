@@ -106,3 +106,11 @@ export const attachedTimesheets = {
   attachment_id: 'attachment_id',
   timesheet_id: 'timesheet_id',
 };
+
+export const workschedule = {
+  start_date: 'start_date',
+  end_date: 'end_date',
+  payroll_allocated_hours: 'payroll_allocated_hours',
+  payroll_usuage_hours: 'payroll_usuage_hours',
+  company_id: 'company_id',
+};

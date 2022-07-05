@@ -49,9 +49,6 @@ export class AddressInput {
   country: string;
 
   @Field()
-  country: string;
-
-  @Field()
   streetAddress: string;
 
   @Field({ nullable: true })

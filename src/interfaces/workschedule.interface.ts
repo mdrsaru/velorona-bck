@@ -7,30 +7,31 @@ import { IGetAllAndCountResult, IPaginationData, IPagingArgs } from './paging.in
 
 export interface IWorkschedule {
   id: string;
-  date: Date;
-  from: number;
-  to: number;
-  tasks: Task[];
-  user: User[];
+  startDate: Date;
+  endDate: Date;
+  payrollAllocatedHours: Number;
+  payrollUsageHours: Number;
+  status: string;
+  company_id: string;
   company: Company[];
 }
 export interface IWorkscheduleCreateInput {
-  date: Date;
-  from: number;
-  to: number;
-  task_id: string;
-  user_id: string;
-  company_id: string;
+  startDate: IWorkschedule['startDate'];
+  endDate: IWorkschedule['endDate'];
+  payrollAllocatedHours: IWorkschedule['payrollAllocatedHours'];
+  payrollUsageHours: IWorkschedule['payrollUsageHours'];
+  status: IWorkschedule['status'];
+  company_id: IWorkschedule['company_id'];
 }
 
 export interface IWorkscheduleUpdateInput {
   id: string;
-  date?: Date;
-  from?: number;
-  to?: number;
-  task_id?: string;
-  user_id?: string;
-  company_id?: string;
+  startDate?: IWorkschedule['startDate'];
+  endDate?: IWorkschedule['endDate'];
+  payrollAllocatedHours?: IWorkschedule['payrollAllocatedHours'];
+  payrollUsageHours?: IWorkschedule['payrollUsageHours'];
+  status?: IWorkschedule['status'];
+  company_id: IWorkschedule['company_id'];
 }
 
 export interface IWorkscheduleService {

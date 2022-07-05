@@ -264,6 +264,12 @@ export class TimesheetQuery {
 
   @Field({ nullable: true })
   status: string;
+
+  @Field({ nullable: true })
+  weekStartDate: string;
+
+  @Field({ nullable: true })
+  weekEndDate: string;
 }
 
 @InputType()
