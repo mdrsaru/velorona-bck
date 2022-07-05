@@ -116,6 +116,9 @@ export default class UserRepository extends BaseRepository<User> implements IUse
       const roles = args.roles;
       const archived = args?.archived ?? false;
       const type = args?.type;
+      const startDate = args?.startDate;
+      const endDate = args?.endDate;
+      const timesheet_attachment = args?.timesheet_attachment;
 
       const errors: string[] = [];
 
@@ -182,6 +185,9 @@ export default class UserRepository extends BaseRepository<User> implements IUse
         address,
         roles: existingRoles,
         archived,
+        startDate,
+        endDate,
+        timesheet_attachment,
       };
       if (roles.includes(RoleEnum.Employee)) {
         userData.type = type;
@@ -207,6 +213,9 @@ export default class UserRepository extends BaseRepository<User> implements IUse
       const avatar_id = args?.avatar_id;
       const archived = args?.archived;
       const type = args?.type;
+      const startDate = args?.startDate;
+      const endDate = args?.endDate;
+      const timesheet_attachment = args?.timesheet_attachment;
 
       const found = await this.repo.findOne(id, {
         relations: ['address', 'roles'],
@@ -237,6 +246,9 @@ export default class UserRepository extends BaseRepository<User> implements IUse
           ...address,
         },
         archived,
+        startDate,
+        endDate,
+        timesheet_attachment,
       };
 
       const role = found?.roles.some(function (role) {
