@@ -178,6 +178,7 @@ export default class AuthService implements IAuthService {
         expiresIn: constants.refreshTokenExpiration,
         tokenType: TokenType?.refresh,
       });
+
       return {
         id: user.id,
         token: token,
@@ -188,6 +189,7 @@ export default class AuthService implements IAuthService {
         middleName: user?.middleName,
         lastName: user.lastName,
         avatar: user?.avatar,
+        type: user.type,
       };
     } catch (err) {
       throw err;
@@ -395,16 +397,24 @@ export default class AuthService implements IAuthService {
         id: decoded.id,
         relations: ['roles', 'company', 'avatar'],
       });
+
+      if (!user) {
+        throw new apiError.NotFoundError({
+          details: [strings.userNotFound],
+        });
+      }
+
       return {
         id: payload.id,
         token: newAccessToken,
         refreshToken,
-        roles: user?.roles ?? [],
-        company: user?.company,
-        firstName: user?.firstName,
+        roles: user.roles ?? [],
+        company: user.company,
+        firstName: user.firstName,
         middleName: user?.middleName,
         lastName: user?.lastName,
         avatar: user?.avatar,
+        type: user.type,
       };
     } catch (err) {
       throw err;
