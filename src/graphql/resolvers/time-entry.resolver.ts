@@ -163,7 +163,7 @@ export class TimeEntryResolver {
   }
 
   @Mutation((returns) => TimeEntry)
-  @UseMiddleware(authenticate, checkCompanyAccess, canCreateTimeEntry)
+  @UseMiddleware(authenticate, authorize(RoleEnum.Employee), checkCompanyAccess)
   async TimeEntryCreate(@Arg('input') args: TimeEntryCreateInput, @Ctx() ctx: IGraphqlContext): Promise<TimeEntry> {
     const operation = 'TimeEntryCreate';
 
