@@ -103,4 +103,6 @@ export default {
   descriptionRequired: 'Description Required',
   timesheetIdRequired: 'Timesheet Id required',
   attachmentRequired: 'Attachment Required',
+  payrollAllocatedHoursRequired: 'Payroll allocated hours required',
+  payrollUsageHoursRequired: 'Payroll usage hours required',
 };

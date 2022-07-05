@@ -1,44 +1,37 @@
 import { Field, InputType, ObjectType } from 'type-graphql';
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
 import { entities } from '../config/constants';
 import { Base } from './base.entity';
 import { PagingInput, PagingResult } from './common.entity';
 import Company from './company.entity';
-import Task from './task.entity';
-import User from './user.entity';
+import { workschedule } from '../config/db/columns';
 
+const indexPrefix = 'workschedule';
 @ObjectType()
 @Entity({ name: entities.workschedule })
 export default class Workschedule extends Base {
+  @Index(`${indexPrefix}_start_date`)
+  @Field()
+  @Column({ name: workschedule.start_date })
+  startDate: Date;
+
+  @Index(`${indexPrefix}_end_date`)
+  @Field()
+  @Column({ name: workschedule.end_date })
+  endDate: Date;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true, name: workschedule.payroll_allocated_hours })
+  payrollAllocatedHours: Number;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true, name: workschedule.payroll_usuage_hours })
+  payrollUsageHours: Number;
+
+  @Index(`${indexPrefix}_status`)
   @Field()
   @Column()
-  date: Date;
-
-  @Field()
-  @Column()
-  from: number;
-
-  @Field()
-  @Column()
-  to: number;
-
-  @Field()
-  @Column()
-  task_id: string;
-
-  @Field(() => Task)
-  @ManyToOne(() => Task)
-  @JoinColumn({ name: 'task_id' })
-  tasks: Task;
-
-  @Field()
-  @Column()
-  user_id: string;
-
-  @Field(() => User)
-  @ManyToOne(() => User)
-  @JoinColumn({ name: 'user_id' })
-  user: User;
+  status: string;
 
   @Field()
   @Column()
@@ -46,7 +39,7 @@ export default class Workschedule extends Base {
 
   @Field(() => Company)
   @ManyToOne(() => Company)
-  @JoinColumn({ name: 'company_id' })
+  @JoinColumn({ name: workschedule.company_id })
   company: Company;
 }
 
@@ -62,19 +55,19 @@ export class WorkschedulePagingResult {
 @InputType()
 export class WorkscheduleCreateInput {
   @Field()
-  date: Date;
+  startDate: Date;
 
   @Field()
-  from: number;
+  endDate: Date;
+
+  @Field({ nullable: true })
+  payrollAllocatedHours: Number;
+
+  @Field({ nullable: true })
+  payrollUsageHours: Number;
 
   @Field()
-  to: number;
-
-  @Field()
-  task_id: string;
-
-  @Field()
-  user_id: string;
+  status: string;
 
   @Field()
   company_id: string;
@@ -86,19 +79,19 @@ export class WorkscheduleUpdateInput {
   id: string;
 
   @Field({ nullable: true })
-  date: Date;
+  startDate: Date;
 
   @Field({ nullable: true })
-  from: number;
+  endDate: Date;
 
   @Field({ nullable: true })
-  to: number;
+  payrollAllocatedHours: Number;
 
   @Field({ nullable: true })
-  task_id: string;
+  payrollUsageHours: Number;
 
   @Field({ nullable: true })
-  user_id: string;
+  status: string;
 
   @Field({ nullable: true })
   company_id: string;

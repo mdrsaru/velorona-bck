@@ -1,7 +1,7 @@
 {
   "_type": "export",
   "__export_format": 4,
-  "__export_date": "2022-06-29T04:03:10.824Z",
+  "__export_date": "2022-07-05T03:39:39.251Z",
   "__export_source": "insomnia.desktop.app:v2022.4.2",
   "resources": [
     {
@@ -2184,7 +2184,7 @@
     {
       "_id": "req_2098dc609f9e4189be552923a484a25c",
       "parentId": "fld_0415f6e2927d4d978d7b39c803cc2390",
-      "modified": 1649217718506,
+      "modified": 1656992140880,
       "created": 1649156731976,
       "url": "{{ api_url }}/{{ version }}/graphql",
       "name": "Workschedule",
@@ -2192,14 +2192,14 @@
       "method": "POST",
       "body": {
         "mimeType": "application/graphql",
-        "text": "{\"query\":\"query Workschedule($input: WorkscheduleQueryInput!) {\\n  Workschedule(input: $input) {\\n    paging {\\n      total\\n      startIndex\\n      endIndex\\n      hasNextPage\\n    }\\n    data {\\n      id\\n     date\\n\\t\\t\\tfrom\\n\\t\\t\\tto\\n\\t\\t\\ttasks{\\n\\t\\t\\t\\tid\\n\\t\\t\\t\\tname\\n\\t\\t\\t\\tarchived\\n\\t\\t\\t}\\n\\t\\t\\temployee{\\n\\t\\t\\t\\tid\\n\\t\\t\\t\\tfirstName\\n\\t\\t\\t}\\n\\t\\t\\tcompany{\\n\\t\\t\\t\\tid\\n\\t\\t\\t\\tname\\n\\t\\t\\t\\tcompanyCode\\n\\t\\t\\t}\\n    }\\n  }\\n}\",\"variables\":{\"input\":{\"query\":{\"company_id\":\"e9ff1082-cd75-415e-8416-91995bf83847\"}}},\"operationName\":\"Workschedule\"}"
+        "text": "{\"query\":\"query Workschedule($input: WorkscheduleQueryInput!) {\\n  Workschedule(input: $input) {\\n    paging {\\n      total\\n      startIndex\\n      endIndex\\n      hasNextPage\\n    }\\n    data {\\n\\t\\t\\tid\\n    startDate\\n\\t\\tendDate\\n\\t\\tpayrollAllocatedHours\\n\\t\\tpayrollUsageHours\\n\\t\\tstatus\\n\\t\\tcompany{\\n\\t\\t\\tid\\n\\t\\t\\tname\\n\\t\\t}\\n    }\\n  }\\n}\",\"variables\":{\"input\":{\"query\":{\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\"}}},\"operationName\":\"Workschedule\"}"
       },
       "parameters": [],
       "headers": [
         { "id": "pair_5785fa0d281e4c5980ec45d40cc212a4", "name": "Content-Type", "value": "application/json" }
       ],
       "authentication": {
-        "token": "{% response 'body', 'req_d1297130d87b4fc7a39459364a2323fb', 'b64::JC5kYXRhLkxvZ2luLnRva2Vu::46b', 'never', 60 %}",
+        "token": "{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLnRva2Vu::46b', 'never', 60 %}",
         "type": "bearer"
       },
       "metaSortKey": -1646649815996,
@@ -2258,7 +2258,7 @@
     {
       "_id": "req_3872012bac6a484b9b661b4a8c0eb515",
       "parentId": "fld_0415f6e2927d4d978d7b39c803cc2390",
-      "modified": 1649216749559,
+      "modified": 1656992129125,
       "created": 1649156731973,
       "url": "{{ api_url }}/{{ version }}/graphql",
       "name": "WorkscheduleCreate",
@@ -2266,14 +2266,14 @@
       "method": "POST",
       "body": {
         "mimeType": "application/graphql",
-        "text": "{\"query\":\"mutation WorkscheduleCreate($input: WorkscheduleCreateInput!) {\\n  WorkscheduleCreate(input: $input) {\\n    id\\n    date\\n  }\\n}\\n\",\"variables\":{\"input\":{\"date\":\"2022-02-12\",\"from\":10,\"to\":12,\"task_id\":\"{% response 'body', 'req_9161a44aa9394a7dae13cba1d1bb11e1', 'b64::JC5kYXRhLlRhc2tDcmVhdGUuaWQ=::46b', 'never', 60 %}\",\"company_id\":\"{% response 'body', 'req_23b94e00d43949c8af5462e9bac89dbd', 'b64::JC5kYXRhLkNvbXBhbnlDcmVhdGUuaWQ=::46b', 'never', 60 %}\",\"employee_id\":\"c2263f3b-388d-4e8f-836c-05d1277278a8\"}},\"operationName\":\"WorkscheduleCreate\"}"
+        "text": "{\"query\":\"mutation WorkscheduleCreate($input: WorkscheduleCreateInput!) {\\n  WorkscheduleCreate(input: $input) {\\n    id\\n    startDate\\n\\t\\tendDate\\n\\t\\tpayrollAllocatedHours\\n\\t\\tpayrollUsageHours\\n\\t\\tstatus\\n\\t\\tcompany{\\n\\t\\t\\tid\\n\\t\\t\\tname\\n\\t\\t}\\n  }\\n}\\n\",\"variables\":{\"input\":{\"startDate\":\"2022-02-12\",\"endDate\":\"2022-03-20\",\"payrollAllocatedHours\":8,\"status\":\"Active\",\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\"}},\"operationName\":\"WorkscheduleCreate\"}"
       },
       "parameters": [],
       "headers": [
         { "id": "pair_5785fa0d281e4c5980ec45d40cc212a4", "name": "Content-Type", "value": "application/json" }
       ],
       "authentication": {
-        "token": "{% response 'body', 'req_d1297130d87b4fc7a39459364a2323fb', 'b64::JC5kYXRhLkxvZ2luLnRva2Vu::46b', 'never', 60 %}",
+        "token": "{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLnRva2Vu::46b', 'never', 60 %}",
         "type": "bearer"
       },
       "metaSortKey": -1646649815946,
@@ -2289,7 +2289,7 @@
     {
       "_id": "req_158f0b71ddcd4c0593ce2c1afd425499",
       "parentId": "fld_0415f6e2927d4d978d7b39c803cc2390",
-      "modified": 1649159996775,
+      "modified": 1656992182423,
       "created": 1649156731978,
       "url": "{{ api_url }}/{{ version }}/graphql",
       "name": "WorkscheduleUpdate",
@@ -2297,14 +2297,14 @@
       "method": "POST",
       "body": {
         "mimeType": "application/graphql",
-        "text": "{\"query\":\"mutation WorkscheduleUpdate($input: WorkscheduleUpdateInput!) {\\n  WorkscheduleUpdate(input: $input) {\\n    id\\n    date\\n  }\\n}\\n\",\"variables\":{\"input\":{\"id\":\"{% response 'body', 'req_3872012bac6a484b9b661b4a8c0eb515', 'b64::JC5kYXRhLldvcmtzY2hlZHVsZUNyZWF0ZS5pZA==::46b', 'never', 60 %}\",\"date\":\"2022-10-1\",\"company_id\":\"{% response 'body', 'req_23b94e00d43949c8af5462e9bac89dbd', 'b64::JC5kYXRhLkNvbXBhbnlDcmVhdGUuaWQ=::46b', 'never', 60 %}\"}},\"operationName\":\"WorkscheduleUpdate\"}"
+        "text": "{\"query\":\"mutation WorkscheduleUpdate($input: WorkscheduleUpdateInput!) {\\n  WorkscheduleUpdate(input: $input) {\\n    id\\n    startDate\\n\\t\\tendDate\\n\\t\\tpayrollAllocatedHours\\n\\t\\tpayrollUsageHours\\n\\t\\tstatus\\n\\t\\tcompany{\\n\\t\\t\\tid\\n\\t\\t\\tname\\n\\t\\t}\\n  }\\n}\\n\",\"variables\":{\"input\":{\"id\":\"{% response 'body', 'req_3872012bac6a484b9b661b4a8c0eb515', 'b64::JC5kYXRhLldvcmtzY2hlZHVsZUNyZWF0ZS5pZA==::46b', 'never', 60 %}\",\"startDate\":\"2022-02-22\",\"endDate\":\"2022-03-29\",\"payrollUsageHours\":4,\"status\":\"InActive\",\"company_id\":\"{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLmNvbXBhbnkuaWQ=::46b', 'never', 60 %}\"}},\"operationName\":\"WorkscheduleUpdate\"}"
       },
       "parameters": [],
       "headers": [
         { "id": "pair_5785fa0d281e4c5980ec45d40cc212a4", "name": "Content-Type", "value": "application/json" }
       ],
       "authentication": {
-        "token": "{% response 'body', 'req_d1297130d87b4fc7a39459364a2323fb', 'b64::JC5kYXRhLkxvZ2luLnRva2Vu::46b', 'never', 60 %}",
+        "token": "{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLnRva2Vu::46b', 'never', 60 %}",
         "type": "bearer"
       },
       "metaSortKey": -1646634883848.918,
@@ -2320,7 +2320,7 @@
     {
       "_id": "req_52408388834f47dd82d2e48d81423eb4",
       "parentId": "fld_0415f6e2927d4d978d7b39c803cc2390",
-      "modified": 1649160237946,
+      "modified": 1656992197439,
       "created": 1649160149622,
       "url": "{{ api_url }}/{{ version }}/graphql",
       "name": "WorkscheduleDelete",
@@ -2328,14 +2328,14 @@
       "method": "POST",
       "body": {
         "mimeType": "application/graphql",
-        "text": "{\"query\":\"mutation WorkscheduleDelete($input: DeleteInput!) {\\n  WorkscheduleDelete(input: $input) {\\n    id\\n\\t\\tdate\\n\\t\\tfrom\\n\\t\\tto\\n\\t\\t\\n  }\\n}\",\"variables\":{\"input\":{\"id\":\"{% response 'body', 'req_3872012bac6a484b9b661b4a8c0eb515', 'b64::JC5kYXRhLldvcmtzY2hlZHVsZUNyZWF0ZS5pZA==::46b', 'never', 60 %}\"}},\"operationName\":\"WorkscheduleDelete\"}"
+        "text": "{\"query\":\"mutation WorkscheduleDelete($input: DeleteInput!) {\\n  WorkscheduleDelete(input: $input) {\\n    id\\n\\tstartDate\\n\\t\\tendDate\\n\\t\\tpayrollAllocatedHours\\n\\t\\tpayrollUsageHours\\n\\t\\tstatus\\n\\t\\tcompany{\\n\\t\\t\\tid\\n\\t\\t\\tname\\n\\t\\t}\\n\\t\\t\\n  }\\n}\",\"variables\":{\"input\":{\"id\":\"{% response 'body', 'req_3872012bac6a484b9b661b4a8c0eb515', 'b64::JC5kYXRhLldvcmtzY2hlZHVsZUNyZWF0ZS5pZA==::46b', 'never', 60 %}\"}},\"operationName\":\"WorkscheduleDelete\"}"
       },
       "parameters": [],
       "headers": [
         { "id": "pair_5785fa0d281e4c5980ec45d40cc212a4", "name": "Content-Type", "value": "application/json" }
       ],
       "authentication": {
-        "token": "{% response 'body', 'req_d1297130d87b4fc7a39459364a2323fb', 'b64::JC5kYXRhLkxvZ2luLnRva2Vu::46b', 'never', 60 %}",
+        "token": "{% response 'body', 'req_7891357ab736456a8e14b348b31135d3', 'b64::JC5kYXRhLkxvZ2luLnRva2Vu::46b', 'never', 60 %}",
         "type": "bearer"
       },
       "metaSortKey": -1646634883798.918,
@@ -2817,7 +2817,7 @@
     {
       "_id": "req_7891357ab736456a8e14b348b31135d3",
       "parentId": "fld_e864bd8433684c93a335724143ac8a23",
-      "modified": 1654775281238,
+      "modified": 1656992114441,
       "created": 1647846264731,
       "url": "{{ api_url }}/{{ version }}/graphql",
       "name": "Login",
@@ -2898,22 +2898,22 @@
     {
       "_id": "jar_2121b271f08ea9ff6a364be633b863d913907d01",
       "parentId": "wrk_4360c7a0bbfa403c86be07deeb666c4c",
-      "modified": 1654253694059,
+      "modified": 1656992116915,
       "created": 1646649800465,
       "name": "Default Jar",
       "cookies": [
         {
-          "creation": "2022-03-16T07:43:51.090Z",
-          "domain": "localhost",
-          "expires": "2022-06-10T10:54:54.000Z",
-          "hostOnly": true,
-          "httpOnly": true,
-          "id": "9089203509113826",
           "key": "refreshToken",
-          "lastAccessed": "2022-06-03T10:54:54.059Z",
+          "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImI1MmQxYTNjLWU5YTktNDRmMC1hZDM4LTU0MmQ4MWI1MzhlMiIsInJvbGVzIjpbIjVkNDgxYWU2LWNlODYtNDBmMy1hNWNhLTc4MDg1MWFlMzYyYSJdLCJpYXQiOjE2NTY5OTIxMTYsImV4cCI6MTY1NzU5NjkxNn0.pE_DUJ283qOkWbFY3_RmdrvDoDj4rQb_ERxtG9BGHC0",
+          "expires": "2022-07-12T03:35:16.000Z",
           "maxAge": 604800,
+          "domain": "localhost",
           "path": "/",
-          "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQxYmZhZGExLTI2ZTMtNGNkOC1iYzU3LTcwZmI2NDBiNTM4ZiIsInJvbGVzIjpbIjcyMWI4NjhhLWE4M2ItNGMzZC1hNzVlLWUwNzU5Y2JmODc2YSJdLCJpYXQiOjE2NTQyNTM2OTQsImV4cCI6MTY1NDg1ODQ5NH0.YYR-76A-D1gvkoYqiO1rjj87xHB2hr-ZKYb-Bvllelo"
+          "httpOnly": true,
+          "hostOnly": true,
+          "creation": "2022-03-16T07:43:51.090Z",
+          "lastAccessed": "2022-07-05T03:35:16.915Z",
+          "id": "05622328200851001"
         }
       ],
       "_type": "cookie_jar"

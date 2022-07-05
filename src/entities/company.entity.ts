@@ -57,10 +57,6 @@ export default class Company extends Base {
   @OneToMany(() => User, (user) => user.company)
   users: User[];
 
-  @Field(() => Workschedule, { nullable: true })
-  @OneToMany(() => Workschedule, (workschedule) => workschedule.tasks)
-  workschedules: Workschedule[];
-
   @Field({ nullable: true })
   @Column({ name: 'stripe_customer_id', type: 'varchar', nullable: true })
   stripeCustomerId: string;
