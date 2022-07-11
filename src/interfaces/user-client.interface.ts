@@ -1,7 +1,7 @@
 import User from '../entities/user.entity';
 import UserClient from '../entities/user-client.entity';
 import { ISingleEntityQuery } from './common.interface';
-import { IGetOptions } from './common.interface';
+import { IGetOptions } from './paging.interface';
 
 export interface IUserClientCreate {
   client_id: string;
