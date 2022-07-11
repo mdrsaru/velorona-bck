@@ -20,8 +20,8 @@ export default class Workschedule extends Base {
   @Column({ name: workschedule.end_date })
   endDate: Date;
 
-  @Field()
-  @Column({ name: workschedule.payroll_allocated_hours })
+  @Field({ nullable: true })
+  @Column({ nullable: true, name: workschedule.payroll_allocated_hours })
   payrollAllocatedHours: Number;
 
   @Field({ nullable: true })
@@ -60,7 +60,7 @@ export class WorkscheduleCreateInput {
   @Field()
   endDate: Date;
 
-  @Field()
+  @Field({ nullable: true })
   payrollAllocatedHours: Number;
 
   @Field({ nullable: true })

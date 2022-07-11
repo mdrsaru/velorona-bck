@@ -23,6 +23,8 @@ import activityLog from './config/inversify/activity-log';
 import subscription from './config/inversify/subscription';
 import stripe from './config/inversify/stripe';
 import attachedTimesheet from './config/inversify/attached-timesheet';
+import workscheduleDetail from './config/inversify/workschedule-detail';
+import workscheduleTimeDetail from './config/inversify/workschedule-time-detail';
 
 const container = new Container({ skipBaseClassChecks: true });
 
@@ -59,6 +61,8 @@ container.load(
   stripe,
   webhook,
   attachedTimesheet,
+  workscheduleDetail,
+  workscheduleTimeDetail
 );
 
 export default container;

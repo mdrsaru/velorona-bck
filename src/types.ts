@@ -135,6 +135,17 @@ const ATTACHED_TIMESHEET = {
   AttachedTimesheetController: Symbol('AttachedTimesheetController'),
 };
 
+const WORKSCHEDULE_DETAIL = {
+  WorkscheduleDetailRepository: Symbol('WorkscheduleDetailRepository'),
+  WorkscheduleDetailService: Symbol('WorkscheduleDetailService'),
+  WorkscheduleDetailController: Symbol('WorkscheduleDetailController'),
+};
+
+const WORKSCHEDULE_TIME_DETAIL = {
+  WorkscheduleTimeDetailRepository: Symbol('WorkscheduleTimeDetailRepository'),
+  WorkscheduleTimeDetailService: Symbol('WorkscheduleTimeDetailService'),
+  WorkscheduleTimeDetailController: Symbol('WorkscheduleTimeDetailController'),
+};
 const TYPES = {
   ...COMMON,
   ...COMPANY,
@@ -157,6 +168,8 @@ const TYPES = {
   ...SUBSCRIPTION,
   ...STRIPE,
   ...ATTACHED_TIMESHEET,
+  ...WORKSCHEDULE_DETAIL,
+  ...WORKSCHEDULE_TIME_DETAIL,
 };
 
 export { TYPES };

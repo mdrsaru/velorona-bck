@@ -83,8 +83,6 @@ export class WorkscheduleResolver {
         input: {
           startDate,
           endDate,
-          payrollAllocatedHours,
-          payrollUsageHours,
           status,
           company_id,
         },

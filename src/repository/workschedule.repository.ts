@@ -55,9 +55,6 @@ export default class WorkscheduleRepository extends BaseRepository<Workschedule>
       if (isNil(endDate) || !isDate(endDate)) {
         errors.push(strings.endDateRequired);
       }
-      if (isNil(payrollAllocatedHours) || !isNumber(payrollAllocatedHours)) {
-        errors.push(strings.payrollAllocatedHoursRequired);
-      }
       if (isNil(company_id) || !isString(company_id)) {
         errors.push(strings.companyRequired);
       }

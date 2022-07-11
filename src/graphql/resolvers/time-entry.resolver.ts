@@ -386,11 +386,6 @@ export class TimeEntryResolver {
   }
 
   @FieldResolver()
-  task(@Root() root: TimeEntry, @Ctx() ctx: IGraphqlContext) {
-    return ctx.loaders.tasksByIdLoader.load(root.task_id);
-  }
-
-  @FieldResolver()
   async timesheet(@Root() root: TimeEntry, @Ctx() ctx: IGraphqlContext) {
     if (root.timesheet_id) {
       return ctx.loaders.timesheetByIdLoader.load(root.timesheet_id);

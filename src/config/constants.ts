@@ -1,7 +1,6 @@
 import path from 'path';
 import colors from 'colors';
 import * as dotenv from 'dotenv';
-import { DatabaseType } from 'typeorm';
 
 const env = process.env.NODE_ENV || 'local';
 
@@ -65,6 +64,8 @@ export const entities = {
   taskAttachments: 'task_attachments',
   activityLogs: 'activity_log',
   timesheetAttachments: 'timesheet_attachments',
+  workscheduleDetail: 'workschedule_details',
+  workscheduleTimeDetail: 'workschedule_time_details',
 };
 
 export enum CompanyStatus {

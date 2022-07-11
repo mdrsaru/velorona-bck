@@ -45,6 +45,7 @@ export default class BaseRepository<T> implements IBaseRepository<T> {
 
   async getAll(args: IGetOptions): Promise<T[]> {
     try {
+      console.log('getAll');
       let { query = {}, select = [], ...rest } = args;
 
       const _select = select as (keyof T)[];
@@ -56,13 +57,13 @@ export default class BaseRepository<T> implements IBaseRepository<T> {
           query[key] = In(query[key]);
         }
       }
-
+      console.log(query, 'repo');
       const rows = await this.repo.find({
         where: query,
         ...(_select?.length && { select: _select }),
         ...rest,
       });
-
+      console.log(rows);
       return rows;
     } catch (err) {
       throw err;

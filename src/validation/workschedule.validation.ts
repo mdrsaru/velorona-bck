@@ -44,8 +44,6 @@ export default class WorkscheduleValidation {
     return Joi.object({
       startDate: Joi.date().required().messages(messages.startDate),
       endDate: Joi.date().required().messages(messages.endDate),
-      payrollAllocatedHours: Joi.number().required().messages(messages.payrollAllocatedHours),
-      payrollUsageHours: Joi.number().messages(messages.payrollUsageHours),
       status: Joi.string(),
       company_id: Joi.string().required().messages(messages.company_id),
     });

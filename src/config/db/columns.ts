@@ -114,3 +114,17 @@ export const workschedule = {
   payroll_usuage_hours: 'payroll_usuage_hours',
   company_id: 'company_id',
 };
+
+export const workscheduleDetail = {
+  time_detail: 'time_detail',
+  workschedule_id: 'workschedule_id',
+  user_id: 'user_id',
+  start_date: 'start_date',
+  end_date: 'end_date',
+};
+
+export const workscheduleTimeDetail = {
+  start_time: 'start_time',
+  end_time: 'end_time',
+  workschedule_detail_id: 'workschedule_detail_id',
+};
