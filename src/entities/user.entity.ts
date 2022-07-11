@@ -22,7 +22,6 @@ import { Base } from './base.entity';
 import { PagingInput, PagingResult } from './common.entity';
 import Address, { AddressCreateInput, AddressUpdateInput } from './address.entity';
 import { AdminRole, CompanyRole, entities, UserStatus, Role as RoleEnum, UserType } from '../config/constants';
-import Task from './task.entity';
 import Workschedule from './workschedule.entity';
 import { userRolesTable } from '../config/db/columns';
 import UserPayRate from './user-payrate.entity';
@@ -156,9 +155,6 @@ export default class User extends Base {
   @Field(() => UserToken, { nullable: true })
   @OneToMany(() => UserToken, (token) => token.user)
   tokens: UserToken[];
-
-  @ManyToMany(() => Task)
-  assignedTasks: Task[];
 
   @Field(() => Workschedule, { nullable: true })
   @OneToMany(() => Workschedule, (workschedule) => workschedule.user)

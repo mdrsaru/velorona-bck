@@ -58,7 +58,7 @@ export default class Company extends Base {
   users: User[];
 
   @Field(() => Workschedule, { nullable: true })
-  @OneToMany(() => Workschedule, (workschedule) => workschedule.tasks)
+  @OneToMany(() => Workschedule, (workschedule) => workschedule.company)
   workschedules: Workschedule[];
 
   @Field({ nullable: true })

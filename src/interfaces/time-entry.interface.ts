@@ -2,7 +2,6 @@ import { TimeEntryApprovalStatus, UserType } from '../config/constants';
 import Company from '../entities/company.entity';
 import Project from '../entities/project.entity';
 import User from '../entities/user.entity';
-import Task from '../entities/task.entity';
 import TimeEntry from '../entities/time-entry.entity';
 import { IEntityID, IEntityRemove } from './common.interface';
 import { IGetAllAndCountResult, IPaginationData, IPagingArgs, IGetOptions } from './paging.interface';
@@ -16,17 +15,16 @@ export interface ITimeEntry {
   approver_id: string;
   project_id: string;
   company_id: string;
-  task_id: string;
   created_by: string;
   approver: User;
   project: Project;
   company: Company;
   creator: User;
-  task?: Task;
   approvalStatus: TimeEntryApprovalStatus;
   hourlyRate: number;
   timesheet_id?: string;
   entryType?: UserType;
+  description?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -38,8 +36,8 @@ export interface ITimeEntryCreateInput {
   project_id: ITimeEntry['project_id'];
   company_id: ITimeEntry['company_id'];
   created_by: ITimeEntry['created_by'];
-  task_id: ITimeEntry['task_id'];
   entryType: ITimeEntry['entryType'];
+  description?: ITimeEntry['description'];
 }
 
 export interface ITimeEntryUpdateInput {
@@ -51,8 +49,8 @@ export interface ITimeEntryUpdateInput {
   project_id?: ITimeEntry['project_id'];
   company_id?: ITimeEntry['company_id'];
   created_by?: ITimeEntry['created_by'];
-  task_id?: ITimeEntry['task_id'];
   timesheet_id?: ITimeEntry['timesheet_id'];
+  description?: ITimeEntry['description'];
 }
 
 export interface ITimeEntryStopInput {

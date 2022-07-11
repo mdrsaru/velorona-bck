@@ -1,8 +1,6 @@
-import {
-  IPagingArgs,
-  IPagingResult,
-  IPagingResultArgs,
-} from '../interfaces/paging.interface';
+import isNil from 'lodash/isNil';
+
+import { IPagingArgs, IPagingResult, IPagingResultArgs } from '../interfaces/paging.interface';
 
 export default class Paging {
   static createPagingPayload(args: any): IPagingArgs {
@@ -24,7 +22,7 @@ export default class Paging {
 
     return {
       skip,
-      ...(take && { take }),
+      ...(!isNil(take) && { take }),
       order: _order,
       query,
     };

@@ -116,8 +116,8 @@ export default class TimeEntryService implements ITimeEntryService {
     const project_id = args.project_id;
     const company_id = args.company_id;
     const created_by = args.created_by;
-    const task_id = args.task_id;
     const entryType = args.entryType;
+    const description = args.description;
 
     try {
       let timeEntry = await this.timeEntryRepository.create({
@@ -127,8 +127,8 @@ export default class TimeEntryService implements ITimeEntryService {
         project_id,
         company_id,
         created_by,
-        task_id,
         entryType,
+        description,
       });
 
       /* Create/Update timesheet if the end time is provided */
@@ -184,7 +184,7 @@ export default class TimeEntryService implements ITimeEntryService {
     const project_id = args.project_id;
     const company_id = args.company_id;
     const created_by = args.created_by;
-    const task_id = args.task_id;
+    const description = args.description;
 
     try {
       let timeEntry = await this.timeEntryRepository.update({
@@ -196,7 +196,7 @@ export default class TimeEntryService implements ITimeEntryService {
         project_id,
         company_id,
         created_by,
-        task_id,
+        description,
       });
       try {
         /* Create/Update timesheet if the start/end time is provided */
@@ -234,7 +234,6 @@ export default class TimeEntryService implements ITimeEntryService {
         // Emit event for onTimeEntryStop
         timeEntryEmitter.emit(events.onTimeEntryStop, {
           created_by: timeEntry.created_by,
-          task_id: timeEntry.task_id,
           duration: timeEntry.duration,
           company_id: timeEntry.company_id,
         });

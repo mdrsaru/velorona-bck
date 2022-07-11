@@ -1,5 +1,7 @@
 import User from '../entities/user.entity';
 import UserClient from '../entities/user-client.entity';
+import { ISingleEntityQuery } from './common.interface';
+import { IGetOptions } from './common.interface';
 
 export interface IUserClientCreate {
   client_id: string;
@@ -20,7 +22,8 @@ export interface IUserClientService {
 }
 
 export interface IUserClientRepository {
-  getAll(args: any): Promise<UserClient[]>;
+  getAll(args: IGetOptions): Promise<UserClient[]>;
+  getSingleEntity(args: ISingleEntityQuery): Promise<UserClient | undefined>;
   create(args: IUserClientCreate): Promise<UserClient>;
   changeStatusToInactive(args: IUserClientMakeInactive): Promise<User>;
 }

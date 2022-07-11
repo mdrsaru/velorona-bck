@@ -19,9 +19,9 @@ export interface IUser {
   company_id?: string;
   type?: UserType;
   archived: boolean;
-  startDate: Date;
-  endDate: Date;
-  timesheet_attachment: boolean;
+  startDate?: Date;
+  endDate?: Date;
+  timesheet_attachment?: boolean;
   createdAt: string;
   updatedAt: string;
 }

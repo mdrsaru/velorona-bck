@@ -173,8 +173,8 @@ export class TimeEntryResolver {
       const clientLocation = args.clientLocation;
       const project_id = args.project_id;
       const company_id = args.company_id;
-      const task_id = args.task_id;
       const entryType = ctx?.user?.type;
+      const description = args.description;
       const created_by = ctx?.user?.id as string;
 
       const schema = TimeEntryValidation.create();
@@ -187,7 +187,7 @@ export class TimeEntryResolver {
           project_id,
           company_id,
           created_by,
-          task_id,
+          description,
         },
       });
 
@@ -198,8 +198,8 @@ export class TimeEntryResolver {
         project_id,
         company_id,
         created_by,
-        task_id,
         entryType,
+        description,
       });
 
       return timeEntry;
@@ -229,7 +229,7 @@ export class TimeEntryResolver {
       const project_id = args.project_id;
       const company_id = args.company_id;
       const created_by = args.created_by;
-      const task_id = args.task_id;
+      const description = args.description;
 
       const schema = TimeEntryValidation.update();
       await this.joiService.validate({
@@ -242,7 +242,7 @@ export class TimeEntryResolver {
           project_id,
           company_id,
           created_by,
-          task_id,
+          description,
         },
       });
 
@@ -254,7 +254,7 @@ export class TimeEntryResolver {
         project_id,
         company_id,
         created_by,
-        task_id,
+        description,
       });
 
       return timeEntry;
@@ -274,7 +274,7 @@ export class TimeEntryResolver {
     checkCompanyAccess
   )
   async TimeEntryDelete(@Arg('input') args: TimeEntryDeleteInput): Promise<TimeEntry> {
-    const operation = 'TaskDelete';
+    const operation = 'TimeEntryDelete';
 
     try {
       const id = args.id;
@@ -298,7 +298,7 @@ export class TimeEntryResolver {
     @Arg('input') args: TimeEntryBulkDeleteInput,
     @Ctx() ctx: IGraphqlContext
   ): Promise<TimeEntry[]> {
-    const operation = 'TaskDelete';
+    const operation = 'TimeEntryBulkDelete';
 
     try {
       const ids = args.ids;
@@ -383,11 +383,6 @@ export class TimeEntryResolver {
   @FieldResolver()
   creator(@Root() root: TimeEntry, @Ctx() ctx: IGraphqlContext) {
     return ctx.loaders.usersByIdLoader.load(root.created_by);
-  }
-
-  @FieldResolver()
-  task(@Root() root: TimeEntry, @Ctx() ctx: IGraphqlContext) {
-    return ctx.loaders.tasksByIdLoader.load(root.task_id);
   }
 
   @FieldResolver()
