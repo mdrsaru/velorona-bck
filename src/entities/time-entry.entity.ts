@@ -7,7 +7,6 @@ import { Base } from './base.entity';
 import Company from './company.entity';
 import User from './user.entity';
 import Project from './project.entity';
-import Task from './task.entity';
 import Invoice from './invoice.entity';
 import Timesheet from './timesheet.entity';
 import { PagingInput, PagingResult, DeleteInput } from './common.entity';
@@ -73,16 +72,6 @@ export default class TimeEntry extends Base {
   @JoinColumn({ name: timeEntry.created_by })
   creator: User;
 
-  @Index(`${indexPrefix}_task_id_index`)
-  @Field()
-  @Column()
-  task_id: string;
-
-  @Field((type) => Task)
-  @ManyToOne(() => Task)
-  @JoinColumn({ name: timeEntry.task_id })
-  task: Task;
-
   @Field(() => TimeEntryApprovalStatus)
   @Column({
     type: 'varchar',
@@ -135,6 +124,10 @@ export default class TimeEntry extends Base {
   @Field(() => UserType)
   @Column({ name: 'entry_type', type: 'varchar', default: UserType.Timesheet })
   entryType: UserType;
+
+  @Field({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
+  description: string;
 }
 
 @ObjectType()
@@ -166,8 +159,8 @@ export class TimeEntryCreateInput {
   @Field()
   company_id: string;
 
-  @Field()
-  task_id: string;
+  @Field({ nullable: true })
+  description: string;
 }
 
 @InputType()
@@ -197,7 +190,7 @@ export class TimeEntryUpdateInput {
   created_by: string;
 
   @Field({ nullable: true })
-  task_id: string;
+  description: string;
 }
 
 @InputType()
@@ -222,9 +215,6 @@ export class TimeEntryQuery {
 
   @Field()
   company_id: string;
-
-  @Field({ nullable: true })
-  task_id: string;
 
   @Field({ nullable: true })
   project_id: string;

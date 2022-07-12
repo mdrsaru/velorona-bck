@@ -19,6 +19,9 @@ export interface IUser {
   company_id?: string;
   type?: UserType;
   archived: boolean;
+  startDate?: Date;
+  endDate?: Date;
+  timesheet_attachment?: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -44,6 +47,9 @@ export interface IUserCreate {
   type?: IUser['type'];
   roles: string[];
   company_id?: string;
+  startDate?: IUser['startDate'];
+  endDate?: IUser['endDate'];
+  timesheet_attachment?: IUser['timesheet_attachment'];
   address?: IAddressCreateInput;
 }
 
@@ -68,6 +74,9 @@ export interface IUserUpdate {
   password?: string;
   avatar_id?: string;
   archived?: boolean;
+  startDate?: IUser['startDate'];
+  endDate?: IUser['endDate'];
+  timesheet_attachment?: IUser['timesheet_attachment'];
   type?: IUser['type'];
 }
 

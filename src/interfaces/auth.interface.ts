@@ -1,6 +1,6 @@
 import Role from '../entities/role.entity';
 import Company from '../entities/company.entity';
-import { ForgotPasswordUserType } from '../config/constants';
+import { ForgotPasswordUserType, UserType } from '../config/constants';
 
 import { IEntityID } from './common.interface';
 import { IAddressCreateInput } from './address.interface';
@@ -40,6 +40,7 @@ export interface ILoginResponse {
   lastName?: string;
   avatar_id?: string;
   avatar?: Media;
+  type?: UserType;
 }
 
 export interface IForgotPasswordResponse {

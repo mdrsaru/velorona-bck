@@ -9,6 +9,7 @@ import {
   RelationId,
   OneToMany,
   Unique,
+  Index,
 } from 'typeorm';
 import { ObjectType, Field, ID, InputType, registerEnumType } from 'type-graphql';
 
@@ -21,11 +22,12 @@ import { Base } from './base.entity';
 import { PagingInput, PagingResult } from './common.entity';
 import Address, { AddressCreateInput, AddressUpdateInput } from './address.entity';
 import { AdminRole, CompanyRole, entities, UserStatus, Role as RoleEnum, UserType } from '../config/constants';
-import Task from './task.entity';
 import Workschedule from './workschedule.entity';
 import { userRolesTable } from '../config/db/columns';
 import UserPayRate from './user-payrate.entity';
 import Timesheet from './timesheet.entity';
+
+const indexPrefix = 'user';
 
 registerEnumType(UserStatus, {
   name: 'UserStatus',
@@ -95,6 +97,21 @@ export default class User extends Base {
   @Column({ nullable: true })
   avatar_id: string;
 
+  @Index(`${indexPrefix}_start_date_index`)
+  @Field({ nullable: true })
+  @Column({ nullable: true, name: 'start_date' })
+  startDate: Date;
+
+  @Index(`${indexPrefix}_end_date_index`)
+  @Field({ nullable: true })
+  @Column({ nullable: true, name: 'end_date' })
+  endDate: Date;
+
+  @Index(`${indexPrefix}_timesheet_attachment_index`)
+  @Field({ nullable: true })
+  @Column({ nullable: true, name: 'timesheet_attachment', default: false })
+  timesheet_attachment: boolean;
+
   @Field(() => Media, { nullable: true })
   @OneToOne(() => Media, { nullable: true, cascade: true })
   @JoinColumn({ name: 'avatar_id' })
@@ -139,9 +156,6 @@ export default class User extends Base {
   @OneToMany(() => UserToken, (token) => token.user)
   tokens: UserToken[];
 
-  @ManyToMany(() => Task)
-  assignedTasks: Task[];
-
   @Field(() => Workschedule, { nullable: true })
   @OneToMany(() => Workschedule, (workschedule) => workschedule.user)
   workschedules: Workschedule[];
@@ -179,6 +193,15 @@ export class UserCreateInput {
 
   @Field()
   lastName: string;
+
+  @Field({ nullable: true })
+  startDate: Date;
+
+  @Field({ nullable: true })
+  endDate: Date;
+
+  @Field({ nullable: true })
+  timesheet_attachment: boolean;
 
   @Field((type) => UserStatus)
   status: UserStatus;
@@ -254,6 +277,15 @@ export class UserUpdateInput {
 
   @Field({ nullable: true })
   lastName: string;
+
+  @Field({ nullable: true })
+  startDate: Date;
+
+  @Field({ nullable: true })
+  endDate: Date;
+
+  @Field({ nullable: true })
+  timesheet_attachment: boolean;
 
   @Field((type) => UserStatus, { nullable: true })
   status: UserStatus;

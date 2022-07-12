@@ -99,10 +99,6 @@ export default class Task extends Base {
   @OneToMany(() => Workschedule, (workschedule) => workschedule.tasks)
   workschedules: Workschedule[];
 
-  @Field(() => TimeEntry, { nullable: true, description: 'Field for timeEntry' })
-  @OneToMany(() => TimeEntry, (timeEntry) => timeEntry.task)
-  timeEntry: TimeEntry[];
-
   @Field()
   @Column()
   project_id: string;

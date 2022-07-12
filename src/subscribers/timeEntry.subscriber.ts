@@ -7,13 +7,11 @@ import { ILogger } from '../interfaces/common.interface';
 import { ITimeEntryRepository } from '../interfaces/time-entry.interface';
 import { IActivityLogRepository } from '../interfaces/activity-log.interface';
 import ActivityLogRepository from '../repository/activity-log.repository';
-import { ITaskRepository } from '../interfaces/task.interface';
 import { IUserRepository } from '../interfaces/user.interface';
 import activityLog from '../config/inversify/activity-log';
 
 type TimeEntryStop = {
   created_by: string;
-  task_id: string;
   duration: number;
   company_id: string;
 };
@@ -21,7 +19,6 @@ type TimeEntryStop = {
 timeEntryEmitter.on(events.onTimeEntryStop, async (args: TimeEntryStop) => {
   const operation = events.onTimeEntryStop;
 
-  const taskRepository: ITaskRepository = container.get<ITaskRepository>(TYPES.TaskRepository);
   const userRepository: IUserRepository = container.get<IUserRepository>(TYPES.UserRepository);
   const activityLogRepository: IActivityLogRepository = container.get<IActivityLogRepository>(
     TYPES.ActivityLogRepository
@@ -30,11 +27,9 @@ timeEntryEmitter.on(events.onTimeEntryStop, async (args: TimeEntryStop) => {
   logger.init('timEntry.subscriber');
 
   const created_by = args.created_by;
-  const task_id = args.task_id;
   const duration = args.duration;
   const company_id = args.company_id;
 
-  let task = await taskRepository.getById({ id: task_id });
   let user = await userRepository.getById({ id: created_by });
 
   function secondsToHms(duration: any) {
@@ -45,7 +40,8 @@ timeEntryEmitter.on(events.onTimeEntryStop, async (args: TimeEntryStop) => {
   }
 
   const totalTime = secondsToHms(duration);
-  let message = ` tracked time ${totalTime} on task <b>${task?.name}</b>`;
+  // TODO: Removed task. Need to add project instead
+  let message = ` tracked time ${totalTime}`;
 
   let activityLogData = {
     message: message,
