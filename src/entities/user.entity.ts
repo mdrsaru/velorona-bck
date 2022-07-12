@@ -156,10 +156,6 @@ export default class User extends Base {
   @OneToMany(() => UserToken, (token) => token.user)
   tokens: UserToken[];
 
-  @Field(() => Workschedule, { nullable: true })
-  @OneToMany(() => Workschedule, (workschedule) => workschedule.user)
-  workschedules: Workschedule[];
-
   @Field((type) => Client, { nullable: true })
   activeClient: Client;
 

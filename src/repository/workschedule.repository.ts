@@ -20,6 +20,7 @@ import {
   IWorkscheduleUpdateInput,
 } from '../interfaces/workschedule.interface';
 import { ITaskRepository } from '../interfaces/task.interface';
+import { isDate, isNumber } from 'lodash';
 
 @injectable()
 export default class WorkscheduleRepository extends BaseRepository<Workschedule> implements IWorkscheduleRepository {
@@ -39,20 +40,20 @@ export default class WorkscheduleRepository extends BaseRepository<Workschedule>
 
   create = async (args: IWorkscheduleCreateInput): Promise<Workschedule> => {
     try {
-      const date = args.date;
-      const from = args.from;
-      const to = args.to;
-      const task_id = args.task_id;
-      const user_id = args.user_id;
+      const startDate = args.startDate;
+      const endDate = args.endDate;
+      const payrollAllocatedHours = args.payrollAllocatedHours;
+      const payrollUsageHours = args.payrollUsageHours;
+      const status = args.status;
       const company_id = args.company_id;
 
       const errors: string[] = [];
 
-      if (isNil(task_id) || !isString(task_id)) {
-        errors.push(strings.taskIdRequired);
+      if (isNil(startDate) || !isDate(startDate)) {
+        errors.push(strings.startDateRequired);
       }
-      if (isNil(user_id) || !isString(user_id)) {
-        errors.push(strings.EmployeeIdRequired);
+      if (isNil(endDate) || !isDate(endDate)) {
+        errors.push(strings.endDateRequired);
       }
       if (isNil(company_id) || !isString(company_id)) {
         errors.push(strings.companyRequired);
@@ -64,18 +65,6 @@ export default class WorkscheduleRepository extends BaseRepository<Workschedule>
         });
       }
 
-      const task = await this.taskRepository.getById({ id: task_id });
-      if (!task) {
-        throw new apiError.NotFoundError({
-          details: [strings.taskNotFound],
-        });
-      }
-      const employee = await this.userRepository.getById({ id: user_id, relations: ['roles'] });
-      if (!employee) {
-        throw new apiError.NotFoundError({
-          details: [strings.userNotFound],
-        });
-      }
       const company = await this.companyRepository.getById({ id: company_id });
       if (!company) {
         throw new apiError.NotFoundError({
@@ -84,11 +73,11 @@ export default class WorkscheduleRepository extends BaseRepository<Workschedule>
       }
 
       const workschedule = await this.repo.save({
-        date,
-        from,
-        to,
-        task_id,
-        user_id,
+        startDate,
+        endDate,
+        payrollAllocatedHours,
+        payrollUsageHours,
+        status,
         company_id,
       });
 
@@ -101,11 +90,11 @@ export default class WorkscheduleRepository extends BaseRepository<Workschedule>
   update = async (args: IWorkscheduleUpdateInput): Promise<Workschedule> => {
     try {
       const id = args.id;
-      const date = args.date;
-      const from = args.from;
-      const to = args.to;
-      const task_id = args.task_id;
-      const user_id = args.user_id;
+      const startDate = args.startDate;
+      const endDate = args.endDate;
+      const payrollAllocatedHours = args.payrollAllocatedHours;
+      const payrollUsageHours = args.payrollUsageHours;
+      const status = args.status;
       const company_id = args.company_id;
 
       const found = await this.getById({ id });
@@ -116,11 +105,11 @@ export default class WorkscheduleRepository extends BaseRepository<Workschedule>
       }
       const update = merge(found, {
         id,
-        date,
-        from,
-        to,
-        task_id,
-        user_id,
+        startDate,
+        endDate,
+        payrollAllocatedHours,
+        payrollUsageHours,
+        status,
         company_id,
       });
 
