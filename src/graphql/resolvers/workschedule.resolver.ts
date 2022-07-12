@@ -43,7 +43,7 @@ export class WorkscheduleResolver {
   }
 
   @Query((returns) => WorkschedulePagingResult)
-  @UseMiddleware(authenticate)
+  @UseMiddleware(authenticate, authorize(RoleEnum.SuperAdmin, RoleEnum.CompanyAdmin), checkCompanyAccess)
   async Workschedule(
     @Arg('input', { nullable: true }) args: WorkscheduleQueryInput,
     @Ctx() ctx: any
@@ -70,32 +70,30 @@ export class WorkscheduleResolver {
   async WorkscheduleCreate(@Arg('input') args: WorkscheduleCreateInput, @Ctx() ctx: any): Promise<Workschedule> {
     const operation = 'WorkscheduleCreate';
     try {
-      const date = args.date;
-      const from = args.from;
-      const to = args.to;
-      const task_id = args.task_id;
-      const user_id = args.user_id;
+      const startDate = args.startDate;
+      const endDate = args.endDate;
+      const payrollAllocatedHours = args.payrollAllocatedHours;
+      const payrollUsageHours = args.payrollUsageHours;
+      const status = args.status;
       const company_id = args.company_id;
 
       const schema = WorkscheduleValidation.create();
       await this.joiService.validate({
         schema,
         input: {
-          date,
-          from,
-          to,
-          task_id,
-          user_id,
+          startDate,
+          endDate,
+          status,
           company_id,
         },
       });
 
       let workschedule: Workschedule = await this.workscheduleService.create({
-        date,
-        from,
-        to,
-        task_id,
-        user_id,
+        startDate,
+        endDate,
+        payrollAllocatedHours,
+        payrollUsageHours,
+        status,
         company_id,
       });
 
@@ -117,11 +115,11 @@ export class WorkscheduleResolver {
 
     try {
       const id = args.id;
-      const date = args.date;
-      const from = args.from;
-      const to = args.to;
-      const task_id = args.task_id;
-      const user_id = args.user_id;
+      const startDate = args.startDate;
+      const endDate = args.endDate;
+      const payrollAllocatedHours = args.payrollAllocatedHours;
+      const payrollUsageHours = args.payrollUsageHours;
+      const status = args.status;
       const company_id = args.company_id;
 
       const schema = WorkscheduleValidation.update();
@@ -129,22 +127,22 @@ export class WorkscheduleResolver {
         schema,
         input: {
           id,
-          date,
-          from,
-          to,
-          task_id,
-          user_id,
+          startDate,
+          endDate,
+          payrollAllocatedHours,
+          payrollUsageHours,
+          status,
           company_id,
         },
       });
 
       let workschedule: Workschedule = await this.workscheduleService.update({
         id,
-        date,
-        from,
-        to,
-        task_id,
-        user_id,
+        startDate,
+        endDate,
+        payrollAllocatedHours,
+        payrollUsageHours,
+        status,
         company_id,
       });
 
@@ -178,18 +176,7 @@ export class WorkscheduleResolver {
       });
     }
   }
-  @FieldResolver()
-  async tasks(@Root() root: Workschedule, @Ctx() ctx: IGraphqlContext) {
-    if (root.task_id) {
-      return await ctx.loaders.tasksByIdLoader.load(root.task_id);
-    }
-  }
-  @FieldResolver()
-  async user(@Root() root: Workschedule, @Ctx() ctx: IGraphqlContext) {
-    if (root.user_id) {
-      return await ctx.loaders.usersByIdLoader.load(root.user_id);
-    }
-  }
+
   @FieldResolver()
   async company(@Root() root: Workschedule, @Ctx() ctx: IGraphqlContext) {
     if (root.company_id) {

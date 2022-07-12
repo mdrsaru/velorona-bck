@@ -95,10 +95,6 @@ export default class Task extends Base {
   })
   users: User[];
 
-  @Field(() => Workschedule, { nullable: true })
-  @OneToMany(() => Workschedule, (workschedule) => workschedule.tasks)
-  workschedules: Workschedule[];
-
   @Field()
   @Column()
   project_id: string;

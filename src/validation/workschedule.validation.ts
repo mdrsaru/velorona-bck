@@ -8,24 +8,24 @@ const messages = {
     'string.empty': strings.idRequired,
     'any.required': strings.idRequired,
   },
-  date: {
-    'string.empty': strings.dateRequired,
-    'any.required': strings.dateRequired,
+  startDate: {
+    'string.empty': strings.startDateRequired,
+    'any.required': strings.startDateRequired,
   },
-  from: {
-    'number.base': strings.fromRequired,
-    'string.empty': strings.fromRequired,
-    'any.required': strings.fromRequired,
+  endDate: {
+    'number.base': strings.endDateRequired,
+    'string.empty': strings.endDateRequired,
+    'any.required': strings.endDateRequired,
   },
-  to: {
-    'string.base': strings.toRequired,
-    'string.empty': strings.toRequired,
-    'any.required': strings.toRequired,
+  payrollAllocatedHours: {
+    'string.base': strings.payrollAllocatedHoursRequired,
+    'string.empty': strings.payrollAllocatedHoursRequired,
+    'any.required': strings.payrollAllocatedHoursRequired,
   },
-  task_id: {
-    'string.base': strings.taskIdRequired,
-    'string.empty': strings.taskIdRequired,
-    'any.required': strings.taskIdRequired,
+  payrollUsageHours: {
+    'string.base': strings.payrollUsageHoursRequired,
+    'string.empty': strings.payrollUsageHoursRequired,
+    'any.required': strings.payrollUsageHoursRequired,
   },
   user_id: {
     'string.base': strings.UserIdRequired,
@@ -42,23 +42,21 @@ const messages = {
 export default class WorkscheduleValidation {
   static create() {
     return Joi.object({
-      date: Joi.date().required().messages(messages.date),
-      from: Joi.number().required().messages(messages.from),
-      to: Joi.number().required().messages(messages.to),
-      task_id: Joi.string().required().messages(messages.task_id),
-      user_id: Joi.string().required().messages(messages.user_id),
+      startDate: Joi.date().required().messages(messages.startDate),
+      endDate: Joi.date().required().messages(messages.endDate),
+      status: Joi.string(),
       company_id: Joi.string().required().messages(messages.company_id),
     });
   }
   static update() {
     return Joi.object({
       id: Joi.string().required().messages(messages.id),
-      date: Joi.date().messages(messages.date),
-      from: Joi.number().messages(messages.from),
-      to: Joi.number().messages(messages.to),
-      task_id: Joi.string().messages(messages.task_id),
-      user_id: Joi.string().messages(messages.user_id),
-      company_id: Joi.string().messages(messages.company_id),
+      startDate: Joi.date(),
+      endDate: Joi.date(),
+      payrollAllocatedHours: Joi.number(),
+      payrollUsageHours: Joi.number(),
+      status: Joi.string(),
+      company_id: Joi.string().required().messages(messages.company_id),
     });
   }
 }
