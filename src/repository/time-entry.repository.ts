@@ -20,7 +20,6 @@ import BaseRepository from './base.repository';
 
 import { ICompanyRepository } from '../interfaces/company.interface';
 import { IProjectRepository } from '../interfaces/project.interface';
-import { ITaskRepository } from '../interfaces/task.interface';
 import { IUserPayRateRepository } from '../interfaces/user-payrate.interface';
 import {
   ITimeEntryCreateInput,
@@ -53,7 +52,6 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
   private userRepository: IUserRepository;
   private companyRepository: ICompanyRepository;
   private projectRepository: IProjectRepository;
-  private taskRepository: ITaskRepository;
   private userPayRateRepository: IUserPayRateRepository;
   private manager: EntityManager;
 
@@ -61,14 +59,12 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
     @inject(TYPES.CompanyRepository) _companyRepository: ICompanyRepository,
     @inject(TYPES.ProjectRepository) _projectRepository: IProjectRepository,
     @inject(TYPES.UserRepository) userRepository: IUserRepository,
-    @inject(TYPES.TaskRepository) _taskRepository: ITaskRepository,
     @inject(TYPES.UserPayRateRepository) _userPayRateRepository: IUserPayRateRepository
   ) {
     super(getRepository(TimeEntry));
     this.userRepository = userRepository;
     this.projectRepository = _projectRepository;
     this.companyRepository = _companyRepository;
-    this.taskRepository = _taskRepository;
     this.userPayRateRepository = _userPayRateRepository;
     this.manager = getManager();
   }
@@ -310,8 +306,8 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
       const project_id = args.project_id;
       const company_id = args.company_id;
       const created_by = args.created_by;
-      const task_id = args.task_id;
       const entryType = args.entryType;
+      const description = args.description?.trim();
 
       const errors: string[] = [];
 
@@ -323,9 +319,6 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
       }
       if (isNil(company_id) || isEmpty(company_id)) {
         errors.push(strings.companyRequired);
-      }
-      if (isNil(task_id) || isEmpty(task_id)) {
-        errors.push(strings.taskIdRequired);
       }
       if (isNil(created_by) || isEmpty(created_by)) {
         errors.push(strings.userIdRequired);
@@ -373,19 +366,6 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
         });
       }
 
-      const task = await this.taskRepository.getById({ id: task_id });
-      if (!task) {
-        throw new apiError.NotFoundError({
-          details: [strings.taskNotFound],
-        });
-      }
-
-      if (task.project_id !== project_id) {
-        throw new apiError.NotFoundError({
-          details: [strings.taskNotBelongToProject],
-        });
-      }
-
       let duration: undefined | number = undefined;
       if (endTime) {
         const startDate = moment(startTime);
@@ -410,9 +390,9 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
         project_id,
         company_id,
         created_by,
-        task_id,
         hourlyRate,
         entryType,
+        description,
       });
 
       return timeEntry;
@@ -428,11 +408,11 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
       const approver_id = args.approver_id;
       const company_id = args.company_id;
       const created_by = args.created_by;
-      const task_id = args.task_id;
       const timesheet_id = args.timesheet_id;
       let project_id = args.project_id;
       let startTime = args.startTime;
       let endTime = args.endTime;
+      const description = args.description?.trim();
 
       const errors: string[] = [];
 
@@ -451,17 +431,6 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
         throw new NotFoundError({
           details: ['TimeEntry not found'],
         });
-      }
-
-      if (!isNil(task_id) && !isEmpty(task_id)) {
-        const task = await this.taskRepository.getById({ id: task_id });
-        if (!task) {
-          throw new apiError.NotFoundError({
-            details: [strings.taskNotFound],
-          });
-        }
-
-        project_id = task.project_id;
       }
 
       startTime = startTime ?? found.startTime;
@@ -490,8 +459,8 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
         project_id,
         company_id,
         created_by,
-        task_id,
         timesheet_id,
+        description,
       });
 
       let timeEntry = await this.repo.save(update);

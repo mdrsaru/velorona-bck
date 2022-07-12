@@ -100,7 +100,6 @@ export default class WebhookController {
 
       return res.status(200).send();
     } catch (err) {
-      console.log({ err });
       next(err);
     }
   };

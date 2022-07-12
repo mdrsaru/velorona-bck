@@ -25,7 +25,6 @@ export interface IDataloader {
   tasksByIdLoader?: Dataloader<string, Task>;
   projectByIdLoader: Dataloader<string, Project>;
   clientByIdLoader: Dataloader<string, Client>;
-  tasksByProjectIdLoader: Dataloader<string, Task>;
   activeClientByUserIdLoader: Dataloader<string, Client>;
   itemsByInvoiceIdLoader: Dataloader<string, InvoiceItem[]>;
   invoicesByIdLoader: Dataloader<string, Invoice>;

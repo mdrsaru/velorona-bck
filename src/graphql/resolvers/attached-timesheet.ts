@@ -73,7 +73,6 @@ export class AttachedTimesheetResolver {
     @Ctx() ctx: any
   ): Promise<AttachedTimesheet> {
     const operation = 'AttachedTimesheetCreate';
-    console.log(ctx?.user?.id, 'ctx');
     try {
       const description = args.description;
       const attachment_id = args.attachment_id;
@@ -159,13 +158,13 @@ export class AttachedTimesheetResolver {
   @Mutation((returns) => AttachedTimesheet)
   @UseMiddleware(authenticate)
   async AttachedTimesheetDelete(@Arg('input') args: DeleteInput, @Ctx() ctx: any): Promise<AttachedTimesheet> {
-    const operation = 'TaskDelete';
+    const operation = 'AttachedTimesheetDelete';
 
     try {
       const id = args.id;
-      let task: AttachedTimesheet = await this.attachedTimesheetService.remove({ id });
+      let attachedTimesheet: AttachedTimesheet = await this.attachedTimesheetService.remove({ id });
 
-      return task;
+      return attachedTimesheet;
     } catch (err) {
       this.errorService.throwError({
         err,

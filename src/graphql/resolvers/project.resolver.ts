@@ -1,8 +1,10 @@
+import set from 'lodash/set';
 import { inject, injectable } from 'inversify';
 import { Arg, Ctx, Mutation, Query, Resolver, UseMiddleware, FieldResolver, Root } from 'type-graphql';
 
 import { TYPES } from '../../types';
-import { Role as RoleEnum } from '../../config/constants';
+import { Role as RoleEnum, UserClientStatus } from '../../config/constants';
+import { checkRoles } from '../../utils/roles';
 import Paging from '../../utils/paging';
 import authenticate from '../middlewares/authenticate';
 import authorize from '../middlewares/authorize';
@@ -19,9 +21,10 @@ import Project, {
 } from '../../entities/project.entity';
 
 import { IPaginationData } from '../../interfaces/paging.interface';
-import { IErrorService, IJoiService } from '../../interfaces/common.interface';
-import { IProject, IProjectRepository, IProjectService } from '../../interfaces/project.interface';
 import { IGraphqlContext } from '../../interfaces/graphql.interface';
+import { IErrorService, IJoiService } from '../../interfaces/common.interface';
+import { IUserClientRepository } from '../../interfaces/user-client.interface';
+import { IProject, IProjectRepository, IProjectService } from '../../interfaces/project.interface';
 
 @injectable()
 @Resolver((of) => Project)
@@ -31,23 +34,43 @@ export class ProjectResolver {
   private joiService: IJoiService;
   private errorService: IErrorService;
   private projectRepository: IProjectRepository;
+  private userClientRepository: IUserClientRepository;
 
   constructor(
     @inject(TYPES.ProjectService) _projectService: IProjectService,
     @inject(TYPES.JoiService) _joiService: IJoiService,
     @inject(TYPES.ErrorService) _errorService: IErrorService,
-    @inject(TYPES.ProjectRepository) _projectRepository: IProjectRepository
+    @inject(TYPES.ProjectRepository) _projectRepository: IProjectRepository,
+    @inject(TYPES.UserClientRepository) _userClientRepository: IUserClientRepository
   ) {
     this.projectService = _projectService;
     this.joiService = _joiService;
     this.errorService = _errorService;
     this.projectRepository = _projectRepository;
+    this.userClientRepository = _userClientRepository;
   }
 
   @Query((returns) => ProjectPagingResult)
   @UseMiddleware(authenticate, checkCompanyAccess)
-  async Project(@Arg('input') args: ProjectQueryInput, @Ctx() ctx: any): Promise<IPaginationData<Project>> {
+  async Project(@Arg('input') args: ProjectQueryInput, @Ctx() ctx: IGraphqlContext): Promise<IPaginationData<Project>> {
     const operation = 'Projects';
+
+    // Filter projects for employee
+    const isEmployee = checkRoles({
+      expectedRoles: [RoleEnum.Employee],
+      userRoles: ctx?.user?.roles ?? [],
+    });
+
+    if (isEmployee) {
+      const userClient = await this.userClientRepository.getSingleEntity({
+        query: {
+          user_id: ctx.user!.id,
+          status: UserClientStatus.Active,
+        },
+      });
+
+      set(args, 'query.client_id', userClient?.client_id);
+    }
 
     try {
       const pagingArgs = Paging.createPagingPayload(args);
@@ -213,10 +236,5 @@ export class ProjectResolver {
   @FieldResolver()
   client(@Root() root: Project, @Ctx() ctx: IGraphqlContext) {
     return ctx.loaders.clientByIdLoader.load(root.client_id);
-  }
-
-  @FieldResolver()
-  async task(@Root() root: Project, @Ctx() ctx: IGraphqlContext) {
-    return await ctx.loaders.tasksByProjectIdLoader.load(root.id);
   }
 }

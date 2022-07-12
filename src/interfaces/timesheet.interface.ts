@@ -2,7 +2,6 @@ import Company from '../entities/company.entity';
 import Project from '../entities/project.entity';
 import User from '../entities/user.entity';
 import TimeEntry from '../entities/time-entry.entity';
-import Task from '../entities/task.entity';
 import Client from '../entities/client.entity';
 import Timesheet from '../entities/timesheet.entity';
 import { TimesheetStatus } from '../config/constants';
