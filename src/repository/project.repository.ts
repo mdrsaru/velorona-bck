@@ -33,7 +33,7 @@ import {
 } from '../interfaces/project.interface';
 import { IClientRepository } from '../interfaces/client.interface';
 import { IGetAllAndCountResult, IGetOptions } from '../interfaces/paging.interface';
-import { taskAssignmentTable, projects, company } from '../config/db/columns';
+import { projects, company } from '../config/db/columns';
 import project from '../config/inversify/project';
 
 @injectable()

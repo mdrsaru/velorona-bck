@@ -140,7 +140,6 @@ const _timeEntries: ITimeEntry[] = [
     hourlyRate: 0,
     clientLocation: 'Lalitpur',
     approvalStatus: TimeEntryApprovalStatus.Pending,
-    task_id: '12566ff8-1247-4a2a-a258-09b05268e2ce',
     project_id: projects[0].id,
     project: projects[0],
     approver_id: users[0].id,

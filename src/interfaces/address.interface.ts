@@ -2,7 +2,7 @@ import Address from '../entities/address.entity';
 
 export interface IAddress {
   id: string;
-  country: string;
+  country?: string;
   streetAddress: string;
   aptOrSuite: string;
   city: string;

@@ -32,12 +32,6 @@ const messages = {
     'string.empty': strings.createdByRequired,
     'any.required': strings.createdByRequired,
   },
-  task_id: {
-    'string.base': strings.taskIdRequired,
-    'string.empty': strings.taskIdRequired,
-    'any.required': strings.taskIdRequired,
-  },
-
   client_id: {
     'string.base': strings.clientRequired,
     'string.empty': strings.clientRequired,
@@ -54,7 +48,7 @@ export default class TimeEntryValidation {
       project_id: Joi.string().required().messages(messages.project_id),
       company_id: Joi.string().required().messages(messages.company_id),
       created_by: Joi.string().required().messages(messages.company_id),
-      task_id: Joi.string().required().messages(messages.task_id),
+      description: Joi.string(),
     });
   }
   static update() {
@@ -66,7 +60,7 @@ export default class TimeEntryValidation {
       project_id: Joi.string(),
       company_id: Joi.string(),
       created_by: Joi.string(),
-      task_id: Joi.string(),
+      description: Joi.string(),
     });
   }
 
