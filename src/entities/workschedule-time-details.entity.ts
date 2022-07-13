@@ -45,6 +45,17 @@ export class WorkscheduleTimeDetailPagingResult {
 }
 
 @InputType()
+export class WorkscheduleTimeDetailCreateInput {
+  @Field()
+  startTime: Date;
+
+  @Field()
+  endTime: Date;
+
+  @Field()
+  workschedule_detail_id: string;
+}
+@InputType()
 export class WorkscheduleTimeDetailUpdateInput {
   @Field()
   id: string;
@@ -55,7 +66,7 @@ export class WorkscheduleTimeDetailUpdateInput {
   @Field({ nullable: true })
   endTime: Date;
 
-  @Field({ nullable: true })
+  @Field()
   workschedule_detail_id: string;
 }
 

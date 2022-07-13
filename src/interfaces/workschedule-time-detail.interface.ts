@@ -16,7 +16,7 @@ export interface IWorkscheduleTimeDetail {
 export interface IWorkscheduleTimeDetailCreateInput {
   startTime: IWorkscheduleTimeDetail['startTime'];
   endTime: IWorkscheduleTimeDetail['endTime'];
-  duration: Number;
+  duration?: Number;
   workschedule_detail_id: string;
 }
 
@@ -30,6 +30,7 @@ export interface IWorkscheduleTimeDetailUpdateInput {
 
 export interface IWorkscheduleTimeDetailService {
   getAllAndCount(filters?: any): Promise<IPaginationData<WorkscheduleTimeDetail>>;
+  create(args: IWorkscheduleTimeDetailCreateInput): Promise<WorkscheduleTimeDetail>;
   update(args: IWorkscheduleTimeDetailUpdateInput): Promise<WorkscheduleTimeDetail>;
   remove(args: IEntityRemove): Promise<WorkscheduleTimeDetail>;
 }

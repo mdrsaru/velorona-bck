@@ -74,12 +74,6 @@ export default class WorkscheduleDetailRepository
         });
       }
 
-      const workscheduleDetail = await this.repo.save({
-        date,
-        workschedule_id,
-        user_id,
-      });
-
       let result = await this.manager.transaction(async (entityManager) => {
         const workscheduleDetailRepo = entityManager.getRepository(WorkscheduleDetail);
         const workscheduleTimeDetailRepo = entityManager.getRepository(WorkscheduleTimeDetail);
@@ -96,9 +90,9 @@ export default class WorkscheduleDetailRepository
           workschedule_detail_id: workscheduleDetail?.id,
           duration: duration,
         });
+        return workscheduleDetail;
       });
-
-      return workscheduleDetail;
+      return result;
     } catch (err) {
       throw err;
     }

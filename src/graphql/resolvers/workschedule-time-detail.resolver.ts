@@ -1,6 +1,7 @@
 import { inject, injectable } from 'inversify';
 import { Arg, Ctx, Mutation, Query, Resolver, UseMiddleware } from 'type-graphql';
 import WorkscheduleTimeDetail, {
+  WorkscheduleTimeDetailCreateInput,
   WorkscheduleTimeDetailPagingResult,
   WorkscheduleTimeDetailQueryInput,
   WorkscheduleTimeDetailUpdateInput,
@@ -57,7 +58,35 @@ export class WorkscheduleTimeDetailResolver {
       });
     }
   }
+  @Mutation((returns) => WorkscheduleTimeDetail)
+  @UseMiddleware(authenticate, authorize(RoleEnum.SuperAdmin, RoleEnum.CompanyAdmin))
+  async WorkscheduleTimeDetailCreate(
+    @Arg('input') args: WorkscheduleTimeDetailCreateInput,
+    @Ctx() ctx: any
+  ): Promise<WorkscheduleTimeDetail> {
+    const operation = 'WorkscheduleCreate';
 
+    try {
+      const startTime = args.startTime;
+      const endTime = args.endTime;
+      const workschedule_detail_id = args.workschedule_detail_id;
+
+      let workscheduleTimeDetail: WorkscheduleTimeDetail = await this.workscheduleTimeDetailService.create({
+        startTime,
+        endTime,
+        workschedule_detail_id,
+      });
+
+      return workscheduleTimeDetail;
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: false,
+      });
+    }
+  }
   @Mutation((returns) => WorkscheduleTimeDetail)
   @UseMiddleware(authenticate, authorize(RoleEnum.SuperAdmin, RoleEnum.CompanyAdmin))
   async WorkscheduleTimeDetailUpdate(

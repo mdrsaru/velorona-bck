@@ -36,9 +36,9 @@ export default class WorkscheduleDetail extends Base {
   @JoinColumn({ name: workscheduleDetail.user_id })
   user: User;
 
-  @Field(() => WorkscheduleTimeDetail, { nullable: true, description: 'Field for WorkscheduleTimeDetail' })
-  @OneToMany(() => WorkscheduleTimeDetail, (workscheduleTimeDetail) => workscheduleTimeDetail.workscheduleDetail)
-  WorkscheduleTimeDetail: WorkscheduleTimeDetail[];
+  // @Field(() => WorkscheduleTimeDetail, { nullable: true, description: 'Field for WorkscheduleTimeDetail' })
+  // @OneToMany(() => WorkscheduleTimeDetail, (workscheduleTimeDetail) => workscheduleTimeDetail.workscheduleDetail)
+  // WorkscheduleTimeDetail: WorkscheduleTimeDetail[];
 
   @Field((type) => [WorkscheduleTimeDetail], { nullable: true })
   workscheduleTimeDetail: string[];

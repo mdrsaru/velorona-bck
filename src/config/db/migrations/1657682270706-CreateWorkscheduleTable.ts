@@ -1,26 +1,26 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class CreateWorkschedule1657627970215 implements MigrationInterface {
-  name = 'CreateWorkschedule1657627970215';
+export class CreateWorkscheduleTable1657682270706 implements MigrationInterface {
+  name = 'CreateWorkscheduleTable1657682270706';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`
-            ALTER TABLE "workschedule" DROP CONSTRAINT "FK_4949068832a1e60dfce5529ac89"
-        `);
     await queryRunner.query(`
             ALTER TABLE "workschedule" DROP CONSTRAINT "FK_759fecd19b16b63ee672e05f3bf"
         `);
     await queryRunner.query(`
-            ALTER TABLE "workschedule" DROP COLUMN "date"
+            ALTER TABLE "workschedule" DROP CONSTRAINT "FK_4949068832a1e60dfce5529ac89"
         `);
     await queryRunner.query(`
             ALTER TABLE "workschedule" DROP COLUMN "from"
         `);
     await queryRunner.query(`
-            ALTER TABLE "workschedule" DROP COLUMN "to"
+            ALTER TABLE "workschedule" DROP COLUMN "task_id"
         `);
     await queryRunner.query(`
-            ALTER TABLE "workschedule" DROP COLUMN "task_id"
+            ALTER TABLE "workschedule" DROP COLUMN "date"
+        `);
+    await queryRunner.query(`
+            ALTER TABLE "workschedule" DROP COLUMN "to"
         `);
     await queryRunner.query(`
             ALTER TABLE "workschedule" DROP COLUMN "user_id"
@@ -87,15 +87,7 @@ export class CreateWorkschedule1657627970215 implements MigrationInterface {
         `);
     await queryRunner.query(`
             ALTER TABLE "workschedule"
-            ADD "task_id" uuid NOT NULL
-        `);
-    await queryRunner.query(`
-            ALTER TABLE "workschedule"
             ADD "to" integer NOT NULL
-        `);
-    await queryRunner.query(`
-            ALTER TABLE "workschedule"
-            ADD "from" integer NOT NULL
         `);
     await queryRunner.query(`
             ALTER TABLE "workschedule"
@@ -103,11 +95,19 @@ export class CreateWorkschedule1657627970215 implements MigrationInterface {
         `);
     await queryRunner.query(`
             ALTER TABLE "workschedule"
-            ADD CONSTRAINT "FK_759fecd19b16b63ee672e05f3bf" FOREIGN KEY ("task_id") REFERENCES "tasks"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+            ADD "task_id" uuid NOT NULL
+        `);
+    await queryRunner.query(`
+            ALTER TABLE "workschedule"
+            ADD "from" integer NOT NULL
         `);
     await queryRunner.query(`
             ALTER TABLE "workschedule"
             ADD CONSTRAINT "FK_4949068832a1e60dfce5529ac89" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+        `);
+    await queryRunner.query(`
+            ALTER TABLE "workschedule"
+            ADD CONSTRAINT "FK_759fecd19b16b63ee672e05f3bf" FOREIGN KEY ("task_id") REFERENCES "tasks"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
         `);
   }
 }
