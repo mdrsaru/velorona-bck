@@ -105,4 +105,7 @@ export default {
   attachmentRequired: 'Attachment Required',
   payrollAllocatedHoursRequired: 'Payroll allocated hours required',
   payrollUsageHoursRequired: 'Payroll usage hours required',
+  timeDetailRequired: 'Time detail required',
+  workscheduleRequired: 'Workschedule Required',
+  workscheduleDetailNotFound: 'Workschedule Detail not Found',
 };

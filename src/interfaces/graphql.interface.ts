@@ -12,6 +12,8 @@ import Client from '../entities/client.entity';
 import Invoice from '../entities/invoice.entity';
 import InvoiceItem from '../entities/invoice-item.entity';
 import Timesheet from '../entities/timesheet.entity';
+import Workschedule from '../entities/workschedule.entity';
+import WorkscheduleTimeDetail from '../entities/workschedule-time-details.entity';
 
 export interface IDataloader {
   companyByIdLoader: Dataloader<string, Company>;
@@ -20,7 +22,7 @@ export interface IDataloader {
   avatarByIdLoader: Dataloader<string, Media>;
   addressByIdLoader: Dataloader<string, Address>;
   usersByIdLoader: Dataloader<string, User>;
-  tasksByIdLoader: Dataloader<string, Task>;
+  tasksByIdLoader?: Dataloader<string, Task>;
   projectByIdLoader: Dataloader<string, Project>;
   clientByIdLoader: Dataloader<string, Client>;
   activeClientByUserIdLoader: Dataloader<string, Client>;
@@ -29,6 +31,8 @@ export interface IDataloader {
   usersByTaskIdLoader: Dataloader<string, any>;
   attachmentsByTaskIdLoader: Dataloader<string, Media[]>;
   timesheetByIdLoader: Dataloader<string, Timesheet>;
+  workschedulesByIdLoader: Dataloader<string, Workschedule>;
+  workscheduleTimeDetailByDetailIdLoader: Dataloader<string, WorkscheduleTimeDetail>;
 }
 
 export interface IGraphqlContext {

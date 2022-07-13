@@ -31,7 +31,7 @@ export interface IWorkscheduleUpdateInput {
   payrollAllocatedHours?: IWorkschedule['payrollAllocatedHours'];
   payrollUsageHours?: IWorkschedule['payrollUsageHours'];
   status?: IWorkschedule['status'];
-  company_id: IWorkschedule['company_id'];
+  company_id?: IWorkschedule['company_id'];
 }
 
 export interface IWorkscheduleService {

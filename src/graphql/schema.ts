@@ -18,6 +18,8 @@ import { TimesheetResolver } from './resolvers/timesheet.resolver';
 import { ActivityLogResolver } from './resolvers/activity-log';
 import { SubscriptionResolver } from './resolvers/subscription.resolver';
 import { AttachedTimesheetResolver } from './resolvers/attached-timesheet';
+import { WorkscheduleDetailResolver } from './resolvers/workschedule-details.resolver';
+import { WorkscheduleTimeDetailResolver } from './resolvers/workschedule-time-detail.resolver';
 
 export default buildSchema({
   container,
@@ -41,5 +43,7 @@ export default buildSchema({
     ActivityLogResolver,
     SubscriptionResolver,
     AttachedTimesheetResolver,
+    WorkscheduleDetailResolver,
+    WorkscheduleTimeDetailResolver,
   ],
 });

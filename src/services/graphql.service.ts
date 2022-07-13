@@ -8,6 +8,7 @@ import User from '../entities/user.entity';
 import * as companyLoader from '../loaders/dataloader/company.dataloader';
 import * as userLoader from '../loaders/dataloader/user.dataloader';
 import * as workscheduleLoader from '../loaders/dataloader/workschedule.dataloader';
+import * as workscheduleTimeDetailLoader from '../loaders/dataloader/workscheduleTimeDetail.dataloader';
 import * as projectLoader from '../loaders/dataloader/project.dataloader';
 import * as addressLoader from '../loaders/dataloader/address.dataloader';
 import * as clientLoader from '../loaders/dataloader/client.dataloader';
@@ -89,7 +90,6 @@ export default class GraphqlService implements IGraphql {
         avatarByIdLoader: userLoader.avatarByIdLoader(),
         addressByIdLoader: addressLoader.addressByIdLoader(),
         usersByIdLoader: userLoader.usersByIdLoader(),
-        tasksByIdLoader: workscheduleLoader.tasksByIdLoader(),
         projectByIdLoader: projectLoader.projectsByIdLoader(),
         clientByIdLoader: clientLoader.clientByIdLoader(),
         activeClientByUserIdLoader: clientLoader.activeClientByUserIdLoader(),
@@ -98,6 +98,8 @@ export default class GraphqlService implements IGraphql {
         usersByTaskIdLoader: taskLoader.usersByTaskIdLoader(),
         attachmentsByTaskIdLoader: taskLoader.attachmentsByTaskIdLoader(),
         timesheetByIdLoader: timesheetLoader.timesheetByIdLoader(),
+        workschedulesByIdLoader: workscheduleLoader.workschedulesByIdLoader(),
+        workscheduleTimeDetailByDetailIdLoader: workscheduleTimeDetailLoader.workschedulesTimeDetailByIdLoader(),
       },
     };
   };

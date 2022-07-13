@@ -56,13 +56,11 @@ export default class BaseRepository<T> implements IBaseRepository<T> {
           query[key] = In(query[key]);
         }
       }
-
       const rows = await this.repo.find({
         where: query,
         ...(_select?.length && { select: _select }),
         ...rest,
       });
-
       return rows;
     } catch (err) {
       throw err;
