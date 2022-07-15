@@ -146,6 +146,13 @@ const WORKSCHEDULE_TIME_DETAIL = {
   WorkscheduleTimeDetailService: Symbol('WorkscheduleTimeDetailService'),
   WorkscheduleTimeDetailController: Symbol('WorkscheduleTimeDetailController'),
 };
+
+const SUBSCRIPTION_PAYMENT = {
+  SubscriptionPaymentRepository: Symbol('SubscriptionPaymentRepository'),
+  SubscriptionPaymentService: Symbol('SubscriptionPaymentService'),
+  SubscriptionPaymentResolver: Symbol('SubscriptionPaymentResolver'),
+};
+
 const TYPES = {
   ...COMMON,
   ...COMPANY,
@@ -170,6 +177,7 @@ const TYPES = {
   ...ATTACHED_TIMESHEET,
   ...WORKSCHEDULE_DETAIL,
   ...WORKSCHEDULE_TIME_DETAIL,
+  ...SUBSCRIPTION_PAYMENT,
 };
 
 export { TYPES };

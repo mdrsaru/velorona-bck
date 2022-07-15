@@ -202,6 +202,12 @@ export class CompanyCountInput {
   companyCode: string;
 }
 
+@InputType()
+export class CompanyByIdInput {
+  @Field()
+  id: string;
+}
+
 @ObjectType()
 export class CompanyGrowthOutput {
   @Field({ nullable: true })

@@ -66,6 +66,7 @@ export const entities = {
   timesheetAttachments: 'timesheet_attachments',
   workscheduleDetail: 'workschedule_details',
   workscheduleTimeDetail: 'workschedule_time_details',
+  subscriptionPayments: 'subscription_payments',
 };
 
 export enum CompanyStatus {
@@ -203,6 +204,12 @@ export const subscriptionStatus = {
   active: 'active',
   inactive: 'inactive',
 };
+
+export enum SubscriptionPaymentStatus {
+  Paid = 'Paid',
+  Pending = 'Pending',
+  RequiredAction = 'Requires Action',
+}
 
 export default {
   env,

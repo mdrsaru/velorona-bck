@@ -22,7 +22,7 @@ export const checkCompanyAccess: MiddlewareFn<IGraphqlContext> = async ({ contex
 
   try {
     const roles = context.user?.roles ?? [];
-    const argsCompanyId = args?.input?.company_id ?? args?.input?.query?.company_id;
+    const argsCompanyId = args?.input?.company_id ?? args?.input?.query?.company_id ?? args?.input?.id;
 
     // check the users's company_id with the input company_id(both for query as well as mutation)
     const hasCompanyAccess = context?.user?.company?.id === argsCompanyId;

@@ -6,7 +6,7 @@ import { inject, injectable } from 'inversify';
 import { TYPES } from '../types';
 import strings from '../config/strings';
 import * as apiError from '../utils/api-error';
-import { stripeSetting, stripePrices, plans } from '../config/constants';
+import { stripeSetting, stripePrices, plans, Role as RoleEnum } from '../config/constants';
 import Company from '../entities/company.entity';
 import StripeService from '../services/stripe.service';
 
@@ -17,6 +17,7 @@ import {
   ISubscriptionService,
 } from '../interfaces/subscription.interface';
 import { ICompanyRepository } from '../interfaces/company.interface';
+import { IUserRepository } from '../interfaces/user.interface';
 
 @injectable()
 export default class SubscriptionService implements ISubscriptionService {
@@ -24,13 +25,16 @@ export default class SubscriptionService implements ISubscriptionService {
   private readonly stripe: Stripe;
   private companyRepository: ICompanyRepository;
   private stripeService: StripeService;
+  private userRepository: IUserRepository;
 
   constructor(
     @inject(TYPES.CompanyRepository) _companyRepository: ICompanyRepository,
-    @inject(TYPES.StripeService) _stripeService: StripeService
+    @inject(TYPES.StripeService) _stripeService: StripeService,
+    @inject(TYPES.UserRepository) _userRepository: IUserRepository
   ) {
     this.companyRepository = _companyRepository;
     this.stripeService = _stripeService;
+    this.userRepository = _userRepository;
 
     this.stripe = new Stripe(stripeSetting.secretKey, {
       apiVersion: '2020-08-27',
@@ -78,6 +82,23 @@ export default class SubscriptionService implements ISubscriptionService {
       const meteredItem = find(items, { price: { id: stripePrices.perUser } });
       if (meteredItem) {
         subscriptionItemId = meteredItem?.id;
+      }
+
+      if (subscriptionItemId) {
+        const userCount = await this.userRepository.countEntities({
+          query: {
+            company_id,
+            archived: false,
+            role: RoleEnum.Employee,
+          },
+        });
+
+        await this.stripeService.createUsageRecord({
+          quantity: userCount,
+          action: 'set',
+          subscriptionItemId: subscriptionItemId,
+          timestamp: Math.floor(Date.now() / 1000),
+        });
       }
 
       //Update the company with the subscription id for provisioning the service.

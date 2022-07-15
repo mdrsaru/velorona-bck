@@ -1,5 +1,5 @@
 import { companyEmitter } from './emitters';
-import constants, { events } from '../config/constants';
+import constants, { events, Role as RoleEnum } from '../config/constants';
 import { TYPES } from '../types';
 import container from '../inversify.config';
 import Company from '../entities/company.entity';
@@ -31,20 +31,21 @@ companyEmitter.on(events.updateCompanySubscriptionUsage, async (args: UpdateComp
 
   const company = await companyRepository.getById({
     id: company_id,
-    select: ['id', 'companyCode', 'subscriptionItemId', 'subscriptionId'],
+    select: ['id', 'companyCode', 'subscriptionItemId', 'subscriptionId', 'plan'],
   });
 
-  if (company && company.subscriptionId && company.subscriptionItemId) {
+  if (company && company.plan === 'Professional' && company.subscriptionId && company.subscriptionItemId) {
     const userCount = await userRepository.countEntities({
       query: {
         company_id,
         archived: false,
+        role: RoleEnum.Employee,
       },
     });
 
     stripeService
       .createUsageRecord({
-        quantity: userCount - 1, // ignoring main company admin
+        quantity: userCount,
         action: 'set',
         subscriptionItemId: company.subscriptionItemId,
         timestamp: Math.floor(Date.now() / 1000),

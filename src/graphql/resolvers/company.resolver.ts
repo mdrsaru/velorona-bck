@@ -2,13 +2,15 @@ import { inject, injectable } from 'inversify';
 import { Resolver, Query, Ctx, Arg, Mutation, UseMiddleware, FieldResolver, Root } from 'type-graphql';
 
 import { TYPES } from '../../types';
+import * as apiError from '../../utils/api-error';
 import Paging from '../../utils/paging';
 import User from '../../entities/user.entity';
-import Company, { CompanyCountInput, CompanyGrowthOutput } from '../../entities/company.entity';
+import Company, { CompanyCountInput, CompanyGrowthOutput, CompanyByIdInput } from '../../entities/company.entity';
 import { Role as RoleEnum } from '../../config/constants';
 import CompanyValidation from '../../validation/company.validation';
 import authenticate from '../middlewares/authenticate';
 import authorize from '../middlewares/authorize';
+import { checkCompanyAccess } from '../middlewares/company';
 import {
   CompanyPagingResult,
   CompanyQueryInput,
@@ -42,6 +44,33 @@ export class CompanyResolver {
     this.joiService = joiService;
     this.errorService = errorService;
     this.companyRepository = _companyRepostitory;
+  }
+
+  @Query((returns) => Company)
+  @UseMiddleware(authenticate, authorize(RoleEnum.SuperAdmin, RoleEnum.CompanyAdmin), checkCompanyAccess)
+  async CompanyById(@Arg('input') args: CompanyByIdInput, @Ctx() ctx: IGraphqlContext): Promise<Company> {
+    const operation = 'CompanyById';
+
+    try {
+      let company = await this.companyRepository.getById({
+        id: args.id,
+      });
+
+      if (!company) {
+        throw new apiError.NotFoundError({
+          details: ['Company not found'],
+        });
+      }
+
+      return company;
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
+    }
   }
 
   @Query((returns) => CompanyPagingResult)

@@ -2,6 +2,7 @@ import { injectable, inject } from 'inversify';
 
 import Paging from '../utils/paging';
 import { TYPES } from '../types';
+import { Role as RoleEnum } from '../config/constants';
 import User from '../entities/user.entity';
 import Company from '../entities/company.entity';
 import { generateRandomStrings } from '../utils/strings';
@@ -99,7 +100,7 @@ export default class UserService implements IUserService {
       });
 
       // Emit event for updateCompanySubscriptionUsage
-      if (user.company_id) {
+      if (user.company_id && roles.includes(RoleEnum.Employee)) {
         companyEmitter.emit(events.updateCompanySubscriptionUsage, {
           company_id: user.company_id,
         });

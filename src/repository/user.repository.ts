@@ -313,4 +313,36 @@ export default class UserRepository extends BaseRepository<User> implements IUse
       throw err;
     }
   };
+
+  countEntities = async (args: IGetOptions): Promise<number> => {
+    let { query = {}, select = [], relations = [], ...rest } = args;
+    let { role: roleName, search, ...where } = query;
+
+    for (let key in query) {
+      if (isArray(query[key])) {
+        query[key] = In(query[key]);
+      }
+    }
+
+    let role: Role | undefined;
+    if (roleName) {
+      relations.push('roles');
+      role = await this.roleRepository.getSingleEntity({ query: { name: roleName } });
+    }
+
+    // Using function based where query since it needs inner join where clause
+    const _where = (qb: SelectQueryBuilder<User>) => {
+      const queryBuilder = qb.where(where);
+
+      if (roleName) {
+        queryBuilder.andWhere('role_id = :roleId', { roleId: role?.id ?? '' });
+      }
+    };
+
+    return this.repo.count({
+      relations,
+      where: _where,
+      ...rest,
+    });
+  };
 }

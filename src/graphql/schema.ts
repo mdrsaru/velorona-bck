@@ -20,6 +20,7 @@ import { SubscriptionResolver } from './resolvers/subscription.resolver';
 import { AttachedTimesheetResolver } from './resolvers/attached-timesheet';
 import { WorkscheduleDetailResolver } from './resolvers/workschedule-details.resolver';
 import { WorkscheduleTimeDetailResolver } from './resolvers/workschedule-time-detail.resolver';
+import { SubscriptionPaymentResolver } from './resolvers/subscription-payment.resolver';
 
 export default buildSchema({
   container,
@@ -45,5 +46,6 @@ export default buildSchema({
     AttachedTimesheetResolver,
     WorkscheduleDetailResolver,
     WorkscheduleTimeDetailResolver,
+    SubscriptionPaymentResolver,
   ],
 });
