@@ -108,4 +108,5 @@ export default {
   timeDetailRequired: 'Time detail required',
   workscheduleRequired: 'Workschedule Required',
   workscheduleDetailNotFound: 'Workschedule Detail not Found',
+  timesheetMandatory: 'Timesheet Mandatory. You need to attach timesheet before submitting',
 };

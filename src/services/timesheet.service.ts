@@ -17,6 +17,8 @@ import {
 import { IEntityRemove, IErrorService, ILogger } from '../interfaces/common.interface';
 import { IPaginationData, IPagingArgs } from '../interfaces/paging.interface';
 import { ITimeEntryRepository } from '../interfaces/time-entry.interface';
+import { IAttachedTimesheetRepository } from '../interfaces/attached-timesheet.interface';
+import { NotFoundError } from '../utils/api-error';
 
 @injectable()
 export default class TimesheetService implements ITimesheetService {
@@ -25,17 +27,20 @@ export default class TimesheetService implements ITimesheetService {
   private logger: ILogger;
   private errorService: IErrorService;
   private timeEntryRepository: ITimeEntryRepository;
+  private attachedTimesheetRepository: IAttachedTimesheetRepository;
 
   constructor(
     @inject(TYPES.TimesheetRepository) timesheetRepository: ITimesheetRepository,
     @inject(TYPES.LoggerFactory) loggerFactory: (name: string) => ILogger,
     @inject(TYPES.ErrorService) errorService: IErrorService,
-    @inject(TYPES.TimeEntryRepository) _timeEntryRepository: ITimeEntryRepository
+    @inject(TYPES.TimeEntryRepository) _timeEntryRepository: ITimeEntryRepository,
+    @inject(TYPES.AttachedTimesheetRepository) _attachedTimesheet: IAttachedTimesheetRepository
   ) {
     this.timesheetRepository = timesheetRepository;
     this.logger = loggerFactory(this.name);
     this.errorService = errorService;
     this.timeEntryRepository = _timeEntryRepository;
+    this.attachedTimesheetRepository = _attachedTimesheet;
   }
 
   getAllAndCount = async (args: IPagingArgs): Promise<IPaginationData<Timesheet>> => {
@@ -65,6 +70,16 @@ export default class TimesheetService implements ITimesheetService {
       const lastSubmittedAt = args.lastSubmittedAt;
       const approver_id = args.approver_id;
 
+      let found: any = await this.timesheetRepository.getById({ id, relations: ['user'] });
+
+      if (found.user.timesheet_attachment) {
+        let attachedTimesheet = await this.attachedTimesheetRepository.getAll({ created_by: found.user.id });
+
+        if (!attachedTimesheet.length)
+          throw new NotFoundError({
+            details: [strings.timesheetMandatory],
+          });
+      }
       const timesheet = await this.timesheetRepository.update({
         id,
         status,
