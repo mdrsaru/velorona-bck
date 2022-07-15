@@ -30,7 +30,7 @@ export default class WorkscheduleTimeDetail extends Base {
   workschedule_detail_id: string;
 
   @Field(() => WorkscheduleDetail)
-  @ManyToOne(() => WorkscheduleDetail)
+  @ManyToOne(() => WorkscheduleDetail, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
   @JoinColumn({ name: workscheduleTimeDetail.workschedule_detail_id })
   workscheduleDetail: WorkscheduleDetail;
 }
