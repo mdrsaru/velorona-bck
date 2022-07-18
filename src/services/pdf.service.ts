@@ -174,9 +174,12 @@ export default class PDFService {
 
         if (invoice.notes) {
           const footerPosition = paidToDatePosition + 50;
-          doc.fontSize(10).font('Helvetica-Bold').text('Notes:', 50, footerPosition);
+          doc.fontSize(10).font('Helvetica-Bold').text('Notes', 50, footerPosition);
 
-          doc.fontSize(10).font('Helvetica').text(invoice.notes, 85, footerPosition);
+          doc
+            .fontSize(10)
+            .font('Helvetica')
+            .text(invoice.notes, 50, footerPosition + 20);
         }
 
         let buffers: any = [];
