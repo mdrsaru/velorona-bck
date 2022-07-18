@@ -162,6 +162,20 @@ export default class User extends Base {
   @Field(() => UserPayRate, { nullable: true, description: 'Field for UserPayRate' })
   @OneToMany(() => UserPayRate, (userPayRate) => userPayRate.user)
   userPayRate: UserPayRate[];
+
+  @Field(() => User, { nullable: true })
+  @ManyToOne(() => User, (user) => user.employees, { nullable: true })
+  @JoinColumn({ name: 'manager_id' })
+  manager: User;
+
+  @Index(`${indexPrefix}_manager_id`)
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  manager_id: string;
+
+  @Field(() => [User])
+  @OneToMany(() => User, (user) => user.manager)
+  employees: User[];
 }
 
 @ObjectType()
@@ -213,6 +227,9 @@ export class UserCreateInput {
 
   @Field((type) => [CompanyRole])
   roles: CompanyRole[];
+
+  @Field({ nullable: true })
+  manager_id: string;
 }
 
 @InputType()
@@ -291,6 +308,9 @@ export class UserUpdateInput {
 
   @Field((type) => UserType, { nullable: true })
   type: UserType;
+
+  @Field({ nullable: true })
+  manager_id: string;
 }
 
 @InputType()
