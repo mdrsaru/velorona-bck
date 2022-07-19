@@ -83,17 +83,31 @@ export default class UserClientRepository extends BaseRepository<UserClient> imp
         throw new apiError.NotFoundError({ details: [strings.clientNotFound] });
       }
 
-      let activeUser = await this.repo.count({
-        where: {
-          user_id: user_id,
-          status: UserClientStatus.Active,
+      const userClientFound = await this.getSingleEntity({
+        query: {
+          client_id,
+          user_id,
         },
       });
 
-      if (activeUser) {
-        throw new apiError.ConflictError({ details: [strings.userStatusActive] });
-      }
+      if (userClientFound && userClientFound?.status === UserClientStatus.Inactive) {
+        await this.changeStatusToInactive({
+          user_id,
+        });
+        await this.repo.update({ client_id }, { status: UserClientStatus.Active });
 
+        const userClient: any = await this.getSingleEntity({
+          query: {
+            client_id,
+          },
+        });
+        return userClient;
+      } else if (userClientFound && userClientFound?.status === UserClientStatus.Active) {
+        return userClientFound;
+      }
+      await this.changeStatusToInactive({
+        user_id,
+      });
       const userClient = await this.repo.save({
         status: UserClientStatus.Active,
         client_id,
