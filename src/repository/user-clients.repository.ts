@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { getRepository } from 'typeorm';
+import { getRepository, In } from 'typeorm';
 import BaseRepository from './base.repository';
 
 import { TYPES } from '../types';
@@ -17,6 +17,8 @@ import {
   IUserClientMakeInactive,
 } from '../interfaces/user-client.interface';
 import { IClientRepository } from '../interfaces/client.interface';
+import { isArray } from 'util';
+import { IGetAllAndCountResult, IGetOptions } from '../interfaces/paging.interface';
 
 @injectable()
 export default class UserClientRepository extends BaseRepository<UserClient> implements IUserClientRepository {
@@ -31,6 +33,34 @@ export default class UserClientRepository extends BaseRepository<UserClient> imp
     this.userRepository = _userRepository;
     this.clientRepository = _clientRepository;
   }
+
+  getAllAndCount = async (args: IGetOptions): Promise<IGetAllAndCountResult<UserClient>> => {
+    try {
+      let { query = {}, select = [], relations = [], ...rest } = args;
+      let { search, ...where } = query;
+      const _select = select as (keyof UserClient)[];
+
+      for (let key in query) {
+        if (isArray(query[key])) {
+          query[key] = In(query[key]);
+        }
+      }
+
+      let [rows, count] = await this.repo.findAndCount({
+        relations: ['client'],
+        where: where,
+        ...(_select?.length && { select: _select }),
+        ...rest,
+      });
+
+      return {
+        count,
+        rows,
+      };
+    } catch (err) {
+      throw err;
+    }
+  };
 
   create = async (args: IUserClientCreate): Promise<UserClient> => {
     try {
