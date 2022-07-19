@@ -28,6 +28,12 @@ export interface IWorkscheduleTimeDetailUpdateInput {
   workschedule_detail_id: string;
 }
 
+export interface IWorkscheduleTimeDetailTotalDurationInput {
+  startTime: string;
+  endTime: string;
+  workschedule_detail_id?: string;
+}
+
 export interface IWorkscheduleTimeDetailService {
   getAllAndCount(filters?: any): Promise<IPaginationData<WorkscheduleTimeDetail>>;
   create(args: IWorkscheduleTimeDetailCreateInput): Promise<WorkscheduleTimeDetail>;
@@ -42,4 +48,8 @@ export interface IWorkscheduleTimeDetailRepository {
   update(args: IWorkscheduleTimeDetailUpdateInput): Promise<WorkscheduleTimeDetail>;
   create(args: IWorkscheduleTimeDetailCreateInput): Promise<WorkscheduleTimeDetail>;
   remove(args: IEntityRemove): Promise<WorkscheduleTimeDetail>;
+  /*
+  Calculate total time in seconds of users time entry for the given interval
+  */
+  getTotalTimeInSeconds(args: IWorkscheduleTimeDetailTotalDurationInput): Promise<number>;
 }

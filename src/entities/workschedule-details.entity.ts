@@ -16,14 +16,18 @@ export default class WorkscheduleDetail extends Base {
   @Index(`${indexPrefix}_date`)
   @Field()
   @Column()
-  date: Date;
+  schedule_date: Date;
+
+  @Field()
+  @Column()
+  duration: Number;
 
   @Field()
   @Column()
   workschedule_id: string;
 
   @Field(() => Workschedule)
-  @ManyToOne(() => Workschedule)
+  @ManyToOne(() => Workschedule, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
   @JoinColumn({ name: workscheduleDetail.workschedule_id })
   workschedule: Workschedule;
 
@@ -58,7 +62,7 @@ export class WorkscheduleDetailPagingResult {
 @InputType()
 export class WorkscheduleDetailCreateInput {
   @Field()
-  date: Date;
+  schedule_date: Date;
 
   @Field()
   startTime: Date;
@@ -79,7 +83,7 @@ export class WorkscheduleDetailUpdateInput {
   id: string;
 
   @Field({ nullable: true })
-  date: Date;
+  schedule_date: Date;
 
   @Field({ nullable: true })
   startTime: Date;

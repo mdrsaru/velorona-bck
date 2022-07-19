@@ -44,7 +44,7 @@ export default class WorkscheduleDetailRepository
 
   create = async (args: IWorkscheduleDetailCreateInput): Promise<WorkscheduleDetail> => {
     try {
-      const date = args.date;
+      const schedule_date = args.schedule_date;
       const workschedule_id = args.workschedule_id;
       const user_id = args.user_id;
       const startTime = args.startTime;
@@ -79,9 +79,10 @@ export default class WorkscheduleDetailRepository
         const workscheduleTimeDetailRepo = entityManager.getRepository(WorkscheduleTimeDetail);
 
         const workscheduleDetail = await workscheduleDetailRepo.save({
-          date,
+          schedule_date,
           workschedule_id,
           user_id,
+          duration,
         });
 
         await workscheduleTimeDetailRepo.create({
@@ -101,11 +102,12 @@ export default class WorkscheduleDetailRepository
   update = async (args: IWorkscheduleDetailUpdateInput): Promise<WorkscheduleDetail> => {
     try {
       const id = args.id;
-      const date = args.date;
+      const schedule_date = args.schedule_date;
       const startTime = args.startTime;
       const endTime = args.endTime;
       const workschedule_id = args.workschedule_id;
       const user_id = args.user_id;
+      const duration = args.duration;
 
       const found = await this.getById({ id });
       if (!found) {
@@ -113,11 +115,15 @@ export default class WorkscheduleDetailRepository
           details: [strings.workscheduleDetailNotFound],
         });
       }
+
       const update = merge(found, {
         id,
-        date,
+        schedule_date,
+        startTime,
+        endTime,
         workschedule_id,
         user_id,
+        duration,
       });
 
       let workscheduleDetail = await this.repo.save(update);

@@ -37,7 +37,7 @@ const messages = {
 export default class WorkscheduleDetailValidation {
   static create() {
     return Joi.object({
-      date: Joi.date().required().messages(messages.date),
+      schedule_date: Joi.date().required().messages(messages.date),
       workschedule_id: Joi.string().messages(messages.workschedule_id),
       user_id: Joi.string().required().messages(messages.user_id),
     });
@@ -45,7 +45,7 @@ export default class WorkscheduleDetailValidation {
   static update() {
     return Joi.object({
       id: Joi.string().required().messages(messages.id),
-      date: Joi.date(),
+      schedule_date: Joi.date(),
       workschedule_id: Joi.string(),
       user_id: Joi.string(),
     });

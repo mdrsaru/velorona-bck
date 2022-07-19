@@ -62,7 +62,7 @@ export default class WorkscheduleDetailService implements IWorkscheduleDetailSer
 
   create = async (args: IWorkscheduleDetailCreateInput) => {
     const operation = 'create';
-    const date = args.date;
+    const schedule_date = args.schedule_date;
     const startTime = args.startTime;
     const endTime = args.endTime;
     const workschedule_id = args.workschedule_id;
@@ -74,7 +74,7 @@ export default class WorkscheduleDetailService implements IWorkscheduleDetailSer
       const duration = endTime1?.diff(startTime1, 'seconds');
 
       const workscheduleDetail = await this.workscheduleDetailRepository.create({
-        date,
+        schedule_date,
         workschedule_id,
         user_id,
         startTime,
@@ -82,16 +82,10 @@ export default class WorkscheduleDetailService implements IWorkscheduleDetailSer
         duration: duration,
       });
 
-      await this.workscheduleTimeDetailRepository.create({
-        startTime,
-        endTime,
-        workschedule_detail_id: workscheduleDetail?.id,
-        duration: duration,
-      });
       /* Update payroll allocated hours on new workschedule created*/
       await this.updateWorkschedule({
-        total: duration,
-        workschedule_id,
+        startTime,
+        workschedule_id: workschedule_id,
       });
 
       return workscheduleDetail;
@@ -108,7 +102,7 @@ export default class WorkscheduleDetailService implements IWorkscheduleDetailSer
   update = async (args: IWorkscheduleDetailUpdateInput) => {
     const operation = 'update';
     const id = args.id;
-    const date = args.date;
+    const schedule_date = args.schedule_date;
     const startTime = args.startTime;
     const endTime = args.endTime;
     const workschedule_id = args.workschedule_id;
@@ -117,21 +111,17 @@ export default class WorkscheduleDetailService implements IWorkscheduleDetailSer
     try {
       let workscheduleDetail = await this.workscheduleDetailRepository.update({
         id,
-        date,
+        schedule_date,
         startTime,
         endTime,
         workschedule_id,
         user_id,
       });
 
-      const startTime1 = moment(startTime);
-      const endTime1 = moment(endTime);
-      const duration = endTime1?.diff(startTime1, 'seconds');
-
       /* Update payroll allocated hours on new workschedule created*/
       await this.updateWorkschedule({
-        total: duration,
-        workschedule_id,
+        startTime,
+        workschedule_id: workschedule_id,
       });
       return workscheduleDetail;
     } catch (err) {
@@ -147,11 +137,18 @@ export default class WorkscheduleDetailService implements IWorkscheduleDetailSer
   remove = async (args: IEntityRemove) => {
     try {
       const id = args.id;
-      console.log(id);
+
+      const found = await this.workscheduleDetailRepository.getById({
+        id,
+      });
       const workscheduleDetail = await this.workscheduleDetailRepository.remove({
         id,
       });
 
+      await this.updateWorkschedule({
+        startTime: found?.schedule_date,
+        workschedule_id: found?.workschedule_id,
+      });
       return workscheduleDetail;
     } catch (err) {
       throw err;
@@ -159,13 +156,20 @@ export default class WorkscheduleDetailService implements IWorkscheduleDetailSer
   };
 
   updateWorkschedule = async (args: any) => {
+    const startTime = args.startTime;
     const id = args.workschedule_id;
-    const total = args.total;
-    const workschedule = await this.workscheduleRepository.getById({ id: id });
-    const result = await this.workscheduleRepository.update({
-      id,
-      payrollAllocatedHours: workschedule?.payrollAllocatedHours + total,
+
+    const startDate = moment(startTime).startOf('isoWeek');
+    const endDate = moment(startTime).endOf('isoWeek');
+
+    const totalTimeInSeconds = await this.workscheduleTimeDetailRepository.getTotalTimeInSeconds({
+      startTime: startDate.format('YYYY-MM-DDTHH:mm:ss'),
+      endTime: endDate.format('YYYY-MM-DDTHH:mm:ss'),
     });
-    return result;
+
+    await this.workscheduleRepository.update({
+      id,
+      payrollAllocatedHours: totalTimeInSeconds,
+    });
   };
 }
