@@ -40,6 +40,7 @@ import {
 } from '../interfaces/time-entry.interface';
 import { IUserRepository } from '../interfaces/user.interface';
 import { IGetOptions, IGetAllAndCountResult } from '../interfaces/paging.interface';
+import user from '../config/inversify/user';
 
 type DurationMap = {
   [statusOrInvoiceId: string]: {
@@ -197,20 +198,34 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
         errors.push(strings.companyIdRequired);
       }
 
-      const query = this.repo
-        .createQueryBuilder(entities.timeEntry)
-        .select('SUM(duration)', 'totalTime')
-        .where('company_id = :company_id', { company_id });
-
+      let total;
       if (user_id) {
-        query.andWhere('created_by = :user_id', { user_id });
+        total = await this.manager.query(
+          ` Select 
+            sum(duration) from ${entities.timeEntry} as t
+            left join ${entities.users} as u
+            on u.id = t.created_by
+            where t.company_id = $1
+            AND t.created_by = $2
+`,
+          [company_id, user_id]
+        );
       }
 
       if (manager_id) {
-        query.andWhere('approver_id = :manager_id', { manager_id });
+        total = await this.manager.query(
+          `Select 
+           sum(duration) from ${entities.timeEntry} as t
+           left join ${entities.users} as u
+           on u.id = t.created_by
+           where t.company_id = $1
+           AND u.manager_id = $2
+`,
+          [company_id, manager_id]
+        );
       }
-      const { totalTime } = await query.getRawOne();
-      return totalTime ?? 0;
+
+      return total?.[0]?.sum ?? 0;
     } catch (err) {
       throw err;
     }

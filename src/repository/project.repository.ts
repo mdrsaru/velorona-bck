@@ -118,16 +118,19 @@ export default class ProjectRepository extends BaseRepository<Project> implement
       let queryResult;
 
       queryResult = await this.manager.query(
-        `SELECT count(*)
-          FROM projects AS p
-          JOIN tasks AS t ON t.project_id = p.id
-          LEFT JOIN task_assignment AS ta ON ta.task_id = t.id
-          where p.company_id = $1
-          AND ta.user_id =$2
+        `
+        with temp_table as (
+        Select 
+        distinct(projects.id) AS project_id FROM projects 
+        INNER JOIN time_entries ON 
+        time_entries.project_id = projects.id
+        where created_by = $1 AND 
+        projects.company_id = $2
+       )
+       select count(project_id) from temp_table;
         `,
-        [company_id, user_id]
+        [user_id, company_id]
       );
-
       return queryResult?.[0]?.count ?? 0;
     } catch (err) {
       throw err;
@@ -146,26 +149,45 @@ export default class ProjectRepository extends BaseRepository<Project> implement
       if (manager_id) {
         queryResult = await this.manager.query(
           `
-          SELECT count(*)
-          FROM ${entities.projects} AS p
-          JOIN ${entities.tasks} AS t ON t.project_id = p.id
-          where p.company_id = $1 AND p.archived = $2 AND p.status =$3 
-          where t.manager_id = $4
+          with temp_table as (
+            Select 
+            distinct(projects.id) AS project_id FROM projects 
+            INNER JOIN time_entries ON 
+            time_entries.project_id = projects.id
+            LEFT JOIN users ON
+            users.id = time_entries.created_by
+            where 
+            projects.company_id = $1 AND
+            projects.archived =$2 AND 
+            projects.status = $3 AND 
+            users.manager_id = $4
+            
+           )
+           select count(project_id) from temp_table;
           `,
           [company_id, archived, status, manager_id]
         );
       } else {
         queryResult = await this.manager.query(
-          `SELECT count(*)
-          FROM projects AS p
-          JOIN tasks AS t ON t.project_id = p.id
-          LEFT JOIN task_assignment AS ta ON ta.task_id = t.id
-          where p.company_id = $1 AND p.archived = $2 AND p.status =$3 
-          AND ta.user_id =$4
+          `
+          with temp_table as (
+          Select 
+          distinct(projects.id) AS project_id FROM projects 
+          INNER JOIN time_entries ON 
+          time_entries.project_id = projects.id
+          where 
+          projects.company_id = $1 AND
+          projects.archived =$2 AND 
+          projects.status = $3 AND 
+          created_by = $4
+         )
+         select count(project_id) from temp_table;
+       
         `,
           [company_id, archived, status, user_id]
         );
       }
+      console.log(queryResult);
       return queryResult?.[0]?.count ?? 0;
     } catch (err) {
       throw err;
