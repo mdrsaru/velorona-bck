@@ -10,6 +10,9 @@ import {
   IUserClientService,
   IUserClientMakeInactive,
 } from '../interfaces/user-client.interface';
+import { IPaginationData, IPagingArgs } from '../interfaces/paging.interface';
+import UserClient from '../entities/user-client.entity';
+import Paging from '../utils/paging';
 
 @injectable()
 export default class UserClientService implements IUserClientService {
@@ -27,6 +30,24 @@ export default class UserClientService implements IUserClientService {
     this.logger = loggerFactory(this.name);
     this.errorService = errorService;
   }
+
+  getAllAndCount = async (args: IPagingArgs): Promise<IPaginationData<UserClient>> => {
+    try {
+      const { rows, count } = await this.userClientRepository.getAllAndCount(args);
+
+      const paging = Paging.getPagingResult({
+        ...args,
+        total: count,
+      });
+
+      return {
+        paging,
+        data: rows,
+      };
+    } catch (err) {
+      throw err;
+    }
+  };
 
   associate = async (args: IUserClientCreate) => {
     const operation = 'create';

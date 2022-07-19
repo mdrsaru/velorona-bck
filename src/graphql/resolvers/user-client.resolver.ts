@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { Arg, Ctx, FieldResolver, Mutation, Resolver, Root, UseMiddleware } from 'type-graphql';
+import { Arg, Ctx, FieldResolver, Mutation, Query, Resolver, Root, UseMiddleware } from 'type-graphql';
 
 import { TYPES } from '../../types';
 import { Role as RoleEnum } from '../../config/constants';
@@ -7,12 +7,19 @@ import authenticate from '../middlewares/authenticate';
 import authorize from '../middlewares/authorize';
 import { checkCompanyAccess } from '../middlewares/company';
 import User from '../../entities/user.entity';
-import UserClient, { UserClientAssociateInput, UserClientMakeInactiveInput } from '../../entities/user-client.entity';
+import UserClient, {
+  UserClientAssociateInput,
+  UserClientMakeInactiveInput,
+  UserClientPagingResult,
+  UserClientQueryInput,
+} from '../../entities/user-client.entity';
 import UserClientValidation from '../../validation/user-client.validation';
 
 import { IErrorService, IJoiService } from '../../interfaces/common.interface';
 import { IGraphqlContext } from '../../interfaces/graphql.interface';
 import { IUserClientService } from '../../interfaces/user-client.interface';
+import { IPaginationData } from '../../interfaces/paging.interface';
+import Paging from '../../utils/paging';
 
 @injectable()
 @Resolver((of) => UserClient)
@@ -30,6 +37,30 @@ export class UserClientResolver {
     this.userClientService = userClientService;
     this.joiService = joiService;
     this.errorService = errorService;
+  }
+
+  @Query((returns) => UserClientPagingResult)
+  @UseMiddleware(authenticate)
+  async UserClient(
+    @Arg('input') args: UserClientQueryInput,
+    @Ctx() ctx: IGraphqlContext
+  ): Promise<IPaginationData<UserClient>> {
+    const operation = 'UserClient';
+
+    try {
+      const pagingArgs = Paging.createPagingPayload(args);
+
+      let result: IPaginationData<UserClient> = await this.userClientService.getAllAndCount(pagingArgs);
+
+      return result;
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
+    }
   }
 
   @Mutation((returns) => UserClient, { description: 'Associate user with client' })
