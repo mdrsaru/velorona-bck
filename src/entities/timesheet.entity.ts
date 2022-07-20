@@ -280,3 +280,12 @@ export class TimesheetQueryInput {
   @Field()
   query: TimesheetQuery;
 }
+
+@InputType()
+export class TimesheetCountInput {
+  @Field()
+  company_id: string;
+
+  @Field({ nullable: true })
+  manager_id: string;
+}

@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { getRepository } from 'typeorm';
+import { getRepository, In } from 'typeorm';
 import BaseRepository from './base.repository';
 
 import { TYPES } from '../types';
@@ -17,6 +17,8 @@ import {
   IUserClientMakeInactive,
 } from '../interfaces/user-client.interface';
 import { IClientRepository } from '../interfaces/client.interface';
+import { isArray } from 'util';
+import { IGetAllAndCountResult, IGetOptions } from '../interfaces/paging.interface';
 
 @injectable()
 export default class UserClientRepository extends BaseRepository<UserClient> implements IUserClientRepository {
@@ -31,6 +33,34 @@ export default class UserClientRepository extends BaseRepository<UserClient> imp
     this.userRepository = _userRepository;
     this.clientRepository = _clientRepository;
   }
+
+  getAllAndCount = async (args: IGetOptions): Promise<IGetAllAndCountResult<UserClient>> => {
+    try {
+      let { query = {}, select = [], relations = [], ...rest } = args;
+      let { search, ...where } = query;
+      const _select = select as (keyof UserClient)[];
+
+      for (let key in query) {
+        if (isArray(query[key])) {
+          query[key] = In(query[key]);
+        }
+      }
+
+      let [rows, count] = await this.repo.findAndCount({
+        relations: ['client'],
+        where: where,
+        ...(_select?.length && { select: _select }),
+        ...rest,
+      });
+
+      return {
+        count,
+        rows,
+      };
+    } catch (err) {
+      throw err;
+    }
+  };
 
   create = async (args: IUserClientCreate): Promise<UserClient> => {
     try {
@@ -53,17 +83,31 @@ export default class UserClientRepository extends BaseRepository<UserClient> imp
         throw new apiError.NotFoundError({ details: [strings.clientNotFound] });
       }
 
-      let activeUser = await this.repo.count({
-        where: {
-          user_id: user_id,
-          status: UserClientStatus.Active,
+      const userClientFound = await this.getSingleEntity({
+        query: {
+          client_id,
+          user_id,
         },
       });
 
-      if (activeUser) {
-        throw new apiError.ConflictError({ details: [strings.userStatusActive] });
-      }
+      if (userClientFound && userClientFound?.status === UserClientStatus.Inactive) {
+        await this.changeStatusToInactive({
+          user_id,
+        });
+        await this.repo.update({ client_id }, { status: UserClientStatus.Active });
 
+        const userClient: any = await this.getSingleEntity({
+          query: {
+            client_id,
+          },
+        });
+        return userClient;
+      } else if (userClientFound && userClientFound?.status === UserClientStatus.Active) {
+        return userClientFound;
+      }
+      await this.changeStatusToInactive({
+        user_id,
+      });
       const userClient = await this.repo.save({
         status: UserClientStatus.Active,
         client_id,
