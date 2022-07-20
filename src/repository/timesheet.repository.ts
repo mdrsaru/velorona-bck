@@ -89,6 +89,34 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
     }
   };
 
+  getTimesheetByManager = async (args: ITimesheetCountInput): Promise<IGetAllAndCountResult<Timesheet>> => {
+    try {
+      let company_id = args.company_id;
+      let manager_id = args.manager_id;
+
+      let queryResult;
+
+      queryResult = await this.manager.query(
+        `
+        Select 
+        t.id, 
+        TO_CHAR(week_start_date, 'YYYY-MM-DD') as "weekStartDate",
+        TO_CHAR(week_end_date, 'YYYY-MM-DD') as "weekEndDate",
+        duration 
+        FROM timesheet as t
+        INNER JOIN Users as u ON t.user_id = u.id
+        where u.manager_id = $1
+        and t.company_id = $2
+        
+        `,
+        [manager_id, company_id]
+      );
+
+      return queryResult ?? [];
+    } catch (err) {
+      throw err;
+    }
+  };
   countTimesheet = async (args: ITimesheetCountInput): Promise<number> => {
     try {
       let company_id = args.company_id;
@@ -103,6 +131,7 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
         INNER JOIN Users as u ON t.user_id = u.id
         where u.manager_id = $1
         and t.company_id = $2
+        and t.approver_id is NULL
         
         `,
         [manager_id, company_id]

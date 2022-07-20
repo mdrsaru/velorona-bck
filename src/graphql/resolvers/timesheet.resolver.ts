@@ -75,6 +75,27 @@ export class TimesheetResolver {
     }
   }
 
+  @Query((returns) => [Timesheet])
+  @UseMiddleware(authenticate, checkCompanyAccess)
+  async TimesheetByManager(
+    @Arg('input', { nullable: true }) args: TimesheetCountInput,
+    @Ctx() ctx: any
+  ): Promise<Timesheet[]> {
+    const operation = 'TimesheetByManager';
+    try {
+      let result: any = await this.timesheetRepository.getTimesheetByManager(args);
+      console.log(result, '123');
+      return result;
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
+    }
+  }
+
   @Query((returns) => Number)
   @UseMiddleware(authenticate, checkCompanyAccess)
   async TimesheetCount(@Arg('input', { nullable: true }) args: TimesheetCountInput, @Ctx() ctx: any): Promise<Number> {

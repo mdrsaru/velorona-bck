@@ -6,7 +6,7 @@ import { IGetAllAndCountResult, IPaginationData, IPagingArgs } from './paging.in
 
 export interface IWorkscheduleDetail {
   id: string;
-  date: Date;
+  schedule_date: Date;
   timeDetail: string[];
   total: Number;
   workschedule_id: string;
@@ -15,7 +15,7 @@ export interface IWorkscheduleDetail {
   workschedule: Workschedule[];
 }
 export interface IWorkscheduleDetailCreateInput {
-  date: IWorkscheduleDetail['date'];
+  schedule_date: IWorkscheduleDetail['schedule_date'];
   startTime?: Date | undefined;
   endTime?: Date | undefined;
   duration?: Number;
@@ -25,9 +25,10 @@ export interface IWorkscheduleDetailCreateInput {
 
 export interface IWorkscheduleDetailUpdateInput {
   id: string;
-  date?: IWorkscheduleDetail['date'];
+  schedule_date?: IWorkscheduleDetail['schedule_date'];
   startTime?: Date | undefined;
   endTime?: Date | undefined;
+  duration?: Number;
   workschedule_id?: IWorkscheduleDetail['workschedule_id'];
   user_id?: IWorkscheduleDetail['user_id'];
 }

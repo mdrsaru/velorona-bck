@@ -72,7 +72,7 @@ export class WorkscheduleDetailResolver {
   ): Promise<WorkscheduleDetail> {
     const operation = 'WorkscheduleDetailCreate';
     try {
-      const date = args.date;
+      const schedule_date = args.schedule_date;
       const startTime = args.startTime;
       const endTime = args.endTime;
       const workschedule_id = args.workschedule_id;
@@ -82,14 +82,14 @@ export class WorkscheduleDetailResolver {
       await this.joiService.validate({
         schema,
         input: {
-          date,
+          schedule_date,
           workschedule_id,
           user_id,
         },
       });
 
       let workscheduleDetail: WorkscheduleDetail = await this.workscheduleDetailService.create({
-        date,
+        schedule_date,
         startTime,
         endTime,
         workschedule_id,
@@ -117,7 +117,7 @@ export class WorkscheduleDetailResolver {
 
     try {
       const id = args.id;
-      const date = args.date;
+      const schedule_date = args.schedule_date;
       const startTime = args.startTime;
       const endTime = args.endTime;
       const workschedule_id = args.workschedule_id;
@@ -128,7 +128,7 @@ export class WorkscheduleDetailResolver {
         schema,
         input: {
           id,
-          date,
+          schedule_date,
           workschedule_id,
           user_id,
         },
@@ -136,7 +136,7 @@ export class WorkscheduleDetailResolver {
 
       let workscheduleDetail: WorkscheduleDetail = await this.workscheduleDetailService.update({
         id,
-        date,
+        schedule_date,
         startTime,
         endTime,
         workschedule_id,

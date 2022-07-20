@@ -67,7 +67,7 @@ export default class WorkscheduleTimeDetailService implements IWorkscheduleTimeD
     try {
       const startTime1 = moment(startTime);
       const endTime1 = moment(endTime);
-      const duration = endTime1?.diff(startTime1, 'seconds');
+      const duration: any = endTime1?.diff(startTime1, 'seconds');
 
       let workscheduleTimeDetail = await this.workscheduleTimeDetailRepository.create({
         startTime,
@@ -75,15 +75,16 @@ export default class WorkscheduleTimeDetailService implements IWorkscheduleTimeD
         duration,
         workschedule_detail_id,
       });
-
       let workscheduleDetail = await this.workscheduleDetailRepository.getById({ id: workschedule_detail_id });
-      console.log(workscheduleDetail);
 
+      await this.updateWorkscheduleDetailDuration({
+        startTime,
+        id: workschedule_detail_id,
+      });
       /* Update payroll allocated hours on new workschedule created*/
       await this.updateWorkschedule({
-        total: duration,
+        startTime,
         workschedule_id: workscheduleDetail?.workschedule_id,
-        type: 'add',
       });
 
       return workscheduleTimeDetail;
@@ -105,11 +106,32 @@ export default class WorkscheduleTimeDetailService implements IWorkscheduleTimeD
     const workschedule_detail_id = args.workschedule_detail_id;
 
     try {
+      const startDate = moment(startTime).startOf('isoWeek');
+      const endDate = moment(startTime).endOf('isoWeek');
+
+      const totalTimeInSeconds = await this.workscheduleTimeDetailRepository.getTotalTimeInSeconds({
+        startTime: startDate.format('YYYY-MM-DDTHH:mm:ss'),
+        endTime: endDate.format('YYYY-MM-DDTHH:mm:ss'),
+        workschedule_detail_id: workschedule_detail_id,
+      });
+
       let workscheduleTimeDetail = await this.workscheduleTimeDetailRepository.update({
         id,
         startTime,
         endTime,
+        duration: totalTimeInSeconds,
         workschedule_detail_id,
+      });
+
+      let workscheduleDetail = await this.workscheduleDetailRepository.getById({
+        id: workscheduleTimeDetail?.workschedule_detail_id,
+      });
+
+      /* Update payroll allocated hours on new workschedule created*/
+      await this.updateWorkschedule({
+        startTime,
+        workschedule_id: workscheduleDetail?.workschedule_id,
+        // type: 'add',
       });
 
       return workscheduleTimeDetail;
@@ -126,24 +148,29 @@ export default class WorkscheduleTimeDetailService implements IWorkscheduleTimeD
   remove = async (args: IEntityRemove) => {
     try {
       const id = args.id;
-      console.log(id);
-      const workscheduleTimeDetail = await this.workscheduleTimeDetailRepository.remove({
-        id,
+      let workscheduleTimeDetail: any = await this.workscheduleTimeDetailRepository.getById({
+        id: id,
       });
+
       let workscheduleDetail = await this.workscheduleDetailRepository.getById({
         id: workscheduleTimeDetail?.workschedule_detail_id,
       });
-      console.log(workscheduleDetail);
 
       const startTime1 = moment(workscheduleTimeDetail?.startTime);
       const endTime1 = moment(workscheduleTimeDetail?.endTime);
       const duration = endTime1?.diff(startTime1, 'seconds');
 
+      await this.updateWorkscheduleDetailDuration({
+        startTime: workscheduleTimeDetail?.startTime,
+        id: workscheduleDetail?.id,
+      });
+      const res = await this.workscheduleTimeDetailRepository.remove({
+        id,
+      });
       /* Update payroll allocated hours on new workschedule created*/
       await this.updateWorkschedule({
         total: duration,
         workschedule_id: workscheduleDetail?.workschedule_id,
-        type: 'sub',
       });
       return workscheduleTimeDetail;
     } catch (err) {
@@ -152,21 +179,39 @@ export default class WorkscheduleTimeDetailService implements IWorkscheduleTimeD
   };
 
   updateWorkschedule = async (args: any) => {
+    const startTime = args.startTime;
     const id = args.workschedule_id;
-    const total = args.total;
-    const type: string = args?.type;
-    const workschedule: any = await this.workscheduleRepository.getById({ id: id });
-    let payrollAllocatedHours;
 
-    if (type === 'add') {
-      payrollAllocatedHours = workschedule?.payrollAllocatedHours + total;
-    } else {
-      payrollAllocatedHours = workschedule?.payrollAllocatedHours - total;
-    }
+    const startDate = moment(startTime).startOf('isoWeek');
+    const endDate = moment(startTime).endOf('isoWeek');
+
+    const totalTimeInSeconds = await this.workscheduleTimeDetailRepository.getTotalTimeInSeconds({
+      startTime: startDate.format('YYYY-MM-DDTHH:mm:ss'),
+      endTime: endDate.format('YYYY-MM-DDTHH:mm:ss'),
+    });
+
     const result = await this.workscheduleRepository.update({
       id,
-      payrollAllocatedHours: payrollAllocatedHours,
+      payrollAllocatedHours: totalTimeInSeconds,
     });
-    return result;
+  };
+
+  updateWorkscheduleDetailDuration = async (args: any) => {
+    const startTime = args.startTime;
+    const id = args.id;
+
+    const startDate = moment(startTime).startOf('isoWeek');
+    const endDate = moment(startTime).endOf('isoWeek');
+
+    const totalTimeInSeconds = await this.workscheduleTimeDetailRepository.getTotalTimeInSeconds({
+      startTime: startDate.format('YYYY-MM-DDTHH:mm:ss'),
+      endTime: endDate.format('YYYY-MM-DDTHH:mm:ss'),
+      workschedule_detail_id: id,
+    });
+
+    await this.workscheduleDetailRepository.update({
+      id: id,
+      duration: totalTimeInSeconds,
+    });
   };
 }

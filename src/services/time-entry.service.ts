@@ -5,7 +5,7 @@ import { TYPES } from '../types';
 import Paging from '../utils/paging';
 import * as apiError from '../utils/api-error';
 import TimeEntry from '../entities/time-entry.entity';
-import { TimesheetStatus, events, TimeEntryApprovalStatus } from '../config/constants';
+import { TimesheetStatus, events, TimeEntryApprovalStatus, UserType } from '../config/constants';
 import timesheetEmitter from '../subscribers/timeEntry.subscriber';
 
 import { IEntityRemove, IErrorService, ILogger, Maybe } from '../interfaces/common.interface';
@@ -155,6 +155,19 @@ export default class TimeEntryService implements ITimeEntryService {
             }
           }
         }
+
+        if (timeEntry?.entryType === UserType.CICO) {
+          const project = await this.projectRepository.getById({
+            id: project_id,
+          });
+
+          timeEntryEmitter.emit(events.onCheckIn, {
+            created_by: timeEntry.created_by,
+            company_id: timeEntry.company_id,
+            startTime: timeEntry.startTime,
+            project: project?.name,
+          });
+        }
       } catch (err) {
         this.logger.error({
           operation,
@@ -232,11 +245,20 @@ export default class TimeEntryService implements ITimeEntryService {
 
       if (endTime) {
         // Emit event for onTimeEntryStop
-        timeEntryEmitter.emit(events.onTimeEntryStop, {
-          created_by: timeEntry.created_by,
-          duration: timeEntry.duration,
-          company_id: timeEntry.company_id,
-        });
+        if (timeEntry.entryType === UserType.Timesheet) {
+          timeEntryEmitter.emit(events.onTimeEntryStop, {
+            created_by: timeEntry.created_by,
+            duration: timeEntry.duration,
+            company_id: timeEntry.company_id,
+          });
+        } else {
+          timeEntryEmitter.emit(events.onCheckOut, {
+            created_by: timeEntry.created_by,
+            company_id: timeEntry.company_id,
+            endTime: timeEntry.endTime,
+            duration: timeEntry.duration,
+          });
+        }
       }
       return timeEntry;
     } catch (err) {

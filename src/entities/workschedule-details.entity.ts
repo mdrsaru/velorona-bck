@@ -6,7 +6,6 @@ import { PagingInput, PagingResult } from './common.entity';
 import { workscheduleDetail } from '../config/db/columns';
 import User from './user.entity';
 import Workschedule from './workschedule.entity';
-import { string } from 'joi';
 import WorkscheduleTimeDetail from './workschedule-time-details.entity';
 
 const indexPrefix = 'workschedule';
@@ -16,14 +15,18 @@ export default class WorkscheduleDetail extends Base {
   @Index(`${indexPrefix}_date`)
   @Field()
   @Column()
-  date: Date;
+  schedule_date: Date;
+
+  @Field()
+  @Column()
+  duration: Number;
 
   @Field()
   @Column()
   workschedule_id: string;
 
   @Field(() => Workschedule)
-  @ManyToOne(() => Workschedule)
+  @ManyToOne(() => Workschedule, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
   @JoinColumn({ name: workscheduleDetail.workschedule_id })
   workschedule: Workschedule;
 
@@ -58,7 +61,7 @@ export class WorkscheduleDetailPagingResult {
 @InputType()
 export class WorkscheduleDetailCreateInput {
   @Field()
-  date: Date;
+  schedule_date: Date;
 
   @Field()
   startTime: Date;
@@ -79,7 +82,7 @@ export class WorkscheduleDetailUpdateInput {
   id: string;
 
   @Field({ nullable: true })
-  date: Date;
+  schedule_date: Date;
 
   @Field({ nullable: true })
   startTime: Date;
@@ -101,6 +104,12 @@ export class WorkscheduleDetailQuery {
 
   @Field({ nullable: true })
   workschedule_id: string;
+
+  @Field({ nullable: true })
+  schedule_date: Date;
+
+  @Field({ nullable: true })
+  user_id: string;
 }
 
 @InputType()

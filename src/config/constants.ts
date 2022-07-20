@@ -180,6 +180,8 @@ export const events = {
   onTimeEntriesApprove: 'onTimeEntriesApprove',
   onPayRateCreateUpdate: 'onPayRateCreateUpdate',
   onTimeEntryStop: 'onTimeEntryStop',
+  onCheckIn: 'onCheckIn',
+  onCheckOut: 'onCheckOut',
   onTimeSheetApproveOrReject: 'onTimeSheetApproveOrReject',
   updateCompanySubscriptionUsage: 'updateCompanySubscriptionUsage',
 };

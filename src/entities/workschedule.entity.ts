@@ -1,10 +1,11 @@
 import { Field, InputType, ObjectType } from 'type-graphql';
-import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { entities } from '../config/constants';
 import { Base } from './base.entity';
 import { PagingInput, PagingResult } from './common.entity';
 import Company from './company.entity';
 import { workschedule } from '../config/db/columns';
+import WorkscheduleDetail from './workschedule-details.entity';
 
 const indexPrefix = 'workschedule';
 @ObjectType()
@@ -41,6 +42,12 @@ export default class Workschedule extends Base {
   @ManyToOne(() => Company)
   @JoinColumn({ name: workschedule.company_id })
   company: Company;
+
+  @Field(() => WorkscheduleDetail, { nullable: true, description: 'Field for WorkscheduleTimeDetail' })
+  @OneToMany(() => WorkscheduleDetail, (workscheduleDetail) => workscheduleDetail.workschedule, {
+    cascade: ['remove', 'update'],
+  })
+  WorkscheduleDetail: WorkscheduleDetail[];
 }
 
 @ObjectType()

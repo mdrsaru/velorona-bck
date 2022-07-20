@@ -81,6 +81,7 @@ export interface ITimesheetRepository {
   update(args: ITimesheetUpdateInput): Promise<Timesheet>;
   remove(args: IEntityRemove): Promise<Timesheet>;
   countTimesheet(args: ITimesheetCountInput): Promise<number>;
+  getTimesheetByManager(args: ITimesheetCountInput): Promise<IGetAllAndCountResult<Timesheet>>;
 }
 
 export interface ITimesheetService {
