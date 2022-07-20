@@ -128,6 +128,7 @@ export class UserResolver {
       const startDate = args?.startDate;
       const endDate = args?.endDate;
       const timesheet_attachment = args?.timesheet_attachment;
+      const manager_id = args?.manager_id;
       const address = {
         country: args.address.country,
         streetAddress: args.address.streetAddress,
@@ -170,6 +171,7 @@ export class UserResolver {
         startDate,
         endDate,
         timesheet_attachment,
+        manager_id,
       });
 
       return user;
@@ -258,6 +260,7 @@ export class UserResolver {
       const startDate = args.startDate;
       const endDate = args.endDate;
       const timesheet_attachment = args.timesheet_attachment;
+      const manager_id = args.manager_id;
 
       const schema = UserValidation.update();
       await this.joiService.validate({
@@ -288,6 +291,7 @@ export class UserResolver {
         startDate,
         endDate,
         timesheet_attachment,
+        manager_id,
       });
 
       return user;
@@ -389,5 +393,14 @@ export class UserResolver {
   @FieldResolver()
   activeClient(@Root() root: User, @Ctx() ctx: IGraphqlContext) {
     return ctx.loaders.activeClientByUserIdLoader.load(root.id);
+  }
+
+  @FieldResolver()
+  manager(@Root() root: User, @Ctx() ctx: IGraphqlContext) {
+    if (root.manager_id) {
+      return ctx.loaders.usersByIdLoader.load(root.manager_id);
+    }
+
+    return null;
   }
 }

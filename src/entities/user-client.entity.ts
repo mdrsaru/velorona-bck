@@ -6,6 +6,7 @@ import Client from './client.entity';
 import { Base } from './base.entity';
 import { usersClients } from '../config/db/columns';
 import { UserClientStatus, entities } from '../config/constants';
+import { PagingInput, PagingResult } from './common.entity';
 
 registerEnumType(UserClientStatus, {
   name: 'UserClientStatus',
@@ -64,4 +65,34 @@ export class UserClientMakeInactiveInput {
 
   @Field({ description: 'Company user and client belongs to.' })
   company_id: string;
+}
+
+@ObjectType()
+export class UserClientPagingResult {
+  @Field()
+  paging: PagingResult;
+
+  @Field(() => [UserClient])
+  data: UserClient[];
+}
+
+@InputType()
+export class UserClientQuery {
+  @Field({ nullable: true })
+  id: string;
+
+  @Field({ nullable: true })
+  client_id: string;
+
+  @Field({ nullable: true })
+  user_id: string;
+}
+
+@InputType()
+export class UserClientQueryInput {
+  @Field({ nullable: true })
+  paging: PagingInput;
+
+  @Field()
+  query: UserClientQuery;
 }

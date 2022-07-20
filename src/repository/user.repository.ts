@@ -3,17 +3,17 @@ import isDate from 'lodash/isDate';
 import isNil from 'lodash/isNil';
 import isString from 'lodash/isString';
 import isArray from 'lodash/isArray';
+import find from 'lodash/find';
 import { injectable, inject } from 'inversify';
 import { getRepository, In, IsNull, Like, ILike, SelectQueryBuilder, Raw } from 'typeorm';
 
 import { TYPES } from '../types';
 import strings from '../config/strings';
-import config from '../config/constants';
 import User from '../entities/user.entity';
 import Role from '../entities/role.entity';
 import BaseRepository from './base.repository';
 import * as apiError from '../utils/api-error';
-import { Role as RoleEnum } from '../config/constants';
+import config, { entities, Role as RoleEnum } from '../config/constants';
 import { IHashService } from '../interfaces/common.interface';
 import {
   IUser,
@@ -119,6 +119,7 @@ export default class UserRepository extends BaseRepository<User> implements IUse
       const startDate = args?.startDate;
       const endDate = args?.endDate;
       const timesheet_attachment = args?.timesheet_attachment;
+      const manager_id = args.manager_id;
 
       const errors: string[] = [];
 
@@ -167,11 +168,29 @@ export default class UserRepository extends BaseRepository<User> implements IUse
           name: roles,
         },
       });
+
       if (!existingRoles?.length) {
         throw new apiError.ValidationError({
           details: [strings.userCreateRoleNotFound],
         });
       }
+
+      if (manager_id) {
+        const manager = await this.repo
+          .createQueryBuilder(entities.users)
+          .select(['users.id', 'roles.name'])
+          .where({ id: manager_id })
+          .innerJoin('users.roles', 'roles')
+          .getOne();
+
+        const isManager = find(manager?.roles ?? [], { name: RoleEnum.TaskManager });
+        if (!manager || !isManager) {
+          throw new apiError.NotFoundError({
+            details: [strings.managerNotFound],
+          });
+        }
+      }
+
       const hashedPassword = await this.hashService.hash(password, config.saltRounds);
       const userData: any = {
         email,
@@ -188,10 +207,13 @@ export default class UserRepository extends BaseRepository<User> implements IUse
         startDate,
         endDate,
         timesheet_attachment,
+        manager_id,
       };
+
       if (roles.includes(RoleEnum.Employee)) {
         userData.type = type;
       }
+
       const user = await this.repo.save(userData);
 
       return user;
@@ -216,6 +238,7 @@ export default class UserRepository extends BaseRepository<User> implements IUse
       const startDate = args?.startDate;
       const endDate = args?.endDate;
       const timesheet_attachment = args?.timesheet_attachment;
+      const manager_id = args?.manager_id;
 
       const found = await this.repo.findOne(id, {
         relations: ['address', 'roles'],
@@ -225,6 +248,22 @@ export default class UserRepository extends BaseRepository<User> implements IUse
         throw new apiError.NotFoundError({
           details: [strings.userNotFound],
         });
+      }
+
+      if (manager_id) {
+        const manager = await this.repo
+          .createQueryBuilder(entities.users)
+          .select(['users.id', 'roles.name'])
+          .where({ id: manager_id })
+          .innerJoin('users.roles', 'roles')
+          .getOne();
+
+        const isManager = find(manager?.roles ?? [], { name: RoleEnum.TaskManager });
+        if (!manager || !isManager) {
+          throw new apiError.NotFoundError({
+            details: [strings.managerNotFound],
+          });
+        }
       }
 
       let hashedPassword;
@@ -249,6 +288,7 @@ export default class UserRepository extends BaseRepository<User> implements IUse
         startDate,
         endDate,
         timesheet_attachment,
+        manager_id,
       };
 
       const role = found?.roles.some(function (role) {
@@ -258,6 +298,7 @@ export default class UserRepository extends BaseRepository<User> implements IUse
       if (role) {
         updateData.type = type;
       }
+
       const update = merge(found, updateData);
 
       const user = await this.repo.save(update);

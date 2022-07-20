@@ -39,7 +39,7 @@ export default class CompanyValidation {
       status: Joi.string(),
       issueDate: Joi.date(),
       dueDate: Joi.date(),
-      poNumber: Joi.string(),
+      poNumber: Joi.string().allow(null, ''),
       totalQuantity: Joi.number(),
       subtotal: Joi.number(),
       totalAmount: Joi.number(),

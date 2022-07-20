@@ -174,6 +174,7 @@ export default class InvoiceRepository extends BaseRepository<Invoice> implement
         notes,
         company_id,
         client_id,
+        timesheet_id,
       });
 
       await this.invoiceItemRepository.createMultiple({

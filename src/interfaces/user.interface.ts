@@ -22,6 +22,7 @@ export interface IUser {
   startDate?: Date;
   endDate?: Date;
   timesheet_attachment?: boolean;
+  manager_id?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -51,6 +52,7 @@ export interface IUserCreate {
   endDate?: IUser['endDate'];
   timesheet_attachment?: IUser['timesheet_attachment'];
   address?: IAddressCreateInput;
+  manager_id?: IUser['manager_id'];
 }
 
 export interface IUserCreateRepo extends IUserCreate {
@@ -78,6 +80,7 @@ export interface IUserUpdate {
   endDate?: IUser['endDate'];
   timesheet_attachment?: IUser['timesheet_attachment'];
   type?: IUser['type'];
+  manager_id?: IUser['manager_id'];
 }
 
 export interface IUserArchiveOrUnArchive {

@@ -85,7 +85,7 @@ export default class WorkscheduleDetailRepository
           duration,
         });
 
-        await workscheduleTimeDetailRepo.create({
+        await workscheduleTimeDetailRepo.save({
           startTime,
           endTime,
           workschedule_detail_id: workscheduleDetail?.id,
