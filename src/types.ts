@@ -153,6 +153,12 @@ const SUBSCRIPTION_PAYMENT = {
   SubscriptionPaymentResolver: Symbol('SubscriptionPaymentResolver'),
 };
 
+const TIMESHEET_COMMENT = {
+  TimesheetCommentRepository: Symbol('TimesheetCommentRepository'),
+  TimesheetCommentService: Symbol('TimesheetCommentService'),
+  TimesheetCommentResolver: Symbol('TimesheetCommentResolver'),
+};
+
 const TYPES = {
   ...COMMON,
   ...COMPANY,
@@ -178,6 +184,7 @@ const TYPES = {
   ...WORKSCHEDULE_DETAIL,
   ...WORKSCHEDULE_TIME_DETAIL,
   ...SUBSCRIPTION_PAYMENT,
+  ...TIMESHEET_COMMENT,
 };
 
 export { TYPES };

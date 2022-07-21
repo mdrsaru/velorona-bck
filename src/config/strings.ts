@@ -110,4 +110,5 @@ export default {
   workscheduleDetailNotFound: 'Workschedule Detail not Found',
   timesheetMandatory: 'Timesheet Mandatory. You need to attach timesheet before submitting',
   managerNotFound: 'Manager not found',
+  commentRequired: 'Comment required',
 };

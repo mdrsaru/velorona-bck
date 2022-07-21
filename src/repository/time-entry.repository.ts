@@ -37,6 +37,7 @@ import {
   IMarkApprovedTimeEntriesWithInvoice,
   ITimeEntryHourlyRateInput,
   ITotalDurationInput,
+  ITimeEntryUnlockInput,
 } from '../interfaces/time-entry.interface';
 import { IUserRepository } from '../interfaces/user.interface';
 import { IGetOptions, IGetAllAndCountResult } from '../interfaces/paging.interface';
@@ -663,6 +664,33 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
           hourlyRate: args.hourlyRate,
         }
       );
+
+      return true;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  unlockTimeEntries = async (args: ITimeEntryUnlockInput): Promise<boolean> => {
+    try {
+      const timesheet_id = args.timesheet_id;
+      const user_id = args.user_id;
+      const company_id = args.company_id;
+      const statusToUnlock = args.statusToUnlock;
+
+      await this.repo.update(
+        {
+          timesheet_id,
+          created_by: user_id,
+          company_id,
+          approvalStatus: statusToUnlock,
+        },
+        {
+          approvalStatus: TimeEntryApprovalStatus.Pending,
+        }
+      );
+
+      return true;
 
       return true;
     } catch (err) {

@@ -303,6 +303,21 @@ export class TimeEntryApproveRejectInput {
 }
 
 @InputType()
+export class TimeEntryUnlockInput {
+  @Field()
+  timesheet_id: string;
+
+  @Field()
+  user_id: string;
+
+  @Field()
+  company_id: string;
+
+  @Field()
+  statusToUnlock: TimeEntryApprovalStatus;
+}
+
+@InputType()
 export class TotalDurationCountInput {
   @Field()
   company_id: string;

@@ -33,6 +33,7 @@ export interface IDataloader {
   timesheetByIdLoader: Dataloader<string, Timesheet>;
   workschedulesByIdLoader: Dataloader<string, Workschedule>;
   workscheduleTimeDetailByDetailIdLoader: Dataloader<string, WorkscheduleTimeDetail>;
+  replyCountByParentIdLoader: Dataloader<string, number>;
 }
 
 export interface IGraphqlContext {
