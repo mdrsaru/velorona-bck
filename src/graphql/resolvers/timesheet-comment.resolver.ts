@@ -72,7 +72,7 @@ export class TimesheetCommentResolver {
   }
 
   @Mutation((returns) => TimesheetComment)
-  @UseMiddleware(authenticate, authenticate, authorize(RoleEnum.SuperAdmin, RoleEnum.CompanyAdmin), checkCompanyAccess)
+  @UseMiddleware(authenticate, authenticate, checkCompanyAccess)
   async TimesheetCommentCreate(
     @Arg('input') args: TimesheetCommentCreateInput,
     @Ctx() ctx: IGraphqlContext
