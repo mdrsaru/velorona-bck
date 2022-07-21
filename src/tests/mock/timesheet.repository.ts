@@ -8,6 +8,7 @@ import { ICompanyRepository } from '../../interfaces/company.interface';
 import { IGetAllAndCountResult, IGetOptions, IPagingArgs } from '../../interfaces/paging.interface';
 import { IEntityID, IEntityRemove } from '../../interfaces/common.interface';
 import {
+  ITimesheetCountInput,
   ITimesheetCreateInput,
   ITimesheetRepository,
   ITimesheetUpdateInput,
@@ -43,4 +44,12 @@ export default class TimesheetRepository implements ITimesheetRepository {
   remove(args: IEntityRemove): Promise<Timesheet> {
     throw new Error('not implemented');
   }
+
+  getTimesheetByManager = async (args: ITimesheetCountInput): Promise<IGetAllAndCountResult<Timesheet>> => {
+    throw new Error('not implemented');
+  };
+
+  countTimesheet = async (args: ITimesheetCountInput): Promise<number> => {
+    throw new Error('not implemented');
+  };
 }
