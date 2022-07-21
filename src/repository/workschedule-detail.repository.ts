@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { EntityManager, getManager, getRepository } from 'typeorm';
+import { EntityManager, getManager, getRepository, In } from 'typeorm';
 import isNil from 'lodash/isNil';
 import isString from 'lodash/isString';
 import merge from 'lodash/merge';
@@ -16,6 +16,7 @@ import { isDate, isNumber, isArray } from 'lodash';
 import WorkscheduleDetail from '../entities/workschedule-details.entity';
 import { IWorkscheduleRepository } from '../interfaces/workschedule.interface';
 import {
+  IWorkscheduleDetailBulkRemoveInput,
   IWorkscheduleDetailCreateInput,
   IWorkscheduleDetailRepository,
   IWorkscheduleDetailUpdateInput,
@@ -133,4 +134,33 @@ export default class WorkscheduleDetailRepository
       throw err;
     }
   };
+
+  async bulkRemove(args: IWorkscheduleDetailBulkRemoveInput): Promise<WorkscheduleDetail[]> {
+    try {
+      const user_id = args?.user_id;
+      const ids = args.ids;
+      const workschedule_id = args.workschedule_id;
+
+      const workscheduleDetails = await this.repo
+        .createQueryBuilder(entities.workscheduleDetail)
+        .select(`${entities.workscheduleDetail}.id`)
+        .addSelect(`${entities.workscheduleDetail}.schedule_date`)
+        .andWhere(`${entities.workscheduleDetail}.id = ANY(:ids)`, { ids })
+        .andWhere('user_id = :user_id', { user_id })
+        .andWhere('workschedule_id = :workschedule_id', { workschedule_id })
+        .getMany();
+
+      let workscheduleDetailId: any = [];
+
+      if (workscheduleDetails.length > 0) {
+        workscheduleDetailId = workscheduleDetails.map((workscheduleDetail) => workscheduleDetail.id);
+      }
+
+      await this.repo.delete({ id: In(workscheduleDetailId) });
+
+      return workscheduleDetails;
+    } catch (err) {
+      throw err;
+    }
+  }
 }

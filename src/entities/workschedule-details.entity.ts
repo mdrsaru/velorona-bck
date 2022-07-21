@@ -120,3 +120,15 @@ export class WorkscheduleDetailQueryInput {
   @Field({ nullable: true })
   query: WorkscheduleDetailQuery;
 }
+
+@InputType()
+export class WorkscheduleDetailBulkDeleteInput {
+  @Field((type) => [String])
+  ids: string[];
+
+  @Field()
+  user_id: string;
+
+  @Field()
+  workschedule_id: string;
+}

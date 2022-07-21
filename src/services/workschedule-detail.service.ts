@@ -6,6 +6,7 @@ import Paging from '../utils/paging';
 import { IPaginationData, IPagingArgs } from '../interfaces/paging.interface';
 import { IEntityID, IEntityRemove, IErrorService, ILogger } from '../interfaces/common.interface';
 import {
+  IWorkscheduleDetailBulkRemoveInput,
   IWorkscheduleDetailCreateInput,
   IWorkscheduleDetailRepository,
   IWorkscheduleDetailService,
@@ -149,6 +150,43 @@ export default class WorkscheduleDetailService implements IWorkscheduleDetailSer
         startTime: found?.schedule_date,
         workschedule_id: found?.workschedule_id,
       });
+      return workscheduleDetail;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  bulkRemove = async (args: IWorkscheduleDetailBulkRemoveInput) => {
+    try {
+      const ids = args.ids;
+      const user_id = args.user_id;
+      const workschedule_id = args.workschedule_id;
+
+      const workscheduleDetail = await this.workscheduleDetailRepository.bulkRemove({
+        ids,
+        user_id,
+        workschedule_id,
+      });
+
+      let startDateObj: any = {};
+      workscheduleDetail.forEach((workscheduleDetail) => {
+        const startDate = moment(workscheduleDetail.schedule_date).startOf('isoWeek').format('YYYY-MM-DD');
+        startDateObj[startDate] = true;
+      });
+      try {
+        Object.keys(startDateObj).forEach(async (date) => {
+          await this.updateWorkschedule({
+            startTime: new Date(date),
+            id: workschedule_id,
+          });
+        });
+      } catch (err) {
+        this.logger.error({
+          operation: 'updateWorkschedule',
+          message: 'Error updating Workschedule while bulk delete',
+          data: err,
+        });
+      }
       return workscheduleDetail;
     } catch (err) {
       throw err;

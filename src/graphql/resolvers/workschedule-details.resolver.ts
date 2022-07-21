@@ -15,6 +15,7 @@ import authorize from '../middlewares/authorize';
 
 import { IGraphqlContext } from '../../interfaces/graphql.interface';
 import WorkscheduleDetail, {
+  WorkscheduleDetailBulkDeleteInput,
   WorkscheduleDetailCreateInput,
   WorkscheduleDetailPagingResult,
   WorkscheduleDetailQueryInput,
@@ -22,6 +23,7 @@ import WorkscheduleDetail, {
 } from '../../entities/workschedule-details.entity';
 import WorkscheduleDetailValidation from '../../validation/workschedule-detail.validation';
 import { IWorkscheduleDetailService } from '../../interfaces/workschedule-detail.interface';
+import workscheduleDetailValidation from '../../validation/workschedule-detail.validation';
 
 @injectable()
 @Resolver((of) => WorkscheduleDetail)
@@ -164,6 +166,45 @@ export class WorkscheduleDetailResolver {
       let workscheduleDetail: WorkscheduleDetail = await this.workscheduleDetailService.remove({ id });
 
       return workscheduleDetail;
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: false,
+      });
+    }
+  }
+
+  @Mutation((returns) => [WorkscheduleDetail])
+  @UseMiddleware(authenticate)
+  async WorkscheduleDetailBulkDelete(
+    @Arg('input') args: WorkscheduleDetailBulkDeleteInput,
+    @Ctx() ctx: IGraphqlContext
+  ): Promise<WorkscheduleDetail[]> {
+    const operation = 'WorkscheduleDetailBulkDelete';
+
+    try {
+      const ids = args.ids;
+      const user_id = args.user_id;
+      const workschedule_id = args.workschedule_id;
+
+      const schema = workscheduleDetailValidation.bulkDelete();
+      await this.joiService.validate({
+        schema,
+        input: {
+          ids,
+          user_id,
+          workschedule_id,
+        },
+      });
+      let WorkscheduleDetail: WorkscheduleDetail[] = await this.workscheduleDetailService.bulkRemove({
+        ids,
+        user_id,
+        workschedule_id,
+      });
+
+      return WorkscheduleDetail;
     } catch (err) {
       this.errorService.throwError({
         err,

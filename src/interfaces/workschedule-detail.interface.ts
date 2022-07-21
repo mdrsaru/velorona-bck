@@ -33,11 +33,18 @@ export interface IWorkscheduleDetailUpdateInput {
   user_id?: IWorkscheduleDetail['user_id'];
 }
 
+export interface IWorkscheduleDetailBulkRemoveInput {
+  ids: string[];
+  user_id: string;
+  workschedule_id: string;
+}
+
 export interface IWorkscheduleDetailService {
   getAllAndCount(filters?: any): Promise<IPaginationData<WorkscheduleDetail>>;
   create(args: IWorkscheduleDetailCreateInput): Promise<WorkscheduleDetail>;
   update(args: IWorkscheduleDetailUpdateInput): Promise<WorkscheduleDetail>;
   remove(args: IEntityRemove): Promise<WorkscheduleDetail>;
+  bulkRemove(args: IWorkscheduleDetailBulkRemoveInput): Promise<WorkscheduleDetail[]>;
 }
 
 export interface IWorkscheduleDetailRepository {
@@ -47,4 +54,5 @@ export interface IWorkscheduleDetailRepository {
   create(args: IWorkscheduleDetailCreateInput): Promise<WorkscheduleDetail>;
   update(args: IWorkscheduleDetailUpdateInput): Promise<WorkscheduleDetail>;
   remove(args: IEntityRemove): Promise<WorkscheduleDetail>;
+  bulkRemove(args: IWorkscheduleDetailBulkRemoveInput): Promise<WorkscheduleDetail[]>;
 }
