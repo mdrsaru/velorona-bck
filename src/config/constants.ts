@@ -67,6 +67,7 @@ export const entities = {
   workscheduleDetail: 'workschedule_details',
   workscheduleTimeDetail: 'workschedule_time_details',
   subscriptionPayments: 'subscription_payments',
+  timesheetComments: 'timesheet_comments',
 };
 
 export enum CompanyStatus {
@@ -172,6 +173,10 @@ export const emailSetting = {
     subject: process.env.INVOICE_EMAIL_SUBJECT || '',
     body: process.env.INVOICE_EMAIL_BODY || '',
   },
+  unlockTimesheet: {
+    subject: process.env.UNLOCK_TIMESHEET_EMAIL_SUBJECT || '',
+    body: process.env.UNLOCK_TIMESHEET_EMAIL_BODY || '',
+  },
 };
 
 export const events = {
@@ -184,6 +189,7 @@ export const events = {
   onCheckOut: 'onCheckOut',
   onTimeSheetApproveOrReject: 'onTimeSheetApproveOrReject',
   updateCompanySubscriptionUsage: 'updateCompanySubscriptionUsage',
+  onTimesheetUnlock: 'onTimesheetUnlock',
 };
 
 export const stripeSetting = {

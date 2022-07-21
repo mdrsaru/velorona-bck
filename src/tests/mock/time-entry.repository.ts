@@ -22,6 +22,7 @@ import {
   IMarkApprovedTimeEntriesWithInvoice,
   ITimeEntryHourlyRateInput,
   ITotalDurationInput,
+  ITimeEntryUnlockInput,
 } from '../../interfaces/time-entry.interface';
 import { timeEntries } from './data';
 import { generateUuid } from './utils';
@@ -170,6 +171,10 @@ export default class TimeEntryRepository implements ITimeEntryRepository {
   };
 
   totalDuration(args: ITotalDurationInput): Promise<number> {
+    throw new Error('Not implemented');
+  }
+
+  unlockTimeEntries(args: ITimeEntryUnlockInput): Promise<boolean> {
     throw new Error('Not implemented');
   }
 }

@@ -3,10 +3,15 @@ import { TYPES } from '../types';
 import { events } from '../config/constants';
 import container from '../inversify.config';
 
-import { ILogger } from '../interfaces/common.interface';
-import { IActivityLogRepository } from '../interfaces/activity-log.interface';
+import { emailSetting } from '../config/constants';
+import { IEmailService, ITemplateService, ILogger } from '../interfaces/common.interface';
+import ActivityLogRepository from '../repository/activity-log.repository';
 import { IUserRepository } from '../interfaces/user.interface';
 import moment from 'moment';
+
+import { ITimeEntryRepository } from '../interfaces/time-entry.interface';
+import { IActivityLogRepository } from '../interfaces/activity-log.interface';
+import { ITimesheetRepository } from '../interfaces/timesheet.interface';
 
 type TimeEntryStop = {
   created_by: string;
@@ -108,8 +113,7 @@ timeEntryEmitter.on(events.onCheckIn, async (args: CheckInInput) => {
   });
 
   try {
-    const activityLog = await activityLogRepository.create(activityLogData);
-    console.log(activityLog);
+    await activityLogRepository.create(activityLogData);
     logger.info({
       operation,
       message: `Checked in by user`,
@@ -161,8 +165,7 @@ timeEntryEmitter.on(events.onCheckOut, async (args: CheckoutInput) => {
   });
 
   try {
-    const activityLog = await activityLogRepository.create(activityLogData);
-    console.log(activityLog);
+    await activityLogRepository.create(activityLogData);
     logger.info({
       operation,
       message: `Checked in by user`,
@@ -179,4 +182,73 @@ timeEntryEmitter.on(events.onCheckOut, async (args: CheckoutInput) => {
   }
 });
 
-export default timesheetEmitter;
+type TimesheetUnlock = {
+  timesheet_id: string;
+};
+
+timeEntryEmitter.on(events.onTimesheetUnlock, async (args: TimesheetUnlock) => {
+  const operation = events.onTimesheetUnlock;
+
+  const timesheetRepository: ITimesheetRepository = container.get<ITimesheetRepository>(TYPES.TimesheetRepository);
+  const logger = container.get<ILogger>(TYPES.Logger);
+  logger.init('timeEntryEmitter.subscriber');
+
+  const emailService: IEmailService = container.get<IEmailService>(TYPES.EmailService);
+  const handlebarsService: ITemplateService = container.get<ITemplateService>(TYPES.HandlebarsService);
+
+  let emailBody: string = emailSetting.unlockTimesheet.body;
+
+  try {
+    const timesheet_id = args.timesheet_id;
+    const timesheet = await timesheetRepository.getById({
+      id: timesheet_id,
+      select: ['id', 'weekStartDate', 'weekEndDate'],
+      relations: ['user'],
+    });
+
+    if (!timesheet) {
+      return logger.info({
+        operation,
+        message: `User Email not found for sending timesheet unlock email`,
+        data: {},
+      });
+    }
+
+    const userHtml = handlebarsService.compile({
+      template: emailBody,
+      data: {
+        week: `${timesheet.weekStartDate} - ${timesheet.weekEndDate}`,
+      },
+    });
+
+    emailService
+      .sendEmail({
+        to: timesheet.user.email as string,
+        from: emailSetting.fromEmail,
+        subject: emailSetting.unlockTimesheet.subject,
+        html: userHtml,
+      })
+      .then((response) => {
+        logger.info({
+          operation,
+          message: `Email response for ${timesheet.user.email}`,
+          data: response,
+        });
+      })
+      .catch((err) => {
+        logger.error({
+          operation,
+          message: 'Error sending unlock email',
+          data: err,
+        });
+      });
+  } catch (err) {
+    logger.error({
+      operation,
+      message: 'Error sending unlock email',
+      data: err,
+    });
+  }
+});
+
+export default timeEntryEmitter;

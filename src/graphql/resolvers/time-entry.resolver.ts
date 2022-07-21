@@ -15,13 +15,15 @@ import TimeEntry, {
   TimeEntryBulkDeleteInput,
   TimeEntryApproveRejectInput,
   TotalDurationCountInput,
+  TimeEntryUnlockInput,
 } from '../../entities/time-entry.entity';
 import Paging from '../../utils/paging';
 import authenticate from '../middlewares/authenticate';
 import { checkCompanyAccess } from '../middlewares/company';
 import authorize from '../middlewares/authorize';
 import TimeEntryValidation from '../../validation/time-entry.validation';
-import { Role as RoleEnum } from '../../config/constants';
+import { Role as RoleEnum, events } from '../../config/constants';
+import timeEntryEmitter from '../../subscribers/timeEntry.subscriber';
 
 import { IErrorService, IJoiService } from '../../interfaces/common.interface';
 import { IPaginationData } from '../../interfaces/paging.interface';
@@ -356,6 +358,44 @@ export class TimeEntryResolver {
         ids,
         approvalStatus,
         approver_id,
+        timesheet_id,
+      });
+
+      return timeEntry;
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: false,
+      });
+    }
+  }
+
+  @Mutation((returns) => Boolean)
+  @UseMiddleware(
+    authenticate,
+    authorize(RoleEnum.CompanyAdmin, RoleEnum.SuperAdmin, RoleEnum.TaskManager),
+    checkCompanyAccess
+  )
+  async TimeEntriesUnlock(@Arg('input') args: TimeEntryUnlockInput, @Ctx() ctx: IGraphqlContext): Promise<boolean> {
+    const operation = 'TimeEntriesUnlock';
+
+    try {
+      const user_id = args.user_id;
+      const timesheet_id = args.timesheet_id;
+      const statusToUnlock = args.statusToUnlock;
+      const company_id = args.company_id;
+
+      const timeEntry = await this.timeEntryRepository.unlockTimeEntries({
+        company_id,
+        timesheet_id,
+        user_id,
+        statusToUnlock,
+      });
+
+      // Emit onTimesheetUnlock event
+      timeEntryEmitter.emit(events.onTimesheetUnlock, {
         timesheet_id,
       });
 
