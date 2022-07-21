@@ -69,6 +69,10 @@ export interface ITimesheetUpdateInput {
   lastSubmittedAt?: ITimesheet['lastSubmittedAt'];
 }
 
+export interface ITimesheetCountInput {
+  company_id: string;
+  manager_id: string;
+}
 export interface ITimesheetRepository {
   getAllAndCount(args: IPagingArgs): Promise<IGetAllAndCountResult<Timesheet>>;
   getAll(args: IGetOptions): Promise<Timesheet[]>;
@@ -76,6 +80,8 @@ export interface ITimesheetRepository {
   create(args: ITimesheetCreateInput): Promise<Timesheet>;
   update(args: ITimesheetUpdateInput): Promise<Timesheet>;
   remove(args: IEntityRemove): Promise<Timesheet>;
+  countTimesheet(args: ITimesheetCountInput): Promise<number>;
+  getTimesheetByManager(args: ITimesheetCountInput): Promise<IGetAllAndCountResult<Timesheet>>;
 }
 
 export interface ITimesheetService {

@@ -18,12 +18,13 @@ import Timesheet, {
   TimesheetQueryInput,
   TimesheetApproveRejectInput,
   TimesheetSubmitInput,
+  TimesheetCountInput,
 } from '../../entities/timesheet.entity';
 
 import { IErrorService, IJoiService } from '../../interfaces/common.interface';
 import { IGraphqlContext } from '../../interfaces/graphql.interface';
 import { IPaginationData } from '../../interfaces/paging.interface';
-import { ITimesheetService } from '../../interfaces/timesheet.interface';
+import { ITimesheetRepository, ITimesheetService } from '../../interfaces/timesheet.interface';
 import { ITimeEntryRepository } from '../../interfaces/time-entry.interface';
 
 @injectable()
@@ -33,17 +34,20 @@ export class TimesheetResolver {
   private timesheetService: ITimesheetService;
   private joiService: IJoiService;
   private timeEntryRepository: ITimeEntryRepository;
+  private timesheetRepository: ITimesheetRepository;
   private errorService: IErrorService;
 
   constructor(
     @inject(TYPES.TimesheetService) _timesheetService: ITimesheetService,
     @inject(TYPES.JoiService) _joiService: IJoiService,
     @inject(TYPES.ErrorService) _errorService: IErrorService,
-    @inject(TYPES.TimeEntryRepository) _timeEntryRepository: ITimeEntryRepository
+    @inject(TYPES.TimeEntryRepository) _timeEntryRepository: ITimeEntryRepository,
+    @inject(TYPES.TimesheetRepository) _timesheetRepository: ITimesheetRepository
   ) {
     this.timesheetService = _timesheetService;
     this.joiService = _joiService;
     this.timeEntryRepository = _timeEntryRepository;
+    this.timesheetRepository = _timesheetRepository;
     this.errorService = _errorService;
   }
 
@@ -60,6 +64,44 @@ export class TimesheetResolver {
 
       let result: IPaginationData<Timesheet> = await this.timesheetService.getAllAndCount(pagingArgs);
 
+      return result;
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
+    }
+  }
+
+  @Query((returns) => [Timesheet])
+  @UseMiddleware(authenticate, checkCompanyAccess)
+  async TimesheetByManager(
+    @Arg('input', { nullable: true }) args: TimesheetCountInput,
+    @Ctx() ctx: any
+  ): Promise<Timesheet[]> {
+    const operation = 'TimesheetByManager';
+    try {
+      let result: any = await this.timesheetRepository.getTimesheetByManager(args);
+      console.log(result, '123');
+      return result;
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
+    }
+  }
+
+  @Query((returns) => Number)
+  @UseMiddleware(authenticate, checkCompanyAccess)
+  async TimesheetCount(@Arg('input', { nullable: true }) args: TimesheetCountInput, @Ctx() ctx: any): Promise<Number> {
+    const operation = 'User';
+    try {
+      let result: Number = await this.timesheetRepository.countTimesheet(args);
       return result;
     } catch (err) {
       this.errorService.throwError({

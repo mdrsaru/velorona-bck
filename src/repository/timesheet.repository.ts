@@ -1,7 +1,7 @@
 import { inject, injectable } from 'inversify';
 import { isArray, isNil, isString, merge } from 'lodash';
 import moment from 'moment';
-import { Brackets, getRepository, In, SelectQueryBuilder } from 'typeorm';
+import { Brackets, EntityManager, getManager, getRepository, In, SelectQueryBuilder } from 'typeorm';
 
 import strings from '../config/strings';
 import { TYPES } from '../types';
@@ -13,13 +13,23 @@ import { IClientRepository } from '../interfaces/client.interface';
 import { ICompanyRepository } from '../interfaces/company.interface';
 import { IGetAllAndCountResult, IGetOptions } from '../interfaces/paging.interface';
 import { IUserRepository } from '../interfaces/user.interface';
-import { ITimesheetCreateInput, ITimesheetRepository, ITimesheetUpdateInput } from '../interfaces/timesheet.interface';
+import {
+  ITimesheetCreateInput,
+  ITimesheetRepository,
+  ITimesheetUpdateInput,
+  ITimesheetCountInput,
+} from '../interfaces/timesheet.interface';
+import { entities } from '../config/db/ormconfig';
+// import { entities } from '../config/constants';
+import timesheet from '../config/inversify/timesheet';
 
 @injectable()
 export default class TimesheetRepository extends BaseRepository<Timesheet> implements ITimesheetRepository {
   private userRepository: IUserRepository;
   private clientRepository: IClientRepository;
   private companyRepository: ICompanyRepository;
+  private manager: EntityManager;
+
   constructor(
     @inject(TYPES.UserRepository) userRepository: IUserRepository,
     @inject(TYPES.ClientRepository) _clientRepository: IClientRepository,
@@ -29,6 +39,7 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
     this.userRepository = userRepository;
     this.clientRepository = _clientRepository;
     this.companyRepository = _companyRepository;
+    this.manager = getManager();
   }
 
   getAllAndCount = async (args: IGetOptions): Promise<IGetAllAndCountResult<Timesheet>> => {
@@ -73,6 +84,59 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
         count,
         rows,
       };
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  getTimesheetByManager = async (args: ITimesheetCountInput): Promise<IGetAllAndCountResult<Timesheet>> => {
+    try {
+      let company_id = args.company_id;
+      let manager_id = args.manager_id;
+
+      let queryResult;
+
+      queryResult = await this.manager.query(
+        `
+        Select 
+        t.id, 
+        TO_CHAR(week_start_date, 'YYYY-MM-DD') as "weekStartDate",
+        TO_CHAR(week_end_date, 'YYYY-MM-DD') as "weekEndDate",
+        duration 
+        FROM timesheet as t
+        INNER JOIN Users as u ON t.user_id = u.id
+        where u.manager_id = $1
+        and t.company_id = $2
+        
+        `,
+        [manager_id, company_id]
+      );
+
+      return queryResult ?? [];
+    } catch (err) {
+      throw err;
+    }
+  };
+  countTimesheet = async (args: ITimesheetCountInput): Promise<number> => {
+    try {
+      let company_id = args.company_id;
+      let manager_id = args.manager_id;
+
+      let queryResult;
+
+      queryResult = await this.manager.query(
+        `
+        Select 
+        count(*) FROM timesheet as t
+        INNER JOIN Users as u ON t.user_id = u.id
+        where u.manager_id = $1
+        and t.company_id = $2
+        and t.approver_id is NULL
+        
+        `,
+        [manager_id, company_id]
+      );
+      return queryResult?.[0]?.count ?? 0;
     } catch (err) {
       throw err;
     }

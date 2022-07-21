@@ -6,7 +6,6 @@ import { PagingInput, PagingResult } from './common.entity';
 import { workscheduleDetail } from '../config/db/columns';
 import User from './user.entity';
 import Workschedule from './workschedule.entity';
-import { string } from 'joi';
 import WorkscheduleTimeDetail from './workschedule-time-details.entity';
 
 const indexPrefix = 'workschedule';
@@ -105,6 +104,12 @@ export class WorkscheduleDetailQuery {
 
   @Field({ nullable: true })
   workschedule_id: string;
+
+  @Field({ nullable: true })
+  schedule_date: Date;
+
+  @Field({ nullable: true })
+  user_id: string;
 }
 
 @InputType()

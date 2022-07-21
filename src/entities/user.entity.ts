@@ -362,6 +362,9 @@ export class UserCountInput {
 
   @Field({ nullable: true, defaultValue: false })
   archived: string;
+
+  @Field({ nullable: true })
+  manager_id: string;
 }
 
 @InputType()

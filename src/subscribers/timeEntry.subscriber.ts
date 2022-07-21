@@ -1,13 +1,13 @@
 import { timesheetEmitter, timeEntryEmitter } from './emitters';
 import { TYPES } from '../types';
-import { events, TimesheetStatus, TimeEntryApprovalStatus } from '../config/constants';
+import { events } from '../config/constants';
 import container from '../inversify.config';
 
 import { emailSetting } from '../config/constants';
 import { IEmailService, ITemplateService, ILogger } from '../interfaces/common.interface';
 import ActivityLogRepository from '../repository/activity-log.repository';
 import { IUserRepository } from '../interfaces/user.interface';
-import activityLog from '../config/inversify/activity-log';
+import moment from 'moment';
 
 import { ITimeEntryRepository } from '../interfaces/time-entry.interface';
 import { IActivityLogRepository } from '../interfaces/activity-log.interface';
@@ -64,6 +64,111 @@ timeEntryEmitter.on(events.onTimeEntryStop, async (args: TimeEntryStop) => {
     logger.info({
       operation,
       message: `TimeEntry stopped by user`,
+      data: activityLogData,
+    });
+  } catch (err) {
+    logger.error({
+      operation,
+      message: 'Error creating activity Log',
+      data: {
+        err,
+      },
+    });
+  }
+});
+
+type CheckInInput = {
+  created_by: string;
+  company_id: string;
+  startTime: Date;
+  project: string;
+};
+
+timeEntryEmitter.on(events.onCheckIn, async (args: CheckInInput) => {
+  const operation = events.onCheckIn;
+
+  const activityLogRepository: IActivityLogRepository = container.get<IActivityLogRepository>(
+    TYPES.ActivityLogRepository
+  );
+  const logger = container.get<ILogger>(TYPES.Logger);
+  logger.init('timEntry.subscriber');
+
+  const created_by = args.created_by;
+  const company_id = args.company_id;
+  const startTime = moment(args.startTime).format('ddd MMM DD HH:MM');
+  const project = args.project;
+
+  let message = ` Checked in at ${startTime} on Project ${project}`;
+
+  let activityLogData = {
+    message: message,
+    type: 'CheckIn',
+    company_id: company_id,
+    user_id: created_by,
+  };
+  logger.info({
+    operation,
+    message: `TimeEntry emitter ${events.onCheckIn} started`,
+    data: activityLogData,
+  });
+
+  try {
+    await activityLogRepository.create(activityLogData);
+    logger.info({
+      operation,
+      message: `Checked in by user`,
+      data: activityLogData,
+    });
+  } catch (err) {
+    logger.error({
+      operation,
+      message: 'Error creating activity Log',
+      data: {
+        err,
+      },
+    });
+  }
+});
+
+type CheckoutInput = {
+  created_by: string;
+  company_id: string;
+  endTime: Date;
+  duration: number;
+};
+
+timeEntryEmitter.on(events.onCheckOut, async (args: CheckoutInput) => {
+  const operation = events.onCheckIn;
+
+  const activityLogRepository: IActivityLogRepository = container.get<IActivityLogRepository>(
+    TYPES.ActivityLogRepository
+  );
+  const logger = container.get<ILogger>(TYPES.Logger);
+  logger.init('timEntry.subscriber');
+
+  const created_by = args.created_by;
+  const company_id = args.company_id;
+  const endTime = moment(args.endTime).format('ddd MMM DD HH:MM');
+
+  let message = ` Checked out at ${endTime}`;
+
+  let activityLogData = {
+    message: message,
+    type: 'CheckOut',
+    company_id: company_id,
+    user_id: created_by,
+  };
+  logger.info({
+    operation,
+    message: `TimeEntry emitter ${events.onCheckIn} started`,
+    data: activityLogData,
+  });
+
+  try {
+    await activityLogRepository.create(activityLogData);
+    logger.info({
+      operation,
+      message: `Checked in by user`,
       data: activityLogData,
     });
   } catch (err) {
