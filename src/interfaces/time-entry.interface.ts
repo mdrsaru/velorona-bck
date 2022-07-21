@@ -168,6 +168,14 @@ export interface ITotalDurationInput {
   user_id?: string;
   manager_id?: string;
 }
+
+export interface ITimeEntryUnlockInput {
+  timesheet_id: string;
+  company_id: string;
+  user_id: string;
+  statusToUnlock: TimeEntryApprovalStatus;
+}
+
 export interface ITimeEntryRepository {
   getAllAndCount(args: IPagingArgs): Promise<IGetAllAndCountResult<TimeEntry>>;
   getAll(args: any): Promise<TimeEntry[]>;
@@ -211,6 +219,7 @@ export interface ITimeEntryRepository {
    */
   updateHourlyRate(args: ITimeEntryHourlyRateInput): Promise<boolean>;
   totalDuration(args: ITotalDurationInput): Promise<number>;
+  unlockTimeEntries(args: ITimeEntryUnlockInput): Promise<boolean>;
 }
 
 export interface ITimeEntryService {

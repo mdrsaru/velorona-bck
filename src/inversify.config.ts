@@ -26,6 +26,7 @@ import attachedTimesheet from './config/inversify/attached-timesheet';
 import workscheduleDetail from './config/inversify/workschedule-detail';
 import workscheduleTimeDetail from './config/inversify/workschedule-time-detail';
 import subscriptionPayment from './config/inversify/subscription-payment';
+import timesheetComment from './config/inversify/timesheet-comment';
 
 const container = new Container({ skipBaseClassChecks: true });
 
@@ -65,6 +66,7 @@ container.load(
   workscheduleDetail,
   workscheduleTimeDetail,
   subscriptionPayment,
+  timesheetComment,
 );
 
 export default container;

@@ -6,7 +6,7 @@ import Paging from '../utils/paging';
 import * as apiError from '../utils/api-error';
 import TimeEntry from '../entities/time-entry.entity';
 import { TimesheetStatus, events, TimeEntryApprovalStatus } from '../config/constants';
-import timesheetEmitter from '../subscribers/timeEntry.subscriber';
+import timesheetEmitter from '../subscribers/timesheet.subscriber';
 
 import { IEntityRemove, IErrorService, ILogger, Maybe } from '../interfaces/common.interface';
 import { IPagingArgs } from '../interfaces/paging.interface';
