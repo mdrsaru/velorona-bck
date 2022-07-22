@@ -23,6 +23,7 @@ import {
   ITimeEntryHourlyRateInput,
   ITotalDurationInput,
   ITimeEntryUnlockInput,
+  ITimeEntryBulkUpdateInput,
 } from '../../interfaces/time-entry.interface';
 import { timeEntries } from './data';
 import { generateUuid } from './utils';
@@ -175,6 +176,10 @@ export default class TimeEntryRepository implements ITimeEntryRepository {
   }
 
   unlockTimeEntries(args: ITimeEntryUnlockInput): Promise<boolean> {
+    throw new Error('Not implemented');
+  }
+
+  bulkUpdate(args: ITimeEntryBulkUpdateInput): Promise<boolean> {
     throw new Error('Not implemented');
   }
 }
