@@ -16,6 +16,7 @@ import TimeEntry, {
   TimeEntryApproveRejectInput,
   TotalDurationCountInput,
   TimeEntryUnlockInput,
+  TimeEntryBulkUpdateInput,
 } from '../../entities/time-entry.entity';
 import Paging from '../../utils/paging';
 import authenticate from '../middlewares/authenticate';
@@ -400,6 +401,38 @@ export class TimeEntryResolver {
       });
 
       return timeEntry;
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: false,
+      });
+    }
+  }
+
+  @Mutation((returns) => Boolean, { description: 'Bulk updates time entries of a day' })
+  @UseMiddleware(authenticate, authorize(RoleEnum.Employee, RoleEnum.SuperAdmin))
+  async TimeEntriesBulkUpdate(
+    @Arg('input') args: TimeEntryBulkUpdateInput,
+    @Ctx() ctx: IGraphqlContext
+  ): Promise<boolean> {
+    const operation = 'TimeEntriesBulkUpdateInput';
+
+    try {
+      const date = args.date;
+      const timesheet_id = args.timesheet_id;
+      const duration = args.duration;
+      const project_id = args.project_id;
+
+      const updated = await this.timeEntryRepository.bulkUpdate({
+        date,
+        timesheet_id,
+        duration,
+        project_id,
+      });
+
+      return updated;
     } catch (err) {
       this.errorService.throwError({
         err,

@@ -176,6 +176,13 @@ export interface ITimeEntryUnlockInput {
   statusToUnlock: TimeEntryApprovalStatus;
 }
 
+export interface ITimeEntryBulkUpdateInput {
+  date: string;
+  timesheet_id: string;
+  duration: number;
+  project_id: string;
+}
+
 export interface ITimeEntryRepository {
   getAllAndCount(args: IPagingArgs): Promise<IGetAllAndCountResult<TimeEntry>>;
   getAll(args: any): Promise<TimeEntry[]>;
@@ -220,6 +227,7 @@ export interface ITimeEntryRepository {
   updateHourlyRate(args: ITimeEntryHourlyRateInput): Promise<boolean>;
   totalDuration(args: ITotalDurationInput): Promise<number>;
   unlockTimeEntries(args: ITimeEntryUnlockInput): Promise<boolean>;
+  bulkUpdate(args: ITimeEntryBulkUpdateInput): Promise<boolean>;
 }
 
 export interface ITimeEntryService {

@@ -379,6 +379,7 @@ export default class TimeEntryService implements ITimeEntryService {
           weekStartDate,
           weekEndDate,
         },
+        select: ['id'],
       });
 
       let id: Maybe<string>;

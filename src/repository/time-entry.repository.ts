@@ -21,6 +21,7 @@ import BaseRepository from './base.repository';
 import { ICompanyRepository } from '../interfaces/company.interface';
 import { IProjectRepository } from '../interfaces/project.interface';
 import { IUserPayRateRepository } from '../interfaces/user-payrate.interface';
+import { ITimesheetRepository } from '../interfaces/timesheet.interface';
 import {
   ITimeEntryCreateInput,
   ITimeEntryRepository,
@@ -38,6 +39,7 @@ import {
   ITimeEntryHourlyRateInput,
   ITotalDurationInput,
   ITimeEntryUnlockInput,
+  ITimeEntryBulkUpdateInput,
 } from '../interfaces/time-entry.interface';
 import { IUserRepository } from '../interfaces/user.interface';
 import { IGetOptions, IGetAllAndCountResult } from '../interfaces/paging.interface';
@@ -55,19 +57,22 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
   private companyRepository: ICompanyRepository;
   private projectRepository: IProjectRepository;
   private userPayRateRepository: IUserPayRateRepository;
+  private timesheetRepository: ITimesheetRepository;
   private manager: EntityManager;
 
   constructor(
     @inject(TYPES.CompanyRepository) _companyRepository: ICompanyRepository,
     @inject(TYPES.ProjectRepository) _projectRepository: IProjectRepository,
     @inject(TYPES.UserRepository) userRepository: IUserRepository,
-    @inject(TYPES.UserPayRateRepository) _userPayRateRepository: IUserPayRateRepository
+    @inject(TYPES.UserPayRateRepository) _userPayRateRepository: IUserPayRateRepository,
+    @inject(TYPES.TimesheetRepository) _timesheetRepository: ITimesheetRepository
   ) {
     super(getRepository(TimeEntry));
     this.userRepository = userRepository;
     this.projectRepository = _projectRepository;
     this.companyRepository = _companyRepository;
     this.userPayRateRepository = _userPayRateRepository;
+    this.timesheetRepository = _timesheetRepository;
     this.manager = getManager();
   }
 
@@ -711,6 +716,139 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
     } catch (err) {
       throw err;
     }
+  };
+
+  bulkUpdate = async (args: ITimeEntryBulkUpdateInput): Promise<boolean> => {
+    try {
+      const duration = args.duration;
+      const project_id = args.project_id;
+      const date = args.date;
+      const timesheet_id = args.timesheet_id;
+
+      const timeEntries = await this.repo
+        .createQueryBuilder(entities.timeEntry)
+        .select(['time_entries.id', 'time_entries.startTime', 'time_entries.endTime', 'time_entries.duration'])
+        .where('project_id = :project_id', { project_id })
+        .andWhere('approval_status = :approvalStatus', { approvalStatus: 'Pending' })
+        .andWhere('timesheet_id = :timesheet_id', { timesheet_id })
+        .andWhere('start_time >= :startTime', { startTime: date + 'T00:00:00' })
+        .andWhere('end_time <= :endTime', { endTime: date + 'T23:59:59' }) // using start_time for the end_time
+        .orderBy('end_time', 'ASC')
+        .getMany();
+
+      const totalDuration = timeEntries.reduce((acc, current) => {
+        acc += current.duration;
+        return acc;
+      }, 0);
+
+      const timesheet = await this.timesheetRepository.getById({
+        id: timesheet_id,
+        select: ['duration'],
+      });
+
+      if (duration <= totalDuration) {
+        await this.updateLowDuration({
+          entries: timeEntries,
+          duration,
+        });
+
+        /**
+         * Update the total timesheet duration
+         * Subtract the remaining duration from the total timesheet duration
+         */
+        const remainingDuration = totalDuration - duration;
+        if (remainingDuration >= 0 && timesheet) {
+          const timesheetDuration = timesheet.duration - remainingDuration;
+          await this.timesheetRepository.update({
+            id: timesheet_id,
+            duration: timesheetDuration,
+          });
+        }
+      } else if (duration > totalDuration) {
+        await this.updateHighDuration({
+          entries: timeEntries,
+          duration: duration - totalDuration,
+        });
+
+        /**
+         * Update the total timesheet duration
+         * Add the additional duration to the total timesheet duration
+         */
+        const additionalDuration = duration - totalDuration;
+        if (additionalDuration >= 0 && timesheet) {
+          const timesheetDuration = timesheet.duration + additionalDuration;
+          const t = await this.timesheetRepository.update({
+            id: timesheet_id,
+            duration: timesheetDuration,
+          });
+        }
+      }
+
+      return true;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  /**
+   * Update entries with the duration less than that of the total duration
+   */
+  updateLowDuration = (args: { entries: TimeEntry[]; duration: number }) => {
+    try {
+      const entries = args.entries;
+      const entriesToUpdate: any = [];
+      let remainingDuration = args.duration;
+
+      for (let entry of entries) {
+        if (entry.duration <= remainingDuration) {
+          remainingDuration -= entry.duration;
+          if (remainingDuration < 0) {
+            remainingDuration = 0;
+          }
+        } else {
+          entriesToUpdate.push({
+            id: entry.id,
+            startTime: entry.startTime,
+            endTime: entry.startTime,
+            duration: 0,
+          });
+        }
+      }
+
+      if (entriesToUpdate.length) {
+        const endTime = moment(entriesToUpdate[0].endTime).utc().format('YYYY-MM-DDTHH:mm:ss');
+        entriesToUpdate[0].duration = remainingDuration;
+        entriesToUpdate[0].endTime = moment(entriesToUpdate[0].endTime)
+          .utc()
+          .add(remainingDuration, 'seconds')
+          .toDate();
+      }
+
+      return this.repo.save(entriesToUpdate);
+    } catch (err) {}
+  };
+
+  /**
+   * Update entries with the duration greater than that of the total duration
+   */
+  updateHighDuration = (args: { entries: TimeEntry[]; duration: number }) => {
+    try {
+      const entries = args.entries;
+      const duration = args.duration;
+      const length = entries.length;
+
+      if (length) {
+        const lastEntry = entries[length - 1];
+        if (lastEntry.endTime) {
+          const endTime = moment(lastEntry.endTime).utc().format('YYYY-MM-DDTHH:mm:ss');
+          lastEntry.endTime = moment(endTime).add(duration, 'seconds').toDate();
+          lastEntry.duration += duration;
+          return this.repo.save(lastEntry);
+        }
+      }
+
+      return entries;
+    } catch (err) {}
   };
 }
 
