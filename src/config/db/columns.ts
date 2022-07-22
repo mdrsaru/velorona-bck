@@ -105,6 +105,7 @@ export const attachedTimesheets = {
   created_by: 'created_by',
   attachment_id: 'attachment_id',
   timesheet_id: 'timesheet_id',
+  invoice_id: 'invoice_id',
 };
 
 export const workschedule = {
