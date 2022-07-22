@@ -187,7 +187,7 @@ export default class ProjectRepository extends BaseRepository<Project> implement
           [company_id, archived, status, user_id]
         );
       }
-      console.log(queryResult);
+
       return queryResult?.[0]?.count ?? 0;
     } catch (err) {
       throw err;

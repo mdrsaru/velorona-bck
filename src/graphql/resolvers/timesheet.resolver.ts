@@ -82,9 +82,9 @@ export class TimesheetResolver {
     @Ctx() ctx: any
   ): Promise<Timesheet[]> {
     const operation = 'TimesheetByManager';
+
     try {
       let result: any = await this.timesheetRepository.getTimesheetByManager(args);
-      console.log(result, '123');
       return result;
     } catch (err) {
       this.errorService.throwError({

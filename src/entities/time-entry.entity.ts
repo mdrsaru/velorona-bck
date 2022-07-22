@@ -328,3 +328,18 @@ export class TotalDurationCountInput {
   @Field({ nullable: true })
   manager_id: string;
 }
+
+@InputType()
+export class TimeEntryBulkUpdateInput {
+  @Field()
+  date: string;
+
+  @Field()
+  timesheet_id: string;
+
+  @Field()
+  duration: number;
+
+  @Field()
+  project_id: string;
+}
