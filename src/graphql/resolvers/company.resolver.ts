@@ -177,7 +177,7 @@ export class CompanyResolver {
   }
 
   @Mutation((returns) => Company)
-  @UseMiddleware(authenticate, authorize(RoleEnum.SuperAdmin))
+  @UseMiddleware(authenticate, authorize(RoleEnum.SuperAdmin, RoleEnum.CompanyAdmin))
   async CompanyUpdate(@Arg('input') args: CompanyUpdateInput, @Ctx() ctx: any): Promise<Company> {
     const operation = 'CompanyUpdate';
 
