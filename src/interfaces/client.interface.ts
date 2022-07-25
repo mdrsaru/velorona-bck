@@ -2,7 +2,7 @@ import { IPagingArgs, IGetAllAndCountResult, IPaginationData, IGetOptions } from
 import { IEntityRemove, IEntityID, ISingleEntityQuery, ICountInput } from './common.interface';
 import { IAddressInput } from './address.interface';
 import Client from '../entities/client.entity';
-import { ClientStatus } from '../config/constants';
+import { ClientStatus, InvoiceSchedule } from '../config/constants';
 
 export interface IClient {
   id: string;
@@ -14,6 +14,8 @@ export interface IClient {
   archived: boolean;
   address_id: string;
   company_id: string;
+  invoiceSchedule: InvoiceSchedule;
+  invoice_payment_config_id: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -27,6 +29,8 @@ export interface IClientCreateInput {
   archived?: IClient['archived'];
   company_id: IClient['company_id'];
   address: IAddressInput;
+  invoiceSchedule?: IClient['invoiceSchedule'];
+  invoice_payment_config_id?: IClient['invoice_payment_config_id'];
 }
 
 export interface IClientUpdateInput {
@@ -36,6 +40,8 @@ export interface IClientUpdateInput {
   archived?: IClient['archived'];
   phone?: IClient['phone'];
   address: IAddressInput;
+  invoiceSchedule?: IClient['invoiceSchedule'];
+  invoice_payment_config_id?: IClient['invoice_payment_config_id'];
 }
 
 export interface IClientCountInput extends ICountInput {}

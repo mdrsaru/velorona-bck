@@ -13,6 +13,7 @@ import Client from '../../../entities/client.entity';
 import Project from '../../../entities/project.entity';
 import Task from '../../../entities/task.entity';
 import UserClient from '../../../entities/user-client.entity';
+import InvoicePaymentConfig from '../../../entities/invoice-payment-config.entity';
 import {
   Role as RoleEnum,
   CompanyStatus,
@@ -100,8 +101,22 @@ for (let i = 0; i < 10; i++) {
   projects.push(project);
 }
 
+const paymentDays = [7, 14, 30, 60];
+const paymentConfig: any = [];
+for (const days of paymentDays) {
+  paymentConfig.push({
+    name: `NET ${days}`,
+    days,
+  });
+}
+
 export default class InitialDatabaseSeed implements Seeder {
   public async run(factory: Factory, connection: Connection): Promise<void> {
+    // Create invoice payment config
+    for (let config of paymentConfig) {
+      await factory(InvoicePaymentConfig)().create(config);
+    }
+
     let createdRoles: any = [];
 
     for (let role of roles) {

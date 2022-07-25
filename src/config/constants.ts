@@ -68,6 +68,7 @@ export const entities = {
   workscheduleTimeDetail: 'workschedule_time_details',
   subscriptionPayments: 'subscription_payments',
   timesheetComments: 'timesheet_comments',
+  invoicePaymentConfig: 'invoice_payment_config',
 };
 
 export enum CompanyStatus {
@@ -152,6 +153,12 @@ export enum TimeEntryApprovalStatus {
   Approved = 'Approved',
   Pending = 'Pending',
   Rejected = 'Rejected',
+}
+
+export enum InvoiceSchedule {
+  Monthly = 'Monthly',
+  Biweekly = 'Biweekly',
+  Weekly = 'Weekly',
 }
 
 export const emailSetting = {

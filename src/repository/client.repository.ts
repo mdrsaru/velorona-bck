@@ -79,6 +79,8 @@ export default class ClientRepository extends BaseRepository<Client> implements 
       const company_id = args.company_id;
       const streetAddress = args.address?.streetAddress;
       const phone = args.phone;
+      const invoiceSchedule = args.invoiceSchedule;
+      const invoice_payment_config_id = args.invoice_payment_config_id;
 
       const errors: string[] = [];
 
@@ -138,6 +140,8 @@ export default class ClientRepository extends BaseRepository<Client> implements 
         address,
         company_id,
         phone,
+        invoiceSchedule,
+        invoice_payment_config_id,
       });
 
       return client;
@@ -155,6 +159,8 @@ export default class ClientRepository extends BaseRepository<Client> implements 
       const address = args.address;
       const phone = args.phone;
       const streetAddress = args.address?.streetAddress;
+      const invoiceSchedule = args.invoiceSchedule;
+      const invoice_payment_config_id = args.invoice_payment_config_id;
 
       const errors: string[] = [];
 
@@ -182,6 +188,8 @@ export default class ClientRepository extends BaseRepository<Client> implements 
         status,
         archived,
         phone,
+        invoiceSchedule,
+        invoice_payment_config_id,
         ...(!!address && {
           address: {
             ...(found.address ?? {}),

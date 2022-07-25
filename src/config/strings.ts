@@ -111,4 +111,5 @@ export default {
   timesheetMandatory: 'Timesheet Mandatory. You need to attach timesheet before submitting',
   managerNotFound: 'Manager not found',
   commentRequired: 'Comment required',
+  daysRequired: 'Days required',
 };

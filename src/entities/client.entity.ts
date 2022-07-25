@@ -3,13 +3,18 @@ import { ObjectType, Field, ID, InputType, registerEnumType } from 'type-graphql
 
 import Company from './company.entity';
 import Address, { AddressInput } from './address.entity';
+import InvoicePaymentConfig from './invoice-payment-config.entity';
 import { Base } from './base.entity';
-import { entities, ClientStatus } from '../config/constants';
+import { entities, ClientStatus, InvoiceSchedule } from '../config/constants';
 import { PagingResult, PagingInput, DeleteInput } from './common.entity';
 import { AddressCreateInput, AddressUpdateInput } from './address.entity';
 
 registerEnumType(ClientStatus, {
   name: 'ClientStatus',
+});
+
+registerEnumType(InvoiceSchedule, {
+  name: 'InvoiceSchedule',
 });
 
 const indexPrefix = 'client';
@@ -68,6 +73,19 @@ export default class Client extends Base {
   @ManyToOne(() => Company)
   @JoinColumn({ name: 'company_id' })
   company: Company;
+
+  @Field(() => InvoiceSchedule, { nullable: true })
+  @Column({ type: 'varchar', name: 'invoice_schedule', nullable: true })
+  invoiceSchedule: InvoiceSchedule;
+
+  @Field(() => InvoicePaymentConfig, { nullable: true })
+  @JoinColumn({ name: 'invoice_payment_config_id' })
+  @ManyToOne(() => InvoicePaymentConfig, { nullable: true })
+  invoicePayment: InvoicePaymentConfig;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  invoice_payment_config_id: string;
 }
 
 @ObjectType()
@@ -104,6 +122,12 @@ export class ClientCreateInput {
 
   @Field()
   phone: string;
+
+  @Field({ nullable: true })
+  invoiceSchedule: InvoiceSchedule;
+
+  @Field({ nullable: true })
+  invoice_payment_config_id: string;
 }
 
 @InputType()
@@ -128,6 +152,12 @@ export class ClientUpdateInput {
 
   @Field({ nullable: true })
   phone: string;
+
+  @Field({ nullable: true })
+  invoiceSchedule: InvoiceSchedule;
+
+  @Field({ nullable: true })
+  invoice_payment_config_id: string;
 }
 
 @InputType()
