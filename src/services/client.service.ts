@@ -47,6 +47,8 @@ export default class ClientService implements IClientService {
       const archived = args?.archived;
       const address = args?.address;
       const phone = args.phone;
+      const invoiceSchedule = args.invoiceSchedule;
+      const invoice_payment_config_id = args.invoice_payment_config_id;
 
       const client = await this.clientRepository.create({
         name,
@@ -57,6 +59,8 @@ export default class ClientService implements IClientService {
         archived,
         address,
         phone,
+        invoiceSchedule,
+        invoice_payment_config_id,
       });
 
       return client;
@@ -73,6 +77,8 @@ export default class ClientService implements IClientService {
       const archived = args?.archived;
       const address = args?.address;
       const phone = args?.phone;
+      const invoiceSchedule = args.invoiceSchedule;
+      const invoice_payment_config_id = args.invoice_payment_config_id;
 
       const client = await this.clientRepository.update({
         id,
@@ -81,6 +87,8 @@ export default class ClientService implements IClientService {
         archived,
         address,
         phone,
+        invoiceSchedule,
+        invoice_payment_config_id,
       });
 
       return client;

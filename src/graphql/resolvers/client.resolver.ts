@@ -83,7 +83,7 @@ export class ClientResolver {
   }
 
   @Mutation((returns) => Client)
-  @UseMiddleware(authenticate, authenticate, authorize(RoleEnum.SuperAdmin, RoleEnum.CompanyAdmin), checkCompanyAccess)
+  @UseMiddleware(authenticate, authorize(RoleEnum.SuperAdmin, RoleEnum.CompanyAdmin), checkCompanyAccess)
   async ClientCreate(@Arg('input') args: ClientCreateInput, @Ctx() ctx: any): Promise<Client> {
     const operation = 'ClientCreate';
 
@@ -96,6 +96,8 @@ export class ClientResolver {
       const company_id = args.company_id;
       const archived = args.archived;
       const phone = args.phone;
+      const invoiceSchedule = args.invoiceSchedule;
+      const invoice_payment_config_id = args.invoice_payment_config_id;
 
       const schema = ClientValidation.create();
       await this.joiService.validate({
@@ -121,6 +123,8 @@ export class ClientResolver {
         archived,
         address,
         phone,
+        invoiceSchedule,
+        invoice_payment_config_id,
       });
 
       return client;
@@ -135,7 +139,7 @@ export class ClientResolver {
   }
 
   @Mutation((returns) => Client)
-  @UseMiddleware(authenticate, authenticate, authorize(RoleEnum.SuperAdmin, RoleEnum.CompanyAdmin), checkCompanyAccess)
+  @UseMiddleware(authenticate, authorize(RoleEnum.SuperAdmin, RoleEnum.CompanyAdmin), checkCompanyAccess)
   async ClientUpdate(@Arg('input') args: ClientUpdateInput, @Ctx() ctx: any): Promise<Client> {
     const operation = 'ClientUpdate';
 
@@ -147,6 +151,8 @@ export class ClientResolver {
       const company_id = args.company_id;
       const archived = args.archived;
       const phone = args.phone;
+      const invoiceSchedule = args.invoiceSchedule;
+      const invoice_payment_config_id = args.invoice_payment_config_id;
 
       const schema = ClientValidation.update();
       await this.joiService.validate({
@@ -169,6 +175,8 @@ export class ClientResolver {
         archived,
         address,
         phone,
+        invoiceSchedule,
+        invoice_payment_config_id,
       });
 
       return client;

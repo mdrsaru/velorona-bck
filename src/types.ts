@@ -159,6 +159,12 @@ const TIMESHEET_COMMENT = {
   TimesheetCommentResolver: Symbol('TimesheetCommentResolver'),
 };
 
+const INVOICE_PAYMENT_CONFIG = {
+  InvoicePaymentConfigRepository: Symbol('InvoicePaymentConfigRepository'),
+  InvoicePaymentConfigService: Symbol('  InvoicePaymentConfigService'),
+  InvoicePaymentConfigResolver: Symbol('  InvoicePaymentConfigResolver'),
+};
+
 const TYPES = {
   ...COMMON,
   ...COMPANY,
@@ -185,6 +191,7 @@ const TYPES = {
   ...WORKSCHEDULE_TIME_DETAIL,
   ...SUBSCRIPTION_PAYMENT,
   ...TIMESHEET_COMMENT,
+  ...INVOICE_PAYMENT_CONFIG,
 };
 
 export { TYPES };
