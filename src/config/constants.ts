@@ -102,6 +102,12 @@ export enum TimesheetStatus {
   PartiallyApproved = 'PartiallyApproved',
 }
 
+export enum AttachedTimesheetStatus {
+  Pending = 'Pending',
+  Approved = 'Approved',
+  PartiallyApproved = 'PartiallyApproved',
+}
+
 export enum TaskStatus {
   UnScheduled = 'UnScheduled',
   Scheduled = 'Scheduled',

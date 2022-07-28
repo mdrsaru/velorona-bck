@@ -1,13 +1,18 @@
-import { Field, InputType, ObjectType } from 'type-graphql';
+import { Field, InputType, ObjectType, registerEnumType } from 'type-graphql';
 import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany, OneToOne } from 'typeorm';
-import { entities } from '../config/constants';
+import { AttachedTimesheetStatus, entities } from '../config/constants';
 import { attachedTimesheets } from '../config/db/columns';
 import { Base } from './base.entity';
 import { PagingInput, PagingResult } from './common.entity';
 import Company from './company.entity';
+import Invoice from './invoice.entity';
 import Media from './media.entity';
 import Timesheet from './timesheet.entity';
 import User from './user.entity';
+
+registerEnumType(AttachedTimesheetStatus, {
+  name: 'AttachedTimesheetStatus',
+});
 
 const indexPrefix = 'Timesheet';
 @Entity({ name: entities.timesheetAttachments })
@@ -47,14 +52,31 @@ export default class AttachedTimesheet extends Base {
   creator: User;
 
   @Index(`${indexPrefix}_timesheet_id_index`)
-  @Field()
-  @Column()
+  @Field({ nullable: true })
+  @Column({ nullable: true })
   timesheet_id: string;
 
   @Field((type) => Timesheet)
   @ManyToOne(() => Timesheet)
   @JoinColumn({ name: attachedTimesheets.timesheet_id })
   timesheet: Timesheet;
+
+  @Index(`${indexPrefix}_invoice_id_index`)
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  invoice_id: string;
+
+  @Field((type) => Invoice)
+  @ManyToOne(() => Invoice)
+  @JoinColumn({ name: attachedTimesheets.invoice_id })
+  invoice: Invoice;
+
+  @Field((type) => AttachedTimesheetStatus)
+  @Column({
+    type: 'varchar',
+    default: AttachedTimesheetStatus.Pending,
+  })
+  status: AttachedTimesheetStatus;
 }
 
 @ObjectType()

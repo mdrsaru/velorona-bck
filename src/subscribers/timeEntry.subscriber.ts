@@ -95,7 +95,7 @@ timeEntryEmitter.on(events.onCheckIn, async (args: CheckInInput) => {
 
   const created_by = args.created_by;
   const company_id = args.company_id;
-  const startTime = moment(args.startTime).format('ddd MMM DD HH:MM');
+  const startTime = moment(args.startTime).format('ddd MMM DD hh:mm');
   const project = args.project;
 
   let message = ` Checked in at ${startTime} on Project ${project}`;
@@ -148,7 +148,7 @@ timeEntryEmitter.on(events.onCheckOut, async (args: CheckoutInput) => {
 
   const created_by = args.created_by;
   const company_id = args.company_id;
-  const endTime = moment(args.endTime).format('ddd MMM DD HH:MM');
+  const endTime = moment(args.endTime).format('ddd MMM DD hh:mm');
 
   let message = ` Checked out at ${endTime}`;
 
