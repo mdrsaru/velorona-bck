@@ -94,6 +94,9 @@ export class CompanyPagingResult {
 @InputType()
 export class CompanyAdminAddressInput {
   @Field({ nullable: true })
+  country?: string;
+
+  @Field({ nullable: true })
   streetAddress?: string;
 
   @Field({ nullable: true })

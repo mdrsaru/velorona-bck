@@ -51,6 +51,7 @@ export default class CompanyValidation {
         phone: Joi.string(),
         status: Joi.string(),
         address: Joi.object({
+          country: Joi.string(),
           streetAddress: Joi.string(),
           aptOrSuite: Joi.string(),
           city: Joi.string(),
