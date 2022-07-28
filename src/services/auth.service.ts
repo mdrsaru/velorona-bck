@@ -36,6 +36,7 @@ import {
 import { IUserRepository } from '../interfaces/user.interface';
 import { IUserTokenService } from '../interfaces/user-token.interface';
 import { IRoleRepository } from '../interfaces/role.interface';
+import { ICompanyRepository } from '../interfaces/company.interface';
 
 @injectable()
 export default class AuthService implements IAuthService {
@@ -46,6 +47,7 @@ export default class AuthService implements IAuthService {
   private emailService: IEmailService;
   private userTokenService: IUserTokenService;
   private roleRepository: IRoleRepository;
+  private companyRepository: ICompanyRepository;
   private handlebarsService: ITemplateService;
   private logger: ILogger;
 
@@ -57,6 +59,7 @@ export default class AuthService implements IAuthService {
     @inject(TYPES.UserTokenService) userTokenService: IUserTokenService,
     @inject(TYPES.LoggerFactory) loggerFactory: (name: string) => ILogger,
     @inject(TYPES.RoleRepository) _roleRepository: IRoleRepository,
+    @inject(TYPES.CompanyRepository) _companyRepository: ICompanyRepository,
     @inject(TYPES.HandlebarsService) _handlebarsService: ITemplateService
   ) {
     this.userRepository = _userRepository;
@@ -66,6 +69,7 @@ export default class AuthService implements IAuthService {
     this.userTokenService = userTokenService;
     this.logger = loggerFactory(this.name);
     this.roleRepository = _roleRepository;
+    this.companyRepository = _companyRepository;
     this.handlebarsService = _handlebarsService;
   }
 
@@ -393,9 +397,14 @@ export default class AuthService implements IAuthService {
         tokenLife: constants.accessTokenLife,
       });
 
-      const user = await this.userRepository.getById({
+      const user: any = await this.userRepository.getById({
         id: decoded.id,
         relations: ['roles', 'company', 'avatar'],
+      });
+
+      const company = await this.companyRepository.getById({
+        id: user.company_id,
+        relations: ['logo'],
       });
 
       if (!user) {
@@ -409,7 +418,7 @@ export default class AuthService implements IAuthService {
         token: newAccessToken,
         refreshToken,
         roles: user.roles ?? [],
-        company: user.company,
+        company: company,
         firstName: user.firstName,
         middleName: user?.middleName,
         lastName: user?.lastName,

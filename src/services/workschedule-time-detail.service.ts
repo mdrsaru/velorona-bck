@@ -160,12 +160,12 @@ export default class WorkscheduleTimeDetailService implements IWorkscheduleTimeD
       const endTime1 = moment(workscheduleTimeDetail?.endTime);
       const duration = endTime1?.diff(startTime1, 'seconds');
 
+      await this.workscheduleTimeDetailRepository.remove({
+        id,
+      });
       await this.updateWorkscheduleDetailDuration({
         startTime: workscheduleTimeDetail?.startTime,
         id: workscheduleDetail?.id,
-      });
-      const res = await this.workscheduleTimeDetailRepository.remove({
-        id,
       });
       /* Update payroll allocated hours on new workschedule created*/
       await this.updateWorkschedule({
