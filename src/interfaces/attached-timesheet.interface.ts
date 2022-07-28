@@ -4,6 +4,7 @@ import Media from '../entities/media.entity';
 import AttachedTimesheet from '../entities/attached-timesheet.entity';
 import Company from '../entities/company.entity';
 import Timesheet from '../entities/timesheet.entity';
+import { AttachedTimesheetStatus } from '../config/constants';
 
 export interface IAttachedTimesheet {
   id: string;
@@ -29,6 +30,7 @@ export interface IAttachedTimesheetUpdateInput {
   id: string;
   description?: IAttachedTimesheet['description'];
   attachment_id?: string;
+  status?: AttachedTimesheetStatus;
 }
 
 export interface IAttachedTimesheetCountInput extends ICountInput {}

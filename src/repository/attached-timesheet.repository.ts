@@ -91,6 +91,7 @@ export default class AttachedTimesheetRepository
       const id = args.id;
       const description = args?.description;
       const attachment_id = args?.attachment_id;
+      const status = args?.status;
 
       const found = await this.getById({ id });
 
@@ -104,6 +105,7 @@ export default class AttachedTimesheetRepository
         id,
         description,
         attachment_id,
+        status,
       });
 
       let attachedTimesheet = await this.repo.save(update);

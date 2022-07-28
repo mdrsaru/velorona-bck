@@ -1,6 +1,6 @@
 import { timesheetEmitter } from './emitters';
 import { TYPES } from '../types';
-import { events, TimesheetStatus, TimeEntryApprovalStatus } from '../config/constants';
+import { events, TimesheetStatus, TimeEntryApprovalStatus, AttachedTimesheetStatus } from '../config/constants';
 import container from '../inversify.config';
 
 import { ILogger } from '../interfaces/common.interface';
@@ -8,8 +8,8 @@ import { ITimesheetRepository } from '../interfaces/timesheet.interface';
 import { ITimeEntryRepository } from '../interfaces/time-entry.interface';
 import { IUserRepository } from '../interfaces/user.interface';
 import { IActivityLogRepository } from '../interfaces/activity-log.interface';
-import UserRepository from '../tests/mock/user.repository';
 import moment from 'moment';
+import { IAttachedTimesheetRepository } from '../interfaces/attached-timesheet.interface';
 
 type TimesheetApprove = {
   timesheet_id: string;
@@ -22,6 +22,9 @@ timesheetEmitter.on(events.onTimeEntriesApprove, async (args: TimesheetApprove) 
 
   const timesheetRepository: ITimesheetRepository = container.get<ITimesheetRepository>(TYPES.TimesheetRepository);
   const timeEntryRepository: ITimeEntryRepository = container.get<ITimeEntryRepository>(TYPES.TimeEntryRepository);
+  const attachedTimesheetRepository: IAttachedTimesheetRepository = container.get<IAttachedTimesheetRepository>(
+    TYPES.AttachedTimesheetRepository
+  );
   const userRepository: IUserRepository = container.get<IUserRepository>(TYPES.UserRepository);
   const activityLogRepository: IActivityLogRepository = container.get<IActivityLogRepository>(
     TYPES.ActivityLogRepository
@@ -55,13 +58,17 @@ timesheetEmitter.on(events.onTimeEntriesApprove, async (args: TimesheetApprove) 
       },
     });
     let status: TimesheetStatus;
+    let attachedTimesheetStatus: AttachedTimesheetStatus;
 
     if (approvedEntriesCount === allTimeEntries) {
       status = TimesheetStatus.Approved;
+      attachedTimesheetStatus = AttachedTimesheetStatus.Approved;
     } else if (approvedEntriesCount) {
       status = TimesheetStatus.PartiallyApproved;
+      attachedTimesheetStatus = AttachedTimesheetStatus.PartiallyApproved;
     } else {
       status = TimesheetStatus.Pending;
+      attachedTimesheetStatus = AttachedTimesheetStatus.Pending;
     }
 
     await timesheetRepository.update({
@@ -71,12 +78,23 @@ timesheetEmitter.on(events.onTimeEntriesApprove, async (args: TimesheetApprove) 
       lastApprovedAt,
     });
 
+    const attachedTimesheet = await attachedTimesheetRepository.getAll({
+      timesheet_id: timesheet_id,
+    });
+
+    await attachedTimesheetRepository.update({
+      id: attachedTimesheet[0]?.id,
+      status: attachedTimesheetStatus,
+    });
+
     const timesheet = await timesheetRepository.getById({ id: timesheet_id });
-    const approver = await userRepository.getById({ id: approver_id });
+
     let date =
       moment(timesheet?.weekStartDate).format('MMM D') + ' - ' + moment(timesheet?.weekEndDate).format('MMM D');
+
     let company_id = timesheet?.company_id;
     let employee, activityLogData: any;
+
     if (timesheet) {
       employee = await userRepository.getById({ id: timesheet?.user_id });
     }
