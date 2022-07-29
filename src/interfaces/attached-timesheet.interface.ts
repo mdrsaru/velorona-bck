@@ -15,6 +15,7 @@ export interface IAttachedTimesheet {
   company: Company[];
   created_by: string;
   timesheet_id: string;
+  invoice_id?: string;
   timesheet: Timesheet[];
 }
 
@@ -24,6 +25,7 @@ export interface IAttachedTimesheetCreateInput {
   company_id: IAttachedTimesheet['company_id'];
   created_by: IAttachedTimesheet['created_by'];
   timesheet_id: IAttachedTimesheet['timesheet_id'];
+  invoice_id?: IAttachedTimesheet['invoice_id'];
 }
 
 export interface IAttachedTimesheetUpdateInput {

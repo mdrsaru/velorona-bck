@@ -33,7 +33,8 @@ export default class AttachedTimesheetValidation {
       description: Joi.string().required().messages(messages.description),
       attachment_id: Joi.string().required().messages(messages.attachment),
       company_id: Joi.string().required().messages(messages.company),
-      timesheet_id: Joi.string().required().messages(messages.timesheet),
+      timesheet_id: Joi.string().messages(messages.timesheet),
+      invoice_id: Joi.string(),
     });
   }
 

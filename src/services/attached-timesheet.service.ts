@@ -44,6 +44,7 @@ export default class AttachedTimesheetService implements IAttachedTimesheetServi
       const company_id = args.company_id;
       const created_by = args.created_by;
       const timesheet_id = args.timesheet_id;
+      const invoice_id = args.invoice_id;
 
       const attachedTimesheet = await this.attachedTimesheetRepository.create({
         description,
@@ -51,6 +52,7 @@ export default class AttachedTimesheetService implements IAttachedTimesheetServi
         company_id,
         created_by,
         timesheet_id,
+        invoice_id,
       });
 
       return attachedTimesheet;

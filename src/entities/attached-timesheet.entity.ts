@@ -56,7 +56,7 @@ export default class AttachedTimesheet extends Base {
   @Column({ nullable: true })
   timesheet_id: string;
 
-  @Field((type) => Timesheet)
+  @Field((type) => Timesheet, { nullable: true })
   @ManyToOne(() => Timesheet)
   @JoinColumn({ name: attachedTimesheets.timesheet_id })
   timesheet: Timesheet;
@@ -99,8 +99,11 @@ export class AttachedTimesheetCreateInput {
   @Field()
   company_id: string;
 
-  @Field()
+  @Field({ nullable: true })
   timesheet_id: string;
+
+  @Field({ nullable: true })
+  invoice_id: string;
 }
 
 @InputType()
@@ -131,6 +134,9 @@ export class AttachedTimesheetQuery {
 
   @Field({ nullable: true })
   timesheet_id: string;
+
+  @Field({ nullable: true })
+  invoice_id: string;
 }
 
 @InputType()
