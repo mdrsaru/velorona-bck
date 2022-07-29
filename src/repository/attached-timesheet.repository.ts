@@ -1,8 +1,10 @@
 import { inject, injectable } from 'inversify';
 import { merge } from 'lodash';
 import { getRepository } from 'typeorm';
+import axios from 'axios';
 
 import strings from '../config/strings';
+import { entities } from '../config/constants';
 import { IEntityID } from '../interfaces/common.interface';
 import { TYPES } from '../types';
 import { NotFoundError, ValidationError } from '../utils/api-error';
@@ -16,6 +18,7 @@ import {
   IAttachedTimesheetCreateInput,
   IAttachedTimesheetRepository,
   IAttachedTimesheetUpdateInput,
+  IUpdateWithInvoiceInput,
 } from '../interfaces/attached-timesheet.interface';
 import { IUserRepository } from '../interfaces/user.interface';
 import { ITimesheetRepository } from '../interfaces/timesheet.interface';
@@ -113,6 +116,71 @@ export default class AttachedTimesheetRepository
       let attachedTimesheet = await this.repo.save(update);
 
       return attachedTimesheet;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  getBase64Attachments = async (args: any): Promise<any> => {
+    try {
+      const timesheet_id = args.timesheet_id;
+      const invoice_id = args.invoice_id;
+
+      const attachments = await this.getAll({
+        query: {
+          timesheet_id,
+          invoice_id,
+        },
+        relations: ['attachments'],
+      });
+
+      const promises = attachments.map((attachment, index) => {
+        return axios.get(attachment.attachments.url, { responseType: 'arraybuffer' }).then((response) => {
+          return {
+            name: attachment?.attachments?.name ?? `attachment-${index}.jpg`,
+            response,
+          };
+        });
+      });
+
+      const result = await Promise.allSettled(promises);
+
+      const fulfilledAttachments: any = [];
+
+      result.forEach((res) => {
+        if (res.status === 'fulfilled') {
+          fulfilledAttachments.push(res.value);
+        }
+      });
+
+      return fulfilledAttachments.map((fulfilled: any) => {
+        let buffer = Buffer.from(fulfilled.response.data).toString('base64');
+        const contentType = fulfilled.response.headers['content-type'];
+
+        return {
+          name: fulfilled.name,
+          contentType,
+          base64: buffer,
+        };
+      });
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  updateTimesheedAttachmentWithInvoice = async (args: IUpdateWithInvoiceInput): Promise<any> => {
+    try {
+      const result = await this.repo
+        .createQueryBuilder(entities.timesheetAttachments)
+        .update(AttachedTimesheet)
+        .set({
+          invoice_id: args.invoice_id,
+        })
+        .where('timesheet_id = :timesheet_id', { timesheet_id: args.timesheet_id })
+        .andWhere('invoice_id IS NULL')
+        .execute();
+
+      return result;
     } catch (err) {
       throw err;
     }

@@ -15,6 +15,7 @@ import { ICompanyRepository } from '../interfaces/company.interface';
 import { IInvoiceItemRepository } from '../interfaces/invoice-item.interface';
 import { IClientRepository } from '../interfaces/client.interface';
 import { IUserRepository } from '../interfaces/user.interface';
+import { IAttachedTimesheetRepository } from '../interfaces/attached-timesheet.interface';
 import PDFService from '../services/pdf.service';
 
 /*
@@ -32,6 +33,9 @@ invoiceEmitter.on(events.sendInvoice, async (data: any) => {
   const invoiceItemRepo: IInvoiceItemRepository = container.get<IInvoiceItemRepository>(TYPES.InvoiceItemRepository);
   const clientRepo: IClientRepository = container.get<IClientRepository>(TYPES.ClientRepository);
   const userRepo: IUserRepository = container.get<IUserRepository>(TYPES.UserRepository);
+  const attachedTimesheetRepository: IAttachedTimesheetRepository = container.get<IAttachedTimesheetRepository>(
+    TYPES.AttachedTimesheetRepository
+  );
 
   const invoice = data.invoice;
 
@@ -106,6 +110,22 @@ invoiceEmitter.on(events.sendInvoice, async (data: any) => {
       },
     ];
 
+    if (data?.timesheet_id) {
+      const attached = await attachedTimesheetRepository.getBase64Attachments({
+        timesheet_id: data.timesheet_id,
+        invoice_id: invoice.id,
+      });
+
+      attached.forEach((att: any) => {
+        attachments.push({
+          content: att.base64,
+          filename: att.name,
+          type: att.contentType,
+          disposition: 'attachment',
+        });
+      });
+    }
+
     emailService
       .sendEmail({
         to: email,
@@ -139,5 +159,9 @@ invoiceEmitter.on(events.sendInvoice, async (data: any) => {
     });
   }
 });
+
+function getExtension(contentType: string) {
+  return contentType?.split('/')?.[1] ?? 'jpg';
+}
 
 export default invoiceEmitter;

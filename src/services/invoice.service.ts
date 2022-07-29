@@ -27,6 +27,7 @@ import { IUserRepository } from '../interfaces/user.interface';
 import { IInvoiceScheduleRepository } from '../interfaces/invoice-schedule.interface';
 import { ITimeEntryRepository } from '../interfaces/time-entry.interface';
 import { ITimesheetRepository } from '../interfaces/timesheet.interface';
+import { IAttachedTimesheetRepository } from '../interfaces/attached-timesheet.interface';
 
 @injectable()
 export default class InvoiceService implements IInvoiceService {
@@ -37,6 +38,7 @@ export default class InvoiceService implements IInvoiceService {
   private invoiceScheduleRepository: IInvoiceScheduleRepository;
   private timeEntryRepository: ITimeEntryRepository;
   private timesheetRepository: ITimesheetRepository;
+  private attachedTimesheetRepository: IAttachedTimesheetRepository;
   private pdfService: any;
 
   constructor(
@@ -46,7 +48,8 @@ export default class InvoiceService implements IInvoiceService {
     @inject(TYPES.UserRepository) _userRepository: IUserRepository,
     @inject(TYPES.InvoiceScheduleRepository) _invoiceScheduleRepository: IInvoiceScheduleRepository,
     @inject(TYPES.TimeEntryRepository) _timeEntryRepository: ITimeEntryRepository,
-    @inject(TYPES.TimesheetRepository) _timesheetRepository: ITimesheetRepository
+    @inject(TYPES.TimesheetRepository) _timesheetRepository: ITimesheetRepository,
+    @inject(TYPES.AttachedTimesheetRepository) _attachedTimesheetRepository: IAttachedTimesheetRepository
   ) {
     this.invoiceRepository = _invoiceRepository;
     this.pdfService = new PDFService();
@@ -56,6 +59,7 @@ export default class InvoiceService implements IInvoiceService {
     this.invoiceScheduleRepository = _invoiceScheduleRepository;
     this.timeEntryRepository = _timeEntryRepository;
     this.timesheetRepository = _timesheetRepository;
+    this.attachedTimesheetRepository = _attachedTimesheetRepository;
   }
 
   getAllAndCount = async (args: IPagingArgs): Promise<IPaginationData<Invoice>> => {
@@ -111,8 +115,16 @@ export default class InvoiceService implements IInvoiceService {
       });
 
       if (invoice.status === InvoiceStatus.Sent) {
+        if (invoice.timesheet_id) {
+          await this.attachedTimesheetRepository.updateTimesheedAttachmentWithInvoice({
+            invoice_id: invoice.id,
+            timesheet_id: invoice.timesheet_id,
+          });
+        }
+
         invoiceEmitter.emit(events.sendInvoice, {
           invoice,
+          timesheet_id,
         });
       }
 
@@ -163,8 +175,16 @@ export default class InvoiceService implements IInvoiceService {
       });
 
       if (found.status !== invoice.status && invoice.status === InvoiceStatus.Sent) {
+        if (invoice.timesheet_id) {
+          await this.attachedTimesheetRepository.updateTimesheedAttachmentWithInvoice({
+            invoice_id: invoice.id,
+            timesheet_id: invoice.timesheet_id,
+          });
+        }
+
         invoiceEmitter.emit(events.sendInvoice, {
           invoice,
+          timesheet_id: invoice.timesheet_id,
         });
       }
 

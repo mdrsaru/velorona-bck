@@ -37,6 +37,11 @@ export interface IAttachedTimesheetUpdateInput {
 
 export interface IAttachedTimesheetCountInput extends ICountInput {}
 
+export interface IUpdateWithInvoiceInput {
+  timesheet_id: string;
+  invoice_id: string;
+}
+
 export interface IAttachedTimesheetRepository {
   getAllAndCount(args: IPagingArgs): Promise<IGetAllAndCountResult<AttachedTimesheet>>;
   getAll(args: any): Promise<AttachedTimesheet[]>;
@@ -44,6 +49,8 @@ export interface IAttachedTimesheetRepository {
   create(args: IAttachedTimesheetCreateInput): Promise<AttachedTimesheet>;
   update(args: IAttachedTimesheetUpdateInput): Promise<AttachedTimesheet>;
   remove(args: IEntityRemove): Promise<AttachedTimesheet>;
+  getBase64Attachments(args: any): Promise<any>;
+  updateTimesheedAttachmentWithInvoice(args: IUpdateWithInvoiceInput): Promise<any>;
 }
 
 export interface IAttachedTimesheetService {
