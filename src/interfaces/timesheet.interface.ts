@@ -73,6 +73,7 @@ export interface ITimesheetCountInput {
   company_id: string;
   manager_id: string;
 }
+
 export interface ITimesheetRepository {
   getAllAndCount(args: IPagingArgs): Promise<IGetAllAndCountResult<Timesheet>>;
   getAll(args: IGetOptions): Promise<Timesheet[]>;

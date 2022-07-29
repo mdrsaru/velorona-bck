@@ -555,7 +555,16 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
         [startTime, endTime, company_id, user_id, client_id]
       );
 
-      return queryResult;
+      const items = queryResult?.map((item: any) => {
+        return {
+          ...item,
+          totalDuration: Number(item.totalDuration),
+          totalHours: Number(item.totalHours),
+          totalExpense: Number(item.totalExpense),
+        };
+      });
+
+      return items;
     } catch (err) {
       throw err;
     }

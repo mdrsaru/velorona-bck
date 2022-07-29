@@ -69,6 +69,7 @@ export const entities = {
   subscriptionPayments: 'subscription_payments',
   timesheetComments: 'timesheet_comments',
   invoicePaymentConfig: 'invoice_payment_config',
+  invoiceSchedule: 'invoice_schedule',
 };
 
 export enum CompanyStatus {
@@ -203,6 +204,7 @@ export const events = {
   onTimeSheetApproveOrReject: 'onTimeSheetApproveOrReject',
   updateCompanySubscriptionUsage: 'updateCompanySubscriptionUsage',
   onTimesheetUnlock: 'onTimesheetUnlock',
+  onTimesheetCreate: 'onTimesheetCreate',
 };
 
 export const stripeSetting = {

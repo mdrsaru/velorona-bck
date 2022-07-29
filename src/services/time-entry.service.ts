@@ -398,6 +398,7 @@ export default class TimeEntryService implements ITimeEntryService {
           id,
           duration: totalTimeInSeconds,
         });
+
         return timesheet;
       } else {
         const timesheet = await this.timesheetRepository.create({
@@ -408,6 +409,12 @@ export default class TimeEntryService implements ITimeEntryService {
           user_id,
           client_id,
           company_id,
+        });
+
+        timesheetEmitter.emit(events.onTimesheetCreate, {
+          timesheet_id: timesheet.id,
+          client_id,
+          weekStartDate,
         });
 
         return timesheet;

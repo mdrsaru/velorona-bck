@@ -1,6 +1,14 @@
+import moment from 'moment';
+
 import { timesheetEmitter } from './emitters';
 import { TYPES } from '../types';
-import { events, TimesheetStatus, TimeEntryApprovalStatus, AttachedTimesheetStatus } from '../config/constants';
+import {
+  events,
+  TimesheetStatus,
+  TimeEntryApprovalStatus,
+  AttachedTimesheetStatus,
+  InvoiceSchedule,
+} from '../config/constants';
 import container from '../inversify.config';
 
 import { ILogger } from '../interfaces/common.interface';
@@ -8,8 +16,9 @@ import { ITimesheetRepository } from '../interfaces/timesheet.interface';
 import { ITimeEntryRepository } from '../interfaces/time-entry.interface';
 import { IUserRepository } from '../interfaces/user.interface';
 import { IActivityLogRepository } from '../interfaces/activity-log.interface';
-import moment from 'moment';
+import { IClientRepository } from '../interfaces/client.interface';
 import { IAttachedTimesheetRepository } from '../interfaces/attached-timesheet.interface';
+import { IInvoiceScheduleRepository } from '../interfaces/invoice-schedule.interface';
 
 type TimesheetApprove = {
   timesheet_id: string;
@@ -150,6 +159,85 @@ timesheetEmitter.on(events.onTimeEntriesApprove, async (args: TimesheetApprove) 
         timesheet_id,
         err,
       },
+    });
+  }
+});
+
+type TimesheetCreate = {
+  timesheet_id: string;
+  client_id: string;
+  weekStartDate: string | Date;
+};
+
+// On Timesheet Create
+timesheetEmitter.on(events.onTimesheetCreate, async (args: TimesheetCreate) => {
+  const operation = events.onTimesheetCreate;
+
+  const invoiceScheduleRepository: IInvoiceScheduleRepository = container.get<IInvoiceScheduleRepository>(
+    TYPES.InvoiceScheduleRepository
+  );
+  const clientRepository: IClientRepository = container.get<IClientRepository>(TYPES.ClientRepository);
+
+  const logger = container.get<ILogger>(TYPES.Logger);
+  logger.init('timesheet.subscriber');
+
+  const timesheet_id = args.timesheet_id;
+  const client_id = args.client_id;
+  const weekStartDate = args.weekStartDate;
+
+  logger.info({
+    operation,
+    message: `Timesheet emitter ${events.onTimesheetCreate} started`,
+    data: { timesheet_id },
+  });
+
+  try {
+    const client = await clientRepository.getById({ id: client_id, select: ['id', 'invoiceSchedule'] });
+    if (!client) {
+      logger.info({
+        operation,
+        message: 'Client not found',
+        data: { client_id },
+      });
+      return;
+    }
+
+    let scheduleDate = moment(weekStartDate).add('8', 'days').format('YYYY-MM-DD');
+    if (client.invoiceSchedule === InvoiceSchedule.Weekly) {
+      scheduleDate = moment(weekStartDate).add('8', 'days').format('YYYY-MM-DD');
+    } else if (client.invoiceSchedule === InvoiceSchedule.Biweekly) {
+      scheduleDate = moment(weekStartDate).add('15', 'days').format('YYYY-MM-DD');
+    } else if (client.invoiceSchedule === InvoiceSchedule.Monthly) {
+      scheduleDate = moment(weekStartDate).add('29', 'days').format('YYYY-MM-DD');
+    }
+
+    if (!client.invoiceSchedule) {
+      logger.info({
+        operation,
+        message: 'Defaulting to weekly scheduling',
+        data: { client_id },
+      });
+    }
+
+    const schedule = await invoiceScheduleRepository.create({
+      timesheet_id,
+      scheduleDate,
+    });
+
+    logger.info({
+      operation,
+      message: 'Invoice schedule created.',
+      data: {
+        timesheet_id,
+        scheduleDate,
+        client_id,
+      },
+    });
+  } catch (err) {
+    logger.error({
+      operation,
+      message: 'Error updating timesheet status',
+      data: { timesheet_id, err },
     });
   }
 });

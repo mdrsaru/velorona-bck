@@ -117,6 +117,7 @@ export interface IProjectItem {
   totalDuration: number;
   hourlyRate: number;
   totalExpense: number;
+  totalHours: number;
 }
 
 export interface IProjectItemInput {

@@ -57,6 +57,10 @@ export interface IInvoiceUpdateInput {
   items?: IInvoiceItemUpdateInput[];
 }
 
+export interface IInvoiceScheduleInput {
+  date: string;
+}
+
 export interface IInvoiceRepository {
   getAllAndCount(args: IPagingArgs): Promise<IGetAllAndCountResult<Invoice>>;
   getAll(args: any): Promise<Invoice[]>;
@@ -72,4 +76,5 @@ export interface IInvoiceService {
   update(args: IInvoiceUpdateInput): Promise<Invoice>;
   remove(args: IEntityRemove): Promise<Invoice>;
   getPDF(args: { id: string }): Promise<string>;
+  createInvoiceFromScheduleDate(args: IInvoiceScheduleInput): Promise<Invoice[]>;
 }

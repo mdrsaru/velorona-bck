@@ -165,6 +165,10 @@ const INVOICE_PAYMENT_CONFIG = {
   InvoicePaymentConfigResolver: Symbol('  InvoicePaymentConfigResolver'),
 };
 
+const INVOICE_SCHEDULE = {
+  InvoiceScheduleRepository: Symbol('InvoiceScheduleRepository'),
+};
+
 const TYPES = {
   ...COMMON,
   ...COMPANY,
@@ -192,6 +196,7 @@ const TYPES = {
   ...SUBSCRIPTION_PAYMENT,
   ...TIMESHEET_COMMENT,
   ...INVOICE_PAYMENT_CONFIG,
+  ...INVOICE_SCHEDULE,
 };
 
 export { TYPES };

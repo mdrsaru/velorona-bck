@@ -19,8 +19,7 @@ import {
   ITimesheetUpdateInput,
   ITimesheetCountInput,
 } from '../interfaces/timesheet.interface';
-import { entities } from '../config/db/ormconfig';
-// import { entities } from '../config/constants';
+import { entities } from '../config/constants';
 import timesheet from '../config/inversify/timesheet';
 
 @injectable()
