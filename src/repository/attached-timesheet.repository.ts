@@ -128,7 +128,6 @@ export default class AttachedTimesheetRepository
 
       const attachments = await this.getAll({
         query: {
-          timesheet_id,
           invoice_id,
         },
         relations: ['attachments'],
