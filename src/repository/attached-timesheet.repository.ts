@@ -50,6 +50,7 @@ export default class AttachedTimesheetRepository
       const company_id = args.company_id;
       const created_by = args.created_by;
       const timesheet_id = args.timesheet_id;
+      const invoice_id = args.invoice_id;
 
       const company = await this.companyRepository.getById({ id: company_id });
       if (!company) {
@@ -78,6 +79,7 @@ export default class AttachedTimesheetRepository
         attachment_id,
         created_by,
         timesheet_id,
+        invoice_id,
       });
 
       return attachedTimesheet;

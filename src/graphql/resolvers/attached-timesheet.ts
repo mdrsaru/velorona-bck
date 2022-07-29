@@ -79,6 +79,7 @@ export class AttachedTimesheetResolver {
       const company_id = args.company_id;
       const created_by = ctx?.user?.id;
       const timesheet_id = args.timesheet_id;
+      const invoice_id = args.invoice_id;
 
       const schema = AttachedTimesheetValidation.create();
       await this.joiService.validate({
@@ -88,6 +89,7 @@ export class AttachedTimesheetResolver {
           attachment_id,
           company_id,
           timesheet_id,
+          invoice_id,
         },
       });
 
@@ -97,6 +99,7 @@ export class AttachedTimesheetResolver {
         company_id,
         created_by,
         timesheet_id,
+        invoice_id,
       });
 
       return AttachedTimesheet;
@@ -194,6 +197,8 @@ export class AttachedTimesheetResolver {
 
   @FieldResolver()
   async timesheet(@Root() root: AttachedTimesheet, @Ctx() ctx: IGraphqlContext) {
-    return await ctx.loaders.timesheetByIdLoader.load(root.timesheet_id);
+    if (root.timesheet_id) {
+      return await ctx.loaders.timesheetByIdLoader.load(root.timesheet_id);
+    }
   }
 }
