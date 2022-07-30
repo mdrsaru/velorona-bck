@@ -144,6 +144,31 @@ export class TimesheetResolver {
     }
   }
 
+  @Mutation((returns) => Timesheet)
+  @UseMiddleware(authenticate, authorize(RoleEnum.CompanyAdmin, RoleEnum.SuperAdmin), checkCompanyAccess)
+  async TimesheetSubmitUndo(@Arg('input') args: TimesheetSubmitInput): Promise<Timesheet> {
+    const operation = 'TimesheetSubmitUndo';
+
+    try {
+      const id = args.id;
+      const isSubmitted = false;
+
+      const timesheet = await this.timesheetService.update({
+        id,
+        isSubmitted,
+      });
+
+      return timesheet;
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
+    }
+  }
+
   @FieldResolver()
   durationFormat(@Root() root: Timesheet) {
     if (root.duration) {
