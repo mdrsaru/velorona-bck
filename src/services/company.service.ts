@@ -10,13 +10,19 @@ import { generateRandomStrings } from '../utils/strings';
 import { IPagingArgs, IPaginationData } from '../interfaces/paging.interface';
 import { IEntityRemove, IEntityID } from '../interfaces/common.interface';
 import { ICompanyCreate, ICompanyUpdate, ICompanyRepository, ICompanyService } from '../interfaces/company.interface';
+import { IUserRepository } from '../interfaces/user.interface';
 
 @injectable()
 export default class CompanyService implements ICompanyService {
   private companyRepository: ICompanyRepository;
+  private userRepository: IUserRepository;
 
-  constructor(@inject(TYPES.CompanyRepository) companyRepository: ICompanyRepository) {
+  constructor(
+    @inject(TYPES.CompanyRepository) companyRepository: ICompanyRepository,
+    @inject(TYPES.UserRepository) userRepository: IUserRepository
+  ) {
     this.companyRepository = companyRepository;
+    this.userRepository = userRepository;
   }
 
   getAllAndCount = async (args: IPagingArgs): Promise<IPaginationData<Company>> => {
@@ -76,6 +82,11 @@ export default class CompanyService implements ICompanyService {
       const status = args.status;
       const archived = args?.archived;
       const logo_id = args?.logo_id;
+      const user = args?.user;
+
+      if (user) {
+        await this.userRepository.update(user);
+      }
 
       const company = await this.companyRepository.update({
         id,
@@ -83,6 +94,7 @@ export default class CompanyService implements ICompanyService {
         status,
         archived,
         logo_id,
+        user,
       });
 
       return company;

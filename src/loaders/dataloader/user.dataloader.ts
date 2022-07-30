@@ -67,7 +67,21 @@ const batchUsersByIdFn = async (ids: readonly string[]) => {
   return ids.map((id) => userObj[id]);
 };
 
+const batchUsersByEmailFn = async (emails: readonly string[]) => {
+  const userRepo: IUserRepository = container.get(TYPES.UserRepository);
+  const query = { email: emails };
+  const users: User[] = await userRepo.getAll({ query });
+  const userObj: any = {};
+
+  users.forEach((user: User) => {
+    userObj[user.email] = user;
+  });
+
+  return emails.map((email) => userObj[email]);
+};
+
 export const usersByCompanyIdLoader = () => new Dataloader(batchUsersByCompanyIdFn);
 export const rolesByUserIdLoader = () => new Dataloader(batchRolesByUserIdFn);
 export const avatarByIdLoader = () => new Dataloader(batchAvatarsByIdFn);
 export const usersByIdLoader = () => new Dataloader(batchUsersByIdFn);
+export const usersByEmailLoader = () => new Dataloader(batchUsersByEmailFn);

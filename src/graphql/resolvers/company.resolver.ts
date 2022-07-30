@@ -23,6 +23,7 @@ import { IPaginationData } from '../../interfaces/paging.interface';
 import { ICompanyRepository, ICompanyService } from '../../interfaces/company.interface';
 import { IErrorService, IJoiService } from '../../interfaces/common.interface';
 import { IGraphqlContext } from '../../interfaces/graphql.interface';
+import { IUserRepository } from '../../interfaces/user.interface';
 import { groupBy } from 'lodash';
 
 @injectable()
@@ -33,17 +34,20 @@ export class CompanyResolver {
   private joiService: IJoiService;
   private errorService: IErrorService;
   private companyRepository: ICompanyRepository;
+  private userRepository: IUserRepository;
 
   constructor(
     @inject(TYPES.CompanyService) companyService: ICompanyService,
     @inject(TYPES.JoiService) joiService: IJoiService,
     @inject(TYPES.ErrorService) errorService: IErrorService,
-    @inject(TYPES.CompanyRepository) _companyRepostitory: ICompanyRepository
+    @inject(TYPES.CompanyRepository) _companyRepostitory: ICompanyRepository,
+    @inject(TYPES.UserRepository) _userRepostitory: IUserRepository
   ) {
     this.companyService = companyService;
     this.joiService = joiService;
     this.errorService = errorService;
     this.companyRepository = _companyRepostitory;
+    this.userRepository = _userRepostitory;
   }
 
   @Query((returns) => Company)
@@ -187,6 +191,7 @@ export class CompanyResolver {
       const status = args.status;
       const archived = args?.archived;
       const logo_id = args?.logo_id;
+      const user = args?.user;
 
       const schema = CompanyValidation.update();
       await this.joiService.validate({
@@ -205,6 +210,7 @@ export class CompanyResolver {
         status,
         archived,
         logo_id,
+        user,
       });
 
       return company;
@@ -250,5 +256,15 @@ export class CompanyResolver {
       return ctx.loaders.avatarByIdLoader.load(root.logo_id);
     }
     return null;
+  }
+
+  @FieldResolver()
+  admin(@Root() root: Company, @Ctx() ctx: IGraphqlContext) {
+    return this.userRepository.getSingleEntity({
+      query: {
+        email: root.adminEmail,
+        company_id: root.id,
+      },
+    });
   }
 }

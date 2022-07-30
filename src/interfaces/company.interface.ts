@@ -1,5 +1,6 @@
 import { IPagingArgs, IGetAllAndCountResult, IPaginationData, IGetOptions } from './paging.interface';
 import { IEntityRemove, IEntityID, ISingleEntityQuery } from './common.interface';
+import { IUserUpdate } from './user.interface';
 import Company, { CompanyGrowthOutput } from '../entities/company.entity';
 import User from '../entities/user.entity';
 import { CompanyStatus } from '../config/constants';
@@ -29,6 +30,10 @@ export interface ICompanyAdminAddressInput {
   city?: string;
   state?: string;
   zipcode?: string;
+}
+
+export interface ICompanyAdminAddressUpdateInput extends ICompanyAdminAddressInput {
+  id: string;
 }
 
 export interface ICompanyAdminCreateInput {
@@ -61,6 +66,7 @@ export interface ICompanyUpdate {
   subscriptionId?: ICompany['subscriptionId'];
   subscriptionItemId?: ICompany['subscriptionItemId'];
   subscriptionStatus?: ICompany['subscriptionStatus'];
+  user?: IUserUpdate;
 }
 
 export interface ICompanyCodeInput {

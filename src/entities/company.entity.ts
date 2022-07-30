@@ -2,7 +2,7 @@ import { Entity, Column, OneToMany, OneToOne, JoinColumn, Index } from 'typeorm'
 import { ObjectType, Field, ID, InputType, registerEnumType } from 'type-graphql';
 
 import { Base } from './base.entity';
-import User from './user.entity';
+import User, { UserUpdateInput } from './user.entity';
 import { entities, CompanyStatus, plans } from '../config/constants';
 import { PagingResult, PagingInput } from './common.entity';
 import Workschedule from './workschedule.entity';
@@ -49,6 +49,11 @@ export default class Company extends Base {
   @JoinColumn({ name: 'logo_id' })
   logo: Media;
 
+  /**
+   * Company main admin email(not needed to be unique as same email can be registered in different companies)
+   * If needed, query the user using this email along with the company_id
+   */
+  @Index(`${indexPrefix}_admin_email`)
   @Field({ description: 'Company main admin email' })
   @Column({ name: 'admin_email' })
   adminEmail: string;
@@ -69,6 +74,7 @@ export default class Company extends Base {
   @Column({ nullable: true, type: 'varchar', default: plans.Starter })
   plan: string;
 
+  @Index(`${indexPrefix}_subscription_id`)
   @Field({ nullable: true, description: 'Stripe subscription Id' })
   @Column({ name: 'subscription_id', type: 'varchar', nullable: true })
   subscriptionId: string;
@@ -80,6 +86,9 @@ export default class Company extends Base {
   @Field({ nullable: true, description: 'Status of subscription' })
   @Column({ name: 'subscription_status', type: 'varchar', nullable: true })
   subscriptionStatus: string;
+
+  @Field(() => User)
+  admin: User;
 }
 
 @ObjectType()
@@ -113,10 +122,8 @@ export class CompanyAdminAddressInput {
 }
 
 @InputType()
-export class CompanyAdminInput {
-  @Field()
-  email: string;
-
+@InputType()
+export class CompanyAdminInformationInput {
   @Field({ nullable: true })
   firstName: string;
 
@@ -134,6 +141,12 @@ export class CompanyAdminInput {
 
   @Field({ nullable: true })
   address: CompanyAdminAddressInput;
+}
+
+@InputType()
+export class CompanyAdminInput extends CompanyAdminInformationInput {
+  @Field()
+  email: string;
 }
 
 @InputType()
@@ -170,6 +183,9 @@ export class CompanyUpdateInput {
 
   @Field({ nullable: true })
   logo_id: string;
+
+  @Field({ nullable: true })
+  user: UserUpdateInput;
 }
 
 @InputType()

@@ -49,6 +49,7 @@ registerEnumType(UserType, {
 @Unique('unique_company_email', ['email', 'company_id'])
 @Entity({ name: entities.users })
 export default class User extends Base {
+  @Index(`${indexPrefix}_email`)
   @Field()
   @Column({ length: 64 })
   email: string;
@@ -60,6 +61,7 @@ export default class User extends Base {
   @Column({ nullable: true })
   phone: string;
 
+  @Index(`${indexPrefix}_first_name`)
   @Field({ nullable: true })
   @Column({ length: 25, name: 'first_name', nullable: true })
   firstName: string;
@@ -68,6 +70,7 @@ export default class User extends Base {
   @Column({ length: 25, nullable: true, name: 'middle_name' })
   middleName: string;
 
+  @Index(`${indexPrefix}_last_name`)
   @Field({ nullable: true })
   @Column({ length: 25, name: 'last_name', nullable: true })
   lastName: string;
@@ -75,6 +78,7 @@ export default class User extends Base {
   @Field({ nullable: true })
   fullName: string;
 
+  @Index(`${indexPrefix}_status`)
   @Field((type) => UserStatus)
   @Column({
     type: 'varchar',
@@ -82,6 +86,7 @@ export default class User extends Base {
   })
   status: UserStatus;
 
+  @Index(`${indexPrefix}_type`)
   @Field((type) => UserType, { nullable: true })
   @Column({
     type: 'varchar',
@@ -89,6 +94,7 @@ export default class User extends Base {
   })
   type: UserType;
 
+  @Index(`${indexPrefix}_archived`)
   @Field()
   @Column({ name: 'archived', default: false })
   archived: boolean;
@@ -122,6 +128,7 @@ export default class User extends Base {
   @JoinColumn({ name: 'company_id' })
   company: Company;
 
+  @Index(`${indexPrefix}_company_id`)
   @Field()
   @Column({ nullable: true })
   company_id: string;

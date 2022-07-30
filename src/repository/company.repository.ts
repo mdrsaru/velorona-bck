@@ -163,7 +163,7 @@ export default class CompanyRepository extends BaseRepository<Company> implement
           });
         }
 
-        const user: any = await userRepo.save({
+        const userInput: any = {
           email,
           password: hashedPassword,
           firstName: args.user?.firstName,
@@ -172,11 +172,13 @@ export default class CompanyRepository extends BaseRepository<Company> implement
           phone: args.user?.phone,
           company_id: company.id,
           roles,
-        });
+        };
 
         if (args.user?.address) {
-          user.address = args.user.address;
+          userInput.address = args.user.address;
         }
+
+        const user: any = await userRepo.save(userInput);
 
         return {
           company,
@@ -202,6 +204,7 @@ export default class CompanyRepository extends BaseRepository<Company> implement
       const subscriptionId = args?.subscriptionId;
       const subscriptionItemId = args?.subscriptionItemId;
       const subscriptionStatus = args?.subscriptionStatus;
+      const user = args.user;
 
       const found = await this.getById({ id });
 

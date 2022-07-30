@@ -44,7 +44,7 @@ userEmitter.on(events.onUserCreate, async (data: any) => {
     data: {
       companyCode: company?.companyCode ?? '',
       password: data?.password,
-      loginUrl: constants.frontEndUrl,
+      link: `${constants.frontEndUrl}/login`,
     },
   });
 
