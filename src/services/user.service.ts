@@ -69,7 +69,7 @@ export default class UserService implements IUserService {
       const company_id = args.company_id;
       const address = args?.address;
       const roles = args.roles;
-      const type = args?.type;
+      const entryType = args?.entryType;
       const startDate = args?.startDate;
       const endDate = args?.endDate;
       const timesheet_attachment = args?.timesheet_attachment;
@@ -87,7 +87,7 @@ export default class UserService implements IUserService {
         company_id,
         address,
         roles,
-        type,
+        entryType,
         startDate,
         endDate,
         timesheet_attachment,
@@ -124,7 +124,7 @@ export default class UserService implements IUserService {
       const phone = args.phone;
       const address = args?.address;
       const password = args?.password;
-      const type = args?.type;
+      const entryType = args?.entryType;
       const startDate = args?.startDate;
       const endDate = args?.endDate;
       const timesheet_attachment = args?.timesheet_attachment;
@@ -139,7 +139,7 @@ export default class UserService implements IUserService {
         phone,
         address,
         password,
-        type,
+        entryType,
         startDate,
         endDate,
         timesheet_attachment,

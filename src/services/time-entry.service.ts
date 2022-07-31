@@ -6,7 +6,7 @@ import Paging from '../utils/paging';
 import * as apiError from '../utils/api-error';
 import TimeEntry from '../entities/time-entry.entity';
 import Timesheet from '../entities/timesheet.entity';
-import { TimesheetStatus, events, TimeEntryApprovalStatus, UserType } from '../config/constants';
+import { TimesheetStatus, events, TimeEntryApprovalStatus, EntryType } from '../config/constants';
 import timesheetEmitter from '../subscribers/timesheet.subscriber';
 import workscheduleEmitter from '../subscribers/workschedule.subscriber';
 
@@ -159,7 +159,7 @@ export default class TimeEntryService implements ITimeEntryService {
           }
         }
 
-        if (timeEntry?.entryType === UserType.CICO) {
+        if (timeEntry?.entryType === EntryType.CICO) {
           const project = await this.projectRepository.getById({
             id: project_id,
           });
@@ -248,7 +248,7 @@ export default class TimeEntryService implements ITimeEntryService {
 
       if (endTime) {
         // Emit event for onTimeEntryStop
-        if (timeEntry.entryType === UserType.Timesheet) {
+        if (timeEntry.entryType === EntryType.Timesheet) {
           timeEntryEmitter.emit(events.onTimeEntryStop, {
             created_by: timeEntry.created_by,
             duration: timeEntry.duration,

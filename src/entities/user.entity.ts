@@ -21,7 +21,7 @@ import Client from './client.entity';
 import { Base } from './base.entity';
 import { PagingInput, PagingResult } from './common.entity';
 import Address, { AddressCreateInput, AddressUpdateInput } from './address.entity';
-import { AdminRole, CompanyRole, entities, UserStatus, Role as RoleEnum, UserType } from '../config/constants';
+import { AdminRole, CompanyRole, entities, UserStatus, Role as RoleEnum, EntryType } from '../config/constants';
 import Workschedule from './workschedule.entity';
 import { userRolesTable } from '../config/db/columns';
 import UserPayRate from './user-payrate.entity';
@@ -41,8 +41,8 @@ registerEnumType(AdminRole, {
   name: 'AdminRole',
 });
 
-registerEnumType(UserType, {
-  name: 'UserType',
+registerEnumType(EntryType, {
+  name: 'EntryType',
 });
 
 @ObjectType()
@@ -87,12 +87,13 @@ export default class User extends Base {
   status: UserStatus;
 
   @Index(`${indexPrefix}_type`)
-  @Field((type) => UserType, { nullable: true })
+  @Field((type) => EntryType, { nullable: true })
   @Column({
+    name: 'entry_type',
     type: 'varchar',
     nullable: true,
   })
-  type: UserType;
+  entryType: EntryType;
 
   @Index(`${indexPrefix}_archived`)
   @Field()
@@ -223,8 +224,8 @@ export class UserCreateInput {
   @Field((type) => UserStatus)
   status: UserStatus;
 
-  @Field((type) => UserType, { nullable: true })
-  type: UserType;
+  @Field((type) => EntryType, { nullable: true })
+  entryType: EntryType;
 
   @Field()
   company_id: string;
@@ -313,8 +314,8 @@ export class UserUpdateInput {
   @Field((type) => AddressUpdateInput, { nullable: true })
   address: AddressUpdateInput;
 
-  @Field((type) => UserType, { nullable: true })
-  type: UserType;
+  @Field((type) => EntryType, { nullable: true })
+  entryType: EntryType;
 
   @Field({ nullable: true })
   manager_id: string;
@@ -341,7 +342,7 @@ export class UserQuery {
   status: UserStatus;
 
   @Field({ nullable: true })
-  type: UserType;
+  entryType: EntryType;
 }
 
 @InputType()

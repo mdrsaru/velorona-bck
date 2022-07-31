@@ -2,7 +2,7 @@ import { IPagingArgs, IGetAllAndCountResult, IPaginationData, IGetOptions } from
 import { IEntityRemove, IEntityID, ISingleEntityQuery, ICountInput } from './common.interface';
 import User from '../entities/user.entity';
 import Role from '../entities/role.entity';
-import { UserStatus, UserType } from '../config/constants';
+import { UserStatus, EntryType } from '../config/constants';
 import { IAddress, IAddressCreateInput, IAddressUpdateInput } from './address.interface';
 
 export interface IUser {
@@ -17,7 +17,7 @@ export interface IUser {
   address?: IAddress;
   roles: Role[];
   company_id?: string;
-  type?: UserType;
+  entryType?: EntryType;
   archived: boolean;
   startDate?: Date;
   endDate?: Date;
@@ -45,7 +45,7 @@ export interface IUserCreate {
   middleName?: IUser['middleName'];
   phone: IUser['phone'];
   status: IUser['status'];
-  type?: IUser['type'];
+  entryType?: IUser['entryType'];
   roles: string[];
   company_id?: string;
   startDate?: IUser['startDate'];
@@ -79,7 +79,7 @@ export interface IUserUpdate {
   startDate?: IUser['startDate'];
   endDate?: IUser['endDate'];
   timesheet_attachment?: IUser['timesheet_attachment'];
-  type?: IUser['type'];
+  entryType?: IUser['entryType'];
   manager_id?: IUser['manager_id'];
 }
 

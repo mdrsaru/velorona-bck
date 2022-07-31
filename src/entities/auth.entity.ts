@@ -3,7 +3,7 @@ import { Field, InputType, ObjectType, Root, registerEnumType } from 'type-graph
 import Role from '../entities/role.entity';
 import UserToken from './user-token.entity';
 import Company from '../entities/company.entity';
-import { ForgotPasswordUserType, UserType } from '../config/constants';
+import { ForgotPasswordUserType, EntryType } from '../config/constants';
 import { AddressCreateInput } from '../entities/address.entity';
 import Media from './media.entity';
 
@@ -11,7 +11,7 @@ registerEnumType(ForgotPasswordUserType, {
   name: 'ForgotPasswordUserType',
 });
 
-registerEnumType(UserType, {
+registerEnumType(EntryType, {
   name: 'EntryType',
 });
 
@@ -38,8 +38,8 @@ export class LoginResponse {
   @Field((type) => Company, { nullable: true })
   company: Company;
 
-  @Field(() => UserType, { nullable: true })
-  type: UserType;
+  @Field(() => EntryType, { nullable: true })
+  entryType: EntryType;
 }
 
 @ObjectType()

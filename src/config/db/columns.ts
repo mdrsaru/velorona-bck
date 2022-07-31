@@ -112,7 +112,7 @@ export const workschedule = {
   start_date: 'start_date',
   end_date: 'end_date',
   payroll_allocated_hours: 'payroll_allocated_hours',
-  payroll_usuage_hours: 'payroll_usuage_hours',
+  payroll_usage_hours: 'payroll_usage_hours',
   company_id: 'company_id',
 };
 

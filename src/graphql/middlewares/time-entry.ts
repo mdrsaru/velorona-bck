@@ -3,7 +3,7 @@ import { IGraphqlContext } from '../../interfaces/graphql.interface';
 import container from '../../inversify.config';
 import { IErrorService } from '../../interfaces/common.interface';
 import { TYPES } from '../../types';
-import { Role as RoleEnum, UserType } from '../../config/constants';
+import { Role as RoleEnum, EntryType } from '../../config/constants';
 import { checkRoles } from '../../utils/roles';
 import * as apiError from '../../utils/api-error';
 import strings from '../../config/strings';
@@ -45,7 +45,7 @@ export const canCreateTimeEntry: MiddlewareFn<IGraphqlContext> = async ({ contex
   const errorService = container.get<IErrorService>(TYPES.ErrorService);
 
   try {
-    const type = context.user?.type;
+    const type = context.user?.entryType;
     // Check only if user is not super admin and employee
 
     const isSuperAdminOREmployee = checkRoles({
@@ -53,7 +53,7 @@ export const canCreateTimeEntry: MiddlewareFn<IGraphqlContext> = async ({ contex
       userRoles: context?.user?.roles ?? [],
     });
 
-    if (!isSuperAdminOREmployee || type !== UserType.Timesheet) {
+    if (!isSuperAdminOREmployee || type !== EntryType.Timesheet) {
       throw new apiError.ForbiddenError({
         details: [strings.notAllowedToPerformAction],
       });

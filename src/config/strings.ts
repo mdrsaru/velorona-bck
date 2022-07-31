@@ -112,4 +112,5 @@ export default {
   managerNotFound: 'Manager not found',
   commentRequired: 'Comment required',
   daysRequired: 'Days required',
+  entryTypeRequired: 'Entry type required',
 };

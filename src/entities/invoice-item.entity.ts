@@ -29,7 +29,7 @@ export default class InvoiceItem extends Base {
   @Column()
   project_id: string;
 
-  @Field()
+  @Field(() => Project)
   @ManyToOne(() => Project)
   @JoinColumn({
     name: invoiceItems.project_id,

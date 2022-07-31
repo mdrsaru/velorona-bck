@@ -3,7 +3,7 @@ import container from '../../../inversify.config';
 
 import * as apiError from '../../../utils/api-error';
 import { TYPES } from '../../../types';
-import { UserType } from '../../../config/constants';
+import { EntryType } from '../../../config/constants';
 import { timeEntries } from '../../mock/data';
 import TimeEntryRepository from '../../mock/time-entry.repository';
 import TimesheetRepository from '../../mock/timesheet.repository';
@@ -57,7 +57,7 @@ describe('TimeEntry Service', () => {
         startTime: new Date(),
         endTime: new Date(),
         clientLocation: 'Lalitpur',
-        entryType: UserType.Timesheet,
+        entryType: EntryType.Timesheet,
         project_id: '12566ff8-1247-4a2a-a258-09b05268e2ce',
         company_id: 'b585d580-3e1b-4c07-8e51-9e38eddadf24',
         created_by: '26124a58-9167-45eb-a3b3-13163f263309',
@@ -99,7 +99,7 @@ describe('TimeEntry Service', () => {
         startTime,
         clientLocation: 'Lalitpur',
         project_id: '12566ff8-1247-4a2a-a258-09b05268e2ce',
-        entryType: UserType.Timesheet,
+        entryType: EntryType.Timesheet,
         company_id: 'b585d580-3e1b-4c07-8e51-9e38eddadf24',
         created_by: '26124a58-9167-45eb-a3b3-13163f263309',
       };

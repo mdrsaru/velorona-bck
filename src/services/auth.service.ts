@@ -193,7 +193,7 @@ export default class AuthService implements IAuthService {
         middleName: user?.middleName,
         lastName: user.lastName,
         avatar: user?.avatar,
-        type: user.type,
+        entryType: user.entryType,
       };
     } catch (err) {
       throw err;
@@ -423,7 +423,7 @@ export default class AuthService implements IAuthService {
         middleName: user?.middleName,
         lastName: user?.lastName,
         avatar: user?.avatar,
-        type: user.type,
+        entryType: user.entryType,
       };
     } catch (err) {
       throw err;

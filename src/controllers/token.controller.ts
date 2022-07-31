@@ -39,7 +39,7 @@ export default class TokenController {
             company: tokenResult.company,
             fullName: fullName,
             avatar: tokenResult.avatar,
-            type: tokenResult.type,
+            entryType: tokenResult.entryType,
           },
         });
       } catch (err) {

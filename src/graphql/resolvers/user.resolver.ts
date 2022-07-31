@@ -124,7 +124,7 @@ export class UserResolver {
       const status = args.status;
       const company_id = args.company_id;
       const roles = args.roles;
-      const type = args?.type;
+      const entryType = args?.entryType;
       const startDate = args?.startDate;
       const endDate = args?.endDate;
       const timesheet_attachment = args?.timesheet_attachment;
@@ -150,7 +150,7 @@ export class UserResolver {
           company_id,
           address,
           roles,
-          type,
+          entryType,
           startDate,
           endDate,
           timesheet_attachment,
@@ -167,7 +167,7 @@ export class UserResolver {
         company_id,
         address,
         roles,
-        type,
+        entryType,
         startDate,
         endDate,
         timesheet_attachment,
@@ -256,7 +256,7 @@ export class UserResolver {
       const status = args.status;
       const phone = args.phone;
       const address = args.address;
-      const type = args.type;
+      const entryType = args.entryType;
       const startDate = args.startDate;
       const endDate = args.endDate;
       const timesheet_attachment = args.timesheet_attachment;
@@ -272,7 +272,7 @@ export class UserResolver {
           middleName,
           phone,
           address,
-          type,
+          entryType,
           startDate,
           endDate,
           timesheet_attachment,
@@ -287,7 +287,7 @@ export class UserResolver {
         status,
         phone,
         address,
-        type,
+        entryType,
         startDate,
         endDate,
         timesheet_attachment,

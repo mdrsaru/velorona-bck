@@ -63,12 +63,12 @@ const messages = {
     'any.required': strings.payRateRequired,
     'any.message': strings.payRateRequired,
   },
-  type: {
-    'string.base': strings.userTypeRequired,
-    'string.empty': strings.userTypeRequired,
-    'string.name': strings.userTypeRequired,
-    'any.required': strings.userTypeRequired,
-    'any.message': strings.userTypeRequired,
+  entryType: {
+    'string.base': strings.entryTypeRequired,
+    'string.empty': strings.entryTypeRequired,
+    'string.name': strings.entryTypeRequired,
+    'any.required': strings.entryTypeRequired,
+    'any.message': strings.entryTypeRequired,
   },
 };
 
@@ -88,9 +88,9 @@ export default class UserValidation {
         otherwise: Joi.date(),
       }),
       endDate: Joi.date(),
-      type: Joi.when('roles', {
+      entryType: Joi.when('roles', {
         is: Joi.array().has(RoleEnum.Employee),
-        then: Joi.string().required().messages(messages.type),
+        then: Joi.string().required().messages(messages.entryType),
         otherwise: Joi.string(),
       }),
       address: Joi.object({
@@ -142,7 +142,7 @@ export default class UserValidation {
         state: Joi.string().allow(null, ''),
         zipcode: Joi.string().allow(null, ''),
       }),
-      type: Joi.string(),
+      entryType: Joi.string(),
     });
   }
 

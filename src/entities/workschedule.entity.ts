@@ -26,7 +26,7 @@ export default class Workschedule extends Base {
   payrollAllocatedHours: Number;
 
   @Field({ nullable: true })
-  @Column({ nullable: true, name: workschedule.payroll_usuage_hours })
+  @Column({ nullable: true, name: workschedule.payroll_usage_hours })
   payrollUsageHours: Number;
 
   @Index(`${indexPrefix}_status`)

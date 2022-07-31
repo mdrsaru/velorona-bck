@@ -63,7 +63,7 @@ export const entities = {
   timesheet: 'timesheet',
   taskAttachments: 'task_attachments',
   activityLogs: 'activity_log',
-  timesheetAttachments: 'timesheet_attachments',
+  timesheetAttachments: 'attachments',
   workscheduleDetail: 'workschedule_details',
   workscheduleTimeDetail: 'workschedule_time_details',
   subscriptionPayments: 'subscription_payments',
@@ -82,7 +82,7 @@ export enum UserStatus {
   Inactive = 'Inactive',
 }
 
-export enum UserType {
+export enum EntryType {
   CICO = 'CICO', // Check-In-Check-Out
   Timesheet = 'Timesheet',
 }

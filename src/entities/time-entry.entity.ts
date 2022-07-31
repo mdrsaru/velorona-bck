@@ -1,7 +1,7 @@
 import { Entity, Column, ManyToOne, JoinColumn, Index } from 'typeorm';
 import { ObjectType, Field, ID, InputType, registerEnumType } from 'type-graphql';
 
-import { entities, TimeEntryApprovalStatus, UserType } from '../config/constants';
+import { entities, TimeEntryApprovalStatus, EntryType } from '../config/constants';
 import { timeEntry } from '../config/db/columns';
 import { Base } from './base.entity';
 import Company from './company.entity';
@@ -15,7 +15,7 @@ registerEnumType(TimeEntryApprovalStatus, {
   name: 'TimeEntryApprovalStatus',
 });
 
-registerEnumType(UserType, {
+registerEnumType(EntryType, {
   name: 'EntryType',
 });
 
@@ -121,9 +121,9 @@ export default class TimeEntry extends Base {
   })
   hourlyRate: number;
 
-  @Field(() => UserType)
-  @Column({ name: 'entry_type', type: 'varchar', default: UserType.Timesheet })
-  entryType: UserType;
+  @Field(() => EntryType)
+  @Column({ name: 'entry_type', type: 'varchar', default: EntryType.Timesheet })
+  entryType: EntryType;
 
   @Field({ nullable: true })
   @Column({ type: 'varchar', nullable: true })
@@ -228,8 +228,8 @@ export class TimeEntryQuery {
   @Field({ nullable: true, defaultValue: false, description: 'Filter null endTime data' })
   needActiveTimeEntry: boolean;
 
-  @Field(() => UserType, { nullable: true, defaultValue: UserType.Timesheet })
-  entryType: UserType;
+  @Field(() => EntryType, { nullable: true, defaultValue: EntryType.Timesheet })
+  entryType: EntryType;
 }
 
 @InputType()

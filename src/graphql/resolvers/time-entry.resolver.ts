@@ -176,7 +176,7 @@ export class TimeEntryResolver {
       const clientLocation = args.clientLocation;
       const project_id = args.project_id;
       const company_id = args.company_id;
-      const entryType = ctx?.user?.type;
+      const entryType = ctx?.user?.entryType;
       const description = args.description;
       const created_by = ctx?.user?.id as string;
 

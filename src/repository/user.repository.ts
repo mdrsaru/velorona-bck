@@ -115,7 +115,7 @@ export default class UserRepository extends BaseRepository<User> implements IUse
       const address = args?.address;
       const roles = args.roles;
       const archived = args?.archived ?? false;
-      const type = args?.type;
+      const entryType = args?.entryType;
       const startDate = args?.startDate;
       const endDate = args?.endDate;
       const timesheet_attachment = args?.timesheet_attachment;
@@ -211,7 +211,7 @@ export default class UserRepository extends BaseRepository<User> implements IUse
       };
 
       if (roles.includes(RoleEnum.Employee)) {
-        userData.type = type;
+        userData.entryType = entryType;
       }
 
       const user = await this.repo.save(userData);
@@ -234,7 +234,7 @@ export default class UserRepository extends BaseRepository<User> implements IUse
       const password = args?.password;
       const avatar_id = args?.avatar_id;
       const archived = args?.archived;
-      const type = args?.type;
+      const entryType = args?.entryType;
       const startDate = args?.startDate;
       const endDate = args?.endDate;
       const timesheet_attachment = args?.timesheet_attachment;
@@ -296,10 +296,11 @@ export default class UserRepository extends BaseRepository<User> implements IUse
       });
 
       if (role) {
-        updateData.type = type;
+        updateData.entryType = entryType;
       }
 
       const update = merge(found, updateData);
+      console.log(update, 'update \n\n\n');
 
       const user = await this.repo.save(update);
 
