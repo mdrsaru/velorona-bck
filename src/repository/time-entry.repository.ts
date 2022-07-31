@@ -261,9 +261,12 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
         .createQueryBuilder(entities.timeEntry)
         .select('SUM(duration)', 'totalTime')
         .where('company_id = :company_id', { company_id })
-        .andWhere('created_by = :created_by', { created_by })
         .andWhere('start_time >= :startTime', { startTime })
         .andWhere('start_time <= :endTime', { endTime }); // using start_time for the end_time
+
+      if (created_by) {
+        query.andWhere('created_by = :created_by', { created_by });
+      }
 
       if (project_id) {
         query.andWhere('project_id = :project_id', { project_id });
@@ -741,7 +744,7 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
         .andWhere('approval_status = :approvalStatus', { approvalStatus: 'Pending' })
         .andWhere('timesheet_id = :timesheet_id', { timesheet_id })
         .andWhere('start_time >= :startTime', { startTime: date + 'T00:00:00' })
-        .andWhere('end_time <= :endTime', { endTime: date + 'T23:59:59' }) // using start_time for the end_time
+        .andWhere('start_time <= :endTime', { endTime: date + 'T23:59:59' }) // using start_time for the end_time
         .orderBy('end_time', 'ASC')
         .getMany();
 

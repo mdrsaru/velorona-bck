@@ -78,7 +78,7 @@ export interface ITimeEntryWeeklyDetailsRepoInput {
 
 export interface ITimeEntryTotalDurationInput {
   company_id: string;
-  user_id: string;
+  user_id?: string;
   startTime: string;
   endTime: string;
   project_id?: string;
@@ -239,4 +239,5 @@ export interface ITimeEntryService {
   remove(args: IEntityRemove): Promise<TimeEntry>;
   bulkRemove(args: ITimeEntryBulkRemoveInput): Promise<TimeEntry[]>;
   approveRejectTimeEntries(args: ITimeEntriesApproveRejectInput): Promise<boolean>;
+  bulkUpdate(args: ITimeEntryBulkUpdateInput): Promise<boolean>;
 }

@@ -205,6 +205,7 @@ export const events = {
   updateCompanySubscriptionUsage: 'updateCompanySubscriptionUsage',
   onTimesheetUnlock: 'onTimesheetUnlock',
   onTimesheetCreate: 'onTimesheetCreate',
+  updateWorkscheduleUsage: 'updateWorkscheduleUsage',
 };
 
 export const stripeSetting = {

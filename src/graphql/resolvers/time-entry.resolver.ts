@@ -37,20 +37,20 @@ import { canCreateTimeEntry, checkRoleAndFilterTimeEntry } from '../middlewares/
 export class TimeEntryResolver {
   private name = 'TimeEntryResolver';
   private timeEntryService: ITimeEntryService;
+  private timeEntryRepository: ITimeEntryRepository;
   private joiService: IJoiService;
   private errorService: IErrorService;
-  private timeEntryRepository: ITimeEntryRepository;
 
   constructor(
     @inject(TYPES.TimeEntryService) timeEntryService: ITimeEntryService,
     @inject(TYPES.JoiService) joiService: IJoiService,
     @inject(TYPES.ErrorService) errorService: IErrorService,
-    @inject(TYPES.TimeEntryRepository) _timeEntryRepository: ITimeEntryRepository
+    @inject(TYPES.TimeEntryRepository) timeEntryRepository: ITimeEntryRepository
   ) {
     this.timeEntryService = timeEntryService;
     this.joiService = joiService;
     this.errorService = errorService;
-    this.timeEntryRepository = _timeEntryRepository;
+    this.timeEntryRepository = timeEntryRepository;
   }
 
   @Query((returns) => TimeEntryPagingResult)
@@ -425,7 +425,7 @@ export class TimeEntryResolver {
       const duration = args.duration;
       const project_id = args.project_id;
 
-      const updated = await this.timeEntryRepository.bulkUpdate({
+      const updated = await this.timeEntryService.bulkUpdate({
         date,
         timesheet_id,
         duration,

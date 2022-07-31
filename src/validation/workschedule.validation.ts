@@ -42,8 +42,8 @@ const messages = {
 export default class WorkscheduleValidation {
   static create() {
     return Joi.object({
-      startDate: Joi.date().required().messages(messages.startDate),
-      endDate: Joi.date().required().messages(messages.endDate),
+      startDate: Joi.string().required().messages(messages.startDate),
+      endDate: Joi.string().required().messages(messages.endDate),
       status: Joi.string(),
       company_id: Joi.string().required().messages(messages.company_id),
     });
@@ -51,8 +51,8 @@ export default class WorkscheduleValidation {
   static update() {
     return Joi.object({
       id: Joi.string().required().messages(messages.id),
-      startDate: Joi.date(),
-      endDate: Joi.date(),
+      startDate: Joi.string(),
+      endDate: Joi.string(),
       payrollAllocatedHours: Joi.number(),
       payrollUsageHours: Joi.number(),
       status: Joi.string(),

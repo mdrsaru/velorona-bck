@@ -13,13 +13,13 @@ const indexPrefix = 'workschedule';
 export default class Workschedule extends Base {
   @Index(`${indexPrefix}_start_date`)
   @Field()
-  @Column({ name: workschedule.start_date })
-  startDate: Date;
+  @Column({ type: 'date', name: workschedule.start_date })
+  startDate: string;
 
   @Index(`${indexPrefix}_end_date`)
   @Field()
-  @Column({ name: workschedule.end_date })
-  endDate: Date;
+  @Column({ type: 'date', name: workschedule.end_date })
+  endDate: string;
 
   @Field({ nullable: true })
   @Column({ nullable: true, name: workschedule.payroll_allocated_hours })
@@ -62,10 +62,10 @@ export class WorkschedulePagingResult {
 @InputType()
 export class WorkscheduleCreateInput {
   @Field()
-  startDate: Date;
+  startDate: string;
 
   @Field()
-  endDate: Date;
+  endDate: string;
 
   @Field({ nullable: true })
   payrollAllocatedHours: Number;
@@ -86,10 +86,10 @@ export class WorkscheduleUpdateInput {
   id: string;
 
   @Field({ nullable: true })
-  startDate: Date;
+  startDate: string;
 
   @Field({ nullable: true })
-  endDate: Date;
+  endDate: string;
 
   @Field({ nullable: true })
   payrollAllocatedHours: Number;

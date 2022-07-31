@@ -5,8 +5,10 @@ import { TYPES } from '../types';
 import Paging from '../utils/paging';
 import * as apiError from '../utils/api-error';
 import TimeEntry from '../entities/time-entry.entity';
+import Timesheet from '../entities/timesheet.entity';
 import { TimesheetStatus, events, TimeEntryApprovalStatus, UserType } from '../config/constants';
 import timesheetEmitter from '../subscribers/timesheet.subscriber';
+import workscheduleEmitter from '../subscribers/workschedule.subscriber';
 
 import { IEntityRemove, IErrorService, ILogger, Maybe } from '../interfaces/common.interface';
 import { IPagingArgs } from '../interfaces/paging.interface';
@@ -20,6 +22,7 @@ import {
   ITimeEntryUpdateInput,
   ITimeEntryWeeklyDetailsInput,
   ITimeEntriesApproveRejectInput,
+  ITimeEntryBulkUpdateInput,
 } from '../interfaces/time-entry.interface';
 import { IUserPayRateRepository } from '../interfaces/user-payrate.interface';
 import { ITimesheetRepository } from '../interfaces/timesheet.interface';
@@ -393,15 +396,14 @@ export default class TimeEntryService implements ITimeEntryService {
         id = found[0].id;
       }
 
+      let timesheet: Timesheet;
       if (id) {
-        const timesheet = await this.timesheetRepository.update({
+        timesheet = await this.timesheetRepository.update({
           id,
           duration: totalTimeInSeconds,
         });
-
-        return timesheet;
       } else {
-        const timesheet = await this.timesheetRepository.create({
+        timesheet = await this.timesheetRepository.create({
           weekStartDate,
           weekEndDate,
           duration: totalTimeInSeconds,
@@ -416,9 +418,15 @@ export default class TimeEntryService implements ITimeEntryService {
           client_id,
           weekStartDate,
         });
-
-        return timesheet;
       }
+
+      workscheduleEmitter.emit(events.updateWorkscheduleUsage, {
+        startDate: weekStartDate,
+        endDate: weekEndDate,
+        company_id,
+      });
+
+      return timesheet;
     } catch (err) {
       throw err;
     }
@@ -447,6 +455,39 @@ export default class TimeEntryService implements ITimeEntryService {
       }
 
       return result;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  bulkUpdate = async (args: ITimeEntryBulkUpdateInput): Promise<boolean> => {
+    try {
+      const date = args.date;
+      const timesheet_id = args.timesheet_id;
+      const duration = args.duration;
+      const project_id = args.project_id;
+
+      const updated = await this.timeEntryRepository.bulkUpdate({
+        date,
+        timesheet_id,
+        duration,
+        project_id,
+      });
+
+      const timesheet = await this.timesheetRepository.getById({
+        id: timesheet_id,
+        select: ['company_id', 'id', 'weekStartDate', 'weekEndDate'],
+      });
+
+      if (timesheet) {
+        workscheduleEmitter.emit(events.updateWorkscheduleUsage, {
+          startDate: timesheet.weekStartDate,
+          endDate: timesheet.weekEndDate,
+          company_id: timesheet.company_id,
+        });
+      }
+
+      return updated;
     } catch (err) {
       throw err;
     }

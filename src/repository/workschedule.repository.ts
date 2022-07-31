@@ -1,6 +1,7 @@
 import { inject, injectable } from 'inversify';
 import { getRepository } from 'typeorm';
 import isNil from 'lodash/isNil';
+import isNumber from 'lodash/isNumber';
 import isString from 'lodash/isString';
 import merge from 'lodash/merge';
 
@@ -20,7 +21,6 @@ import {
   IWorkscheduleUpdateInput,
 } from '../interfaces/workschedule.interface';
 import { ITaskRepository } from '../interfaces/task.interface';
-import { isDate, isNumber } from 'lodash';
 
 @injectable()
 export default class WorkscheduleRepository extends BaseRepository<Workschedule> implements IWorkscheduleRepository {
@@ -49,10 +49,10 @@ export default class WorkscheduleRepository extends BaseRepository<Workschedule>
 
       const errors: string[] = [];
 
-      if (isNil(startDate) || !isDate(startDate)) {
+      if (isNil(startDate)) {
         errors.push(strings.startDateRequired);
       }
-      if (isNil(endDate) || !isDate(endDate)) {
+      if (isNil(endDate)) {
         errors.push(strings.endDateRequired);
       }
       if (isNil(company_id) || !isString(company_id)) {

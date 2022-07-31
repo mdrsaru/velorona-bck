@@ -2,19 +2,20 @@ import Company from '../entities/company.entity';
 import Task from '../entities/task.entity';
 import User from '../entities/user.entity';
 import Workschedule from '../entities/workschedule.entity';
-import { IEntityID, IEntityRemove } from './common.interface';
+import { IEntityID, IEntityRemove, ISingleEntityQuery } from './common.interface';
 import { IGetAllAndCountResult, IPaginationData, IPagingArgs } from './paging.interface';
 
 export interface IWorkschedule {
   id: string;
-  startDate: Date;
-  endDate: Date;
+  startDate: string;
+  endDate: string;
   payrollAllocatedHours: Number;
   payrollUsageHours: Number;
   status: string;
   company_id: string;
   company: Company[];
 }
+
 export interface IWorkscheduleCreateInput {
   startDate: IWorkschedule['startDate'];
   endDate: IWorkschedule['endDate'];
@@ -34,11 +35,18 @@ export interface IWorkscheduleUpdateInput {
   company_id?: IWorkschedule['company_id'];
 }
 
+export interface IPayrollUpdateInput {
+  startDate: string;
+  endDate: string;
+  company_id: string;
+}
+
 export interface IWorkscheduleService {
   getAllAndCount(filters?: any): Promise<IPaginationData<Workschedule>>;
   create(args: IWorkscheduleCreateInput): Promise<Workschedule>;
   update(args: IWorkscheduleUpdateInput): Promise<Workschedule>;
   remove(args: IEntityRemove): Promise<Workschedule>;
+  updatePayrollUsage(args: IPayrollUpdateInput): Promise<Workschedule | undefined>;
 }
 
 export interface IWorkscheduleRepository {
@@ -48,4 +56,5 @@ export interface IWorkscheduleRepository {
   create(args: IWorkscheduleCreateInput): Promise<Workschedule>;
   update(args: IWorkscheduleUpdateInput): Promise<Workschedule>;
   remove(args: IEntityRemove): Promise<Workschedule>;
+  getSingleEntity(args: ISingleEntityQuery): Promise<Workschedule | undefined>;
 }
