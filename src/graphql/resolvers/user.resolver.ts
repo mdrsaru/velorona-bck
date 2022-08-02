@@ -261,6 +261,7 @@ export class UserResolver {
       const endDate = args.endDate;
       const timesheet_attachment = args.timesheet_attachment;
       const manager_id = args.manager_id;
+      const roles = args.roles;
 
       const schema = UserValidation.update();
       await this.joiService.validate({
@@ -292,6 +293,7 @@ export class UserResolver {
         endDate,
         timesheet_attachment,
         manager_id,
+        roles,
       });
 
       return user;

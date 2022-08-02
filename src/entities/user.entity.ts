@@ -305,6 +305,9 @@ export class UserUpdateInput {
   @Field({ nullable: true })
   endDate: Date;
 
+  @Field((type) => [CompanyRole], { nullable: true })
+  roles: CompanyRole[];
+
   @Field({ nullable: true })
   timesheet_attachment: boolean;
 

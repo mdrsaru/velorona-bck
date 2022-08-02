@@ -129,6 +129,7 @@ export default class UserService implements IUserService {
       const endDate = args?.endDate;
       const timesheet_attachment = args?.timesheet_attachment;
       const manager_id = args?.manager_id;
+      const roles = args?.roles;
 
       const user = await this.userRepository.update({
         id,
@@ -144,6 +145,7 @@ export default class UserService implements IUserService {
         endDate,
         timesheet_attachment,
         manager_id,
+        roles,
       });
 
       return user;

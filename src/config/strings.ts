@@ -57,6 +57,7 @@ export default {
   toRequired: 'To required',
   fromRequired: 'From required',
   workscheduleNotFound: 'Workschedule not found',
+  workscheduleAlreadyExist: 'Workschedule already exist with given start date and end date',
   UserIdRequired: 'User Id required',
   userTypeRequired: 'User type required',
   tokenExpired: 'Token expired',
