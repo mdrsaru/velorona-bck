@@ -81,6 +81,7 @@ export interface IUserUpdate {
   timesheet_attachment?: IUser['timesheet_attachment'];
   entryType?: IUser['entryType'];
   manager_id?: IUser['manager_id'];
+  roles?: string[];
 }
 
 export interface IUserArchiveOrUnArchive {
