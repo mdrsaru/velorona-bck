@@ -64,7 +64,18 @@ export default class WorkscheduleRepository extends BaseRepository<Workschedule>
           details: errors,
         });
       }
+      const found = await this.getAll({
+        query: {
+          startDate: startDate,
+          endDate: endDate,
+        },
+      });
 
+      if (found.length > 0) {
+        throw new apiError.ConflictError({
+          details: [strings.workscheduleAlreadyExist],
+        });
+      }
       const company = await this.companyRepository.getById({ id: company_id });
       if (!company) {
         throw new apiError.NotFoundError({

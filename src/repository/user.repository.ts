@@ -239,6 +239,7 @@ export default class UserRepository extends BaseRepository<User> implements IUse
       const endDate = args?.endDate;
       const timesheet_attachment = args?.timesheet_attachment;
       const manager_id = args?.manager_id;
+      const roles = args?.roles;
 
       const found = await this.repo.findOne(id, {
         relations: ['address', 'roles'],
@@ -249,6 +250,12 @@ export default class UserRepository extends BaseRepository<User> implements IUse
           details: [strings.userNotFound],
         });
       }
+
+      const existingRoles = await this.roleRepository.getAll({
+        query: {
+          name: roles,
+        },
+      });
 
       if (manager_id) {
         const manager = await this.repo
@@ -270,7 +277,7 @@ export default class UserRepository extends BaseRepository<User> implements IUse
       if (password) {
         hashedPassword = await this.hashService.hash(password, config.saltRounds);
       }
-
+      console.log(startDate);
       const updateData: any = {
         id,
         firstName,
@@ -289,6 +296,7 @@ export default class UserRepository extends BaseRepository<User> implements IUse
         endDate,
         timesheet_attachment,
         manager_id,
+        roles: existingRoles,
       };
 
       const role = found?.roles.some(function (role) {
@@ -303,7 +311,7 @@ export default class UserRepository extends BaseRepository<User> implements IUse
       console.log(update, 'update \n\n\n');
 
       const user = await this.repo.save(update);
-
+      console.log(user);
       return user;
     } catch (err) {
       throw err;

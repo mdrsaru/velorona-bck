@@ -28,6 +28,7 @@ import { IUserPayRateRepository } from '../interfaces/user-payrate.interface';
 import { ITimesheetRepository } from '../interfaces/timesheet.interface';
 import { IProjectRepository } from '../interfaces/project.interface';
 import { timeEntryEmitter } from '../subscribers/emitters';
+import Project from '../entities/project.entity';
 
 @injectable()
 export default class TimeEntryService implements ITimeEntryService {
@@ -121,6 +122,27 @@ export default class TimeEntryService implements ITimeEntryService {
     const created_by = args.created_by;
     const entryType = args.entryType;
     const description = args.description;
+
+    const project: any = await this.projectRepository.getById({ id: project_id });
+    const weekStartDate = moment(startTime).startOf('isoWeek');
+    const weekEndDate = moment(startTime).endOf('isoWeek');
+
+    let foundTimesheet = await this.timesheetRepository.getSingleEntity({
+      query: {
+        weekStartDate,
+        weekEndDate,
+        user_id: created_by,
+        client_id: project.client_id,
+        company_id: company_id,
+      },
+      select: ['isSubmitted'],
+    });
+
+    if (foundTimesheet?.isSubmitted) {
+      throw new apiError.ConflictError({
+        details: ['Timesheet has been submitted.Please contact your manager to unlock it.'],
+      });
+    }
 
     try {
       let timeEntry = await this.timeEntryRepository.create({
