@@ -35,6 +35,9 @@ export default class AttachedTimesheetValidation {
       company_id: Joi.string().required().messages(messages.company),
       timesheet_id: Joi.string().messages(messages.timesheet),
       invoice_id: Joi.string(),
+      type: Joi.string().required(),
+      amount: Joi.number().allow('', null),
+      date: Joi.date(),
     });
   }
 
@@ -43,6 +46,9 @@ export default class AttachedTimesheetValidation {
       id: Joi.string().required().error(new Error(strings.idRequired)),
       description: Joi.string(),
       attachment_id: Joi.string(),
+      type: Joi.string(),
+      amount: Joi.number().allow('', null),
+      date: Joi.date(),
     });
   }
 }

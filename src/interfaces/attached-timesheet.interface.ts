@@ -4,7 +4,7 @@ import Media from '../entities/media.entity';
 import AttachedTimesheet from '../entities/attached-timesheet.entity';
 import Company from '../entities/company.entity';
 import Timesheet from '../entities/timesheet.entity';
-import { AttachedTimesheetStatus } from '../config/constants';
+import { AttachedTimesheetStatus, AttachmentType } from '../config/constants';
 
 export interface IAttachedTimesheet {
   id: string;
@@ -17,6 +17,9 @@ export interface IAttachedTimesheet {
   timesheet_id: string;
   invoice_id?: string;
   timesheet: Timesheet[];
+  type: AttachmentType;
+  amount: number;
+  date: Date;
 }
 
 export interface IAttachedTimesheetCreateInput {
@@ -26,6 +29,9 @@ export interface IAttachedTimesheetCreateInput {
   created_by: IAttachedTimesheet['created_by'];
   timesheet_id: IAttachedTimesheet['timesheet_id'];
   invoice_id?: IAttachedTimesheet['invoice_id'];
+  type?: IAttachedTimesheet['type'];
+  amount?: IAttachedTimesheet['amount'];
+  date?: IAttachedTimesheet['date'];
 }
 
 export interface IAttachedTimesheetUpdateInput {
@@ -33,6 +39,9 @@ export interface IAttachedTimesheetUpdateInput {
   description?: IAttachedTimesheet['description'];
   attachment_id?: string;
   status?: AttachedTimesheetStatus;
+  type?: IAttachedTimesheet['type'];
+  amount?: IAttachedTimesheet['amount'];
+  date?: IAttachedTimesheet['date'];
 }
 
 export interface IAttachedTimesheetCountInput extends ICountInput {}

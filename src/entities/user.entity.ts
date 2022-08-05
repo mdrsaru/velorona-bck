@@ -78,6 +78,11 @@ export default class User extends Base {
   @Field({ nullable: true })
   fullName: string;
 
+  @Index(`${indexPrefix}_designation`)
+  @Field({ nullable: true })
+  @Column({ length: 25, name: 'designation', nullable: true })
+  designation: string;
+
   @Index(`${indexPrefix}_status`)
   @Field((type) => UserStatus)
   @Column({
@@ -230,6 +235,9 @@ export class UserCreateInput {
   @Field()
   company_id: string;
 
+  @Field({ nullable: true })
+  designation: string;
+
   @Field((type) => AddressCreateInput)
   address: AddressCreateInput;
 
@@ -300,6 +308,9 @@ export class UserUpdateInput {
   lastName: string;
 
   @Field({ nullable: true })
+  designation: string;
+
+  @Field({ nullable: true })
   startDate: Date;
 
   @Field({ nullable: true })
@@ -346,6 +357,9 @@ export class UserQuery {
 
   @Field({ nullable: true })
   entryType: EntryType;
+
+  @Field({ nullable: true })
+  designation: string;
 }
 
 @InputType()
