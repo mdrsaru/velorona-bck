@@ -45,6 +45,9 @@ export default class AttachedTimesheetService implements IAttachedTimesheetServi
       const created_by = args.created_by;
       const timesheet_id = args.timesheet_id;
       const invoice_id = args.invoice_id;
+      const type = args.type;
+      const amount = args.amount;
+      const date = args.date;
 
       const attachedTimesheet = await this.attachedTimesheetRepository.create({
         description,
@@ -53,6 +56,9 @@ export default class AttachedTimesheetService implements IAttachedTimesheetServi
         created_by,
         timesheet_id,
         invoice_id,
+        type,
+        amount,
+        date,
       });
 
       return attachedTimesheet;
@@ -66,11 +72,17 @@ export default class AttachedTimesheetService implements IAttachedTimesheetServi
       const id = args.id;
       const description = args?.description;
       const attachment_id = args?.attachment_id;
+      const type = args.type;
+      const amount = args.amount;
+      const date = args.date;
 
       const AttachedTimesheet = await this.attachedTimesheetRepository.update({
         id,
         description,
         attachment_id,
+        type,
+        amount,
+        date,
       });
 
       return AttachedTimesheet;

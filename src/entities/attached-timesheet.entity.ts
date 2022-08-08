@@ -1,6 +1,6 @@
 import { Field, InputType, ObjectType, registerEnumType } from 'type-graphql';
 import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany, OneToOne } from 'typeorm';
-import { AttachedTimesheetStatus, entities } from '../config/constants';
+import { AttachedTimesheetStatus, AttachmentType, entities } from '../config/constants';
 import { attachedTimesheets } from '../config/db/columns';
 import { Base } from './base.entity';
 import { PagingInput, PagingResult } from './common.entity';
@@ -12,6 +12,10 @@ import User from './user.entity';
 
 registerEnumType(AttachedTimesheetStatus, {
   name: 'AttachedTimesheetStatus',
+});
+
+registerEnumType(AttachmentType, {
+  name: 'AttachmentType',
 });
 
 const indexPrefix = 'Timesheet';
@@ -30,6 +34,23 @@ export default class AttachedTimesheet extends Base {
   @ManyToOne(() => Media)
   @JoinColumn({ name: attachedTimesheets.attachment_id })
   attachments: Media;
+
+  @Index(`${indexPrefix}_type`)
+  @Field((type) => AttachmentType)
+  @Column({
+    type: 'varchar',
+    default: AttachmentType.Timesheet,
+    nullable: true,
+  })
+  type: AttachmentType;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  amount: number;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  date: Date;
 
   @Index(`${indexPrefix}_company_id_index`)
   @Field()
@@ -104,6 +125,15 @@ export class AttachedTimesheetCreateInput {
 
   @Field({ nullable: true })
   invoice_id: string;
+
+  @Field((type) => AttachmentType)
+  type: AttachmentType;
+
+  @Field({ nullable: true })
+  amount: number;
+
+  @Field({ nullable: true })
+  date: Date;
 }
 
 @InputType()
@@ -119,6 +149,15 @@ export class AttachedTimesheetUpdateInput {
 
   @Field()
   company_id: string;
+
+  @Field((type) => AttachmentType, { nullable: true })
+  type: AttachmentType;
+
+  @Field({ nullable: true })
+  amount: number;
+
+  @Field({ nullable: true })
+  date: Date;
 }
 
 @InputType()
@@ -137,6 +176,12 @@ export class AttachedTimesheetQuery {
 
   @Field({ nullable: true })
   invoice_id: string;
+
+  @Field({ nullable: true })
+  type: string;
+
+  @Field({ nullable: true })
+  date: Date;
 }
 
 @InputType()

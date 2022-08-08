@@ -146,6 +146,12 @@ export enum InvoiceStatus {
   Sent = 'Sent',
 }
 
+export enum AttachmentType {
+  Timesheet = 'Timesheet',
+  Attachment = 'Attachment',
+  Others = 'Others',
+}
+
 export enum ForgotPasswordUserType {
   Company = 'Company',
   SystemAdmin = 'SystemAdmin',

@@ -13,6 +13,7 @@ export interface IUser {
   lastName: string;
   middleName?: string;
   phone: string;
+  designation?: string;
   status: UserStatus;
   address?: IAddress;
   roles: Role[];
@@ -45,6 +46,7 @@ export interface IUserCreate {
   middleName?: IUser['middleName'];
   phone: IUser['phone'];
   status: IUser['status'];
+  designation?: IUser['designation'];
   entryType?: IUser['entryType'];
   roles: string[];
   company_id?: string;
@@ -72,6 +74,7 @@ export interface IUserUpdate {
   middleName?: IUser['middleName'];
   phone?: IUser['phone'];
   status?: IUser['status'];
+  designation?: IUser['designation'];
   address?: IAddressUpdateInput;
   password?: string;
   avatar_id?: string;

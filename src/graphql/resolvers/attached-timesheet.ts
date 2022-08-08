@@ -80,6 +80,9 @@ export class AttachedTimesheetResolver {
       const created_by = ctx?.user?.id;
       const timesheet_id = args.timesheet_id;
       const invoice_id = args.invoice_id;
+      const type = args.type;
+      const amount = args.amount;
+      const date = args.date;
 
       const schema = AttachedTimesheetValidation.create();
       await this.joiService.validate({
@@ -90,6 +93,9 @@ export class AttachedTimesheetResolver {
           company_id,
           timesheet_id,
           invoice_id,
+          type,
+          amount,
+          date,
         },
       });
 
@@ -100,6 +106,9 @@ export class AttachedTimesheetResolver {
         created_by,
         timesheet_id,
         invoice_id,
+        type,
+        amount,
+        date,
       });
 
       return AttachedTimesheet;
@@ -130,6 +139,9 @@ export class AttachedTimesheetResolver {
       const id = args.id;
       const description = args?.description;
       const attachment_id = args?.attachment_id;
+      const type = args.type;
+      const amount = args.amount;
+      const date = args.date;
 
       const schema = AttachedTimesheetValidation.update();
       await this.joiService.validate({
@@ -138,6 +150,9 @@ export class AttachedTimesheetResolver {
           id,
           description,
           attachment_id,
+          type,
+          amount,
+          date,
         },
       });
 
@@ -145,6 +160,9 @@ export class AttachedTimesheetResolver {
         id,
         description,
         attachment_id,
+        type,
+        amount,
+        date,
       });
 
       return AttachedTimesheet;

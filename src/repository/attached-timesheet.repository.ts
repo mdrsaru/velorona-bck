@@ -54,6 +54,9 @@ export default class AttachedTimesheetRepository
       const created_by = args.created_by;
       const timesheet_id = args.timesheet_id;
       const invoice_id = args.invoice_id;
+      const type = args.type;
+      const amount = args.amount;
+      const date = args.date;
 
       const company = await this.companyRepository.getById({ id: company_id });
       if (!company) {
@@ -68,14 +71,14 @@ export default class AttachedTimesheetRepository
           details: [strings.userNotFound],
         });
       }
-
-      const timesheet = await this.timesheetRepository.getById({ id: timesheet_id });
-      if (!timesheet) {
-        throw new NotFoundError({
-          details: [strings.timesheetNotFound],
-        });
+      if (timesheet_id) {
+        const timesheet = await this.timesheetRepository.getById({ id: timesheet_id });
+        if (!timesheet) {
+          throw new NotFoundError({
+            details: [strings.timesheetNotFound],
+          });
+        }
       }
-
       const attachedTimesheet = await this.repo.save({
         description,
         company_id,
@@ -83,6 +86,9 @@ export default class AttachedTimesheetRepository
         created_by,
         timesheet_id,
         invoice_id,
+        type,
+        amount,
+        date,
       });
 
       return attachedTimesheet;
@@ -97,6 +103,9 @@ export default class AttachedTimesheetRepository
       const description = args?.description;
       const attachment_id = args?.attachment_id;
       const status = args?.status;
+      const type = args.type;
+      const amount = args.amount;
+      const date = args.date;
 
       const found = await this.getById({ id });
 
@@ -111,6 +120,9 @@ export default class AttachedTimesheetRepository
         description,
         attachment_id,
         status,
+        type,
+        amount,
+        date,
       });
 
       let attachedTimesheet = await this.repo.save(update);

@@ -75,6 +75,7 @@ export default class UserService implements IUserService {
       const timesheet_attachment = args?.timesheet_attachment;
       const manager_id = args.manager_id;
       const password = generateRandomStrings({ length: 8 });
+      const designation = args.designation;
 
       const user = await this.userRepository.create({
         email,
@@ -92,6 +93,7 @@ export default class UserService implements IUserService {
         endDate,
         timesheet_attachment,
         manager_id,
+        designation,
       });
 
       // Emit event for onUserCreate
@@ -130,6 +132,7 @@ export default class UserService implements IUserService {
       const timesheet_attachment = args?.timesheet_attachment;
       const manager_id = args?.manager_id;
       const roles = args?.roles;
+      const designation = args.designation;
 
       const user = await this.userRepository.update({
         id,
@@ -146,6 +149,7 @@ export default class UserService implements IUserService {
         timesheet_attachment,
         manager_id,
         roles,
+        designation,
       });
 
       return user;
