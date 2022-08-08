@@ -6,7 +6,7 @@ import Client from '../entities/client.entity';
 import Timesheet from '../entities/timesheet.entity';
 import { TimesheetStatus } from '../config/constants';
 
-import { IEntityID, IEntityRemove } from './common.interface';
+import { IEntityID, IEntityRemove, ISingleEntityQuery } from './common.interface';
 import { IGetAllAndCountResult, IPaginationData, IPagingArgs, IGetOptions } from './paging.interface';
 
 export interface ITimesheet {
@@ -83,6 +83,7 @@ export interface ITimesheetRepository {
   remove(args: IEntityRemove): Promise<Timesheet>;
   countTimesheet(args: ITimesheetCountInput): Promise<number>;
   getTimesheetByManager(args: ITimesheetCountInput): Promise<IGetAllAndCountResult<Timesheet>>;
+  getSingleEntity(args: ISingleEntityQuery): Promise<Timesheet | undefined>;
 }
 
 export interface ITimesheetService {
