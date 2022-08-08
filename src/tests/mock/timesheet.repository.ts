@@ -6,7 +6,7 @@ import Timesheet from '../../entities/timesheet.entity';
 import { IClientRepository } from '../../interfaces/client.interface';
 import { ICompanyRepository } from '../../interfaces/company.interface';
 import { IGetAllAndCountResult, IGetOptions, IPagingArgs } from '../../interfaces/paging.interface';
-import { IEntityID, IEntityRemove } from '../../interfaces/common.interface';
+import { IEntityID, IEntityRemove, ISingleEntityQuery } from '../../interfaces/common.interface';
 import {
   ITimesheetCountInput,
   ITimesheetCreateInput,
@@ -50,6 +50,9 @@ export default class TimesheetRepository implements ITimesheetRepository {
   };
 
   countTimesheet = async (args: ITimesheetCountInput): Promise<number> => {
+    throw new Error('not implemented');
+  };
+  getSingleEntity = (args: ISingleEntityQuery): Promise<Timesheet | undefined> => {
     throw new Error('not implemented');
   };
 }
