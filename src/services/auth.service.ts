@@ -7,6 +7,7 @@ import constants, {
   UserStatus,
   ForgotPasswordUserType,
   emailSetting,
+  CompanyStatus,
 } from '../config/constants';
 import { NotAuthenticatedError, ValidationError } from '../utils/api-error';
 import strings from '../config/strings';
@@ -91,6 +92,18 @@ export default class AuthService implements IAuthService {
         if (user?.company?.archived) {
           throw new apiError.NotAuthenticatedError({
             details: [strings.companyArchived],
+          });
+        }
+
+        if (user?.company?.status === CompanyStatus.Unapproved) {
+          throw new apiError.NotAuthenticatedError({
+            details: [strings.companyNotApproved],
+          });
+        }
+
+        if (user?.company?.status === CompanyStatus.Inactive) {
+          throw new apiError.NotAuthenticatedError({
+            details: [strings.companyInactive],
           });
         }
       } else {

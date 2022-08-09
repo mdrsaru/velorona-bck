@@ -75,6 +75,7 @@ export const entities = {
 export enum CompanyStatus {
   Active = 'Active',
   Inactive = 'Inactive',
+  Unapproved = 'Unapproved',
 }
 
 export enum UserStatus {

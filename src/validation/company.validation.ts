@@ -36,6 +36,25 @@ const messages = {
   },
 };
 
+const userValidation = {
+  user: Joi.object({
+    email: Joi.string().required().messages(messages.email),
+    firstName: Joi.string().allow('', null),
+    lastName: Joi.string().allow('', null),
+    middleName: Joi.string().allow('', null),
+    phone: Joi.string().allow('', null),
+    status: Joi.string().allow('', null),
+    address: Joi.object({
+      country: Joi.string().allow('', null),
+      streetAddress: Joi.string().allow('', null),
+      aptOrSuite: Joi.string().allow('', null),
+      city: Joi.string().allow('', null),
+      state: Joi.string().allow('', null),
+      zipcode: Joi.string().allow('', null),
+    }),
+  }),
+};
+
 export default class CompanyValidation {
   static create() {
     return Joi.object({
@@ -43,22 +62,15 @@ export default class CompanyValidation {
       status: Joi.string().required().messages(messages.status),
       archived: Joi.boolean(),
       logo_id: Joi.string(),
-      user: Joi.object({
-        email: Joi.string().required().messages(messages.email),
-        firstName: Joi.string(),
-        lastName: Joi.string(),
-        middleName: Joi.string().allow('', null),
-        phone: Joi.string(),
-        status: Joi.string(),
-        address: Joi.object({
-          country: Joi.string(),
-          streetAddress: Joi.string(),
-          aptOrSuite: Joi.string(),
-          city: Joi.string(),
-          state: Joi.string(),
-          zipcode: Joi.string(),
-        }),
-      }),
+      ...userValidation,
+    });
+  }
+
+  static signUp() {
+    return Joi.object({
+      name: Joi.string().required().messages(messages.name),
+      logo_id: Joi.string(),
+      ...userValidation,
     });
   }
 

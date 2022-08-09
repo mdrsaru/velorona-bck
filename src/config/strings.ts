@@ -114,4 +114,6 @@ export default {
   commentRequired: 'Comment required',
   daysRequired: 'Days required',
   entryTypeRequired: 'Entry type required',
+  companyNotApproved: 'The company has not been approved yet.',
+  companyInactive: 'The company is inactive',
 };

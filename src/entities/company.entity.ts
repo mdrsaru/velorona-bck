@@ -168,6 +168,18 @@ export class CompanyCreateInput {
 }
 
 @InputType()
+export class CompanySignUpInput {
+  @Field()
+  name: string;
+
+  @Field()
+  user: CompanyAdminInput;
+
+  @Field({ nullable: true })
+  logo_id: string;
+}
+
+@InputType()
 export class CompanyUpdateInput {
   @Field()
   id: string;
