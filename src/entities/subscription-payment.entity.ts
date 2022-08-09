@@ -62,7 +62,7 @@ export class SubscriptionPaymentQuery {
   @Field({ nullable: true })
   id: string;
 
-  @Field()
+  @Field({ nullable: true })
   company_id: string;
 }
 
@@ -71,6 +71,6 @@ export class SubscriptionPaymentQueryInput {
   @Field({ nullable: true })
   paging: PagingInput;
 
-  @Field()
+  @Field({ nullable: true })
   query: SubscriptionPaymentQuery;
 }

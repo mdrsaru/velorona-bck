@@ -1,3 +1,4 @@
+import set from 'lodash/set';
 import { inject, injectable } from 'inversify';
 import { Resolver, Query, Ctx, Arg, Mutation, UseMiddleware, FieldResolver, Root } from 'type-graphql';
 
@@ -35,14 +36,19 @@ export class SubscriptionPaymentResolver {
   }
 
   @Query((returns) => SubscriptionPaymentPagingResult)
-  @UseMiddleware(authenticate, authorize(RoleEnum.CompanyAdmin), checkCompanyAccess)
+  @UseMiddleware(authenticate, authorize(RoleEnum.CompanyAdmin, RoleEnum.SuperAdmin), checkCompanyAccess)
   async SubscriptionPayment(
     @Arg('input') args: SubscriptionPaymentQueryInput,
-    @Ctx() ctx: any
+    @Ctx() ctx: IGraphqlContext
   ): Promise<IPaginationData<SubscriptionPayment>> {
     const operation = 'SubscriptionPayment';
 
     try {
+      const company_id = args?.query?.company_id;
+      if (!company_id && !ctx.user?.roles?.map((role) => role.name)?.includes(RoleEnum.SuperAdmin)) {
+        set(args, 'query.company_id', ctx.user?.company_id as string);
+      }
+
       const pagingArgs = Paging.createPagingPayload(args);
       let result: IPaginationData<SubscriptionPayment> = await this.subscriptionPaymentService.getAllAndCount(
         pagingArgs
@@ -57,5 +63,10 @@ export class SubscriptionPaymentResolver {
         logError: true,
       });
     }
+  }
+
+  @FieldResolver()
+  company(@Root() root: SubscriptionPayment, @Ctx() ctx: IGraphqlContext) {
+    return ctx.loaders.companyByIdLoader.load(root.company_id);
   }
 }

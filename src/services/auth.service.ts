@@ -399,12 +399,7 @@ export default class AuthService implements IAuthService {
 
       const user: any = await this.userRepository.getById({
         id: decoded.id,
-        relations: ['roles', 'company', 'avatar'],
-      });
-
-      const company = await this.companyRepository.getById({
-        id: user.company_id,
-        relations: ['logo'],
+        relations: ['roles', 'company', 'avatar', 'company.logo'],
       });
 
       if (!user) {
@@ -418,7 +413,7 @@ export default class AuthService implements IAuthService {
         token: newAccessToken,
         refreshToken,
         roles: user.roles ?? [],
-        company: company,
+        company: user.company,
         firstName: user.firstName,
         middleName: user?.middleName,
         lastName: user?.lastName,
