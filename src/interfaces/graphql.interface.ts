@@ -35,6 +35,7 @@ export interface IDataloader {
   workscheduleTimeDetailByDetailIdLoader: Dataloader<string, WorkscheduleTimeDetail>;
   replyCountByParentIdLoader: Dataloader<string, number>;
   usersByEmailLoader: Dataloader<string, User>;
+  usersByProjectIdLoader: Dataloader<string, any>;
 }
 
 export interface IGraphqlContext {

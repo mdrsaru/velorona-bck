@@ -33,6 +33,7 @@ export default class ProjectValidation {
       company_id: Joi.string().required().messages(messages.company),
       status: Joi.string(),
       archived: Joi.boolean(),
+      user_ids: Joi.array(),
     });
   }
   static update() {
@@ -41,6 +42,7 @@ export default class ProjectValidation {
       name: Joi.string().required().messages(messages.name),
       status: Joi.string(),
       archived: Joi.boolean(),
+      user_ids: Joi.array(),
     });
   }
 }

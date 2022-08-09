@@ -9,6 +9,7 @@ import { PagingInput, PagingResult } from './common.entity';
 import TimeEntry from './time-entry.entity';
 import Client from './client.entity';
 import UserPayRate from './user-payrate.entity';
+import { userProjectTable } from '../config/db/columns';
 
 registerEnumType(ProjectStatus, {
   name: 'ProjectStatus',
@@ -56,6 +57,22 @@ export default class Project extends Base {
   @Field(() => UserPayRate, { nullable: true, description: 'Field for UserPayRate' })
   @OneToMany(() => UserPayRate, (userpayrate) => userpayrate.project)
   userPayRate: UserPayRate[];
+
+  @Field(() => [User], { nullable: true })
+  @ManyToMany(() => User)
+  @JoinTable({
+    name: entities.userProject,
+    joinColumn: {
+      name: userProjectTable.project_id,
+      referencedColumnName: 'id',
+    },
+
+    inverseJoinColumn: {
+      name: userProjectTable.user_id,
+      referencedColumnName: 'id',
+    },
+  })
+  users: User[];
 }
 
 @ObjectType()
@@ -83,6 +100,9 @@ export class ProjectCreateInput {
 
   @Field({ nullable: true })
   archived: boolean;
+
+  @Field(() => [String], { nullable: true })
+  user_ids: string[];
 }
 
 @InputType()
@@ -101,6 +121,9 @@ export class ProjectUpdateInput {
 
   @Field({ nullable: true })
   archived: boolean;
+
+  @Field(() => [String], { nullable: true })
+  user_ids: string[];
 }
 
 @InputType()
@@ -122,6 +145,9 @@ export class ProjectQuery {
 
   @Field({ nullable: true })
   status: string;
+
+  @Field({ nullable: true, description: 'Assigned user_id for the project' })
+  user_id: string;
 }
 
 @InputType()

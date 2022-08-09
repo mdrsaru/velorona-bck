@@ -20,6 +20,7 @@ export interface IProjectCreateInput {
   company_id: IProject['company_id'];
   status?: IProject['status'];
   archived?: IProject['archived'];
+  user_ids?: string[];
 }
 
 export interface IProjectUpdateInput {
@@ -27,6 +28,7 @@ export interface IProjectUpdateInput {
   name: IProject['name'];
   status?: IProject['status'];
   archived?: IProject['archived'];
+  user_ids?: string[];
 }
 
 export interface IProjectCountInput extends ICountInput {
@@ -38,6 +40,12 @@ export interface IActiveProjectCountInput extends IProjectCountInput {
   archived: boolean;
   status: string;
 }
+
+export interface IAssignProjectToUsers {
+  user_id: string[];
+  project_id: string;
+}
+
 export interface IProjectRepository {
   getAllAndCount(args: IPagingArgs): Promise<IGetAllAndCountResult<Project>>;
   getAll(args: IGetOptions): Promise<Project[]>;
@@ -48,6 +56,7 @@ export interface IProjectRepository {
   remove(args: IEntityRemove): Promise<Project>;
   countProjectInvolved(args: IProjectCountInput): Promise<number>;
   countActiveProjectInvolved(args: IActiveProjectCountInput): Promise<number>;
+  assignProjectToUsers(args: IAssignProjectToUsers): Promise<Project>;
 }
 
 export interface IProjectService {

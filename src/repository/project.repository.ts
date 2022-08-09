@@ -1,23 +1,12 @@
 import isNil from 'lodash/isNil';
 import isString from 'lodash/isString';
 import merge from 'lodash/merge';
-import find from 'lodash/find';
 import isArray from 'lodash/isArray';
 import { inject, injectable } from 'inversify';
-import {
-  getRepository,
-  Repository,
-  In,
-  SelectQueryBuilder,
-  EntityManager,
-  getManager,
-  QueryResult,
-  ILike,
-} from 'typeorm';
+import { getRepository, In, SelectQueryBuilder, EntityManager, getManager, ILike } from 'typeorm';
 
 import * as apiError from '../utils/api-error';
 import { TYPES } from '../types';
-import { entities, Role as RoleEnum } from '../config/constants';
 import strings from '../config/strings';
 import Project from '../entities/project.entity';
 import BaseRepository from './base.repository';
@@ -26,6 +15,7 @@ import { ICompanyRepository } from '../interfaces/company.interface';
 import { IUserRepository } from '../interfaces/user.interface';
 import {
   IActiveProjectCountInput,
+  IAssignProjectToUsers,
   IProjectCountInput,
   IProjectCreateInput,
   IProjectRepository,
@@ -33,8 +23,7 @@ import {
 } from '../interfaces/project.interface';
 import { IClientRepository } from '../interfaces/client.interface';
 import { IGetAllAndCountResult, IGetOptions } from '../interfaces/paging.interface';
-import { projects, company } from '../config/db/columns';
-import project from '../config/inversify/project';
+import User from '../entities/user.entity';
 
 @injectable()
 export default class ProjectRepository extends BaseRepository<Project> implements IProjectRepository {
@@ -77,9 +66,24 @@ export default class ProjectRepository extends BaseRepository<Project> implement
         ];
       }
 
+      if (query.user_id) {
+        relations.push('users');
+      }
+
+      // Using function based where query since it needs inner join where clause
+      const _where = (qb: SelectQueryBuilder<User>) => {
+        let { user_id, ...where } = query;
+
+        const queryBuilder = qb.where(_searchWhere.length ? _searchWhere : where);
+
+        if (user_id) {
+          queryBuilder.andWhere('user_id = :userId', { userId: user_id ?? '' });
+        }
+      };
+
       let [rows, count] = await this.repo.findAndCount({
         relations,
-        where: _searchWhere.length ? _searchWhere : where,
+        where: _where,
         ...(_select?.length && { select: _select }),
         ...rest,
       });
@@ -201,6 +205,7 @@ export default class ProjectRepository extends BaseRepository<Project> implement
       const company_id = args.company_id;
       const status = args.status;
       const archived = args.archived;
+      const user_ids = args.user_ids;
 
       const errors: string[] = [];
 
@@ -243,6 +248,14 @@ export default class ProjectRepository extends BaseRepository<Project> implement
         archived,
       });
 
+      if (user_ids) {
+        const arg = {
+          user_id: user_ids,
+          project_id: project.id,
+        };
+        await this.assignProjectToUsers(arg);
+      }
+
       return project;
     } catch (err) {
       throw err;
@@ -277,4 +290,40 @@ export default class ProjectRepository extends BaseRepository<Project> implement
       throw err;
     }
   };
+
+  async assignProjectToUsers(args: IAssignProjectToUsers): Promise<Project> {
+    try {
+      const user_id = args.user_id;
+      const id = args.project_id;
+
+      const found = await this.getById({ id });
+      if (!found) {
+        throw new apiError.NotFoundError({
+          details: [strings.taskNotFound],
+        });
+      }
+
+      const existingUsers = await this.userRepository.getAll({
+        query: {
+          id: user_id,
+        },
+      });
+
+      if (existingUsers?.length !== user_id.length) {
+        throw new apiError.ValidationError({
+          details: [strings.userNotFound],
+        });
+      }
+      console.log(existingUsers);
+      const update = merge(found, {
+        id,
+        users: existingUsers,
+      });
+
+      let project = await this.repo.save(update);
+      return project;
+    } catch (err) {
+      throw err;
+    }
+  }
 }
