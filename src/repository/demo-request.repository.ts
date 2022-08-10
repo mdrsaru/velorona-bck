@@ -30,6 +30,7 @@ export default class DemoRequestRepository extends BaseRepository<DemoRequest> i
       const email = args.email?.trim()?.toLowerCase();
       const phone = args.phone;
       const jobTitle = args.jobTitle;
+      const companyName = args.companyName;
 
       const errors: string[] = [];
 
@@ -63,6 +64,7 @@ export default class DemoRequestRepository extends BaseRepository<DemoRequest> i
         email,
         phone,
         jobTitle,
+        companyName,
       });
 
       return demoRequest;

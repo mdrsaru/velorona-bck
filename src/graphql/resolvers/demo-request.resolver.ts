@@ -63,7 +63,6 @@ export class DemoRequestResolver {
   }
 
   @Mutation((returns) => DemoRequest)
-  @UseMiddleware(authenticate, authorize(RoleEnum.SuperAdmin))
   async DemoRequestCreate(@Arg('input') args: DemoRequestCreateInput, @Ctx() ctx: any): Promise<DemoRequest> {
     const operation = 'DemoRequestCreate';
 
@@ -72,6 +71,7 @@ export class DemoRequestResolver {
       const email = args.email;
       const phone = args.phone;
       const jobTitle = args.jobTitle;
+      const companyName = args.companyName;
 
       const schema = DemoRequestValidation.create();
       await this.joiService.validate({
@@ -81,6 +81,7 @@ export class DemoRequestResolver {
           email,
           phone,
           jobTitle,
+          companyName,
         },
       });
 
@@ -89,6 +90,7 @@ export class DemoRequestResolver {
         email,
         phone,
         jobTitle,
+        companyName,
       });
 
       return demoRequest;

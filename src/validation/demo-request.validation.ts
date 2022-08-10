@@ -11,6 +11,7 @@ export default class DemoRequestValidation {
       email: Joi.string().required().error(new Error(strings.emailRequired)),
       phone: Joi.string().allow('', null),
       jobTitle: Joi.string().allow('', null),
+      companyName: Joi.string().allow('', null),
     });
   }
 

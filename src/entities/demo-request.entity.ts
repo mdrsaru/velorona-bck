@@ -31,6 +31,10 @@ export default class DemoRequest extends Base {
   @Column({ name: 'job_title', nullable: true })
   jobTitle: string;
 
+  @Field({ nullable: true })
+  @Column({ name: 'company_name', nullable: true })
+  companyName: string;
+
   @Field(() => DemoRequestStatus)
   @Column({ type: 'varchar', default: 'Pending' })
   status: DemoRequestStatus;
@@ -58,6 +62,9 @@ export class DemoRequestCreateInput {
 
   @Field({ nullable: true })
   jobTitle: string;
+
+  @Field({ nullable: true })
+  companyName: string;
 }
 
 @InputType()

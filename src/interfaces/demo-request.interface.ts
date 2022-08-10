@@ -10,6 +10,7 @@ export interface IDemoRequest {
   email: string;
   phone?: string;
   jobTitle?: string;
+  companyName?: string;
   status: DemoRequestStatus;
 }
 
@@ -19,6 +20,7 @@ export interface IDemoRequestCreateInput {
   phone?: IDemoRequest['phone'];
   jobTitle?: IDemoRequest['phone'];
   status?: IDemoRequest['status'];
+  companyName?: IDemoRequest['companyName'];
 }
 
 export interface IDemoRequestUpdateInput {

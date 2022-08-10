@@ -44,12 +44,14 @@ export default class DemoRequestService implements IDemoRequestService {
       const email = args.email;
       const phone = args.phone;
       const jobTitle = args.jobTitle;
+      const companyName = args.companyName;
 
       const demoRequest = await this.demoRequestRepository.create({
         fullName,
         email,
         phone,
         jobTitle,
+        companyName,
       });
 
       return demoRequest;
