@@ -11,6 +11,11 @@ export const taskAssignmentTable = {
   task_id: 'task_id',
 };
 
+export const userProjectTable = {
+  user_id: 'user_id',
+  project_id: 'project_id',
+};
+
 export const userRolesTable = {
   user_id: 'user_id',
   role_id: 'role_id',

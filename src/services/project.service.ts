@@ -55,6 +55,7 @@ export default class ProjectService implements IProjectService {
     const company_id = args.company_id;
     const status = args.status;
     const archived = args.archived;
+    const user_ids = args.user_ids;
 
     try {
       const project = await this.projectRepository.create({
@@ -63,6 +64,7 @@ export default class ProjectService implements IProjectService {
         company_id,
         status,
         archived,
+        user_ids,
       });
 
       return project;
@@ -82,13 +84,21 @@ export default class ProjectService implements IProjectService {
     const name = args?.name;
     const status = args?.status;
     const archived = args?.archived;
+    const user_ids = args.user_ids;
 
+    if (user_ids) {
+      await this.projectRepository.assignProjectToUsers({
+        user_id: user_ids,
+        project_id: id,
+      });
+    }
     try {
       let project = await this.projectRepository.update({
         id,
         name,
         status,
         archived,
+        user_ids,
       });
 
       return project;

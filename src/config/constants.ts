@@ -70,6 +70,7 @@ export const entities = {
   timesheetComments: 'timesheet_comments',
   invoicePaymentConfig: 'invoice_payment_config',
   invoiceSchedule: 'invoice_schedule',
+  userProject: 'user_project',
   demoRequest: 'demo_requests',
 };
 

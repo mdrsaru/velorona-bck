@@ -155,6 +155,7 @@ export class ProjectResolver {
       const company_id = args.company_id;
       const status = args.status;
       const archived = args.archived;
+      const user_ids = args?.user_ids;
 
       const schema = ProjectValidation.create();
       await this.joiService.validate({
@@ -165,6 +166,7 @@ export class ProjectResolver {
           company_id,
           status,
           archived,
+          user_ids,
         },
       });
 
@@ -174,6 +176,7 @@ export class ProjectResolver {
         company_id,
         status,
         archived,
+        user_ids,
       });
 
       return project;
@@ -198,6 +201,7 @@ export class ProjectResolver {
       const company_id = args.company_id;
       const status = args.status;
       const archived = args.archived;
+      const user_ids = args.user_ids;
 
       const schema = ProjectValidation.update();
       await this.joiService.validate({
@@ -207,6 +211,7 @@ export class ProjectResolver {
           name,
           status,
           archived,
+          user_ids,
         },
       });
 
@@ -215,6 +220,7 @@ export class ProjectResolver {
         name,
         status,
         archived,
+        user_ids,
       });
 
       return project;
@@ -236,5 +242,9 @@ export class ProjectResolver {
   @FieldResolver()
   client(@Root() root: Project, @Ctx() ctx: IGraphqlContext) {
     return ctx.loaders.clientByIdLoader.load(root.client_id);
+  }
+  @FieldResolver()
+  async users(@Root() root: Project, @Ctx() ctx: IGraphqlContext) {
+    return ctx.loaders.usersByProjectIdLoader.load(root.id);
   }
 }

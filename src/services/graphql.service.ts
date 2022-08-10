@@ -103,6 +103,7 @@ export default class GraphqlService implements IGraphql {
         workscheduleTimeDetailByDetailIdLoader: workscheduleTimeDetailLoader.workschedulesTimeDetailByIdLoader(),
         replyCountByParentIdLoader: timesheetCommentLoader.replyCountByParentIdLoader(),
         usersByEmailLoader: userLoader.usersByEmailLoader(),
+        usersByProjectIdLoader: projectLoader.usersByProjectIdLoader(),
       },
     };
   };
