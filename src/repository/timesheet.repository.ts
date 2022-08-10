@@ -130,7 +130,8 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
         INNER JOIN Users as u ON t.user_id = u.id
         where u.manager_id = $1
         and t.company_id = $2
-        and t.approver_id is NULL
+        and (t.status='Pending'
+		or t.status='PartiallyApproved')
         
         `,
         [manager_id, company_id]

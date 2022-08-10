@@ -145,7 +145,11 @@ export class TimesheetResolver {
   }
 
   @Mutation((returns) => Timesheet)
-  @UseMiddleware(authenticate, authorize(RoleEnum.CompanyAdmin, RoleEnum.SuperAdmin), checkCompanyAccess)
+  @UseMiddleware(
+    authenticate,
+    authorize(RoleEnum.CompanyAdmin, RoleEnum.SuperAdmin, RoleEnum.TaskManager),
+    checkCompanyAccess
+  )
   async TimesheetSubmitUndo(@Arg('input') args: TimesheetSubmitInput): Promise<Timesheet> {
     const operation = 'TimesheetSubmitUndo';
 
