@@ -71,11 +71,13 @@ export const entities = {
   invoicePaymentConfig: 'invoice_payment_config',
   invoiceSchedule: 'invoice_schedule',
   userProject: 'user_project',
+  demoRequest: 'demo_requests',
 };
 
 export enum CompanyStatus {
   Active = 'Active',
   Inactive = 'Inactive',
+  Unapproved = 'Unapproved',
 }
 
 export enum UserStatus {
@@ -173,6 +175,12 @@ export enum InvoiceSchedule {
   Monthly = 'Monthly',
   Biweekly = 'Biweekly',
   Weekly = 'Weekly',
+}
+
+export enum DemoRequestStatus {
+  Pending = 'Pending',
+  Approved = 'Approved',
+  Rejected = 'Rejected',
 }
 
 export const emailSetting = {

@@ -6,7 +6,7 @@ import * as apiError from '../../utils/api-error';
 import Paging from '../../utils/paging';
 import User from '../../entities/user.entity';
 import Company, { CompanyCountInput, CompanyGrowthOutput, CompanyByIdInput } from '../../entities/company.entity';
-import { Role as RoleEnum } from '../../config/constants';
+import { Role as RoleEnum, CompanyStatus } from '../../config/constants';
 import CompanyValidation from '../../validation/company.validation';
 import authenticate from '../middlewares/authenticate';
 import authorize from '../middlewares/authorize';
@@ -16,6 +16,7 @@ import {
   CompanyQueryInput,
   CompanyCreateInput,
   CompanyUpdateInput,
+  CompanySignUpInput,
 } from '../../entities/company.entity';
 import { PagingInput, DeleteInput, MessageResponse } from '../../entities/common.entity';
 
@@ -167,6 +168,44 @@ export class CompanyResolver {
         archived,
         user,
         logo_id,
+      });
+
+      return company;
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
+    }
+  }
+
+  @Mutation((returns) => Company)
+  async CompanySignUp(@Arg('input') args: CompanySignUpInput, @Ctx() ctx: any): Promise<Company> {
+    const operation = 'CompanySignUp';
+
+    try {
+      const name = args.name;
+      const user = args.user;
+      const status = CompanyStatus.Unapproved;
+      const logo_id = args?.logo_id;
+
+      const schema = CompanyValidation.signUp();
+      await this.joiService.validate({
+        schema,
+        input: {
+          name,
+          user,
+          logo_id,
+        },
+      });
+
+      let company: Company = await this.companyService.create({
+        name,
+        status,
+        logo_id,
+        user,
       });
 
       return company;
