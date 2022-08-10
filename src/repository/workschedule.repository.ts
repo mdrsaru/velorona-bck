@@ -68,6 +68,7 @@ export default class WorkscheduleRepository extends BaseRepository<Workschedule>
         query: {
           startDate: startDate,
           endDate: endDate,
+          company_id,
         },
       });
 
