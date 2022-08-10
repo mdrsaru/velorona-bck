@@ -116,4 +116,6 @@ export default {
   entryTypeRequired: 'Entry type required',
   companyNotApproved: 'The company has not been approved yet.',
   companyInactive: 'The company is inactive',
+  demoAlreadyRequested: 'Demo has already been requested for the provided email',
+  demoRequestNotFound: 'Demo request not found',
 };

@@ -70,6 +70,7 @@ export const entities = {
   timesheetComments: 'timesheet_comments',
   invoicePaymentConfig: 'invoice_payment_config',
   invoiceSchedule: 'invoice_schedule',
+  demoRequest: 'demo_requests',
 };
 
 export enum CompanyStatus {
@@ -173,6 +174,12 @@ export enum InvoiceSchedule {
   Monthly = 'Monthly',
   Biweekly = 'Biweekly',
   Weekly = 'Weekly',
+}
+
+export enum DemoRequestStatus {
+  Pending = 'Pending',
+  Approved = 'Approved',
+  Rejected = 'Rejected',
 }
 
 export const emailSetting = {

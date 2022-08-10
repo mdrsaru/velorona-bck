@@ -169,6 +169,12 @@ const INVOICE_SCHEDULE = {
   InvoiceScheduleRepository: Symbol('InvoiceScheduleRepository'),
 };
 
+const DEMO_REQUEST = {
+  DemoRequestRepository: Symbol('DemoRequestRepository'),
+  DemoRequestService: Symbol('  DemoRequestService'),
+  DemoRequestResolver: Symbol('  DemoRequestResolver'),
+};
+
 const TYPES = {
   ...COMMON,
   ...COMPANY,
@@ -197,6 +203,7 @@ const TYPES = {
   ...TIMESHEET_COMMENT,
   ...INVOICE_PAYMENT_CONFIG,
   ...INVOICE_SCHEDULE,
+  ...DEMO_REQUEST,
 };
 
 export { TYPES };
