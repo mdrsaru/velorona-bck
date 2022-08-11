@@ -20,6 +20,7 @@ import {
   IProjectUpdateInput,
   IProjectCountInput,
   IActiveProjectCountInput,
+  IAssignProjectToUsers,
 } from '../../interfaces/project.interface';
 import { IPaginationData, IPagingArgs, IGetAllAndCountResult, IGetOptions } from '../../interfaces/paging.interface';
 
@@ -100,6 +101,10 @@ export default class ProjectRepository implements IProjectRepository {
   }
 
   countActiveProjectInvolved(args: IActiveProjectCountInput): Promise<number> {
+    throw new Error('not implemented');
+  }
+
+  assignProjectToUsers(args: IAssignProjectToUsers): Promise<Project> {
     throw new Error('not implemented');
   }
 }
