@@ -77,9 +77,12 @@ export default class InvoiceRepository extends BaseRepository<Invoice> implement
         if (search) {
           queryBuilder.andWhere(
             new Brackets((qb) => {
-              qb.where('name = :search', { search: search ?? '' }).orWhere('"invoicingEmail" = :search', {
-                search: search ?? '',
-              });
+              qb.where('name ILike :search', { search: `%${search}%` ?? '' }).orWhere(
+                '"invoicingEmail" ILike :search',
+                {
+                  search: `%${search}%` ?? '',
+                }
+              );
             })
           );
         }

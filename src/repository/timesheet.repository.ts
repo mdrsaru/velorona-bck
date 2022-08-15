@@ -64,8 +64,8 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
         if (search) {
           queryBuilder.andWhere(
             new Brackets((qb) => {
-              qb.where('first_name = :search', { search: search ?? '' }).orWhere('name=:search', {
-                search: search ?? '',
+              qb.where('first_name ILike :search', { search: `%${search}%` ?? '' }).orWhere('name ILike :search', {
+                search: `%${search}%` ?? '',
               });
             })
           );

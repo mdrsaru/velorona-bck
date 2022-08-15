@@ -60,7 +60,7 @@ export default class ProjectRepository extends BaseRepository<Project> implement
       if (search) {
         _searchWhere = [
           {
-            name: ILike(`%${search}`),
+            name: ILike(`%${search}%`),
             ...where,
           },
         ];

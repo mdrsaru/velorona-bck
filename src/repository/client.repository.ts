@@ -161,6 +161,7 @@ export default class ClientRepository extends BaseRepository<Client> implements 
       const streetAddress = args.address?.streetAddress;
       const invoiceSchedule = args.invoiceSchedule;
       const invoice_payment_config_id = args.invoice_payment_config_id;
+      const invoicingEmail = args.invoicingEmail;
 
       const errors: string[] = [];
 
@@ -189,6 +190,7 @@ export default class ClientRepository extends BaseRepository<Client> implements 
         archived,
         phone,
         invoiceSchedule,
+        invoicingEmail,
         invoice_payment_config_id,
         ...(!!address && {
           address: {
