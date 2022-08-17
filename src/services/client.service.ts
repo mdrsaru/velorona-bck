@@ -79,6 +79,7 @@ export default class ClientService implements IClientService {
       const phone = args?.phone;
       const invoiceSchedule = args.invoiceSchedule;
       const invoice_payment_config_id = args.invoice_payment_config_id;
+      const invoicingEmail = args.invoicingEmail;
 
       const client = await this.clientRepository.update({
         id,
@@ -89,6 +90,7 @@ export default class ClientService implements IClientService {
         phone,
         invoiceSchedule,
         invoice_payment_config_id,
+        invoicingEmail,
       });
 
       return client;

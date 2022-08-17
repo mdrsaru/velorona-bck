@@ -39,6 +39,7 @@ export interface IClientUpdateInput {
   status: IClient['status'];
   archived?: IClient['archived'];
   phone?: IClient['phone'];
+  invoicingEmail?: IClient['invoicingEmail'];
   address: IAddressInput;
   invoiceSchedule?: IClient['invoiceSchedule'];
   invoice_payment_config_id?: IClient['invoice_payment_config_id'];
