@@ -21,9 +21,12 @@ import {
   IWorkscheduleDetailRepository,
   IWorkscheduleDetailUpdateInput,
 } from '../interfaces/workschedule-detail.interface';
-import { workschedule, workscheduleTimeDetail } from '../config/db/columns';
+import { workschedule } from '../config/db/columns';
 import { entities } from '../config/constants';
 import WorkscheduleTimeDetail from '../entities/workschedule-time-details.entity';
+import workscheduleTimeDetail from '../config/inversify/workschedule-time-detail';
+import moment from 'moment';
+import { any } from 'joi';
 
 @injectable()
 export default class WorkscheduleDetailRepository
@@ -100,6 +103,65 @@ export default class WorkscheduleDetailRepository
     }
   };
 
+  bulkCreate = async (args: IWorkscheduleDetailCreateInput): Promise<WorkscheduleDetail> => {
+    try {
+      const schedule_date = args.schedule_date;
+      const workschedule_id = args.workschedule_id;
+      const user_id = args.user_id;
+      const startTime = args.startTime;
+      const endTime = args.endTime;
+      const duration: any = args.duration;
+      const workscheduleTimeDetail = args.workscheduleTimeDetail;
+      const errors: string[] = [];
+
+      if (errors.length) {
+        throw new apiError.ValidationError({
+          details: errors,
+        });
+      }
+
+      const user = await this.userRepository.getById({ id: user_id });
+
+      if (!user) {
+        throw new apiError.NotFoundError({
+          details: [strings.userNotFound],
+        });
+      }
+
+      const workschedule = await this.workscheduleRepository.getById({ id: workschedule_id });
+      if (!workschedule || workschedule === undefined) {
+        throw new apiError.NotFoundError({
+          details: [strings.workscheduleNotFound],
+        });
+      }
+
+      const workscheduleTimeDetailList: any = [];
+
+      workscheduleTimeDetail?.forEach((workscheduleTimeDetail: any, index: number) => {
+        const date = moment(schedule_date).format('YYYY-MM-DD');
+        const startTime = date + 'T' + moment(workscheduleTimeDetail?.startTime).format('HH:mm:ss');
+        const endTime = date + 'T' + moment(workscheduleTimeDetail?.endTime).format('HH:mm:ss');
+        workscheduleTimeDetailList.push({
+          startTime: new Date(startTime),
+          endTime: new Date(endTime),
+          duration: workscheduleTimeDetail.duration,
+        });
+      });
+
+      const workscheduleDetails = new WorkscheduleDetail();
+      workscheduleDetails.schedule_date = schedule_date;
+      workscheduleDetails.workschedule_id = workschedule_id;
+      (workscheduleDetails.user_id = user_id),
+        (workscheduleDetails.duration = duration),
+        (workscheduleDetails.WorkscheduleTimeDetail = workscheduleTimeDetailList);
+
+      let result = await this.manager.save(workscheduleDetails);
+
+      return result;
+    } catch (err) {
+      throw err;
+    }
+  };
   update = async (args: IWorkscheduleDetailUpdateInput): Promise<WorkscheduleDetail> => {
     try {
       const id = args.id;

@@ -20,7 +20,6 @@ const batchProjectsByIdFn = async (ids: readonly string[]) => {
 
 const batchUsersByProjectIdFn = async (ids: readonly string[]) => {
   const projectRepository: IProjectRepository = container.get(TYPES.ProjectRepository);
-  console.log(ids, 'saru');
   const projectObj: any = {};
   let query = { id: ids };
   const projects = await projectRepository.getAll({ query, relations: ['users'] });

@@ -7,6 +7,7 @@ import { IPaginationData, IPagingArgs } from '../interfaces/paging.interface';
 import { IEntityID, IEntityRemove, IErrorService, ILogger } from '../interfaces/common.interface';
 import {
   IWorkscheduleDetailBulkRemoveInput,
+  IWorkscheduleDetailCopyInput,
   IWorkscheduleDetailCreateInput,
   IWorkscheduleDetailRepository,
   IWorkscheduleDetailService,
@@ -18,6 +19,8 @@ import { IWorkscheduleRepository } from '../interfaces/workschedule.interface';
 import { IWorkscheduleTimeDetailRepository } from '../interfaces/workschedule-time-detail.interface';
 import workscheduleDetail from '../config/inversify/workschedule-detail';
 import moment from 'moment';
+import _ from 'lodash';
+import workscheduleTimeDetail from '../config/inversify/workschedule-time-detail';
 
 @injectable()
 export default class WorkscheduleDetailService implements IWorkscheduleDetailService {
@@ -188,6 +191,72 @@ export default class WorkscheduleDetailService implements IWorkscheduleDetailSer
         });
       }
       return workscheduleDetail;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  getWeekDays = (date: string | Date): any => {
+    const dates: any = [];
+    const current = moment(date);
+
+    for (let i = 0; i < 7; i++) {
+      dates.push(new Date(current.format('YYYY-MM-DD')));
+      current.add(1, 'days');
+    }
+    return dates;
+  };
+
+  dateDifference = async (Date1: any, Date2: any) => {
+    const date1: any = new Date(Date1);
+    const date2: any = new Date(Date2);
+    const diffTime = Math.abs(date2 - date1);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays;
+  };
+
+  bulkCreate = async (args: IWorkscheduleDetailCopyInput) => {
+    const operation = 'create';
+    const given_schedule_date: any = args.schedule_date;
+    const workscheduleId = args.workschedule_id;
+    const copy_workschedule_id = args.copy_workschedule_id;
+    const user_id = args.user_id;
+    try {
+      let workscheduleDetails = await this.workscheduleDetailRepository.getAll({
+        query: {
+          workschedule_id: copy_workschedule_id,
+          user_id,
+        },
+        relations: ['WorkscheduleTimeDetail'],
+      });
+      let res;
+      if (workscheduleDetails?.length) {
+        let diffDays = await this.dateDifference(given_schedule_date, workscheduleDetails?.[0]?.schedule_date);
+        workscheduleDetails.map(async (workscheduleDetail, index) => {
+          let schedule_date = new Date(
+            workscheduleDetail?.schedule_date.setDate(workscheduleDetail?.schedule_date.getDate() + diffDays)
+          );
+          let workschedule_id = workscheduleId;
+          let duration = workscheduleDetail?.duration;
+          let user_id = workscheduleDetail.user_id;
+
+          let res = await this.workscheduleDetailRepository.bulkCreate({
+            schedule_date,
+            workschedule_id,
+            user_id,
+            duration: duration,
+            workscheduleTimeDetail: workscheduleDetail.WorkscheduleTimeDetail,
+          });
+
+          await this.updateWorkschedule({
+            startTime: given_schedule_date,
+            workschedule_id: workscheduleId,
+          });
+          return res;
+        });
+      }
+
+      return res;
     } catch (err) {
       throw err;
     }

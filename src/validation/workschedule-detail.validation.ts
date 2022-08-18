@@ -57,4 +57,12 @@ export default class WorkscheduleDetailValidation {
       user_id: Joi.string().required().messages(messages.user_id),
     });
   }
+  static bulkCreate() {
+    return Joi.object({
+      schedule_date: Joi.date().required().messages(messages.date),
+      workschedule_id: Joi.string().required().messages(messages.workschedule_id),
+      copy_workschedule_id: Joi.string().required().messages(messages.workschedule_id),
+      user_id: Joi.string().required().messages(messages.user_id),
+    });
+  }
 }
