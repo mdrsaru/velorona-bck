@@ -142,6 +142,32 @@ export default class Invoice extends Base {
   @Field((type) => [InvoiceItem], { description: 'Invoice items' })
   @OneToMany(() => InvoiceItem, (item) => item.invoice)
   items: InvoiceItem[];
+
+  @Field({ nullable: true })
+  @Column({
+    type: 'float',
+    nullable: true,
+    default: 0,
+  })
+  discount: number;
+
+  @Field({ nullable: true })
+  discountAmount: number;
+
+  @Field({ nullable: true })
+  @Column({
+    type: 'float',
+    nullable: true,
+    default: 0,
+  })
+  shipping: number;
+
+  @Field()
+  @Column({
+    name: 'need_project',
+    default: true,
+  })
+  needProject: boolean;
 }
 
 @ObjectType()
@@ -194,6 +220,15 @@ export class InvoiceCreateInput {
   @Field()
   client_id: string;
 
+  @Field({ nullable: true })
+  discount: number;
+
+  @Field({ nullable: true })
+  shipping: number;
+
+  @Field({ defaultValue: true })
+  needProject: boolean;
+
   @Field(() => [InvoiceItemCreateInput])
   items: InvoiceItemCreateInput[];
 }
@@ -235,6 +270,15 @@ export class InvoiceUpdateInput {
 
   @Field({ nullable: true })
   notes: string;
+
+  @Field({ nullable: true })
+  discount: number;
+
+  @Field({ nullable: true })
+  shipping: number;
+
+  @Field({ defaultValue: true })
+  needProject: boolean;
 
   @Field((type) => [InvoiceItemUpdateInput], { nullable: true })
   items: InvoiceItemUpdateInput[];

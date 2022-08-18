@@ -1,3 +1,4 @@
+import round from 'lodash/round';
 import { inject, injectable } from 'inversify';
 import { Resolver, Query, Ctx, Arg, Mutation, UseMiddleware, FieldResolver, Root } from 'type-graphql';
 
@@ -102,6 +103,9 @@ export class InvoiceResolver {
       const notes = args.notes;
       const company_id = args.company_id;
       const client_id = args.client_id;
+      const discount = args.discount;
+      const shipping = args.shipping;
+      const needProject = args.needProject;
       const items = args.items;
 
       const schema = InvoiceValidation.create();
@@ -137,6 +141,9 @@ export class InvoiceResolver {
         notes,
         company_id,
         client_id,
+        discount,
+        shipping,
+        needProject,
         items,
       });
 
@@ -168,6 +175,9 @@ export class InvoiceResolver {
       const taxPercent = args.taxPercent ?? 0;
       const taxAmount = args.taxAmount ?? 0;
       const notes = args.notes;
+      const discount = args.discount;
+      const shipping = args.shipping;
+      const needProject = args.needProject;
       const items = args.items;
 
       const schema = InvoiceValidation.update();
@@ -200,6 +210,9 @@ export class InvoiceResolver {
         taxPercent,
         taxAmount,
         notes,
+        discount,
+        shipping,
+        needProject,
         items,
       });
 
@@ -248,5 +261,13 @@ export class InvoiceResolver {
   @FieldResolver()
   items(@Root() root: Invoice, @Ctx() ctx: IGraphqlContext) {
     return ctx.loaders.itemsByInvoiceIdLoader.load(root.id);
+  }
+
+  @FieldResolver()
+  discountAmount(@Root() root: Invoice) {
+    if (root.discount && root.subtotal) {
+      const discountAmount = 0.01 * root.discount * root.subtotal;
+      return round(discountAmount, 2);
+    }
   }
 }

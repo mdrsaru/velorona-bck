@@ -22,7 +22,7 @@ export default class CompanyValidation {
       items: Joi.array()
         .items(
           Joi.object({
-            project_id: Joi.string().required().error(new Error(strings.oneOrMoreProjectRequired)),
+            project_id: Joi.string(),
             description: Joi.string().allow(null, ''),
             quantity: Joi.number().required().error(new Error(strings.quantityRequired)),
             rate: Joi.number().required().error(new Error(strings.rateRequired)),

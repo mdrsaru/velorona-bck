@@ -21,6 +21,9 @@ export interface IInvoice {
   notes?: string;
   company_id: string;
   client_id: string;
+  discount?: number;
+  shipping?: number;
+  needProject: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -39,6 +42,9 @@ export interface IInvoiceCreateInput {
   notes?: Invoice['notes'];
   company_id: Invoice['company_id'];
   client_id: Invoice['client_id'];
+  discount?: Invoice['discount'];
+  shipping?: Invoice['shipping'];
+  needProject?: Invoice['needProject'];
   items: IInvoiceItemInput[];
 }
 
@@ -54,6 +60,9 @@ export interface IInvoiceUpdateInput {
   taxPercent?: Invoice['taxPercent'];
   taxAmount?: Invoice['taxAmount'];
   notes?: Invoice['notes'];
+  discount?: Invoice['discount'];
+  shipping?: Invoice['shipping'];
+  needProject?: Invoice['needProject'];
   items?: IInvoiceItemUpdateInput[];
 }
 

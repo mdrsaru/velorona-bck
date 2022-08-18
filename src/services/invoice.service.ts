@@ -95,6 +95,9 @@ export default class InvoiceService implements IInvoiceService {
       const notes = args.notes;
       const company_id = args.company_id;
       const client_id = args.client_id;
+      const discount = args.discount;
+      const shipping = args.shipping;
+      const needProject = args.needProject;
       const items = args.items;
 
       const invoice = await this.invoiceRepository.create({
@@ -111,6 +114,9 @@ export default class InvoiceService implements IInvoiceService {
         notes,
         company_id,
         client_id,
+        discount,
+        shipping,
+        needProject,
         items,
       });
 
@@ -147,6 +153,9 @@ export default class InvoiceService implements IInvoiceService {
       const taxPercent = args.taxPercent ?? 0;
       const taxAmount = args.taxAmount ?? 0;
       const notes = args.notes;
+      const discount = args.discount;
+      const shipping = args.shipping;
+      const needProject = args.needProject;
       const items = args.items;
 
       const found = await this.invoiceRepository.getById({
@@ -172,6 +181,9 @@ export default class InvoiceService implements IInvoiceService {
         taxAmount,
         notes,
         items,
+        discount,
+        shipping,
+        needProject,
       });
 
       if (found.status !== invoice.status && invoice.status === InvoiceStatus.Sent) {

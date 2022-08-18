@@ -36,28 +36,21 @@ export default class InvoiceItemRepository extends BaseRepository<InvoiceItem> i
 
       const errors: string[] = [];
 
-      const projectIds = items.map((item) => item.project_id);
+      const projectIds = items.filter((item) => !!item.project_id).map((item) => item.project_id);
+      console.log(items, projectIds, 'hello\n\n\n');
 
-      if (projectIds.filter((id) => isNil(id) || isEmpty(id))?.length) {
-        errors.push(strings.oneOrMoreProjectRequired);
-      }
-
-      if (errors.length) {
-        throw new apiError.ValidationError({
-          details: errors,
+      if (projectIds?.length) {
+        const foundProjectCount = await this.projectRepository.countEntities({
+          query: {
+            id: projectIds,
+          },
         });
-      }
 
-      const foundProjectCount = await this.projectRepository.countEntities({
-        query: {
-          id: projectIds,
-        },
-      });
-
-      if (foundProjectCount !== uniq(projectIds).length) {
-        throw new apiError.NotFoundError({
-          details: [strings.oneOrMoreProject404],
-        });
+        if (foundProjectCount !== uniq(projectIds).length) {
+          throw new apiError.NotFoundError({
+            details: [strings.oneOrMoreProject404],
+          });
+        }
       }
 
       const invoiceItems = items.map((item) => {

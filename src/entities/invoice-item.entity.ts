@@ -25,12 +25,12 @@ export default class InvoiceItem extends Base {
   invoice: Invoice;
 
   @Index(`${indexPrefix}_project_id`)
-  @Field()
-  @Column()
+  @Field({ nullable: true })
+  @Column({ nullable: true })
   project_id: string;
 
   @Field(() => Project)
-  @ManyToOne(() => Project)
+  @ManyToOne(() => Project, { nullable: true })
   @JoinColumn({
     name: invoiceItems.project_id,
   })
@@ -61,7 +61,7 @@ export default class InvoiceItem extends Base {
 
 @InputType()
 export class InvoiceItemCreateInput {
-  @Field()
+  @Field({ nullable: true })
   project_id: string;
 
   @Field({ nullable: true })
@@ -82,7 +82,7 @@ export class InvoiceItemUpdateInput {
   @Field({ nullable: true })
   id: string;
 
-  @Field()
+  @Field({ nullable: true })
   project_id: string;
 
   @Field({ nullable: true })

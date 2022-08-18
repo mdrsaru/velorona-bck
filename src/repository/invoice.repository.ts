@@ -119,6 +119,9 @@ export default class InvoiceRepository extends BaseRepository<Invoice> implement
       const notes = args.notes;
       const company_id = args.company_id;
       const client_id = args.client_id;
+      const discount = args.discount ?? 0;
+      const shipping = args.shipping ?? 0;
+      const needProject = args.needProject;
       const items = args.items;
 
       const errors: string[] = [];
@@ -178,6 +181,9 @@ export default class InvoiceRepository extends BaseRepository<Invoice> implement
         company_id,
         client_id,
         timesheet_id,
+        discount,
+        shipping,
+        needProject,
       });
 
       await this.invoiceItemRepository.createMultiple({
@@ -250,6 +256,9 @@ export default class InvoiceRepository extends BaseRepository<Invoice> implement
       const taxPercent = args.taxPercent ?? 0;
       const taxAmount = args.taxAmount ?? 0;
       const notes = args.notes;
+      const discount = args.discount;
+      const shipping = args.shipping;
+      const needProject = args.needProject;
       const items = args.items;
 
       const found = await this.getById({ id });
@@ -272,6 +281,9 @@ export default class InvoiceRepository extends BaseRepository<Invoice> implement
         taxPercent,
         taxAmount,
         notes,
+        discount,
+        shipping,
+        needProject,
       });
 
       // TODO: Use transaction
