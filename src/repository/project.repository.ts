@@ -126,10 +126,10 @@ export default class ProjectRepository extends BaseRepository<Project> implement
         with temp_table as (
         Select 
         distinct(projects.id) AS project_id FROM projects 
-        INNER JOIN time_entries ON 
-        time_entries.project_id = projects.id
-        where created_by = $1 AND 
-        projects.company_id = $2
+		INNER JOIN user_project ON 
+		user_project.project_id = projects.id
+        where user_id = $1 AND 
+        company_id = $2
        )
        select count(project_id) from temp_table;
         `,
@@ -156,10 +156,10 @@ export default class ProjectRepository extends BaseRepository<Project> implement
           with temp_table as (
             Select 
             distinct(projects.id) AS project_id FROM projects 
-            INNER JOIN time_entries ON 
-            time_entries.project_id = projects.id
+            INNER JOIN user_project ON 
+			user_project.project_id = projects.id
             LEFT JOIN users ON
-            users.id = time_entries.created_by
+            users.id = user_project.user_id
             where 
             projects.company_id = $1 AND
             projects.archived =$2 AND 
@@ -177,13 +177,13 @@ export default class ProjectRepository extends BaseRepository<Project> implement
           with temp_table as (
           Select 
           distinct(projects.id) AS project_id FROM projects 
-          INNER JOIN time_entries ON 
-          time_entries.project_id = projects.id
+          INNER JOIN user_project ON 
+		  user_project.project_id = projects.id
           where 
           projects.company_id = $1 AND
           projects.archived =$2 AND 
           projects.status = $3 AND 
-          created_by = $4
+          user_id = $4
          )
          select count(project_id) from temp_table;
        
