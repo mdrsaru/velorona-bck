@@ -59,7 +59,8 @@ export interface IAttachedTimesheetRepository {
   update(args: IAttachedTimesheetUpdateInput): Promise<AttachedTimesheet>;
   remove(args: IEntityRemove): Promise<AttachedTimesheet>;
   getBase64Attachments(args: any): Promise<any>;
-  updateTimesheedAttachmentWithInvoice(args: IUpdateWithInvoiceInput): Promise<any>;
+  updateTimesheetAttachmentWithInvoice(args: IUpdateWithInvoiceInput): Promise<any>;
+  totalAmountByInvoice(invoice_id: string): Promise<number>;
 }
 
 export interface IAttachedTimesheetService {

@@ -4,7 +4,7 @@ import { getRepository } from 'typeorm';
 import axios from 'axios';
 
 import strings from '../config/strings';
-import { entities } from '../config/constants';
+import { entities, AttachmentType } from '../config/constants';
 import { IEntityID } from '../interfaces/common.interface';
 import { TYPES } from '../types';
 import { NotFoundError, ValidationError } from '../utils/api-error';
@@ -179,7 +179,7 @@ export default class AttachedTimesheetRepository
     }
   };
 
-  updateTimesheedAttachmentWithInvoice = async (args: IUpdateWithInvoiceInput): Promise<any> => {
+  updateTimesheetAttachmentWithInvoice = async (args: IUpdateWithInvoiceInput): Promise<any> => {
     try {
       const result = await this.repo
         .createQueryBuilder(entities.timesheetAttachments)
@@ -189,6 +189,21 @@ export default class AttachedTimesheetRepository
         })
         .where('timesheet_id = :timesheet_id', { timesheet_id: args.timesheet_id })
         .andWhere('invoice_id IS NULL')
+        .execute();
+
+      return result;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  totalAmountByInvoice = async (invoice_id: string): Promise<number> => {
+    try {
+      const result = await this.repo
+        .createQueryBuilder(entities.timesheetAttachments)
+        .select('SUM(amount)', 'totalAmount')
+        .where('attachment_type = :attachmentType', { attachmentType: AttachmentType.Attachment })
+        .andWhere('invoice_id = :invoice_id', { invoice_id })
         .execute();
 
       return result;
