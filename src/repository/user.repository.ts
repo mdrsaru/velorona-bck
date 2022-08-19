@@ -243,6 +243,7 @@ export default class UserRepository extends BaseRepository<User> implements IUse
       const manager_id = args?.manager_id;
       const roles = args?.roles;
       const designation = args.designation;
+      const loggedIn = args.loggedIn;
 
       const found = await this.repo.findOne(id, {
         relations: ['address', 'roles'],
@@ -300,6 +301,7 @@ export default class UserRepository extends BaseRepository<User> implements IUse
         manager_id,
         roles: existingRoles,
         designation,
+        loggedIn,
       };
 
       const role = found?.roles.some(function (role) {

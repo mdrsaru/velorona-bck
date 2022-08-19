@@ -81,6 +81,7 @@ export enum CompanyStatus {
 }
 
 export enum UserStatus {
+  InvitationSent = 'Invitation Sent',
   Active = 'Active',
   Inactive = 'Inactive',
 }

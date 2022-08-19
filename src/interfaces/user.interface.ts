@@ -23,6 +23,7 @@ export interface IUser {
   startDate?: Date;
   endDate?: Date;
   timesheet_attachment?: boolean;
+  loggedIn?: boolean;
   manager_id?: string;
   createdAt: string;
   updatedAt: string;
@@ -85,6 +86,7 @@ export interface IUserUpdate {
   entryType?: IUser['entryType'];
   manager_id?: IUser['manager_id'];
   roles?: string[];
+  loggedIn?: IUser['loggedIn'];
 }
 
 export interface IUserArchiveOrUnArchive {
