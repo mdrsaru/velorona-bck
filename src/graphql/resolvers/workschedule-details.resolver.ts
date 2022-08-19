@@ -15,6 +15,7 @@ import authorize from '../middlewares/authorize';
 
 import { IGraphqlContext } from '../../interfaces/graphql.interface';
 import WorkscheduleDetail, {
+  WorkscheduleDetailBulkCreateInput,
   WorkscheduleDetailBulkDeleteInput,
   WorkscheduleDetailCreateInput,
   WorkscheduleDetailPagingResult,
@@ -215,6 +216,45 @@ export class WorkscheduleDetailResolver {
     }
   }
 
+  @Mutation((returns) => String)
+  @UseMiddleware(authenticate, authorize(RoleEnum.SuperAdmin, RoleEnum.CompanyAdmin))
+  async WorkscheduleDetailBulkCreate(
+    @Arg('input') args: WorkscheduleDetailBulkCreateInput,
+    @Ctx() ctx: any
+  ): Promise<string> {
+    const operation = 'WorkscheduleDetailCreate';
+    try {
+      const schedule_date = args.schedule_date;
+      const workschedule_id = args.workschedule_id;
+      const copy_workschedule_id = args.copy_workschedule_id;
+      const user_id = args.user_id;
+      const schema = WorkscheduleDetailValidation.bulkCreate();
+      await this.joiService.validate({
+        schema,
+        input: {
+          schedule_date,
+          workschedule_id,
+          user_id,
+          copy_workschedule_id,
+        },
+      });
+
+      let workscheduleDetail: WorkscheduleDetail[] = await this.workscheduleDetailService.bulkCreate({
+        schedule_date,
+        workschedule_id,
+        copy_workschedule_id,
+        user_id,
+      });
+      return 'Workschedule Copy Successful';
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: false,
+      });
+    }
+  }
   @FieldResolver()
   async user(@Root() root: WorkscheduleDetail, @Ctx() ctx: IGraphqlContext) {
     if (root.user_id) {

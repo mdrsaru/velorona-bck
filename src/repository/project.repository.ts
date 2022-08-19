@@ -314,7 +314,6 @@ export default class ProjectRepository extends BaseRepository<Project> implement
           details: [strings.userNotFound],
         });
       }
-      console.log(existingUsers);
       const update = merge(found, {
         id,
         users: existingUsers,
