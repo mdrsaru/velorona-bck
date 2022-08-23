@@ -55,7 +55,12 @@ export default class AuthValidation {
       companyCode: Joi.string(),
     });
   }
-
+  static resendInvitation() {
+    return Joi.object({
+      user_id: Joi.string().required().messages(messages.user_id),
+      company_id: Joi.string().messages(messages.company),
+    });
+  }
   static forgotPassword() {
     return Joi.object({
       email: Joi.string().required().messages(messages.email),

@@ -12,6 +12,7 @@ import {
   ResetPasswordInput,
   ChangePasswordInput,
   ChangePasswordResponse,
+  ResendInvitationInput,
 } from '../../entities/auth.entity';
 
 import { TYPES } from '../../types';
@@ -23,6 +24,7 @@ import { IErrorService, IJoiService } from '../../interfaces/common.interface';
 import { IAuthService } from '../../interfaces/auth.interface';
 import { IGraphqlContext } from '../../interfaces/graphql.interface';
 import { IUserService } from '../../interfaces/user.interface';
+import { checkCompanyAccess } from '../middlewares/company';
 
 @injectable()
 @Resolver((of) => LoginResponse)
@@ -98,6 +100,40 @@ export class AuthResolver {
       ctx.res.cookie(constants.refreshTokenCookieName, loginResponse.refreshToken, options);
 
       return loginResponse;
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
+    }
+  }
+
+  @Mutation((returns) => String)
+  @UseMiddleware(authenticate, checkCompanyAccess)
+  async ResendInvitation(@Arg('input') args: ResendInvitationInput) {
+    const operation = 'ForgotPassword';
+
+    try {
+      const user_id = args.user_id;
+      const company_id = args.company_id;
+
+      const schema = AuthValidation.resendInvitation();
+      await this.joiService.validate({
+        schema,
+        input: {
+          user_id,
+          company_id,
+        },
+      });
+
+      const result = await this.authService.resendInvitation({
+        user_id,
+        company_id,
+      });
+
+      return strings.forgotPasswordMsg;
     } catch (err) {
       this.errorService.throwError({
         err,
