@@ -73,6 +73,9 @@ export class SubscriptionPaymentQuery {
 
   @Field({ nullable: true })
   search: string;
+
+  @Field({ nullable: true })
+  status: string;
 }
 
 @InputType()
