@@ -64,6 +64,15 @@ export class SubscriptionPaymentQuery {
 
   @Field({ nullable: true })
   company_id: string;
+
+  @Field({ nullable: true })
+  startDate: Date;
+
+  @Field({ nullable: true })
+  endDate: Date;
+
+  @Field({ nullable: true })
+  search: string;
 }
 
 @InputType()

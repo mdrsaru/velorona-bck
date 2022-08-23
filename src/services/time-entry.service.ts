@@ -132,7 +132,7 @@ export default class TimeEntryService implements ITimeEntryService {
         weekStartDate,
         weekEndDate,
         user_id: created_by,
-        client_id: project.client_id,
+        client_id: project?.client_id,
         company_id: company_id,
       },
       select: ['isSubmitted'],

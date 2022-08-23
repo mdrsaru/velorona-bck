@@ -5,7 +5,7 @@ import isString from 'lodash/isString';
 import isEmpty from 'lodash/isEmpty';
 import difference from 'lodash/difference';
 import { injectable, inject } from 'inversify';
-import { Brackets, getRepository, In, SelectQueryBuilder } from 'typeorm';
+import { Brackets, getRepository, In, LessThanOrEqual, MoreThanOrEqual, SelectQueryBuilder } from 'typeorm';
 import crypto from 'crypto';
 
 import { TYPES } from '../types';
@@ -58,7 +58,7 @@ export default class InvoiceRepository extends BaseRepository<Invoice> implement
   getAllAndCount = async (args: IGetOptions): Promise<IGetAllAndCountResult<Invoice>> => {
     try {
       let { query = {}, select = [], relations = [], ...rest } = args;
-      let { role: roleName, search, ...where } = query;
+      let { role: roleName, search, startDate, endDate, ...where } = query;
       const _select = select as (keyof Invoice)[];
 
       for (let key in query) {
@@ -66,7 +66,6 @@ export default class InvoiceRepository extends BaseRepository<Invoice> implement
           query[key] = In(query[key]);
         }
       }
-
       if (search) {
         relations.push('client');
       }
@@ -74,6 +73,14 @@ export default class InvoiceRepository extends BaseRepository<Invoice> implement
       // Using function based where query since it needs inner join where clause
       const _where = (qb: SelectQueryBuilder<Invoice>) => {
         const queryBuilder = qb.where(where);
+        if (startDate && endDate) {
+          queryBuilder.andWhere({
+            issueDate: MoreThanOrEqual(startDate),
+          });
+          queryBuilder.andWhere({
+            issueDate: LessThanOrEqual(endDate),
+          });
+        }
         if (search) {
           queryBuilder.andWhere(
             new Brackets((qb) => {
