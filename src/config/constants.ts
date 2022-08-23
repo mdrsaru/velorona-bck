@@ -125,6 +125,7 @@ export enum Role {
   Employee = 'Employee',
   TaskManager = 'TaskManager',
   Client = 'Client',
+  BookKeeper = 'BookKeeper',
 }
 
 export enum CompanyRole {
@@ -132,6 +133,7 @@ export enum CompanyRole {
   Employee = 'Employee',
   TaskManager = 'TaskManager',
   Client = 'Client',
+  BookKeeper = 'BookKeeper',
 }
 
 export enum AdminRole {
