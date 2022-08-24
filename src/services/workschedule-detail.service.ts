@@ -21,6 +21,7 @@ import workscheduleDetail from '../config/inversify/workschedule-detail';
 import moment from 'moment';
 import _ from 'lodash';
 import workscheduleTimeDetail from '../config/inversify/workschedule-time-detail';
+import { NotFoundError } from '../utils/api-error';
 
 @injectable()
 export default class WorkscheduleDetailService implements IWorkscheduleDetailService {
@@ -230,7 +231,10 @@ export default class WorkscheduleDetailService implements IWorkscheduleDetailSer
         relations: ['WorkscheduleTimeDetail'],
       });
       let res;
-      if (workscheduleDetails?.length) {
+
+      if (!workscheduleDetails?.length) {
+        throw new NotFoundError({ details: ['Workschedule of this user in selected date not found'] });
+      } else {
         let diffDays = await this.dateDifference(given_schedule_date, workscheduleDetails?.[0]?.schedule_date);
         workscheduleDetails.map(async (workscheduleDetail, index) => {
           let schedule_date = new Date(
