@@ -21,8 +21,12 @@ export default class UserPayRate extends Base {
   endDate: Date;
 
   @Field()
-  @Column()
+  @Column({ default: 0 })
   amount: number;
+
+  @Field()
+  @Column({ name: userPayRate.invoice_rate, default: 0 })
+  invoiceRate: number;
 
   @Field()
   @Column()
@@ -51,7 +55,7 @@ export class UserPayRateCreateInput {
   @Field({ nullable: true })
   endDate: Date;
 
-  @Field()
+  @Field({ nullable: true })
   amount: number;
 
   @Field()
@@ -59,6 +63,9 @@ export class UserPayRateCreateInput {
 
   @Field()
   user_id: string;
+
+  @Field({ nullable: true })
+  invoiceRate: number;
 
   @Field()
   company_id: string;
@@ -83,6 +90,9 @@ export class UserPayRateUpdateInput {
 
   @Field({ nullable: true })
   user_id: string;
+
+  @Field({ nullable: true })
+  invoiceRate: number;
 }
 
 @InputType()
