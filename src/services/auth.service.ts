@@ -177,7 +177,7 @@ export default class AuthService implements IAuthService {
       }
 
       if (user && !user?.loggedIn) {
-        user = await this.userRepository.update({
+        await this.userRepository.update({
           id: user?.id,
           loggedIn: true,
           status: UserStatus.Active,

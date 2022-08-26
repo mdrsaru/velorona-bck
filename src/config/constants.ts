@@ -105,12 +105,14 @@ export enum TimesheetStatus {
   Pending = 'Pending',
   Approved = 'Approved',
   PartiallyApproved = 'PartiallyApproved',
+  Rejected = 'Rejected',
 }
 
 export enum AttachedTimesheetStatus {
   Pending = 'Pending',
   Approved = 'Approved',
   PartiallyApproved = 'PartiallyApproved',
+  Rejected = 'Rejected',
 }
 
 export enum TaskStatus {
