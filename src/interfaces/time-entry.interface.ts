@@ -126,6 +126,7 @@ export interface IProjectItemInput {
   company_id: string;
   user_id: string;
   client_id: string;
+  type?: string;
 }
 
 export interface IDurationMap {
@@ -162,6 +163,7 @@ export interface ITimeEntryHourlyRateInput {
   created_by: string;
   company_id: string;
   hourlyRate: number;
+  hourlyInvoiceRate: number;
 }
 
 export interface ITotalDurationInput {
