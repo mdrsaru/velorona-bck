@@ -61,6 +61,13 @@ timesheetEmitter.on(events.onTimeEntriesApprove, async (args: TimesheetApprove) 
       },
     });
 
+    const rejectedEntriesCount = await timeEntryRepository.countEntities({
+      query: {
+        timesheet_id,
+        approvalStatus: TimeEntryApprovalStatus.Rejected,
+      },
+    });
+
     const allTimeEntries = await timeEntryRepository.countEntities({
       query: {
         timesheet_id,
@@ -72,6 +79,9 @@ timesheetEmitter.on(events.onTimeEntriesApprove, async (args: TimesheetApprove) 
     if (approvedEntriesCount === allTimeEntries) {
       status = TimesheetStatus.Approved;
       attachedTimesheetStatus = AttachedTimesheetStatus.Approved;
+    } else if (rejectedEntriesCount === allTimeEntries) {
+      status = TimesheetStatus.Rejected;
+      attachedTimesheetStatus = AttachedTimesheetStatus.Rejected;
     } else if (approvedEntriesCount) {
       status = TimesheetStatus.PartiallyApproved;
       attachedTimesheetStatus = AttachedTimesheetStatus.PartiallyApproved;
