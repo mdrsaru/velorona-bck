@@ -77,6 +77,7 @@ export class UserPayRateResolver {
       const amount = args.amount;
       const user_id = args.user_id;
       const project_id = args.project_id;
+      const invoiceRate = args.invoiceRate;
 
       const schema = UserPayRateValidation.create();
       await this.joiService.validate({
@@ -95,6 +96,7 @@ export class UserPayRateResolver {
         amount,
         user_id,
         project_id,
+        invoiceRate,
       });
       return userPayRate;
     } catch (err) {
@@ -119,6 +121,7 @@ export class UserPayRateResolver {
       const amount = args.amount;
       const user_id = args.user_id;
       const project_id = args.project_id;
+      const invoiceRate = args.invoiceRate;
 
       const schema = UserPayRateValidation.update();
       await this.joiService.validate({
@@ -140,6 +143,7 @@ export class UserPayRateResolver {
         amount,
         user_id,
         project_id,
+        invoiceRate,
       });
 
       return userPayRate;
