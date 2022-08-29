@@ -9,7 +9,7 @@ export interface IUserPayRate {
   amount: number;
   user_id: string;
   project_id: string;
-  invoiceRate: number;
+  invoiceRate?: number;
   createdAt: Date;
   updatedAt: Date;
 }
