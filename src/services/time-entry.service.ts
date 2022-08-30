@@ -381,6 +381,7 @@ export default class TimeEntryService implements ITimeEntryService {
       const totalTimeInSeconds = await this.timeEntryRepository.getTotalTimeInSeconds({
         company_id,
         user_id,
+        client_id,
         startTime: startDate.format('YYYY-MM-DDTHH:mm:ss'),
         endTime: endDate.format('YYYY-MM-DDTHH:mm:ss'),
       });

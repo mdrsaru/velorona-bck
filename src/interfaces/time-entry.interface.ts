@@ -84,6 +84,7 @@ export interface ITimeEntryTotalDurationInput {
   project_id?: string;
   invoiced?: boolean;
   timesheet_id?: string;
+  client_id?: string;
 }
 
 /**

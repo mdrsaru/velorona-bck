@@ -244,6 +244,7 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
       const company_id = args.company_id;
       const project_id = args.project_id;
       const created_by = args.user_id;
+      const client_id = args.client_id;
       const invoiced = args.invoiced ?? false;
       const errors: string[] = [];
 
@@ -260,7 +261,7 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
       const query = this.repo
         .createQueryBuilder(entities.timeEntry)
         .select('SUM(duration)', 'totalTime')
-        .where('company_id = :company_id', { company_id })
+        .where(`${entities.timeEntry}.company_id = :company_id`, { company_id })
         .andWhere('start_time >= :startTime', { startTime })
         .andWhere('start_time <= :endTime', { endTime }); // using start_time for the end_time
 
@@ -275,7 +276,11 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
       if (invoiced) {
         query.andWhere('invoice_id IS NOT NULL');
       }
-
+      if (client_id) {
+        query
+          .leftJoin(`${entities.timeEntry}.project`, 'project')
+          .andWhere('project.client_id = :client_id', { client_id });
+      }
       const { totalTime } = await query.getRawOne();
 
       return totalTime ?? 0;
