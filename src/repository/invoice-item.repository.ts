@@ -37,7 +37,6 @@ export default class InvoiceItemRepository extends BaseRepository<InvoiceItem> i
       const errors: string[] = [];
 
       const projectIds = items.filter((item) => !!item.project_id).map((item) => item.project_id);
-      console.log(items, projectIds, 'hello\n\n\n');
 
       if (projectIds?.length) {
         const foundProjectCount = await this.projectRepository.countEntities({
