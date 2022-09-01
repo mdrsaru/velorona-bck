@@ -20,6 +20,7 @@ export interface IStripeSubscriptionCreateArgs {
   payment_behavior?: any;
   payment_settings?: any;
   expand?: string[];
+  trial_end?: number;
 }
 
 export interface IStripeUsageRecordCreateArgs {

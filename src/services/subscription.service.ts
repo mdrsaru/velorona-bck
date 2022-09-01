@@ -1,3 +1,4 @@
+import moment from 'moment';
 import Stripe from 'stripe';
 import find from 'lodash/find';
 import isNil from 'lodash/isNil';
@@ -16,12 +17,13 @@ import {
   ISubscriptionUpdateInput,
   ISubscriptionService,
 } from '../interfaces/subscription.interface';
+import { IStripeSubscriptionCreateArgs } from '../interfaces/stripe.interface';
 import { ICompanyRepository } from '../interfaces/company.interface';
 import { IUserRepository } from '../interfaces/user.interface';
 
 @injectable()
 export default class SubscriptionService implements ISubscriptionService {
-  private name = 'MediaService';
+  private name = 'SubscriptionService';
   private readonly stripe: Stripe;
   private companyRepository: ICompanyRepository;
   private stripeService: StripeService;
@@ -44,6 +46,7 @@ export default class SubscriptionService implements ISubscriptionService {
   createSubscription = async (args: ISubscriptionCreateInput): Promise<any> => {
     try {
       const company_id = args.company_id;
+      const trial = args?.trial;
       const prices = args.prices;
 
       const company = await this.companyRepository.getById({
@@ -66,6 +69,20 @@ export default class SubscriptionService implements ISubscriptionService {
       const customer = await this.stripeService.createCustomer({
         email: company.adminEmail,
       });
+
+      const subscriptionPayload: IStripeSubscriptionCreateArgs = {
+        customer: customer.id,
+        items: prices.map((price) => ({ price })),
+      };
+
+      if (trial) {
+        const threeMonths = moment().add(3, 'months').unix();
+        subscriptionPayload.trial_end = threeMonths;
+      } else {
+        subscriptionPayload.payment_behavior = 'default_incomplete';
+        subscriptionPayload.expand = ['latest_invoice.payment_intent'];
+        subscriptionPayload.payment_settings = { save_default_payment_method: 'on_subscription' };
+      }
 
       const subscription = (await this.stripeService.createSubscription({
         customer: customer.id,

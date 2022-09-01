@@ -3,6 +3,7 @@ import Company from '../entities/company.entity';
 export interface ISubscriptionCreateInput {
   prices: string[];
   company_id: string;
+  trial?: boolean;
 }
 
 export interface ISubscriptionCreateResult {

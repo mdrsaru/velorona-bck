@@ -77,6 +77,7 @@ export default class StripeService {
       const payment_behavior = args.payment_behavior;
       const expand = args.expand;
       const payment_settings = args.payment_settings;
+      const trial_end = args.trial_end;
 
       let errors = [];
       if (isNil(customer) || !isString(customer)) {
@@ -89,13 +90,25 @@ export default class StripeService {
         });
       }
 
-      const subscription = await this.stripe.subscriptions.create({
+      const subscriptionParams: Stripe.SubscriptionCreateParams = {
         customer,
         items,
-        payment_behavior,
-        expand,
-        payment_settings,
-      });
+      };
+
+      if (payment_behavior) {
+        subscriptionParams.payment_behavior = payment_behavior;
+      }
+      if (expand) {
+        subscriptionParams.expand = expand;
+      }
+      if (payment_settings) {
+        subscriptionParams.payment_settings = payment_settings;
+      }
+      if (trial_end) {
+        subscriptionParams.trial_end = trial_end;
+      }
+
+      const subscription = await this.stripe.subscriptions.create(subscriptionParams);
 
       return subscription;
     } catch (err) {
