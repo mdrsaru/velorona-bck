@@ -39,6 +39,7 @@ export default class UserPayRateRepository extends BaseRepository<UserPayRate> i
       const amount = args.amount;
       const user_id = args.user_id;
       const project_id = args.project_id;
+      const invoiceRate = args.invoiceRate;
 
       const errors: string[] = [];
 
@@ -74,6 +75,7 @@ export default class UserPayRateRepository extends BaseRepository<UserPayRate> i
         amount,
         user_id,
         project_id,
+        invoiceRate,
       });
 
       return UserPayRate;
@@ -90,6 +92,7 @@ export default class UserPayRateRepository extends BaseRepository<UserPayRate> i
       const amount = args.amount;
       const user_id = args.user_id;
       const project_id = args.project_id;
+      const invoiceRate = args.invoiceRate;
 
       const found = await this.getById({ id });
       if (!found) {
@@ -104,6 +107,7 @@ export default class UserPayRateRepository extends BaseRepository<UserPayRate> i
         amount,
         user_id,
         project_id,
+        invoiceRate,
       });
 
       let UserPayRate = await this.repo.save(update);

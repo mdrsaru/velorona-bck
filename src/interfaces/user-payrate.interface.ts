@@ -9,6 +9,7 @@ export interface IUserPayRate {
   amount: number;
   user_id: string;
   project_id: string;
+  invoiceRate?: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -19,6 +20,7 @@ export interface IUserPayRateCreateInput {
   amount: IUserPayRate['amount'];
   user_id: IUserPayRate['user_id'];
   project_id: IUserPayRate['project_id'];
+  invoiceRate?: IUserPayRate['invoiceRate'];
 }
 
 export interface IUserPayRateUpdateInput {
@@ -28,6 +30,7 @@ export interface IUserPayRateUpdateInput {
   amount?: IUserPayRate['amount'];
   user_id?: IUserPayRate['user_id'];
   project_id?: IUserPayRate['project_id'];
+  invoiceRate?: IUserPayRate['invoiceRate'];
 }
 
 export interface IPayrateByUserAndProject {

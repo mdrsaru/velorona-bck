@@ -21,6 +21,7 @@ export interface IWorkscheduleDetailCreateInput {
   duration?: Number;
   workschedule_id: IWorkscheduleDetail['workschedule_id'];
   user_id: IWorkscheduleDetail['user_id'];
+  workscheduleTimeDetail?: any;
 }
 
 export interface IWorkscheduleDetailUpdateInput {
@@ -39,9 +40,16 @@ export interface IWorkscheduleDetailBulkRemoveInput {
   workschedule_id: string;
 }
 
+export interface IWorkscheduleDetailCopyInput {
+  schedule_date: any;
+  workschedule_id: string;
+  copy_workschedule_id: string;
+  user_id: string;
+}
 export interface IWorkscheduleDetailService {
   getAllAndCount(filters?: any): Promise<IPaginationData<WorkscheduleDetail>>;
   create(args: IWorkscheduleDetailCreateInput): Promise<WorkscheduleDetail>;
+  bulkCreate(args: IWorkscheduleDetailCopyInput): Promise<any>;
   update(args: IWorkscheduleDetailUpdateInput): Promise<WorkscheduleDetail>;
   remove(args: IEntityRemove): Promise<WorkscheduleDetail>;
   bulkRemove(args: IWorkscheduleDetailBulkRemoveInput): Promise<WorkscheduleDetail[]>;
@@ -52,6 +60,7 @@ export interface IWorkscheduleDetailRepository {
   getAll(args: any): Promise<WorkscheduleDetail[]>;
   getById(args: IEntityID): Promise<WorkscheduleDetail | undefined>;
   create(args: IWorkscheduleDetailCreateInput): Promise<WorkscheduleDetail>;
+  bulkCreate(args: IWorkscheduleDetailCreateInput): Promise<WorkscheduleDetail>;
   update(args: IWorkscheduleDetailUpdateInput): Promise<WorkscheduleDetail>;
   remove(args: IEntityRemove): Promise<WorkscheduleDetail>;
   bulkRemove(args: IWorkscheduleDetailBulkRemoveInput): Promise<WorkscheduleDetail[]>;

@@ -87,7 +87,7 @@ export default class User extends Base {
   @Field((type) => UserStatus)
   @Column({
     type: 'varchar',
-    default: UserStatus.Active,
+    default: UserStatus.InvitationSent,
   })
   status: UserStatus;
 
@@ -104,6 +104,11 @@ export default class User extends Base {
   @Field()
   @Column({ name: 'archived', default: false })
   archived: boolean;
+
+  @Index(`${indexPrefix}_loggedIn`)
+  @Field()
+  @Column({ name: 'logged_in', default: false })
+  loggedIn: boolean;
 
   @Field({ nullable: true })
   @Column({ nullable: true })

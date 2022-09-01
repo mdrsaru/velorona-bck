@@ -81,6 +81,7 @@ export enum CompanyStatus {
 }
 
 export enum UserStatus {
+  InvitationSent = 'Invitation Sent',
   Active = 'Active',
   Inactive = 'Inactive',
 }
@@ -104,12 +105,14 @@ export enum TimesheetStatus {
   Pending = 'Pending',
   Approved = 'Approved',
   PartiallyApproved = 'PartiallyApproved',
+  Rejected = 'Rejected',
 }
 
 export enum AttachedTimesheetStatus {
   Pending = 'Pending',
   Approved = 'Approved',
   PartiallyApproved = 'PartiallyApproved',
+  Rejected = 'Rejected',
 }
 
 export enum TaskStatus {
@@ -125,6 +128,7 @@ export enum Role {
   Employee = 'Employee',
   TaskManager = 'TaskManager',
   Client = 'Client',
+  BookKeeper = 'BookKeeper',
 }
 
 export enum CompanyRole {
@@ -132,6 +136,7 @@ export enum CompanyRole {
   Employee = 'Employee',
   TaskManager = 'TaskManager',
   Client = 'Client',
+  BookKeeper = 'BookKeeper',
 }
 
 export enum AdminRole {

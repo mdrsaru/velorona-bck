@@ -44,7 +44,11 @@ export class InvoiceResolver {
   }
 
   @Query((returns) => InvoicePagingResult)
-  @UseMiddleware(authenticate, authorize(RoleEnum.CompanyAdmin, RoleEnum.SuperAdmin), checkCompanyAccess)
+  @UseMiddleware(
+    authenticate,
+    authorize(RoleEnum.CompanyAdmin, RoleEnum.SuperAdmin, RoleEnum.BookKeeper),
+    checkCompanyAccess
+  )
   async Invoice(@Arg('input') args: InvoiceQueryInput, @Ctx() ctx: any): Promise<IPaginationData<Invoice>> {
     const operation = 'Invoices';
 
@@ -64,7 +68,11 @@ export class InvoiceResolver {
   }
 
   @Query((returns) => String)
-  @UseMiddleware(authenticate, authorize(RoleEnum.SuperAdmin, RoleEnum.CompanyAdmin), checkCompanyAccess)
+  @UseMiddleware(
+    authenticate,
+    authorize(RoleEnum.SuperAdmin, RoleEnum.CompanyAdmin, RoleEnum.BookKeeper),
+    checkCompanyAccess
+  )
   async InvoicePDF(@Arg('input') args: InvoicePDFInput, @Ctx() ctx: any): Promise<string> {
     const operation = 'InvoicePDF';
 

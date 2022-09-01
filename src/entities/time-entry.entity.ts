@@ -121,6 +121,14 @@ export default class TimeEntry extends Base {
   })
   hourlyRate: number;
 
+  @Field()
+  @Column({
+    type: 'float',
+    name: timeEntry.hourly_invoice_rate,
+    default: 0,
+  })
+  hourlyInvoiceRate: number;
+
   @Field(() => EntryType)
   @Column({ name: 'entry_type', type: 'varchar', default: EntryType.Timesheet })
   entryType: EntryType;

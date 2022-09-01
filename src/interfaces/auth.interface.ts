@@ -19,6 +19,11 @@ export interface IForgotPasswordInput {
   companyCode: string;
 }
 
+export interface IResendInvitation {
+  user_id: string;
+  company_id: string;
+}
+
 export interface IResetPasswordInput {
   token?: any;
   password: string;
@@ -42,7 +47,9 @@ export interface ILoginResponse {
   avatar?: Media;
   entryType?: EntryType;
 }
-
+export interface IResendInvitationResponse {
+  message: string;
+}
 export interface IForgotPasswordResponse {
   token: string | undefined;
 }
@@ -57,6 +64,7 @@ export interface IAuthService {
   login(args: ILoginInput): Promise<ILoginResponse>;
   forgotPassword(args: IForgotPasswordInput): Promise<IForgotPasswordResponse>;
   resetPassword(args: IResetPasswordInput): Promise<IResetPasswordResponse>;
+  resendInvitation(args: IResendInvitation): Promise<IResendInvitationResponse>;
   changePassword(args: IChangePasswordInput): Promise<IChangePasswordResponse>;
   renewAccessToken(refreshToken: string): Promise<ILoginResponse>;
   logout(refreshToken: string): Promise<boolean>;

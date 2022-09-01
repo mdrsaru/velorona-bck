@@ -59,6 +59,7 @@ export default class UserPayRateService implements IUserPayRateService {
     const amount = args.amount;
     const user_id = args.user_id;
     const project_id = args.project_id;
+    const invoiceRate = args.invoiceRate;
 
     try {
       let userPayRate = await this.userPayRateRepository.create({
@@ -67,6 +68,7 @@ export default class UserPayRateService implements IUserPayRateService {
         amount,
         user_id,
         project_id,
+        invoiceRate,
       });
 
       /**
@@ -77,6 +79,7 @@ export default class UserPayRateService implements IUserPayRateService {
         created_by: user_id,
         project_id,
         hourlyRate: amount,
+        hourlyInvoiceRate: invoiceRate,
       });
 
       return userPayRate;
@@ -98,6 +101,7 @@ export default class UserPayRateService implements IUserPayRateService {
     const amount = args?.amount;
     const user_id = args?.user_id;
     const project_id = args?.project_id;
+    const invoiceRate = args.invoiceRate;
 
     try {
       let userPayRate = await this.userPayRateRepository.update({
@@ -107,6 +111,7 @@ export default class UserPayRateService implements IUserPayRateService {
         amount,
         user_id,
         project_id,
+        invoiceRate,
       });
 
       if (!isNil(amount)) {
@@ -118,6 +123,7 @@ export default class UserPayRateService implements IUserPayRateService {
           created_by: userPayRate.user_id,
           project_id: userPayRate.project_id,
           hourlyRate: userPayRate.amount,
+          hourlyInvoiceRate: userPayRate.invoiceRate,
         });
       }
 

@@ -11,6 +11,7 @@ type UserPayRate = {
   project_id: string;
   created_by: string;
   hourlyRate: number;
+  hourlyInvoiceRate: number;
 };
 
 payRateEmitter.on(events.onPayRateCreateUpdate, async (args: UserPayRate) => {
@@ -48,8 +49,8 @@ payRateEmitter.on(events.onPayRateCreateUpdate, async (args: UserPayRate) => {
           company_id: user.company_id,
           created_by: args.created_by,
           hourlyRate: args.hourlyRate,
+          hourlyInvoiceRate: args.hourlyInvoiceRate,
         });
-
         logger.info({
           operation,
           message: 'Hourly rate has been successfully updated.',

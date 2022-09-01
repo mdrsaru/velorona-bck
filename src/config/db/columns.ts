@@ -41,6 +41,7 @@ export const timeEntry = {
   approver_id: 'approver_id',
   timesheet_id: 'timesheet_id',
   hourly_rate: 'hourly_rate',
+  hourly_invoice_rate: 'hourly_invoice_rate',
 };
 
 export const timesheet = {
@@ -97,6 +98,7 @@ export const userPayRate = {
   amount: 'amount',
   user_id: 'user_id',
   project_id: 'project_id',
+  invoice_rate: 'invoice_rate',
 };
 
 export const projects = {

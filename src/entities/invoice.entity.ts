@@ -309,6 +309,15 @@ export class InvoiceQuery {
 
   @Field({ nullable: true })
   status: string;
+
+  @Field({ nullable: true })
+  issueDate: Date;
+
+  @Field({ nullable: true })
+  startDate: Date;
+
+  @Field({ nullable: true })
+  endDate: Date;
 }
 
 @InputType()

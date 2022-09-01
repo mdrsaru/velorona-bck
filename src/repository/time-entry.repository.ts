@@ -406,6 +406,8 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
 
       const hourlyRate = payRate?.[0]?.amount ?? 0;
 
+      const hourlyInvoiceRate = payRate?.[0]?.invoiceRate ?? 0;
+
       const timeEntry = await this.repo.save({
         startTime,
         endTime,
@@ -415,6 +417,7 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
         company_id,
         created_by,
         hourlyRate,
+        hourlyInvoiceRate,
         entryType,
         description,
       });
@@ -538,10 +541,10 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
       const queryResult = await this.manager.query(
         `
         SELECT t.${timeEntry.project_id},
-        COALESCE(up.${userPayRate.amount}, 0) as "hourlyRate",
+        COALESCE(up.${userPayRate.invoice_rate}, 0) as "hourlyRate",
         COALESCE(SUM(t.${timeEntry.duration}), 0) AS "totalDuration",
         ROUND(COALESCE((SUM(t.${timeEntry.duration})::numeric / 3600), 0), 2) AS "totalHours",
-        ROUND(COALESCE(((SUM(t.${timeEntry.duration})::numeric / 3600) * up.${userPayRate.amount}), 0), 2) AS "totalExpense" 
+        ROUND(COALESCE(((SUM(t.${timeEntry.duration})::numeric / 3600) * up.${userPayRate.invoice_rate}), 0), 2) AS "totalExpense" 
         FROM ${entities.timeEntry} as t 
         JOIN ${entities.projects} as p on t.${timeEntry.project_id} = p.id
         LEFT JOIN ${entities.userPayRate} up ON t.project_id = up.project_id AND t.created_by = up.user_id
@@ -553,7 +556,7 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
         AND t.${timeEntry.company_id} = $3
         AND t.${timeEntry.created_by} = $4
         AND p.client_id = $5
-        GROUP BY t.${timeEntry.project_id}, up.${userPayRate.amount};
+        GROUP BY t.${timeEntry.project_id}, up.${userPayRate.invoice_rate};
         `,
         [startTime, endTime, company_id, user_id, client_id]
       );
@@ -694,6 +697,7 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
         },
         {
           hourlyRate: args.hourlyRate,
+          hourlyInvoiceRate: args.hourlyInvoiceRate,
         }
       );
 

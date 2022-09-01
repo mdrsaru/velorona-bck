@@ -73,6 +73,15 @@ export class ForgotPasswordInput {
 }
 
 @InputType()
+export class ResendInvitationInput {
+  @Field()
+  user_id: string;
+
+  @Field({ nullable: true })
+  company_id: string;
+}
+
+@InputType()
 export class ResetPasswordInput {
   @Field()
   token: string;

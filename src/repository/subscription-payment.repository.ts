@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { getRepository, Repository } from 'typeorm';
+import { Brackets, getRepository, In, LessThanOrEqual, MoreThanOrEqual, Repository, SelectQueryBuilder } from 'typeorm';
 
 import * as apiError from '../utils/api-error';
 import { TYPES } from '../types';
@@ -11,6 +11,8 @@ import {
   ISubscriptionPaymentRepository,
 } from '../interfaces/subscription-payment.interface';
 import { ICompanyRepository } from '../interfaces/company.interface';
+import { IGetAllAndCountResult, IGetOptions } from '../interfaces/paging.interface';
+import { isArray } from 'lodash';
 
 @injectable()
 export default class SubscriptionPaymentRepository
@@ -23,6 +25,57 @@ export default class SubscriptionPaymentRepository
     super(getRepository(SubscriptionPayment));
     this.companyRepository = _companyRepository;
   }
+
+  getAllAndCount = async (args: IGetOptions): Promise<IGetAllAndCountResult<SubscriptionPayment>> => {
+    try {
+      let { query = {}, select = [], relations = [], ...rest } = args;
+      let { role: roleName, search, startDate, endDate, ...where } = query;
+      const _select = select as (keyof SubscriptionPayment)[];
+
+      for (let key in query) {
+        if (isArray(query[key])) {
+          query[key] = In(query[key]);
+        }
+      }
+      if (search) {
+        relations.push('company');
+      }
+
+      // Using function based where query since it needs inner join where clause
+      const _where = (qb: SelectQueryBuilder<SubscriptionPayment>) => {
+        const queryBuilder = qb.where(where);
+        if (startDate && endDate) {
+          queryBuilder.andWhere({
+            paymentDate: MoreThanOrEqual(startDate),
+          });
+          queryBuilder.andWhere({
+            paymentDate: LessThanOrEqual(endDate),
+          });
+        }
+        if (search) {
+          queryBuilder.andWhere(
+            new Brackets((qb) => {
+              qb.where('name ILike :search', { search: `%${search}%` ?? '' });
+            })
+          );
+        }
+      };
+
+      let [rows, count] = await this.repo.findAndCount({
+        relations,
+        where: _where,
+        ...(_select?.length && { select: _select }),
+        ...rest,
+      });
+
+      return {
+        count,
+        rows,
+      };
+    } catch (err) {
+      throw err;
+    }
+  };
 
   create = async (args: ISubscriptionPaymentCreate): Promise<SubscriptionPayment> => {
     try {

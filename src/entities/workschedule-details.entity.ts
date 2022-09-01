@@ -41,7 +41,7 @@ export default class WorkscheduleDetail extends Base {
 
   @Field(() => WorkscheduleTimeDetail, { nullable: true, description: 'Field for WorkscheduleTimeDetail' })
   @OneToMany(() => WorkscheduleTimeDetail, (workscheduleTimeDetail) => workscheduleTimeDetail.workscheduleDetail, {
-    cascade: ['remove', 'update'],
+    cascade: true,
   })
   WorkscheduleTimeDetail: WorkscheduleTimeDetail[];
 
@@ -71,6 +71,21 @@ export class WorkscheduleDetailCreateInput {
 
   @Field({ nullable: true })
   workschedule_id: string;
+
+  @Field()
+  user_id: string;
+}
+
+@InputType()
+export class WorkscheduleDetailBulkCreateInput {
+  @Field()
+  schedule_date: Date;
+
+  @Field({ nullable: true })
+  workschedule_id: string;
+
+  @Field({ nullable: true })
+  copy_workschedule_id: string;
 
   @Field()
   user_id: string;

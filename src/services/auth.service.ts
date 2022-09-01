@@ -8,12 +8,13 @@ import constants, {
   ForgotPasswordUserType,
   emailSetting,
   CompanyStatus,
+  events,
 } from '../config/constants';
 import { NotAuthenticatedError, ValidationError } from '../utils/api-error';
 import strings from '../config/strings';
 import User from '../entities/user.entity';
 import * as apiError from '../utils/api-error';
-import { generateRandomToken } from '../utils/strings';
+import { generateRandomStrings, generateRandomToken } from '../utils/strings';
 
 import {
   IAuthService,
@@ -25,6 +26,8 @@ import {
   IForgotPasswordResponse,
   IChangePasswordInput,
   IChangePasswordResponse,
+  IResendInvitation,
+  IResendInvitationResponse,
 } from '../interfaces/auth.interface';
 import {
   IEmailService,
@@ -38,6 +41,7 @@ import { IUserRepository } from '../interfaces/user.interface';
 import { IUserTokenService } from '../interfaces/user-token.interface';
 import { IRoleRepository } from '../interfaces/role.interface';
 import { ICompanyRepository } from '../interfaces/company.interface';
+import userEmitter from '../subscribers/user.subscriber';
 
 @injectable()
 export default class AuthService implements IAuthService {
@@ -155,7 +159,7 @@ export default class AuthService implements IAuthService {
         });
       }
 
-      if (user.status !== UserStatus.Active) {
+      if (user.status == UserStatus.Inactive) {
         throw new NotAuthenticatedError({
           details: [strings.emailPasswordNotCorrect],
           data: {
@@ -169,6 +173,14 @@ export default class AuthService implements IAuthService {
       if (!isPasswordCorrect) {
         throw new NotAuthenticatedError({
           details: [strings.emailPasswordNotCorrect],
+        });
+      }
+
+      if (user && !user?.loggedIn) {
+        await this.userRepository.update({
+          id: user?.id,
+          loggedIn: true,
+          status: UserStatus.Active,
         });
       }
 
@@ -207,6 +219,39 @@ export default class AuthService implements IAuthService {
         lastName: user.lastName,
         avatar: user?.avatar,
         entryType: user.entryType,
+      };
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  resendInvitation = async (args: IResendInvitation): Promise<IResendInvitationResponse> => {
+    const operation = 'Resend Invitation';
+
+    try {
+      const user_id = args.user_id;
+      const company_id = args.company_id;
+
+      let user = await this.userRepository.getById({ id: user_id });
+
+      if (user?.loggedIn) {
+        throw new apiError.ConflictError({ details: ['User has already logged in'] });
+      }
+      const password = generateRandomStrings({ length: 8 });
+
+      await this.userRepository.update({
+        id: user_id,
+        password,
+      });
+      // Emit event for onUserCreate
+      userEmitter.emit(events.onUserCreate, {
+        company_id,
+        user: user,
+        password,
+      });
+
+      return {
+        message: 'Invitation sent successfully',
       };
     } catch (err) {
       throw err;
