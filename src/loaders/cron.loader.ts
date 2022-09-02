@@ -5,6 +5,7 @@ import { TYPES } from '../types';
 import container from '../inversify.config';
 import { IInvoiceService } from '../interfaces/invoice.interface';
 import { ILogger } from '../interfaces/common.interface';
+import { ITimesheetService } from '../interfaces/timesheet.interface';
 
 const CronJob = cron.CronJob;
 
@@ -14,6 +15,7 @@ export default (): void => {
   logger.init('cron.loader');
 
   const invoiceService = container.get<IInvoiceService>(TYPES.InvoiceService);
+  const timesheetService = container.get<ITimesheetService>(TYPES.TimesheetService);
 
   new CronJob(
     '0 0 1 * * *',
@@ -34,6 +36,34 @@ export default (): void => {
         return logger.error({
           operation,
           message: `Error generating invoice from schedule`,
+          data: {},
+        });
+      }
+    },
+    null,
+    true,
+    'Asia/Kathmandu'
+  );
+
+  new CronJob(
+    '0 5 * * MON',
+    function () {
+      try {
+        timesheetService
+          .bulkCreate({
+            date: moment().format('YYYY-MM-DD'),
+          })
+          .then((timesheet) => {
+            logger.info({
+              operation,
+              message: `Timesheet created on every monday`,
+              data: {},
+            });
+          });
+      } catch (err) {
+        return logger.error({
+          operation,
+          message: `Error creating timesheet`,
           data: {},
         });
       }

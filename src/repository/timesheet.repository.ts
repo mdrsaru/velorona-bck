@@ -27,6 +27,7 @@ import {
   ITimesheetRepository,
   ITimesheetUpdateInput,
   ITimesheetCountInput,
+  ITimesheetBulkCreateRepoInput,
 } from '../interfaces/timesheet.interface';
 import { entities } from '../config/constants';
 import timesheet from '../config/inversify/timesheet';
@@ -243,6 +244,16 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
       });
 
       return res;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  bulkCreate = async (args: ITimesheetBulkCreateRepoInput): Promise<string> => {
+    try {
+      this.repo.createQueryBuilder().insert().into(entities.timesheet).values(args.query).execute();
+
+      return 'Bulk create successfully';
     } catch (err) {
       throw err;
     }

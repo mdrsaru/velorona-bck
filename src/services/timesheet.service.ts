@@ -13,17 +13,23 @@ import {
   ITimesheetService,
   ITimesheetUpdateInput,
   ITimesheetApproveRejectInput,
+  ITimesheetBulkCreateInput,
 } from '../interfaces/timesheet.interface';
 import { IEntityRemove, IErrorService, ILogger } from '../interfaces/common.interface';
 import { IPaginationData, IPagingArgs } from '../interfaces/paging.interface';
 import { ITimeEntryRepository } from '../interfaces/time-entry.interface';
 import { IAttachedTimesheetRepository } from '../interfaces/attached-timesheet.interface';
 import { NotFoundError } from '../utils/api-error';
+import { IUserRepository } from '../interfaces/user.interface';
+import { IUserClientRepository } from '../interfaces/user-client.interface';
+import { EntryType, Role, UserClientStatus } from '../config/constants';
 
 @injectable()
 export default class TimesheetService implements ITimesheetService {
   private name = 'TimesheetService';
   private timesheetRepository: ITimesheetRepository;
+  private userRepository: IUserRepository;
+  private userClientRepository: IUserClientRepository;
   private logger: ILogger;
   private errorService: IErrorService;
   private timeEntryRepository: ITimeEntryRepository;
@@ -34,13 +40,17 @@ export default class TimesheetService implements ITimesheetService {
     @inject(TYPES.LoggerFactory) loggerFactory: (name: string) => ILogger,
     @inject(TYPES.ErrorService) errorService: IErrorService,
     @inject(TYPES.TimeEntryRepository) _timeEntryRepository: ITimeEntryRepository,
-    @inject(TYPES.AttachedTimesheetRepository) _attachedTimesheet: IAttachedTimesheetRepository
+    @inject(TYPES.AttachedTimesheetRepository) _attachedTimesheet: IAttachedTimesheetRepository,
+    @inject(TYPES.UserRepository) _userRepository: IUserRepository,
+    @inject(TYPES.UserClientRepository) _userClientRepository: IUserClientRepository
   ) {
     this.timesheetRepository = timesheetRepository;
     this.logger = loggerFactory(this.name);
     this.errorService = errorService;
     this.timeEntryRepository = _timeEntryRepository;
     this.attachedTimesheetRepository = _attachedTimesheet;
+    this.userRepository = _userRepository;
+    this.userClientRepository = _userClientRepository;
   }
 
   getAllAndCount = async (args: IPagingArgs): Promise<IPaginationData<Timesheet>> => {
@@ -60,7 +70,50 @@ export default class TimesheetService implements ITimesheetService {
       throw err;
     }
   };
+  bulkCreate = async (args: ITimesheetBulkCreateInput): Promise<string> => {
+    try {
+      let { rows } = await this.userRepository.getAllAndCount({
+        query: {
+          role: Role.Employee,
+          entryType: EntryType.Timesheet,
+        },
+      });
 
+      let date = args.date;
+      let weekStartDate = moment(date).startOf('isoWeek');
+      const weekEndDate = moment(date).endOf('isoWeek');
+      let users: any = [];
+
+      for (let user of rows) {
+        const clients = await this.userClientRepository.getAll({
+          query: {
+            user_id: user.id,
+            status: UserClientStatus.Active,
+          },
+          select: ['client_id'],
+        });
+
+        if (!clients.length) {
+          continue;
+        } else {
+          users.push({
+            weekStartDate: weekStartDate,
+            weekEndDate: weekEndDate,
+            user_id: user.id,
+            company_id: user.company_id,
+            client_id: clients?.[0]?.client_id,
+          });
+        }
+      }
+
+      let result = await this.timesheetRepository.bulkCreate({
+        query: users,
+      });
+      return result;
+    } catch (err) {
+      throw err;
+    }
+  };
   update = async (args: ITimesheetUpdateInput): Promise<Timesheet> => {
     try {
       const id = args.id;

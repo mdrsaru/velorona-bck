@@ -74,6 +74,14 @@ export interface ITimesheetCountInput {
   manager_id: string;
 }
 
+export interface ITimesheetBulkCreateInput {
+  date: string;
+}
+
+export interface ITimesheetBulkCreateRepoInput {
+  query: string[];
+}
+
 export interface ITimesheetRepository {
   getAllAndCount(args: IPagingArgs): Promise<IGetAllAndCountResult<Timesheet>>;
   getAll(args: IGetOptions): Promise<Timesheet[]>;
@@ -84,9 +92,11 @@ export interface ITimesheetRepository {
   countTimesheet(args: ITimesheetCountInput): Promise<number>;
   getTimesheetByManager(args: ITimesheetCountInput): Promise<IGetAllAndCountResult<Timesheet>>;
   getSingleEntity(args: ISingleEntityQuery): Promise<Timesheet | undefined>;
+  bulkCreate(args: ITimesheetBulkCreateRepoInput): Promise<string>;
 }
 
 export interface ITimesheetService {
   getAllAndCount(args: IPagingArgs): Promise<IPaginationData<Timesheet>>;
   update(args: ITimesheetUpdateInput): Promise<Timesheet>;
+  bulkCreate(args: ITimesheetBulkCreateInput): Promise<string>;
 }
