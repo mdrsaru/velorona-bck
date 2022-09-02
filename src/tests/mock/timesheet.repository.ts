@@ -8,6 +8,7 @@ import { ICompanyRepository } from '../../interfaces/company.interface';
 import { IGetAllAndCountResult, IGetOptions, IPagingArgs } from '../../interfaces/paging.interface';
 import { IEntityID, IEntityRemove, ISingleEntityQuery } from '../../interfaces/common.interface';
 import {
+  ITimesheetBulkCreateRepoInput,
   ITimesheetCountInput,
   ITimesheetCreateInput,
   ITimesheetRepository,
@@ -53,6 +54,9 @@ export default class TimesheetRepository implements ITimesheetRepository {
     throw new Error('not implemented');
   };
   getSingleEntity = (args: ISingleEntityQuery): Promise<Timesheet | undefined> => {
+    throw new Error('not implemented');
+  };
+  bulkCreate = (args: ITimesheetBulkCreateRepoInput): Promise<string> => {
     throw new Error('not implemented');
   };
 }
