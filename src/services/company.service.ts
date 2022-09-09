@@ -1,6 +1,6 @@
 import { injectable, inject } from 'inversify';
 
-import { events } from '../config/constants';
+import { events, plans, stripePrices } from '../config/constants';
 import Company from '../entities/company.entity';
 import Paging from '../utils/paging';
 import { TYPES } from '../types';
@@ -11,6 +11,7 @@ import { IPagingArgs, IPaginationData } from '../interfaces/paging.interface';
 import { IEntityRemove, IEntityID } from '../interfaces/common.interface';
 import { ICompanyCreate, ICompanyUpdate, ICompanyRepository, ICompanyService } from '../interfaces/company.interface';
 import { IUserRepository } from '../interfaces/user.interface';
+import companyEmitter from '../subscribers/company.subscriber';
 
 @injectable()
 export default class CompanyService implements ICompanyService {
@@ -50,6 +51,7 @@ export default class CompanyService implements ICompanyService {
       const archived = args?.archived;
       const user = args.user;
       const logo_id = args?.logo_id;
+      const plan = args?.plan;
 
       const password = generateRandomStrings({ length: 8 });
       user.password = password;
@@ -60,6 +62,7 @@ export default class CompanyService implements ICompanyService {
         archived,
         user,
         logo_id,
+        plan,
       });
 
       // Emit event for onUserCreate
@@ -68,7 +71,12 @@ export default class CompanyService implements ICompanyService {
         user: result.user,
         password,
       });
-
+      if (plan === plans.Professional) {
+        companyEmitter.emit(events.onSubscriptionCreate, {
+          company_id: result.company?.id,
+          prices: [stripePrices.flatPrice, stripePrices.perUser],
+        });
+      }
       return result.company;
     } catch (err) {
       throw err;

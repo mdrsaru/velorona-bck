@@ -20,7 +20,7 @@ import TimeEntry, {
 } from '../../entities/time-entry.entity';
 import Paging from '../../utils/paging';
 import authenticate from '../middlewares/authenticate';
-import { checkCompanyAccess, checkPlan } from '../middlewares/company';
+import { checkCompanyAccess, checkPlan, checkTrialPeriod } from '../middlewares/company';
 import authorize from '../middlewares/authorize';
 import TimeEntryValidation from '../../validation/time-entry.validation';
 import { Role as RoleEnum, events, plans } from '../../config/constants';
@@ -342,7 +342,8 @@ export class TimeEntryResolver {
     authenticate,
     authorize(RoleEnum.CompanyAdmin, RoleEnum.SuperAdmin, RoleEnum.TaskManager),
     checkCompanyAccess,
-    checkPlan(plans.Professional)
+    checkPlan(plans.Professional),
+    checkTrialPeriod
   )
   async TimeEntriesApproveReject(
     @Arg('input') args: TimeEntryApproveRejectInput,

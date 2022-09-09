@@ -60,7 +60,7 @@ export default class SubscriptionService implements ISubscriptionService {
         });
       }
 
-      if (company.plan === plans.Professional || company.subscriptionStatus === 'active') {
+      if (company.subscriptionStatus === 'active') {
         throw new apiError.ConflictError({
           details: [strings.companyAlreadySubscribed],
         });
@@ -76,7 +76,7 @@ export default class SubscriptionService implements ISubscriptionService {
       };
 
       if (trial) {
-        const threeMonths = moment().add(3, 'months').unix();
+        const threeMonths = moment().add(3, 'minutes').unix();
         subscriptionPayload.trial_end = threeMonths;
       } else {
         subscriptionPayload.payment_behavior = 'default_incomplete';
@@ -85,8 +85,7 @@ export default class SubscriptionService implements ISubscriptionService {
       }
 
       const subscription = (await this.stripeService.createSubscription({
-        customer: customer.id,
-        items: prices.map((price) => ({ price })),
+        ...subscriptionPayload,
         payment_behavior: 'default_incomplete',
         expand: ['latest_invoice.payment_intent'],
         payment_settings: { save_default_payment_method: 'on_subscription' },
@@ -128,7 +127,7 @@ export default class SubscriptionService implements ISubscriptionService {
 
       return {
         subscriptionId,
-        clientSecret: subscription.latest_invoice.payment_intent.client_secret ?? '',
+        clientSecret: subscription?.latest_invoice?.payment_intent?.client_secret ?? '',
       };
     } catch (err) {
       throw err;
@@ -139,8 +138,9 @@ export default class SubscriptionService implements ISubscriptionService {
     try {
       const plan = args.plan;
       const eventObject = args.eventObject;
-      const subscriptionId = eventObject?.data?.object?.subscription;
+      const subscriptionId = eventObject?.data?.object?.subscription ?? eventObject?.data?.object?.id;
       const subscriptionStatus = args.subscriptionStatus;
+      const trialEnded = args?.trialEnded;
 
       const company = await this.companyRepository.getSingleEntity({
         query: {
@@ -160,6 +160,7 @@ export default class SubscriptionService implements ISubscriptionService {
         id: company.id,
         plan,
         subscriptionStatus,
+        trialEnded,
       });
 
       return company;

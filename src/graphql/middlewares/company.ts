@@ -62,3 +62,15 @@ export const checkPlan = (plan: string): MiddlewareFn<IGraphqlContext> => {
     await next();
   };
 };
+
+export const checkTrialPeriod: MiddlewareFn = async ({ context, args }: any, next: NextFn) => {
+  const trialEnded = context?.user?.company?.trialEnded;
+
+  if (trialEnded) {
+    throw new apiError.ForbiddenError({
+      details: [strings.trialEnded],
+    });
+  }
+
+  await next();
+};

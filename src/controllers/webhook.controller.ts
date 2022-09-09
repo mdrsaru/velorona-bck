@@ -2,7 +2,7 @@ import { inject, injectable } from 'inversify';
 import { Request, Response, NextFunction } from 'express';
 
 import { TYPES } from '../types';
-import { plans, subscriptionStatus, SubscriptionPaymentStatus } from '../config/constants';
+import { plans, subscriptionStatus, SubscriptionPaymentStatus, stripeSetting } from '../config/constants';
 import * as apiError from '../utils/api-error';
 import StripeService from '../services/stripe.service';
 
@@ -122,7 +122,40 @@ export default class WebhookController {
             });
 
           break;
-
+        case 'customer.subscription.updated':
+          let eventObject = event as any;
+          const invoice = await this.stripeService.getInvoiceDetail({
+            invoiceId: eventObject?.data?.object?.latest_invoice,
+          });
+          if (invoice.status === 'draft') {
+            this.subscriptionService
+              .updateSubscription({
+                eventObject: event,
+                subscriptionStatus: subscriptionStatus.inactive,
+                trialEnded: true,
+              })
+              .then((company) => {
+                this.logger.info({
+                  operation,
+                  message: `Trial ended.`,
+                  data: {
+                    company: company.id,
+                    companyCode: company.companyCode,
+                  },
+                });
+              })
+              .catch((err) => {
+                this.logger.error({
+                  operation,
+                  message: `Error updating the subscription.`,
+                  data: {
+                    err,
+                    event,
+                  },
+                });
+              });
+          }
+          break;
         default:
           throw new apiError.NotImplementedError({
             details: [`Unexpected event type: ${event.type}`],

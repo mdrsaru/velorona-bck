@@ -149,6 +149,7 @@ export class CompanyResolver {
       const archived = args?.archived;
       const user = args.user;
       const logo_id = args?.logo_id;
+      const plan = args?.plan;
 
       const schema = CompanyValidation.create();
       await this.joiService.validate({
@@ -159,6 +160,7 @@ export class CompanyResolver {
           archived,
           user,
           logo_id,
+          plan,
         },
       });
 
@@ -168,6 +170,7 @@ export class CompanyResolver {
         archived,
         user,
         logo_id,
+        plan,
       });
 
       return company;

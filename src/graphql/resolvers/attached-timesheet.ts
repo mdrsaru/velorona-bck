@@ -14,7 +14,7 @@ import { TYPES } from '../../types';
 import Paging from '../../utils/paging';
 import authenticate from '../middlewares/authenticate';
 import authorize from '../middlewares/authorize';
-import { checkCompanyAccess, checkPlan } from '../middlewares/company';
+import { checkCompanyAccess, checkPlan, checkTrialPeriod } from '../middlewares/company';
 import { plans, Role as RoleEnum } from '../../config/constants';
 import AttachedTimesheetValidation from '../../validation/attached-timesheet.validation';
 import { DeleteInput } from '../../entities/common.entity';
@@ -39,7 +39,7 @@ export class AttachedTimesheetResolver {
   }
 
   @Query((returns) => AttachedTimesheetPagingResult)
-  @UseMiddleware(authenticate, checkCompanyAccess, checkPlan(plans.Professional))
+  @UseMiddleware(authenticate, checkCompanyAccess, checkPlan(plans.Professional), checkTrialPeriod)
   async AttachedTimesheet(
     @Arg('input') args: AttachedTimesheetQueryInput,
     @Ctx() ctx: any
@@ -67,7 +67,8 @@ export class AttachedTimesheetResolver {
     authenticate,
     authorize(RoleEnum.SuperAdmin, RoleEnum.CompanyAdmin, RoleEnum.Employee),
     checkCompanyAccess,
-    checkPlan(plans.Professional)
+    checkPlan(plans.Professional),
+    checkTrialPeriod
   )
   async AttachedTimesheetCreate(
     @Arg('input') args: AttachedTimesheetCreateInput,
@@ -129,7 +130,8 @@ export class AttachedTimesheetResolver {
     authenticate,
     authorize(RoleEnum.SuperAdmin, RoleEnum.CompanyAdmin, RoleEnum.Employee),
     checkCompanyAccess,
-    checkPlan(plans.Professional)
+    checkPlan(plans.Professional),
+    checkTrialPeriod
   )
   async AttachedTimesheetUpdate(
     @Arg('input') args: AttachedTimesheetUpdateInput,
@@ -179,7 +181,7 @@ export class AttachedTimesheetResolver {
   }
 
   @Mutation((returns) => AttachedTimesheet)
-  @UseMiddleware(authenticate, checkPlan(plans.Professional))
+  @UseMiddleware(authenticate, checkPlan(plans.Professional), checkTrialPeriod)
   async AttachedTimesheetDelete(@Arg('input') args: DeleteInput, @Ctx() ctx: any): Promise<AttachedTimesheet> {
     const operation = 'AttachedTimesheetDelete';
 

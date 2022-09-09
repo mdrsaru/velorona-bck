@@ -62,6 +62,7 @@ export default class CompanyValidation {
       status: Joi.string().required().messages(messages.status),
       archived: Joi.boolean(),
       logo_id: Joi.string(),
+      plan: Joi.string(),
       ...userValidation,
     });
   }

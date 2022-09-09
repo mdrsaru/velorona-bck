@@ -29,3 +29,7 @@ export interface IStripeUsageRecordCreateArgs {
   action: 'set' | 'increment';
   timestamp: number;
 }
+
+export interface IStripeInvoiceArgs {
+  invoiceId: string;
+}
