@@ -9,8 +9,22 @@ export class SubscriptionCreateResult {
   subscriptionId: string;
 }
 
+@ObjectType()
+export class SubscriptionUpgradeResult {
+  @Field({ nullable: true })
+  subscriptionId: string;
+}
 @InputType()
 export class SubscriptionCreateInput {
   @Field()
   company_id: string;
+}
+
+@InputType()
+export class SubscriptionUpgradeInput {
+  @Field()
+  company_id: string;
+
+  @Field()
+  paymentId: string;
 }

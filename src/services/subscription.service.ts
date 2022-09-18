@@ -7,7 +7,7 @@ import { inject, injectable } from 'inversify';
 import { TYPES } from '../types';
 import strings from '../config/strings';
 import * as apiError from '../utils/api-error';
-import { stripeSetting, stripePrices, plans, Role as RoleEnum } from '../config/constants';
+import { stripeSetting, stripePrices, plans, Role as RoleEnum, subscriptionStatus } from '../config/constants';
 import Company from '../entities/company.entity';
 import StripeService from '../services/stripe.service';
 
@@ -16,6 +16,7 @@ import {
   ISubscriptionCreateResult,
   ISubscriptionUpdateInput,
   ISubscriptionService,
+  ISubscriptionUpgradeInput,
 } from '../interfaces/subscription.interface';
 import { IStripeSubscriptionCreateArgs } from '../interfaces/stripe.interface';
 import { ICompanyRepository } from '../interfaces/company.interface';
@@ -73,6 +74,7 @@ export default class SubscriptionService implements ISubscriptionService {
       const subscriptionPayload: IStripeSubscriptionCreateArgs = {
         customer: customer.id,
         items: prices.map((price) => ({ price })),
+        cancel_at_period_end: false,
       };
 
       if (trial) {
@@ -163,6 +165,41 @@ export default class SubscriptionService implements ISubscriptionService {
       });
 
       return company;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  upgradeSubscription = async (args: ISubscriptionUpgradeInput): Promise<any> => {
+    try {
+      const company_id = args.company_id;
+      const userId = args.userId;
+      const paymentId = args.paymentId;
+
+      const company = await this.companyRepository.getSingleEntity({
+        query: {
+          id: company_id,
+          adminEmail: userId,
+        },
+        select: ['id', 'subscriptionId'],
+      });
+
+      if (!company) {
+        throw new apiError.NotFoundError({
+          details: [strings.companyNotFound],
+        });
+      }
+
+      const subscription = await this.stripeService.upgradeSubscription({
+        subscriptionId: company?.subscriptionId as string,
+        paymentId,
+      });
+
+      await this.companyRepository.update({
+        id: company_id,
+        subscriptionStatus: subscriptionStatus.active,
+      });
+      return subscription;
     } catch (err) {
       throw err;
     }

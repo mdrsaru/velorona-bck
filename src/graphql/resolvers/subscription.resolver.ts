@@ -3,11 +3,17 @@ import { Resolver, Query, Ctx, Arg, Mutation, UseMiddleware, FieldResolver, Root
 
 import { TYPES } from '../../types';
 import { stripePrices } from '../../config/constants';
-import { SubscriptionCreateInput, SubscriptionCreateResult } from '../../entities/subscription.entity';
+import {
+  SubscriptionCreateInput,
+  SubscriptionCreateResult,
+  SubscriptionUpgradeInput,
+  SubscriptionUpgradeResult,
+} from '../../entities/subscription.entity';
 
 import { IErrorService } from '../../interfaces/common.interface';
 import { IGraphqlContext } from '../../interfaces/graphql.interface';
 import { ISubscriptionService } from '../../interfaces/subscription.interface';
+import authenticate from '../middlewares/authenticate';
 
 @injectable()
 @Resolver()
@@ -37,6 +43,36 @@ export class SubscriptionResolver {
       const subscription = await this.subscriptionService.createSubscription({
         company_id,
         prices: [stripePrices.flatPrice, stripePrices.perUser],
+      });
+
+      return subscription;
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
+    }
+  }
+
+  @Mutation((returns) => SubscriptionUpgradeResult)
+  @UseMiddleware(authenticate)
+  async SubscriptionUpgrade(
+    @Arg('input') args: SubscriptionUpgradeInput,
+    @Ctx() ctx: any
+  ): Promise<SubscriptionUpgradeResult> {
+    const operation = 'SubscriptionUpgrade';
+
+    try {
+      const company_id = args.company_id;
+      const paymentId = args.paymentId;
+      const userId = ctx.user.email;
+
+      const subscription = await this.subscriptionService.upgradeSubscription({
+        company_id,
+        userId,
+        paymentId,
       });
 
       return subscription;

@@ -11,6 +11,7 @@ import { stripeSetting } from '../config/constants';
 import {
   IStripeCustomerCreateArgs,
   IStripeSubscriptionCreateArgs,
+  IStripeSubscriptionUpgradeArgs,
   IStripeUsageRecordCreateArgs,
 } from '../interfaces/stripe.interface';
 
@@ -130,6 +131,26 @@ export default class StripeService {
       });
 
       return usageRecord;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  upgradeSubscription = async (args: IStripeSubscriptionUpgradeArgs) => {
+    try {
+      const paymentId = args.paymentId;
+      const subscriptionId = args.subscriptionId;
+      const subscription = await this.stripe.subscriptions.retrieve(subscriptionId);
+
+      await this.stripe.paymentMethods.attach(paymentId, { customer: subscription.customer as string });
+
+      const result = await this.stripe.subscriptions.update(subscriptionId, {
+        trial_end: 'now',
+        default_payment_method: paymentId,
+      });
+      return {
+        subscriptionId: result?.id,
+      };
     } catch (err) {
       throw err;
     }

@@ -125,6 +125,12 @@ export class WorkscheduleDetailQuery {
 
   @Field({ nullable: true })
   user_id: string;
+
+  @Field({ nullable: true })
+  weekStartDate: string;
+
+  @Field({ nullable: true })
+  weekEndDate: string;
 }
 
 @InputType()

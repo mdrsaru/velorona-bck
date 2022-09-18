@@ -16,11 +16,12 @@ export interface IStripeSubscriptionCreateArgs {
   /**
    * Stripe price Id
    */
-  items: IStripeSubscriptionItem[];
+  items?: IStripeSubscriptionItem[];
   payment_behavior?: any;
   payment_settings?: any;
   expand?: string[];
   trial_end?: number;
+  cancel_at_period_end?: boolean;
 }
 
 export interface IStripeUsageRecordCreateArgs {
@@ -28,4 +29,9 @@ export interface IStripeUsageRecordCreateArgs {
   quantity: number;
   action: 'set' | 'increment';
   timestamp: number;
+}
+
+export interface IStripeSubscriptionUpgradeArgs {
+  subscriptionId: string;
+  paymentId: string;
 }

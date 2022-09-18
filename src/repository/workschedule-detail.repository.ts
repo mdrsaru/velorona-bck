@@ -1,5 +1,13 @@
 import { inject, injectable } from 'inversify';
-import { EntityManager, getManager, getRepository, In } from 'typeorm';
+import {
+  EntityManager,
+  getManager,
+  getRepository,
+  In,
+  LessThanOrEqual,
+  MoreThanOrEqual,
+  SelectQueryBuilder,
+} from 'typeorm';
 import isNil from 'lodash/isNil';
 import isString from 'lodash/isString';
 import merge from 'lodash/merge';
@@ -27,6 +35,7 @@ import WorkscheduleTimeDetail from '../entities/workschedule-time-details.entity
 import workscheduleTimeDetail from '../config/inversify/workschedule-time-detail';
 import moment from 'moment';
 import { any } from 'joi';
+import { IGetAllAndCountResult, IGetOptions } from '../interfaces/paging.interface';
 
 @injectable()
 export default class WorkscheduleDetailRepository
@@ -45,6 +54,47 @@ export default class WorkscheduleDetailRepository
     this.workscheduleRepository = _workscheduleRepository;
     this.manager = getManager();
   }
+
+  getAllAndCount = async (args: IGetOptions): Promise<IGetAllAndCountResult<WorkscheduleDetail>> => {
+    try {
+      let { query = {}, select = [], relations = [], ...rest } = args;
+      let { weekStartDate, weekEndDate, ...where } = query;
+      const _select = select as (keyof WorkscheduleDetail)[];
+
+      for (let key in query) {
+        if (isArray(query[key])) {
+          query[key] = In(query[key]);
+        }
+      }
+
+      // Using function based where query since it needs inner join where clause
+      const _where = (qb: SelectQueryBuilder<WorkscheduleDetail>) => {
+        const queryBuilder = qb.where(where);
+        if (weekStartDate && weekEndDate) {
+          queryBuilder.andWhere({
+            schedule_date: MoreThanOrEqual(weekStartDate),
+          });
+          queryBuilder.andWhere({
+            schedule_date: LessThanOrEqual(weekEndDate),
+          });
+        }
+      };
+
+      let [rows, count] = await this.repo.findAndCount({
+        relations,
+        where: _where,
+        ...(_select?.length && { select: _select }),
+        ...rest,
+      });
+
+      return {
+        count,
+        rows,
+      };
+    } catch (err) {
+      throw err;
+    }
+  };
 
   create = async (args: IWorkscheduleDetailCreateInput): Promise<WorkscheduleDetail> => {
     try {

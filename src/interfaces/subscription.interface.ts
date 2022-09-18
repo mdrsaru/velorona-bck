@@ -6,6 +6,11 @@ export interface ISubscriptionCreateInput {
   trial?: boolean;
 }
 
+export interface ISubscriptionUpgradeInput {
+  company_id: string;
+  userId: string;
+  paymentId: string;
+}
 export interface ISubscriptionCreateResult {
   /**
    * Stripe client secret for payment
@@ -35,4 +40,6 @@ export interface ISubscriptionService {
    * Update subscription for a company
    */
   updateSubscription(args: ISubscriptionUpdateInput): Promise<Company>;
+
+  upgradeSubscription(args: ISubscriptionUpgradeInput): Promise<ISubscriptionCreateResult>;
 }
