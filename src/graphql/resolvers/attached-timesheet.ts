@@ -14,8 +14,8 @@ import { TYPES } from '../../types';
 import Paging from '../../utils/paging';
 import authenticate from '../middlewares/authenticate';
 import authorize from '../middlewares/authorize';
-import { checkCompanyAccess } from '../middlewares/company';
-import { Role as RoleEnum } from '../../config/constants';
+import { checkCompanyAccess, checkPlan, checkTrialPeriod } from '../middlewares/company';
+import { plans, Role as RoleEnum } from '../../config/constants';
 import AttachedTimesheetValidation from '../../validation/attached-timesheet.validation';
 import { DeleteInput } from '../../entities/common.entity';
 import { timesheetByIdLoader } from '../../loaders/dataloader/timesheet.dataloader';
@@ -39,7 +39,7 @@ export class AttachedTimesheetResolver {
   }
 
   @Query((returns) => AttachedTimesheetPagingResult)
-  @UseMiddleware(authenticate, checkCompanyAccess)
+  @UseMiddleware(authenticate, checkCompanyAccess, checkPlan(plans.Professional), checkTrialPeriod)
   async AttachedTimesheet(
     @Arg('input') args: AttachedTimesheetQueryInput,
     @Ctx() ctx: any
@@ -66,7 +66,9 @@ export class AttachedTimesheetResolver {
     authenticate,
     authenticate,
     authorize(RoleEnum.SuperAdmin, RoleEnum.CompanyAdmin, RoleEnum.Employee),
-    checkCompanyAccess
+    checkCompanyAccess,
+    checkPlan(plans.Professional),
+    checkTrialPeriod
   )
   async AttachedTimesheetCreate(
     @Arg('input') args: AttachedTimesheetCreateInput,
@@ -127,7 +129,9 @@ export class AttachedTimesheetResolver {
     authenticate,
     authenticate,
     authorize(RoleEnum.SuperAdmin, RoleEnum.CompanyAdmin, RoleEnum.Employee),
-    checkCompanyAccess
+    checkCompanyAccess,
+    checkPlan(plans.Professional),
+    checkTrialPeriod
   )
   async AttachedTimesheetUpdate(
     @Arg('input') args: AttachedTimesheetUpdateInput,
@@ -177,7 +181,7 @@ export class AttachedTimesheetResolver {
   }
 
   @Mutation((returns) => AttachedTimesheet)
-  @UseMiddleware(authenticate)
+  @UseMiddleware(authenticate, checkPlan(plans.Professional), checkTrialPeriod)
   async AttachedTimesheetDelete(@Arg('input') args: DeleteInput, @Ctx() ctx: any): Promise<AttachedTimesheet> {
     const operation = 'AttachedTimesheetDelete';
 

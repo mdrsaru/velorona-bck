@@ -10,6 +10,7 @@ import { stripeSetting } from '../config/constants';
 
 import {
   IStripeCustomerCreateArgs,
+  IStripeInvoiceArgs,
   IStripeSubscriptionCreateArgs,
   IStripeUsageRecordCreateArgs,
 } from '../interfaces/stripe.interface';
@@ -130,6 +131,17 @@ export default class StripeService {
       });
 
       return usageRecord;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  getInvoiceDetail = async (args: IStripeInvoiceArgs) => {
+    try {
+      const invoiceId = args.invoiceId;
+
+      let invoice = await this.stripe.invoices.retrieve(invoiceId);
+      return invoice;
     } catch (err) {
       throw err;
     }

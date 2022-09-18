@@ -20,6 +20,7 @@ export interface ICompany {
   subscriptionId?: string;
   subscriptionItemId?: string;
   subscriptionStatus?: string;
+  trialEnded?: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -51,6 +52,7 @@ export interface ICompanyCreate {
   name: ICompany['name'];
   status: ICompany['status'];
   archived?: ICompany['archived'];
+  plan?: ICompany['plan'];
   user: ICompanyAdminCreateInput;
   logo_id?: ICompany['logo_id'];
 }
@@ -62,6 +64,7 @@ export interface ICompanyUpdate {
   archived?: ICompany['archived'];
   logo_id?: ICompany['logo_id'];
   plan?: ICompany['plan'];
+  trialEnded?: ICompany['trialEnded'];
   stripeCustomerId?: ICompany['stripeCustomerId'];
   subscriptionId?: ICompany['subscriptionId'];
   subscriptionItemId?: ICompany['subscriptionItemId'];

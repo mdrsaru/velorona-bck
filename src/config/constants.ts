@@ -225,6 +225,7 @@ export const events = {
   updateCompanySubscriptionUsage: 'updateCompanySubscriptionUsage',
   onTimesheetUnlock: 'onTimesheetUnlock',
   onTimesheetCreate: 'onTimesheetCreate',
+  onSubscriptionCreate: 'onSubscriptionCreate',
   updateWorkscheduleUsage: 'updateWorkscheduleUsage',
 };
 

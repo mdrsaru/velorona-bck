@@ -102,6 +102,7 @@ export default class CompanyRepository extends BaseRepository<Company> implement
       const archived = args?.archived ?? false;
       const email = args.user.email;
       const logo_id = args?.logo_id;
+      const plan = args?.plan;
 
       const errors: string[] = [];
 
@@ -145,6 +146,7 @@ export default class CompanyRepository extends BaseRepository<Company> implement
           archived,
           adminEmail: email,
           logo_id,
+          plan,
         });
 
         //const password = generateRandomStrings({ length: 8 });
@@ -205,6 +207,7 @@ export default class CompanyRepository extends BaseRepository<Company> implement
       const subscriptionItemId = args?.subscriptionItemId;
       const subscriptionStatus = args?.subscriptionStatus;
       const user = args.user;
+      const trialEnded = args.trialEnded;
 
       const found = await this.getById({ id });
 
@@ -225,6 +228,7 @@ export default class CompanyRepository extends BaseRepository<Company> implement
         stripeCustomerId,
         subscriptionItemId,
         subscriptionStatus,
+        trialEnded,
       });
 
       const company = await this.repo.save(update);
