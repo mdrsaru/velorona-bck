@@ -29,6 +29,7 @@ export interface ISubscriptionUpdateInput {
   eventObject: any;
   plan?: string;
   subscriptionStatus?: string;
+  trialEnded?: boolean;
 }
 
 export interface ISubscriptionService {

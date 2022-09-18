@@ -48,7 +48,7 @@ export const checkCompanyAccess: MiddlewareFn<IGraphqlContext> = async ({ contex
 /**
  * Checks if the company has subscribed to the plan or not
  */
-const checkPlan = (plan: string): MiddlewareFn<IGraphqlContext> => {
+export const checkPlan = (plan: string): MiddlewareFn<IGraphqlContext> => {
   return async ({ context }, next: NextFn) => {
     const companyPlan = context?.user?.company?.plan;
     const _subscriptionStatus = context?.user?.company?.subscriptionStatus;
@@ -61,4 +61,16 @@ const checkPlan = (plan: string): MiddlewareFn<IGraphqlContext> => {
 
     await next();
   };
+};
+
+export const checkTrialPeriod: MiddlewareFn = async ({ context, args }: any, next: NextFn) => {
+  const trialEnded = context?.user?.company?.trialEnded;
+
+  if (trialEnded) {
+    throw new apiError.ForbiddenError({
+      details: [strings.trialEnded],
+    });
+  }
+
+  await next();
 };

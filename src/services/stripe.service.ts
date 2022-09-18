@@ -10,6 +10,7 @@ import { stripeSetting } from '../config/constants';
 
 import {
   IStripeCustomerCreateArgs,
+  IStripeInvoiceArgs,
   IStripeSubscriptionCreateArgs,
   IStripeSubscriptionUpgradeArgs,
   IStripeUsageRecordCreateArgs,
@@ -146,11 +147,34 @@ export default class StripeService {
 
       const result = await this.stripe.subscriptions.update(subscriptionId, {
         trial_end: 'now',
+        cancel_at_period_end: false,
         default_payment_method: paymentId,
       });
+
+      let paymentIntent = await this.stripe.paymentIntents.create({
+        amount: 1000,
+        currency: 'usd',
+        customer: subscription.customer as string,
+        payment_method: result.default_payment_method as string,
+        payment_method_types: ['card'],
+      });
+
+      await this.stripe.paymentIntents.confirm(paymentIntent.id, { payment_method: 'pm_card_visa' });
+
       return {
         subscriptionId: result?.id,
       };
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  getInvoiceDetail = async (args: IStripeInvoiceArgs) => {
+    try {
+      const invoiceId = args.invoiceId;
+
+      let invoice = await this.stripe.invoices.retrieve(invoiceId);
+      return invoice;
     } catch (err) {
       throw err;
     }

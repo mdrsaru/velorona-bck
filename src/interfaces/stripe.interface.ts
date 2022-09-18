@@ -35,3 +35,6 @@ export interface IStripeSubscriptionUpgradeArgs {
   subscriptionId: string;
   paymentId: string;
 }
+export interface IStripeInvoiceArgs {
+  invoiceId: string;
+}

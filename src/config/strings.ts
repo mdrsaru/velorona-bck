@@ -118,4 +118,5 @@ export default {
   companyInactive: 'The company is inactive',
   demoAlreadyRequested: 'Demo has already been requested for the provided email',
   demoRequestNotFound: 'Demo request not found',
+  trialEnded: 'Trial Ended.Please subscribe to Professional plan to use this feature again.',
 };
