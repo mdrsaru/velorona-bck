@@ -93,6 +93,10 @@ export interface ITimesheetRepository {
   getTimesheetByManager(args: ITimesheetCountInput): Promise<IGetAllAndCountResult<Timesheet>>;
   getSingleEntity(args: ISingleEntityQuery): Promise<Timesheet | undefined>;
   bulkCreate(args: ITimesheetBulkCreateRepoInput): Promise<string>;
+  /**
+   * Get biweekly or monthly timesheet
+   */
+  getByFortnightOrMonth(args: IPagingArgs): Promise<IGetAllAndCountResult<Timesheet>>;
 }
 
 export interface ITimesheetService {

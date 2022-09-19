@@ -250,6 +250,12 @@ export class TimesheetQuery {
   @Field({ nullable: true })
   id: string;
 
+  @Field(() => [String], { nullable: true })
+  ids: string[];
+
+  @Field({ nullable: true })
+  needGroupedTimesheet: boolean;
+
   @Field({ nullable: true })
   client_id: string;
 

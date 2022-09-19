@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { isArray, isNil, isString, merge } from 'lodash';
+import { isArray, isNil, isString, merge, get } from 'lodash';
 import moment from 'moment';
 import {
   Brackets,
@@ -20,7 +20,7 @@ import BaseRepository from './base.repository';
 
 import { IClientRepository } from '../interfaces/client.interface';
 import { ICompanyRepository } from '../interfaces/company.interface';
-import { IGetAllAndCountResult, IGetOptions } from '../interfaces/paging.interface';
+import { IGetAllAndCountResult, IGetOptions, IPagingArgs } from '../interfaces/paging.interface';
 import { IUserRepository } from '../interfaces/user.interface';
 import {
   ITimesheetCreateInput,
@@ -29,7 +29,7 @@ import {
   ITimesheetCountInput,
   ITimesheetBulkCreateRepoInput,
 } from '../interfaces/timesheet.interface';
-import { entities } from '../config/constants';
+import { entities, InvoiceSchedule } from '../config/constants';
 import timesheet from '../config/inversify/timesheet';
 
 @injectable()
@@ -57,9 +57,9 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
       let { role: roleName, search, weekStartDate, weekEndDate, ...where } = query;
       const _select = select as (keyof Timesheet)[];
 
-      for (let key in query) {
-        if (isArray(query[key])) {
-          query[key] = In(query[key]);
+      for (let key in where) {
+        if (isArray(where[key])) {
+          where[key] = In(where[key]);
         }
       }
 
@@ -315,6 +315,132 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
       let timesheet = await this.repo.save(update);
 
       return timesheet;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  getByFortnightOrMonth = async (args: IPagingArgs): Promise<IGetAllAndCountResult<Timesheet>> => {
+    try {
+      const skip = args?.skip ?? 0;
+      const take = args?.take;
+      const company_id = args.query?.company_id;
+      const client_id = args.query?.client_id;
+      const user_id = args.query?.user_id;
+
+      let fields: any = [];
+
+      if (company_id) {
+        fields.push({
+          column: 't.company_id',
+          value: company_id,
+        });
+      }
+
+      if (client_id) {
+        fields.push({
+          column: 't.client_id',
+          value: client_id,
+        });
+      }
+
+      if (user_id) {
+        fields.push({
+          column: 't.user_id',
+          value: user_id,
+        });
+      }
+
+      const conditions = [];
+      const parameters = [];
+
+      for (let i = 0; i < fields.length; i++) {
+        parameters.push(fields[i].value);
+        conditions.push(`${fields[i].column} = $${i + 1} `);
+      }
+
+      let where = '';
+      if (conditions.length) {
+        where = 'where ' + conditions.join(' and ');
+      }
+
+      let paginationQuery = '';
+      if (!isNil(skip)) {
+        paginationQuery += ` offset ${skip}`;
+      }
+      if (!isNil(take)) {
+        paginationQuery += ` limit ${take}`;
+      }
+
+      /**
+       * First Case: Biweekly - Get the biweekly_start_date(if not get created_at) of the client and truncate to Monday to calculate the biweekly timesheet
+       * Second Case: Monthly - Truncate start date to month
+       * Third Case: Weekly - Truncate start date to week
+       */
+      const cte = `
+        with grouped_timesheet as (
+          select
+          sum(duration) as duration,
+          sum(total_expense) as "totalExpense",
+          t.user_id as _user_id,
+          t.client_id as _client_id,
+          t.company_id as _company_id,
+          c.invoice_schedule,
+          string_agg(t.id::text, ',') as _id,
+          string_agg(t.status::text, ',') as _status,
+          max(last_approved_at) as _last_approved_at,
+          CASE
+            WHEN invoice_schedule = 'Biweekly' THEN
+              CASE
+                WHEN c.biweekly_start_date is NULL THEN (to_char(date_trunc('week', c.created_at), 'YYYY-MM-DD')::date + floor((week_start_date - to_char(date_trunc('week', c.created_at), 'YYYY-MM-DD')::date ) / 14)::int * 14)::text
+                ELSE  (to_char(date_trunc('week', c.created_at), 'YYYY-MM-DD')::date + floor((week_start_date - to_char(date_trunc('week', c.created_at), 'YYYY-MM-DD')::date ) / 14)::int * 14)::text
+              END
+            WHEN invoice_schedule = 'Monthly'  THEN to_char(date_trunc('month', week_start_date::timestamp)::date, 'YYYY-MM-DD')
+            ELSE to_char(date_trunc('week', week_start_date::timestamp)::date, 'YYYY-MM-DD')
+          END AS start_date,
+          user_id, client_id, t.company_id
+          from timesheet as t inner join clients as c on c.id = t.client_id
+          ${where}
+          group by start_date, t.client_id, t.user_id, t.company_id, c.invoice_schedule
+          order by start_date desc
+        )
+      `;
+
+      const countResult = await this.manager.query(
+        `
+          ${cte}
+          select count(start_date) from grouped_timesheet;
+        `,
+        parameters
+      );
+
+      let queryResult = await this.manager.query(
+        `${cte}
+          select
+          start_date as "weekStartDate",
+          case
+            when invoice_schedule = 'Biweekly' then to_char(start_date::date + 13, 'YYYY-MM-DD')
+            when invoice_schedule = 'Monthly' then to_char(start_date::date + interval '1 month' - interval '1 day', 'YYYY-MM-DD')
+            else to_char(start_date::date + 6, 'YYYY-MM-DD')
+          end as "weekEndDate",
+          _status as status,
+          _last_approved_at as "lastApprovedAt",
+          _company_id as company_id,
+          _id as id,
+          _user_id as user_id,
+          invoice_schedule as period,
+          client_id,
+          duration,
+          "totalExpense"
+          from grouped_timesheet ${paginationQuery};
+        `,
+        parameters
+      );
+
+      return {
+        count: Number(get(countResult, '[0].count', 0)),
+        rows: queryResult,
+      };
     } catch (err) {
       throw err;
     }

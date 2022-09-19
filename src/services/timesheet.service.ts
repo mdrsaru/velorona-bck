@@ -1,11 +1,14 @@
 import moment from 'moment';
 import { inject, injectable } from 'inversify';
+import set from 'lodash/set';
 
+import { checkRoles } from '../utils/roles';
 import { TYPES } from '../types';
 import strings from '../config/strings';
 import Paging from '../utils/paging';
 import Timesheet from '../entities/timesheet.entity';
 import * as apiError from '../utils/api-error';
+import { EntryType, Role, UserClientStatus, InvoiceSchedule } from '../config/constants';
 
 import {
   ITimesheetCreateInput,
@@ -22,7 +25,7 @@ import { IAttachedTimesheetRepository } from '../interfaces/attached-timesheet.i
 import { NotFoundError } from '../utils/api-error';
 import { IUserRepository } from '../interfaces/user.interface';
 import { IUserClientRepository } from '../interfaces/user-client.interface';
-import { EntryType, Role, UserClientStatus } from '../config/constants';
+import { IClientRepository } from '../interfaces/client.interface';
 
 @injectable()
 export default class TimesheetService implements ITimesheetService {
@@ -34,6 +37,7 @@ export default class TimesheetService implements ITimesheetService {
   private errorService: IErrorService;
   private timeEntryRepository: ITimeEntryRepository;
   private attachedTimesheetRepository: IAttachedTimesheetRepository;
+  private clientRepository: IClientRepository;
 
   constructor(
     @inject(TYPES.TimesheetRepository) timesheetRepository: ITimesheetRepository,
@@ -42,7 +46,8 @@ export default class TimesheetService implements ITimesheetService {
     @inject(TYPES.TimeEntryRepository) _timeEntryRepository: ITimeEntryRepository,
     @inject(TYPES.AttachedTimesheetRepository) _attachedTimesheet: IAttachedTimesheetRepository,
     @inject(TYPES.UserRepository) _userRepository: IUserRepository,
-    @inject(TYPES.UserClientRepository) _userClientRepository: IUserClientRepository
+    @inject(TYPES.UserClientRepository) _userClientRepository: IUserClientRepository,
+    @inject(TYPES.ClientRepository) _clientRepository: IClientRepository
   ) {
     this.timesheetRepository = timesheetRepository;
     this.logger = loggerFactory(this.name);
@@ -51,25 +56,64 @@ export default class TimesheetService implements ITimesheetService {
     this.attachedTimesheetRepository = _attachedTimesheet;
     this.userRepository = _userRepository;
     this.userClientRepository = _userClientRepository;
+    this.clientRepository = _clientRepository;
   }
 
   getAllAndCount = async (args: IPagingArgs): Promise<IPaginationData<Timesheet>> => {
     try {
-      const { rows, count } = await this.timesheetRepository.getAllAndCount(args);
+      const client_id = args.query?.client_id;
+      let period = InvoiceSchedule.Weekly;
+
+      /**
+       * Used for showing grouped timesheet according to client invoice schedule if the role is either one of the following:
+       * TaskManager, CompanyAdmin, SuperAdmin
+       */
+      let showGroupedTimesheet = false;
+      if ('roles' in args?.query && args?.query?.needGroupedTimesheet) {
+        const roles = args.query.roles;
+
+        showGroupedTimesheet = checkRoles({
+          userRoles: roles,
+          expectedRoles: [Role.CompanyAdmin, Role.SuperAdmin, Role.TaskManager],
+        });
+      }
+
+      delete args?.query?.roles;
+      delete args?.query?.needGroupedTimesheet;
+
+      if ('ids' in args.query) {
+        args.query.id = args.query.ids;
+        delete args.query.ids;
+      }
+
+      let _rows: Timesheet[];
+      let _count: number;
+      console.log(showGroupedTimesheet, 'askdjfakjsdf\n\n\n');
+
+      if (showGroupedTimesheet) {
+        const { rows, count } = await this.timesheetRepository.getByFortnightOrMonth(args);
+        _rows = rows;
+        _count = count;
+      } else {
+        const { rows, count } = await this.timesheetRepository.getAllAndCount(args);
+        _rows = rows;
+        _count = count;
+      }
 
       const paging = Paging.getPagingResult({
         ...args,
-        total: count,
+        total: _count,
       });
 
       return {
         paging,
-        data: rows,
+        data: _rows,
       };
     } catch (err) {
       throw err;
     }
   };
+
   bulkCreate = async (args: ITimesheetBulkCreateInput): Promise<string> => {
     try {
       let { rows } = await this.userRepository.getAllAndCount({

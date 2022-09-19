@@ -86,6 +86,14 @@ export default class Client extends Base {
   @Field({ nullable: true })
   @Column({ nullable: true })
   invoice_payment_config_id: string;
+
+  @Field({ nullable: true })
+  @Column({
+    name: 'biweekly_start_date',
+    type: 'date',
+    nullable: true,
+  })
+  biweeklyStartDate: string;
 }
 
 @ObjectType()
@@ -128,6 +136,9 @@ export class ClientCreateInput {
 
   @Field({ nullable: true })
   invoice_payment_config_id: string;
+
+  @Field({ nullable: true })
+  biweeklyStartDate: string;
 }
 
 @InputType()
@@ -161,6 +172,9 @@ export class ClientUpdateInput {
 
   @Field({ nullable: true })
   invoice_payment_config_id: string;
+
+  @Field({ nullable: true })
+  biweeklyStartDate: string;
 }
 
 @InputType()
