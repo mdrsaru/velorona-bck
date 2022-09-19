@@ -59,4 +59,7 @@ export default class TimesheetRepository implements ITimesheetRepository {
   bulkCreate = (args: ITimesheetBulkCreateRepoInput): Promise<string> => {
     throw new Error('not implemented');
   };
+  getByFortnightOrMonth = async (args: IPagingArgs): Promise<IGetAllAndCountResult<Timesheet>> => {
+    throw new Error('not implemented');
+  };
 }
