@@ -78,7 +78,7 @@ export default class SubscriptionService implements ISubscriptionService {
       };
 
       if (trial) {
-        const threeMonths = moment().add(3, 'minutes').unix();
+        const threeMonths = moment().add(3, 'months').unix();
         subscriptionPayload.trial_end = threeMonths;
       } else {
         subscriptionPayload.payment_behavior = 'default_incomplete';
@@ -182,6 +182,7 @@ export default class SubscriptionService implements ISubscriptionService {
           id: company_id,
           adminEmail: userId,
         },
+        select: ['id', 'subscriptionId'],
       });
 
       if (!company) {

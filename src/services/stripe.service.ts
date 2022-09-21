@@ -6,7 +6,7 @@ import { inject, injectable } from 'inversify';
 
 import strings from '../config/strings';
 import * as apiError from '../utils/api-error';
-import { stripeSetting } from '../config/constants';
+import constants, { stripeSetting } from '../config/constants';
 
 import {
   IStripeCustomerCreateArgs,
@@ -152,7 +152,7 @@ export default class StripeService {
       });
 
       let paymentIntent = await this.stripe.paymentIntents.create({
-        amount: 1000,
+        amount: constants.amount,
         currency: 'usd',
         customer: subscription.customer as string,
         payment_method: result.default_payment_method as string,

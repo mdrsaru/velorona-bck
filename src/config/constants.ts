@@ -289,4 +289,5 @@ export default {
   frontendUrl: process.env.FRONT_END_URL || 'http://localhost:3000',
   mediaDestination: './public/uploads',
   fileSize: 10000000,
+  amount: 1000,
 };

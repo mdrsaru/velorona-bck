@@ -60,7 +60,13 @@ export class TimesheetResolver {
     const operation = 'Timesheet';
 
     try {
-      const pagingArgs = Paging.createPagingPayload(args);
+      const _args: any = {
+        ...args,
+      };
+
+      _.set(_args, 'query.roles', ctx?.user?.roles ?? []);
+
+      const pagingArgs = Paging.createPagingPayload(_args);
 
       let result: IPaginationData<Timesheet> = await this.timesheetService.getAllAndCount(pagingArgs);
 
@@ -171,6 +177,25 @@ export class TimesheetResolver {
         logError: true,
       });
     }
+  }
+
+  @FieldResolver()
+  status(@Root() root: Timesheet) {
+    const status = root.status.split(',');
+    if (status.length === 1) {
+      return status[0];
+    }
+
+    if (status.includes(TimesheetStatus.PartiallyApproved)) {
+      return TimesheetStatus.PartiallyApproved;
+    }
+
+    if (status.includes(TimesheetStatus.Rejected)) {
+      return TimesheetStatus.Rejected;
+    }
+
+    return 'Pending';
+    return root.status ?? 'Pending';
   }
 
   @FieldResolver()
