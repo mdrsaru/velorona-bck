@@ -14,6 +14,7 @@ import InvoiceItem from '../entities/invoice-item.entity';
 import Timesheet from '../entities/timesheet.entity';
 import Workschedule from '../entities/workschedule.entity';
 import WorkscheduleTimeDetail from '../entities/workschedule-time-details.entity';
+import InvoicePaymentConfig from '../entities/invoice-payment-config.entity';
 
 export interface IDataloader {
   companyByIdLoader: Dataloader<string, Company>;
@@ -36,6 +37,7 @@ export interface IDataloader {
   replyCountByParentIdLoader: Dataloader<string, number>;
   usersByEmailLoader: Dataloader<string, User>;
   usersByProjectIdLoader: Dataloader<string, any>;
+  invoicePaymentConfigByIdLoader: Dataloader<string, InvoicePaymentConfig>;
 }
 
 export interface IGraphqlContext {

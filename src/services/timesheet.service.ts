@@ -88,7 +88,6 @@ export default class TimesheetService implements ITimesheetService {
 
       let _rows: Timesheet[];
       let _count: number;
-      console.log(showGroupedTimesheet, 'askdjfakjsdf\n\n\n');
 
       if (showGroupedTimesheet) {
         const { rows, count } = await this.timesheetRepository.getByFortnightOrMonth(args);
