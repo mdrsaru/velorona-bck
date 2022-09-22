@@ -223,7 +223,8 @@ export default class TimeEntryService implements ITimeEntryService {
     const company_id = args.company_id;
     const created_by = args.created_by;
     const description = args.description;
-
+    const breakTime = args.breakTime;
+    const startBreakTime = args.startBreakTime;
     try {
       let timeEntry = await this.timeEntryRepository.update({
         id,
@@ -235,6 +236,8 @@ export default class TimeEntryService implements ITimeEntryService {
         company_id,
         created_by,
         description,
+        breakTime,
+        startBreakTime,
       });
       try {
         /* Create/Update timesheet if the start/end time is provided */

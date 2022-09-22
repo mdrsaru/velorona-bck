@@ -38,6 +38,15 @@ export default class TimeEntry extends Base {
   @Column({ nullable: true, type: 'int' })
   duration: number;
 
+  @Index(`${indexPrefix}_start_break_time_index`)
+  @Field({ nullable: true })
+  @Column({ name: timeEntry.start_break_time, nullable: true })
+  startBreakTime: Date;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true, type: 'int', name: timeEntry.break_time })
+  breakTime: number;
+
   @Field({ nullable: true })
   @Column({ name: timeEntry.client_location, nullable: true })
   clientLocation: string;
@@ -199,6 +208,12 @@ export class TimeEntryUpdateInput {
 
   @Field({ nullable: true })
   description: string;
+
+  @Field({ nullable: true })
+  startBreakTime: Date;
+
+  @Field({ nullable: true })
+  breakTime: number;
 }
 
 @InputType()

@@ -233,6 +233,8 @@ export class TimeEntryResolver {
       const company_id = args.company_id;
       const created_by = args.created_by;
       const description = args.description;
+      const startBreakTime = args.startBreakTime;
+      const breakTime = args.breakTime;
 
       const schema = TimeEntryValidation.update();
       await this.joiService.validate({
@@ -258,6 +260,8 @@ export class TimeEntryResolver {
         company_id,
         created_by,
         description,
+        startBreakTime,
+        breakTime,
       });
 
       return timeEntry;

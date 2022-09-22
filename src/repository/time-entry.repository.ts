@@ -444,6 +444,8 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
       let project_id = args.project_id;
       let startTime = args.startTime;
       let endTime = args.endTime;
+      let breakTime = args.breakTime as number;
+      let startBreakTime = args.startBreakTime;
       const description = args.description?.trim();
 
       const errors: string[] = [];
@@ -479,6 +481,7 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
         const startDate = moment(startTime ?? found.startTime);
         const endDate = moment(endTime);
         duration = endDate.diff(startDate, 'seconds');
+        duration = duration - found.breakTime;
       }
 
       const update = merge(found, {
@@ -493,6 +496,8 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
         created_by,
         timesheet_id,
         description,
+        breakTime,
+        startBreakTime,
       });
 
       let timeEntry = await this.repo.save(update);
