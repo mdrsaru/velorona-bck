@@ -185,3 +185,39 @@ export class ActiveProjectCountInput {
   @Field({ nullable: true })
   manager_id: string;
 }
+
+@ObjectType({ description: 'Projects with total duration and expense for the provided interval of the time entries' })
+export class ProjectItem {
+  @Field()
+  project_id: string;
+
+  @Field({ description: 'Total duration in hours' })
+  totalHours: number;
+
+  @Field()
+  totalDuration: number;
+
+  @Field()
+  hourlyRate: number;
+
+  @Field()
+  totalExpense: number;
+}
+
+@InputType({ description: 'Input for fetching project items with total expense and duration' })
+export class ProjectItemInput {
+  @Field()
+  startTime: string;
+
+  @Field()
+  endTime: string;
+
+  @Field()
+  company_id: string;
+
+  @Field()
+  user_id: string;
+
+  @Field()
+  client_id: string;
+}

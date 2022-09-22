@@ -129,6 +129,9 @@ export default class InvoiceRepository extends BaseRepository<Invoice> implement
       const discount = args.discount ?? 0;
       const shipping = args.shipping ?? 0;
       const needProject = args.needProject;
+      const startDate = args.startDate;
+      const endDate = args.endDate;
+      const user_id = args.user_id;
       const items = args.items;
 
       const errors: string[] = [];
@@ -191,6 +194,9 @@ export default class InvoiceRepository extends BaseRepository<Invoice> implement
         discount,
         shipping,
         needProject,
+        startDate,
+        endDate,
+        user_id,
       });
 
       await this.invoiceItemRepository.createMultiple({
@@ -198,9 +204,29 @@ export default class InvoiceRepository extends BaseRepository<Invoice> implement
         items,
       });
 
+      if (startDate && endDate && user_id) {
+        await this.timeEntryRepository.markedPeriodicApprovedTimeEntriesWithInvoice({
+          client_id,
+          company_id,
+          startDate,
+          endDate,
+          invoice_id: invoice.id,
+          user_id,
+        });
+
+        await this.timeEntryRepository.updateExpenseAndInvoicedDuration({
+          client_id,
+          company_id,
+          startDate,
+          endDate,
+          user_id,
+        });
+      }
+
       /**
        * As invoice is generated for particular timesheet, need to mark all the time entries with the invoice_id
        */
+      /*
       if (timesheet_id) {
         await this.timeEntryRepository.markApprovedTimeEntriesWithInvoice({
           timesheet_id,
@@ -243,6 +269,7 @@ export default class InvoiceRepository extends BaseRepository<Invoice> implement
           });
         }
       }
+      */
 
       return invoice;
     } catch (err) {

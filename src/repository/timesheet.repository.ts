@@ -381,7 +381,7 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
         with grouped_timesheet as (
           select
           sum(duration) as duration,
-          sum(total_expense) as "totalExpense",
+          round( sum(total_expense)::numeric, 2) as "totalExpense",
           t.user_id as _user_id,
           t.client_id as _client_id,
           t.company_id as _company_id,
@@ -418,6 +418,7 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
         `${cte}
           select
           start_date as "weekStartDate",
+          invoice_schedule as period,
           case
             when invoice_schedule = 'Biweekly' then to_char(start_date::date + 13, 'YYYY-MM-DD')
             when invoice_schedule = 'Monthly' then to_char(start_date::date + interval '1 month' - interval '1 day', 'YYYY-MM-DD')

@@ -17,6 +17,7 @@ import Client from './client.entity';
 import Company from './company.entity';
 import InvoiceItem from './invoice-item.entity';
 import Timesheet from './timesheet.entity';
+import User from './user.entity';
 import { entities, InvoiceStatus } from '../config/constants';
 import { PagingResult, PagingInput } from './common.entity';
 import { InvoiceItemCreateInput, InvoiceItemUpdateInput } from './invoice-item.entity';
@@ -168,6 +169,34 @@ export default class Invoice extends Base {
     default: true,
   })
   needProject: boolean;
+
+  @Field()
+  @Column({
+    name: 'start_date',
+    type: 'date',
+    nullable: true,
+  })
+  startDate: string;
+
+  @Field()
+  @Column({
+    name: 'end_date',
+    type: 'date',
+    nullable: true,
+  })
+  endDate: string;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  user_id: string;
+
+  @Field((type) => User, {
+    nullable: true,
+    description: 'Employee id for the provided time entries',
+  })
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'user_id' })
+  user: User;
 }
 
 @ObjectType()
@@ -228,6 +257,15 @@ export class InvoiceCreateInput {
 
   @Field({ defaultValue: true })
   needProject: boolean;
+
+  @Field({ defaultValue: true })
+  user_id: string;
+
+  @Field({ defaultValue: true })
+  startDate: string;
+
+  @Field({ defaultValue: true })
+  endDate: string;
 
   @Field(() => [InvoiceItemCreateInput])
   items: InvoiceItemCreateInput[];

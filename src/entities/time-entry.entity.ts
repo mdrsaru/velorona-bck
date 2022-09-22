@@ -351,3 +351,21 @@ export class TimeEntryBulkUpdateInput {
   @Field()
   project_id: string;
 }
+
+@InputType()
+export class TimeEntryPeriodicInput {
+  @Field()
+  company_id: string;
+
+  @Field()
+  user_id: string;
+
+  @Field()
+  client_id: string;
+
+  @Field({ description: 'Start date format in YYYY-MM-DD' })
+  startDate: string;
+
+  @Field({ description: 'Start date format in YYYY-MM-DD' })
+  endDate: string;
+}

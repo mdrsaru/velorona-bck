@@ -17,6 +17,7 @@ import TimeEntry, {
   TotalDurationCountInput,
   TimeEntryUnlockInput,
   TimeEntryBulkUpdateInput,
+  TimeEntryPeriodicInput,
 } from '../../entities/time-entry.entity';
 import Paging from '../../utils/paging';
 import authenticate from '../middlewares/authenticate';
@@ -161,6 +162,40 @@ export class TimeEntryResolver {
         name: this.name,
         operation,
         logError: false,
+      });
+    }
+  }
+
+  @Query((returns) => Boolean)
+  @UseMiddleware(authenticate, checkCompanyAccess)
+  async CanGenerateInvoice(
+    @Arg('input', { nullable: true }) args: TimeEntryPeriodicInput,
+    @Ctx() ctx: any
+  ): Promise<Boolean> {
+    const operation = 'CanGenerateInvoice';
+
+    try {
+      const startDate = args.startDate;
+      const endDate = args.endDate;
+      const client_id = args.client_id;
+      const user_id = args.user_id;
+      const company_id = args.company_id;
+
+      let result = await this.timeEntryRepository.canGenerateInvoice({
+        startDate,
+        endDate,
+        client_id,
+        user_id,
+        company_id,
+      });
+
+      return result;
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
       });
     }
   }

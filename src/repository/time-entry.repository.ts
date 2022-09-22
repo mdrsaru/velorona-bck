@@ -40,6 +40,9 @@ import {
   ITotalDurationInput,
   ITimeEntryUnlockInput,
   ITimeEntryBulkUpdateInput,
+  IMarkPeriodicApprovedTimeEntriesWithInvoice,
+  IPeriodicTimeEntriesInput,
+  IExpenseAndInvoicedDuration,
 } from '../interfaces/time-entry.interface';
 import { IUserRepository } from '../interfaces/user.interface';
 import { IGetOptions, IGetAllAndCountResult } from '../interfaces/paging.interface';
@@ -691,6 +694,39 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
     }
   };
 
+  markedPeriodicApprovedTimeEntriesWithInvoice = async (
+    args: IMarkPeriodicApprovedTimeEntriesWithInvoice
+  ): Promise<boolean> => {
+    try {
+      const startTime = args.startDate + ' 00:00:00';
+      const endTime = args.endDate + ' 23:59:59';
+      const client_id = args.client_id;
+      const user_id = args.user_id;
+      const company_id = args.user_id;
+      const invoice_id = args.invoice_id;
+
+      await this.manager.query(
+        `
+          update ${entities.timeEntry} as t
+          set invoice_id = $1 
+          from ${entities.projects} as p
+          where t.project_id = p.id
+          and p.client_id = $2
+          and start_time >= $3
+          and start_time <= $4
+          and created_by <= $5
+          and t.company_id <= $6
+          and approval_status >= '${TimeEntryApprovalStatus.Approved}';
+        `,
+        [invoice_id, client_id, startTime, endTime, user_id, company_id]
+      );
+
+      return true;
+    } catch (err) {
+      throw err;
+    }
+  };
+
   updateHourlyRate = async (args: ITimeEntryHourlyRateInput): Promise<boolean> => {
     try {
       const updated = await this.repo.update(
@@ -870,6 +906,91 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
 
       return entries;
     } catch (err) {}
+  };
+
+  updateExpenseAndInvoicedDuration = async (
+    args: IPeriodicTimeEntriesInput
+  ): Promise<IExpenseAndInvoicedDuration[]> => {
+    try {
+      const startDate = args.startDate + ' 00:00:00';
+      const endDate = args.endDate + ' 23:59:59';
+      const client_id = args.client_id;
+      const user_id = args.user_id;
+      const company_id = args.company_id;
+
+      const groupedTimesheet: IExpenseAndInvoicedDuration[] = await this.manager.query(
+        ` 
+          select
+          timesheet_id,
+          sum(duration) as invoiced_duration,
+          round( sum( (t.duration::numeric / 3600) * t.hourly_invoice_rate )::numeric, 2 ) AS total_expense
+          from time_entries as t
+          join projects as p
+          on t.project_id = p.id
+          where start_time >= $1
+          and start_time <= $2
+          and created_by = $3
+          and client_id = $4
+          and t.company_id = $5
+          and invoice_id is not null
+          group by timesheet_id;
+        `,
+        [startDate, endDate, user_id, client_id, company_id]
+      );
+
+      if (groupedTimesheet?.length) {
+        const values = groupedTimesheet.map((timesheet: any) => {
+          return `('${timesheet.timesheet_id}'::uuid, ${timesheet.invoiced_duration}, ${timesheet.total_expense})`;
+        });
+
+        await this.manager.query(
+          `
+            update timesheet
+            set total_expense = t.total_expense, invoiced_duration = t.invoiced_duration
+            from (
+              values ${values.join(',')}
+            ) as t (id, invoiced_duration, total_expense)
+            where timesheet.id = t.id;
+          `
+        );
+      }
+
+      return groupedTimesheet;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  canGenerateInvoice = async (args: IPeriodicTimeEntriesInput): Promise<boolean> => {
+    try {
+      const startDate = args.startDate + ' 00:00:00';
+      const endDate = args.endDate + ' 23:59:59';
+      const client_id = args.client_id;
+      const user_id = args.user_id;
+      const company_id = args.company_id;
+
+      const result = await this.manager.query(
+        ` 
+          select t.id
+          from time_entries as t
+          join projects as p
+          on t.project_id = p.id
+          where start_time >= $1
+          and start_time <= $2
+          and created_by = $3
+          and client_id = $4
+          and t.company_id = $5
+          and invoice_id is NULL
+          and approval_status = '${TimeEntryApprovalStatus.Approved}'
+          limit 1
+        `,
+        [startDate, endDate, user_id, client_id, company_id]
+      );
+
+      return !!result?.length;
+    } catch (err) {
+      throw err;
+    }
   };
 }
 

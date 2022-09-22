@@ -155,8 +155,26 @@ export interface IMarkApprovedTimeEntriesWithInvoice {
   invoice_id: string;
 }
 
+export interface IPeriodicTimeEntriesInput {
+  startDate: string;
+  endDate: string;
+  client_id: string;
+  user_id: string;
+  company_id: string;
+}
+
+export interface IMarkPeriodicApprovedTimeEntriesWithInvoice extends IPeriodicTimeEntriesInput {
+  invoice_id: string;
+}
+
 export interface ITimeEntryPaginationData extends IPaginationData<TimeEntry> {
   activeEntry?: TimeEntry;
+}
+
+export interface IExpenseAndInvoicedDuration {
+  timesheet_id: string;
+  duration: number;
+  expense: number;
 }
 
 export interface ITimeEntryHourlyRateInput {
@@ -224,6 +242,10 @@ export interface ITimeEntryRepository {
    */
   approveRejectTimeEntries(args: ITimeEntriesApproveRejectInput): Promise<boolean>;
   markApprovedTimeEntriesWithInvoice(args: IMarkApprovedTimeEntriesWithInvoice): Promise<boolean>;
+  /**
+   * Mark the approved time entries within a provided interval with the invoice
+   */
+  markedPeriodicApprovedTimeEntriesWithInvoice(args: IMarkPeriodicApprovedTimeEntriesWithInvoice): Promise<boolean>;
   countEntities(args: IGetOptions): Promise<number>;
   /**
    * Update hourly rate of non invoiced entries
@@ -232,6 +254,15 @@ export interface ITimeEntryRepository {
   totalDuration(args: ITotalDurationInput): Promise<number>;
   unlockTimeEntries(args: ITimeEntryUnlockInput): Promise<boolean>;
   bulkUpdate(args: ITimeEntryBulkUpdateInput): Promise<boolean>;
+  /**
+   * Get total expense and invoiced duration for the periodic time entries
+   * Update the timesheets with the total expense and invoiced duration
+   */
+  updateExpenseAndInvoicedDuration(args: IPeriodicTimeEntriesInput): Promise<IExpenseAndInvoicedDuration[]>;
+  /**
+   * Check if there any approved time entries for which the invoice is to be generated
+   */
+  canGenerateInvoice(args: IPeriodicTimeEntriesInput): Promise<boolean>;
 }
 
 export interface ITimeEntryService {
