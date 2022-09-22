@@ -227,4 +227,9 @@ export class ClientResolver {
   address(@Root() root: User, @Ctx() ctx: IGraphqlContext) {
     return ctx.loaders.addressByIdLoader.load(root.address_id);
   }
+
+  @FieldResolver()
+  invoicePayment(@Root() root: Client, @Ctx() ctx: IGraphqlContext) {
+    return ctx.loaders.invoicePaymentConfigByIdLoader.load(root.invoice_payment_config_id);
+  }
 }

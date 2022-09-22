@@ -11,6 +11,8 @@ export interface ITimeEntry {
   startTime: Date;
   endTime?: Date;
   duration?: number;
+  breakTime?: number;
+  startBreakTime?: Date;
   clientLocation: string;
   approver_id: string;
   project_id: string;
@@ -44,6 +46,8 @@ export interface ITimeEntryUpdateInput {
   id: ITimeEntry['id'];
   startTime?: ITimeEntry['startTime'];
   endTime?: ITimeEntry['endTime'];
+  breakTime?: ITimeEntry['breakTime'];
+  startBreakTime?: ITimeEntry['startBreakTime'];
   clientLocation?: ITimeEntry['clientLocation'];
   approver_id?: ITimeEntry['approver_id'];
   project_id?: ITimeEntry['project_id'];
