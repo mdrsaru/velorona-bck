@@ -42,6 +42,8 @@ export const timeEntry = {
   timesheet_id: 'timesheet_id',
   hourly_rate: 'hourly_rate',
   hourly_invoice_rate: 'hourly_invoice_rate',
+  start_break_time: 'start_break_time',
+  break_time: 'break_time',
 };
 
 export const timesheet = {
