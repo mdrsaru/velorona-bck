@@ -230,6 +230,8 @@ export class ClientResolver {
 
   @FieldResolver()
   invoicePayment(@Root() root: Client, @Ctx() ctx: IGraphqlContext) {
-    return ctx.loaders.invoicePaymentConfigByIdLoader.load(root.invoice_payment_config_id);
+    if (root.invoice_payment_config_id) {
+      return ctx.loaders.invoicePaymentConfigByIdLoader.load(root.invoice_payment_config_id);
+    }
   }
 }
