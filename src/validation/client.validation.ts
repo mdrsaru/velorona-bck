@@ -9,7 +9,7 @@ export default class ClientValidation {
     return Joi.object({
       name: Joi.string().required().error(new Error(strings.nameRequired)),
       email: Joi.string().required().error(new Error(strings.emailRequired)),
-      invoicingEmail: Joi.string().required().error(new Error(strings.invoicingEmailRequired)),
+      invoicingEmail: Joi.string().allow('', null),
       company_id: Joi.string().required().error(new Error(strings.companyRequired)),
       status: Joi.string(),
       phone: Joi.string().required().error(new Error(strings.phoneRequired)),

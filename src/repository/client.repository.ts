@@ -91,9 +91,6 @@ export default class ClientRepository extends BaseRepository<Client> implements 
       if (isNil(email) || !isString(email)) {
         errors.push(strings.emailRequired);
       }
-      if (isNil(invoicingEmail) || !isString(invoicingEmail)) {
-        errors.push(strings.invoicingEmailRequired);
-      }
       if (isNil(streetAddress) || !isString(streetAddress)) {
         errors.push(strings.streetAddressRequired);
       }
