@@ -707,7 +707,7 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
       const endTime = args.endDate + ' 23:59:59';
       const client_id = args.client_id;
       const user_id = args.user_id;
-      const company_id = args.user_id;
+      const company_id = args.company_id;
       const invoice_id = args.invoice_id;
 
       await this.manager.query(
