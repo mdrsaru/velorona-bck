@@ -33,8 +33,8 @@ export default class Client extends Base {
   email: string;
 
   @Index(`${indexPrefix}_invoicing_email_index`)
-  @Field()
-  @Column()
+  @Field({ nullable: true })
+  @Column({ nullable: true })
   invoicingEmail: string;
 
   @Index(`${indexPrefix}_archived_index`)
@@ -113,7 +113,7 @@ export class ClientCreateInput {
   @Field()
   email: string;
 
-  @Field()
+  @Field({ nullable: true })
   invoicingEmail: string;
 
   @Field({ nullable: true })
