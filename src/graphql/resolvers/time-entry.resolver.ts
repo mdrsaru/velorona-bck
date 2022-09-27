@@ -269,6 +269,7 @@ export class TimeEntryResolver {
       const created_by = args.created_by;
       const description = args.description;
       const startBreakTime = args.startBreakTime;
+      const endBreakTime = args.endBreakTime;
       const breakTime = args.breakTime;
 
       const schema = TimeEntryValidation.update();
@@ -296,6 +297,7 @@ export class TimeEntryResolver {
         created_by,
         description,
         startBreakTime,
+        endBreakTime,
         breakTime,
       });
 
@@ -504,5 +506,10 @@ export class TimeEntryResolver {
     if (root.timesheet_id) {
       return ctx.loaders.timesheetByIdLoader.load(root.timesheet_id);
     }
+  }
+
+  @FieldResolver()
+  async breakTime(@Root() root: TimeEntry, @Ctx() ctx: IGraphqlContext) {
+    return ctx.loaders.breakTimesByTimeEntryIdLoader.load(root.id);
   }
 }

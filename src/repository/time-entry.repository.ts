@@ -11,7 +11,7 @@ import { getRepository, LessThanOrEqual, MoreThanOrEqual, In, IsNull, Not, getMa
 
 import { TYPES } from '../types';
 import strings from '../config/strings';
-import { entities, TimeEntryApprovalStatus } from '../config/constants';
+import { CompanyRole, entities, TimeEntryApprovalStatus } from '../config/constants';
 import { timeEntry, userPayRate, projects } from '../config/db/columns';
 import * as apiError from '../utils/api-error';
 import TimeEntry from '../entities/time-entry.entity';
@@ -47,6 +47,7 @@ import {
 import { IUserRepository } from '../interfaces/user.interface';
 import { IGetOptions, IGetAllAndCountResult } from '../interfaces/paging.interface';
 import user from '../config/inversify/user';
+import { IBreakTimeRepository } from '../interfaces/break-time.interface';
 
 type DurationMap = {
   [statusOrInvoiceId: string]: {
@@ -61,6 +62,7 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
   private projectRepository: IProjectRepository;
   private userPayRateRepository: IUserPayRateRepository;
   private timesheetRepository: ITimesheetRepository;
+  private breakTimeRepository: IBreakTimeRepository;
   private manager: EntityManager;
 
   constructor(
@@ -68,7 +70,8 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
     @inject(TYPES.ProjectRepository) _projectRepository: IProjectRepository,
     @inject(TYPES.UserRepository) userRepository: IUserRepository,
     @inject(TYPES.UserPayRateRepository) _userPayRateRepository: IUserPayRateRepository,
-    @inject(TYPES.TimesheetRepository) _timesheetRepository: ITimesheetRepository
+    @inject(TYPES.TimesheetRepository) _timesheetRepository: ITimesheetRepository,
+    @inject(TYPES.BreakTimeRepository) _breakTimeRepository: IBreakTimeRepository
   ) {
     super(getRepository(TimeEntry));
     this.userRepository = userRepository;
@@ -76,6 +79,7 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
     this.companyRepository = _companyRepository;
     this.userPayRateRepository = _userPayRateRepository;
     this.timesheetRepository = _timesheetRepository;
+    this.breakTimeRepository = _breakTimeRepository;
     this.manager = getManager();
   }
 
@@ -114,7 +118,6 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
         ...(_select?.length && { select: _select }),
         ...rest,
       });
-
       return {
         count,
         rows,
@@ -429,7 +432,6 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
         entryType,
         description,
       });
-
       return timeEntry;
     } catch (err) {
       throw err;
@@ -449,6 +451,7 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
       let endTime = args.endTime;
       let breakTime = args.breakTime as number;
       let startBreakTime = args.startBreakTime;
+      let endBreakTime = args.endBreakTime;
       const description = args.description?.trim();
 
       const errors: string[] = [];
@@ -473,7 +476,40 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
       startTime = startTime ?? found.startTime;
       endTime = endTime ?? found.endTime;
       let duration: undefined | number = undefined;
+      let totalBreakDuration: undefined | number = undefined;
+      let breakDuration: number = 0;
 
+      if (startBreakTime) {
+        await this.breakTimeRepository.create({
+          time_entry_id: id,
+          startTime: startBreakTime,
+        });
+      }
+      if (endBreakTime) {
+        const breakTime = await this.breakTimeRepository.getSingleEntity({
+          query: {
+            endTime: IsNull(),
+            time_entry_id: id,
+          },
+        });
+        if (!breakTime) {
+          throw new apiError.NotFoundError({
+            details: ['Break Time not found or already stopped'],
+          });
+        }
+
+        const startTime = moment(startBreakTime ?? breakTime.startTime);
+        const endTime = moment(endBreakTime);
+        breakDuration = endTime.diff(startTime, 'seconds');
+        await this.breakTimeRepository.update({
+          id: breakTime?.id,
+          time_entry_id: id,
+          startTime: startBreakTime,
+          endTime: endBreakTime,
+          duration: breakDuration,
+        });
+        totalBreakDuration = found.breakDuration + breakDuration;
+      }
       if (startTime && endTime) {
         if (endTime <= startTime) {
           throw new apiError.ValidationError({
@@ -484,7 +520,7 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
         const startDate = moment(startTime ?? found.startTime);
         const endDate = moment(endTime);
         duration = endDate.diff(startDate, 'seconds');
-        duration = duration - found.breakTime;
+        duration = duration - found?.breakDuration;
       }
 
       const update = merge(found, {
@@ -499,8 +535,7 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
         created_by,
         timesheet_id,
         description,
-        breakTime,
-        startBreakTime,
+        breakDuration: totalBreakDuration,
       });
 
       let timeEntry = await this.repo.save(update);
@@ -563,7 +598,7 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
         LEFT JOIN ${entities.userPayRate} up ON t.project_id = up.project_id AND t.created_by = up.user_id
         WHERE t.approval_status = 'Approved'
         AND t.timesheet_id IS NOT NULL
-        AND t.invoice_id IS NULL
+        AND t.time_entry_id IS NULL
         AND t.${timeEntry.start_time} >= $1
         AND t.${timeEntry.start_time} <= $2
         AND t.${timeEntry.company_id} = $3

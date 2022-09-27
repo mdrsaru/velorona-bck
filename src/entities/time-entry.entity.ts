@@ -1,4 +1,4 @@
-import { Entity, Column, ManyToOne, JoinColumn, Index } from 'typeorm';
+import { Entity, Column, ManyToOne, JoinColumn, Index, OneToMany, Any } from 'typeorm';
 import { ObjectType, Field, ID, InputType, registerEnumType } from 'type-graphql';
 
 import { entities, TimeEntryApprovalStatus, EntryType } from '../config/constants';
@@ -10,6 +10,7 @@ import Project from './project.entity';
 import Invoice from './invoice.entity';
 import Timesheet from './timesheet.entity';
 import { PagingInput, PagingResult, DeleteInput } from './common.entity';
+import BreakTime from './break-time.entity';
 
 registerEnumType(TimeEntryApprovalStatus, {
   name: 'TimeEntryApprovalStatus',
@@ -37,15 +38,6 @@ export default class TimeEntry extends Base {
   @Field({ nullable: true })
   @Column({ nullable: true, type: 'int' })
   duration: number;
-
-  @Index(`${indexPrefix}_start_break_time_index`)
-  @Field({ nullable: true })
-  @Column({ name: timeEntry.start_break_time, nullable: true })
-  startBreakTime: Date;
-
-  @Field({ nullable: true })
-  @Column({ nullable: true, type: 'int', name: timeEntry.break_time })
-  breakTime: number;
 
   @Field({ nullable: true })
   @Column({ name: timeEntry.client_location, nullable: true })
@@ -145,6 +137,17 @@ export default class TimeEntry extends Base {
   @Field({ nullable: true })
   @Column({ type: 'varchar', nullable: true })
   description: string;
+
+  @Field(() => [BreakTime], { nullable: true, description: 'Field for BreakTime' })
+  @OneToMany(() => BreakTime, (breakTime) => breakTime.timeEntry, {
+    cascade: true,
+    nullable: true,
+  })
+  breakTime: BreakTime[];
+
+  @Field({ nullable: true })
+  @Column({ nullable: true, type: 'int', name: timeEntry.break_duration })
+  breakDuration: number;
 }
 
 @ObjectType()
@@ -157,6 +160,9 @@ export class TimeEntryPagingResult {
 
   @Field(() => TimeEntry, { nullable: true })
   activeEntry: TimeEntry;
+
+  @Field(() => BreakTime, { nullable: true })
+  activeBreakEntry: BreakTime;
 }
 
 @InputType()
@@ -211,6 +217,9 @@ export class TimeEntryUpdateInput {
 
   @Field({ nullable: true })
   startBreakTime: Date;
+
+  @Field({ nullable: true })
+  endBreakTime: Date;
 
   @Field({ nullable: true })
   breakTime: number;

@@ -72,6 +72,7 @@ export const entities = {
   invoiceSchedule: 'invoice_schedule',
   userProject: 'user_project',
   demoRequest: 'demo_requests',
+  breakTimes: 'break_times',
 };
 
 export enum CompanyStatus {

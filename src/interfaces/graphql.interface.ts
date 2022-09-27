@@ -15,6 +15,7 @@ import Timesheet from '../entities/timesheet.entity';
 import Workschedule from '../entities/workschedule.entity';
 import WorkscheduleTimeDetail from '../entities/workschedule-time-details.entity';
 import InvoicePaymentConfig from '../entities/invoice-payment-config.entity';
+import BreakTime from '../entities/break-time.entity';
 
 export interface IDataloader {
   companyByIdLoader: Dataloader<string, Company>;
@@ -38,6 +39,7 @@ export interface IDataloader {
   usersByEmailLoader: Dataloader<string, User>;
   usersByProjectIdLoader: Dataloader<string, any>;
   invoicePaymentConfigByIdLoader: Dataloader<string, InvoicePaymentConfig>;
+  breakTimesByTimeEntryIdLoader: Dataloader<string, BreakTime[]>;
 }
 
 export interface IGraphqlContext {

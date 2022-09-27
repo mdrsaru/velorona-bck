@@ -18,6 +18,7 @@ import * as taskLoader from '../loaders/dataloader/task.dataloader';
 import * as timesheetLoader from '../loaders/dataloader/timesheet.dataloader';
 import * as timesheetCommentLoader from '../loaders/dataloader/timesheet-comment.dataloader';
 import * as invoicePaymentConfigLoader from '../loaders/dataloader/invoice-payment-config.dataloader';
+import * as timeEntryLoader from '../loaders/dataloader/time-entry.dataloader';
 
 import { IGraphql, IGraphqlContext } from '../interfaces/graphql.interface';
 import { ITokenService, ILogger } from '../interfaces/common.interface';
@@ -106,6 +107,7 @@ export default class GraphqlService implements IGraphql {
         usersByEmailLoader: userLoader.usersByEmailLoader(),
         usersByProjectIdLoader: projectLoader.usersByProjectIdLoader(),
         invoicePaymentConfigByIdLoader: invoicePaymentConfigLoader.invoicePaymentConfigByIdLoader(),
+        breakTimesByTimeEntryIdLoader: timeEntryLoader.breakTimesByTimeEntryIdLoader(),
       },
     };
   };
