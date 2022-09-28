@@ -105,6 +105,9 @@ export class UserPayRateQuery {
 
   @Field({ nullable: true })
   user_id: string;
+
+  @Field({ nullable: true })
+  company_id: string;
 }
 
 @InputType()

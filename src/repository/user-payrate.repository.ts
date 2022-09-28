@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { getRepository } from 'typeorm';
+import { getRepository, In, SelectQueryBuilder } from 'typeorm';
 import isNil from 'lodash/isNil';
 import isString from 'lodash/isString';
 import merge from 'lodash/merge';
@@ -18,6 +18,8 @@ import {
 import { IUserRepository } from '../interfaces/user.interface';
 import { IProjectRepository } from '../interfaces/project.interface';
 import UserPayRate from '../entities/user-payrate.entity';
+import { IGetAllAndCountResult, IGetOptions } from '../interfaces/paging.interface';
+import { isArray } from 'lodash';
 
 @injectable()
 export default class UserPayRateRepository extends BaseRepository<UserPayRate> implements IUserPayRateRepository {
@@ -31,6 +33,43 @@ export default class UserPayRateRepository extends BaseRepository<UserPayRate> i
     this.projectRepository = _projectRepository;
     this.userRepository = _userRepository;
   }
+
+  getAllAndCount = async (args: IGetOptions): Promise<IGetAllAndCountResult<UserPayRate>> => {
+    try {
+      let { query = {}, select = [], relations = [], ...rest } = args;
+      let { search, company_id, ...where } = query;
+      const _select = select as (keyof UserPayRate)[];
+
+      for (let key in query) {
+        if (isArray(query[key])) {
+          query[key] = In(query[key]);
+        }
+      }
+      relations.push('user');
+
+      const _where = (qb: SelectQueryBuilder<UserPayRate>) => {
+        const queryBuilder = qb.where(where);
+
+        if (company_id) {
+          queryBuilder.andWhere('company_id = :companyId', { companyId: company_id });
+        }
+      };
+
+      let [rows, count] = await this.repo.findAndCount({
+        relations,
+        where: _where,
+        ...(_select?.length && { select: _select }),
+        ...rest,
+      });
+
+      return {
+        count,
+        rows,
+      };
+    } catch (err) {
+      throw err;
+    }
+  };
 
   create = async (args: IUserPayRateCreateInput): Promise<UserPayRate> => {
     try {
