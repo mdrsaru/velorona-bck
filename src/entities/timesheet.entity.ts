@@ -79,9 +79,13 @@ export default class Timesheet extends Base {
   @Field({ nullable: true, description: 'Weekly duration format in HH:mm:ss' })
   durationFormat: string;
 
-  @Field({ nullable: true })
+  @Field({ nullable: true, description: 'Total invoiced amount' })
   @Column({ name: timesheet.total_expense, type: 'float', nullable: true })
   totalExpense: number;
+
+  @Field({ nullable: true, description: 'User payment for the timesheet' })
+  @Column({ name: 'user_payment', type: 'float', nullable: true, default: 0 })
+  userPayment: number;
 
   @Field({
     nullable: true,

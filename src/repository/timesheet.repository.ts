@@ -131,6 +131,7 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
       throw err;
     }
   };
+
   countTimesheet = async (args: ITimesheetCountInput): Promise<number> => {
     try {
       let company_id = args.company_id;
@@ -382,6 +383,7 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
           select
           sum(duration) as duration,
           round( sum(total_expense)::numeric, 2) as "totalExpense",
+          round( sum(user_payment)::numeric, 2) as "userPayment",
           t.user_id as _user_id,
           t.client_id as _client_id,
           t.company_id as _company_id,
@@ -432,7 +434,8 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
           invoice_schedule as period,
           client_id,
           duration,
-          "totalExpense"
+          "totalExpense",
+          "userPayment"
           from grouped_timesheet ${paginationQuery};
         `,
         parameters

@@ -928,7 +928,8 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
           select
           timesheet_id,
           sum(duration) as invoiced_duration,
-          round( sum( (t.duration::numeric / 3600) * t.hourly_invoice_rate )::numeric, 2 ) AS total_expense
+          round( sum( (t.duration::numeric / 3600) * t.hourly_invoice_rate )::numeric, 2 ) AS total_expense,
+          round( sum( (t.duration::numeric / 3600) * t.hourly_rate)::numeric, 2 ) AS user_payment
           from time_entries as t
           join projects as p
           on t.project_id = p.id
@@ -945,16 +946,16 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
 
       if (groupedTimesheet?.length) {
         const values = groupedTimesheet.map((timesheet: any) => {
-          return `('${timesheet.timesheet_id}'::uuid, ${timesheet.invoiced_duration}, ${timesheet.total_expense})`;
+          return `('${timesheet.timesheet_id}'::uuid, ${timesheet.invoiced_duration}, ${timesheet.total_expense}, ${timesheet.user_payment})`;
         });
 
         await this.manager.query(
           `
             update timesheet
-            set total_expense = t.total_expense, invoiced_duration = t.invoiced_duration
+            set total_expense = t.total_expense, invoiced_duration = t.invoiced_duration, user_payment = t.user_payment
             from (
               values ${values.join(',')}
-            ) as t (id, invoiced_duration, total_expense)
+            ) as t (id, invoiced_duration, total_expense, user_payment)
             where timesheet.id = t.id;
           `
         );
