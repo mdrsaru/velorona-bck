@@ -216,7 +216,7 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
             on u.id = t.created_by
             where t.company_id = $1
             AND t.created_by = $2
-`,
+          `,
           [company_id, user_id]
         );
       }

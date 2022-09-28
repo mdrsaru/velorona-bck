@@ -13,6 +13,8 @@ import strings from '../config/strings';
 import Invoice from '../entities/invoice.entity';
 import BaseRepository from './base.repository';
 import * as apiError from '../utils/api-error';
+import { AttachmentType } from '../config/constants';
+import Attachment from '../entities/attached-timesheet.entity';
 
 import {
   IInvoice,
@@ -133,6 +135,7 @@ export default class InvoiceRepository extends BaseRepository<Invoice> implement
       const endDate = args.endDate;
       const user_id = args.user_id;
       const items = args.items;
+      const attachments = args.attachments ?? [];
 
       const errors: string[] = [];
 
@@ -176,6 +179,22 @@ export default class InvoiceRepository extends BaseRepository<Invoice> implement
         });
       }
 
+      const attachmentEntities: Attachment[] = [];
+      if (attachments?.length) {
+        for (let att of attachments) {
+          const attachment = new Attachment();
+          attachment.description = att.description;
+          attachment.attachment_id = att.attachment_id;
+          attachment.company_id = company_id;
+          attachment.created_by = att.created_by;
+          attachment.type = att.type;
+          attachment.amount = 25;
+          attachment.date = new Date();
+
+          attachmentEntities.push(attachment);
+        }
+      }
+
       // TODO: Add transaction for rollback
       const invoice = await this.repo.save({
         status,
@@ -197,6 +216,7 @@ export default class InvoiceRepository extends BaseRepository<Invoice> implement
         startDate,
         endDate,
         user_id,
+        attachments: attachmentEntities,
       });
 
       await this.invoiceItemRepository.createMultiple({

@@ -30,6 +30,18 @@ export default class CompanyValidation {
           })
         )
         .required(),
+      attachments: Joi.array()
+        .items(
+          Joi.object({
+            description: Joi.string().required(),
+            attachment_id: Joi.string().required(),
+            created_by: Joi.string().required(),
+            type: Joi.string().required(),
+            amount: Joi.number().allow('', null),
+            date: Joi.date().allow('', null),
+          })
+        )
+        .optional(),
     });
   }
 

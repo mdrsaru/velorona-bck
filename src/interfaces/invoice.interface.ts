@@ -1,4 +1,4 @@
-import { InvoiceStatus } from '../config/constants';
+import { InvoiceStatus, AttachmentType } from '../config/constants';
 
 import { IPagingArgs, IGetAllAndCountResult, IPaginationData } from './paging.interface';
 import { IInvoiceItemInput, IInvoiceItemUpdateInput } from './invoice-item.interface';
@@ -31,6 +31,15 @@ export interface IInvoice {
   updatedAt: string;
 }
 
+export interface IAttachmentCreateInput {
+  description: string;
+  attachment_id: string;
+  created_by: string;
+  type: AttachmentType;
+  amount?: number;
+  date?: Date;
+}
+
 export interface IInvoiceCreateInput {
   status: Invoice['status'];
   timesheet_id?: Invoice['timesheet_id'];
@@ -52,6 +61,7 @@ export interface IInvoiceCreateInput {
   endDate?: IInvoice['endDate'];
   user_id?: IInvoice['user_id'];
   items: IInvoiceItemInput[];
+  attachments?: IAttachmentCreateInput[];
 }
 
 export interface IInvoiceUpdateInput {

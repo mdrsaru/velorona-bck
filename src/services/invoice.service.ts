@@ -105,6 +105,7 @@ export default class InvoiceService implements IInvoiceService {
       const endDate = args.endDate;
       const user_id = args.user_id;
       const items = args.items;
+      const attachments = args.attachments;
 
       const invoice = await this.invoiceRepository.create({
         timesheet_id,
@@ -127,6 +128,7 @@ export default class InvoiceService implements IInvoiceService {
         endDate,
         user_id,
         items,
+        attachments,
       });
 
       if (invoice.timesheet_id) {

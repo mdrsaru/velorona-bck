@@ -118,6 +118,7 @@ export class InvoiceResolver {
       const endDate = args.endDate;
       const user_id = args.user_id;
       const items = args.items;
+      const attachments = args.attachments;
 
       const schema = InvoiceValidation.create();
       await this.joiService.validate({
@@ -135,6 +136,7 @@ export class InvoiceResolver {
           company_id,
           client_id,
           items,
+          attachments,
         },
       });
 
@@ -159,6 +161,7 @@ export class InvoiceResolver {
         endDate,
         user_id,
         items,
+        attachments,
       });
 
       return invoice;
