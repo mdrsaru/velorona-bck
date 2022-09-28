@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { getRepository, In } from 'typeorm';
+import { getRepository, In, SelectQueryBuilder } from 'typeorm';
 import BaseRepository from './base.repository';
 
 import { TYPES } from '../types';
@@ -37,7 +37,7 @@ export default class UserClientRepository extends BaseRepository<UserClient> imp
   getAllAndCount = async (args: IGetOptions): Promise<IGetAllAndCountResult<UserClient>> => {
     try {
       let { query = {}, select = [], relations = [], ...rest } = args;
-      let { search, ...where } = query;
+      let { search, company_id, ...where } = query;
       const _select = select as (keyof UserClient)[];
 
       for (let key in query) {
@@ -45,10 +45,19 @@ export default class UserClientRepository extends BaseRepository<UserClient> imp
           query[key] = In(query[key]);
         }
       }
+      relations.push('client');
+
+      const _where = (qb: SelectQueryBuilder<UserClient>) => {
+        const queryBuilder = qb.where(where);
+
+        if (company_id) {
+          queryBuilder.andWhere('company_id = :companyId', { companyId: company_id });
+        }
+      };
 
       let [rows, count] = await this.repo.findAndCount({
-        relations: ['client'],
-        where: where,
+        relations,
+        where: _where,
         ...(_select?.length && { select: _select }),
         ...rest,
       });
