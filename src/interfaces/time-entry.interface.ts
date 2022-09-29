@@ -5,6 +5,7 @@ import User from '../entities/user.entity';
 import TimeEntry from '../entities/time-entry.entity';
 import { IEntityID, IEntityRemove } from './common.interface';
 import { IGetAllAndCountResult, IPaginationData, IPagingArgs, IGetOptions } from './paging.interface';
+import BreakTime from '../entities/break-time.entity';
 
 export interface ITimeEntry {
   id: string;
@@ -13,6 +14,7 @@ export interface ITimeEntry {
   duration?: number;
   breakTime?: number;
   startBreakTime?: Date;
+  endBreakTime?: Date;
   clientLocation: string;
   approver_id: string;
   project_id: string;
@@ -48,6 +50,7 @@ export interface ITimeEntryUpdateInput {
   endTime?: ITimeEntry['endTime'];
   breakTime?: ITimeEntry['breakTime'];
   startBreakTime?: ITimeEntry['startBreakTime'];
+  endBreakTime?: ITimeEntry['endBreakTime'];
   clientLocation?: ITimeEntry['clientLocation'];
   approver_id?: ITimeEntry['approver_id'];
   project_id?: ITimeEntry['project_id'];
@@ -173,6 +176,7 @@ export interface IMarkPeriodicApprovedTimeEntriesWithInvoice extends IPeriodicTi
 
 export interface ITimeEntryPaginationData extends IPaginationData<TimeEntry> {
   activeEntry?: TimeEntry;
+  activeBreakEntry?: BreakTime;
 }
 
 export interface IExpenseAndInvoicedDuration {

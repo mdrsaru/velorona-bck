@@ -29,6 +29,7 @@ import { ITimesheetRepository } from '../interfaces/timesheet.interface';
 import { IProjectRepository } from '../interfaces/project.interface';
 import { timeEntryEmitter } from '../subscribers/emitters';
 import Project from '../entities/project.entity';
+import { IBreakTimeRepository } from '../interfaces/break-time.interface';
 
 @injectable()
 export default class TimeEntryService implements ITimeEntryService {
@@ -37,6 +38,7 @@ export default class TimeEntryService implements ITimeEntryService {
   private userPayRateRepository: IUserPayRateRepository;
   private timesheetRepository: ITimesheetRepository;
   private projectRepository: IProjectRepository;
+  private breakTimeRepository: IBreakTimeRepository;
   private logger: ILogger;
   private errorService: IErrorService;
 
@@ -46,7 +48,8 @@ export default class TimeEntryService implements ITimeEntryService {
     @inject(TYPES.LoggerFactory) loggerFactory: (name: string) => ILogger,
     @inject(TYPES.ErrorService) errorService: IErrorService,
     @inject(TYPES.TimesheetRepository) _timesheetRepository: ITimesheetRepository,
-    @inject(TYPES.ProjectRepository) _projectRepository: IProjectRepository
+    @inject(TYPES.ProjectRepository) _projectRepository: IProjectRepository,
+    @inject(TYPES.BreakTimeRepository) _breakTimeRepository: IBreakTimeRepository
   ) {
     this.timeEntryRepository = timeEntryRepository;
     this.userPayRateRepository = userPayRateRepository;
@@ -54,6 +57,7 @@ export default class TimeEntryService implements ITimeEntryService {
     this.errorService = errorService;
     this.timesheetRepository = _timesheetRepository;
     this.projectRepository = _projectRepository;
+    this.breakTimeRepository = _breakTimeRepository;
   }
 
   getAllAndCount = async (args: IPagingArgs): Promise<ITimeEntryPaginationData> => {
@@ -65,6 +69,9 @@ export default class TimeEntryService implements ITimeEntryService {
         created_by: args?.query?.created_by ?? undefined,
       });
 
+      const activeBreakEntry = await this.breakTimeRepository.getActiveBreak({
+        time_entry_id: activeEntry?.id as string,
+      });
       const paging = Paging.getPagingResult({
         ...args,
         total: count,
@@ -74,6 +81,7 @@ export default class TimeEntryService implements ITimeEntryService {
         paging,
         data: rows,
         activeEntry,
+        activeBreakEntry,
       };
     } catch (err) {
       throw err;
@@ -225,6 +233,7 @@ export default class TimeEntryService implements ITimeEntryService {
     const description = args.description;
     const breakTime = args.breakTime;
     const startBreakTime = args.startBreakTime;
+    const endBreakTime = args.endBreakTime;
     try {
       let timeEntry = await this.timeEntryRepository.update({
         id,
@@ -238,6 +247,7 @@ export default class TimeEntryService implements ITimeEntryService {
         description,
         breakTime,
         startBreakTime,
+        endBreakTime,
       });
       try {
         /* Create/Update timesheet if the start/end time is provided */
