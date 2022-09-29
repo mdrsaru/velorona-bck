@@ -83,12 +83,10 @@ export default class BreakTimeRepository extends BaseRepository<BreakTime> imple
   getActiveBreak = async (args: IBreakActiveInput): Promise<BreakTime | undefined> => {
     try {
       const time_entry_id = args.time_entry_id;
-      console.log(time_entry_id);
       const timeEntry = await this.repo.findOne({
         endTime: IsNull(),
         time_entry_id,
       });
-      console.log(timeEntry, '\n  n activeBreak');
       return timeEntry;
     } catch (err) {
       throw err;

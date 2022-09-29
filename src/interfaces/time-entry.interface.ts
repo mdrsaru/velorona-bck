@@ -213,6 +213,20 @@ export interface ITimeEntryBulkUpdateInput {
   project_id: string;
 }
 
+export interface ITimeEntryBulkUpdateResult {
+  updated: boolean;
+  newEntryDetails?: {
+    startTime: Date;
+    endTime: Date;
+    clientLocation: string;
+    project_id: string;
+    company_id: string;
+    created_by: string;
+    entryType: EntryType;
+    description: string;
+  };
+}
+
 export interface ITimeEntryRepository {
   getAllAndCount(args: IPagingArgs): Promise<IGetAllAndCountResult<TimeEntry>>;
   getAll(args: any): Promise<TimeEntry[]>;
@@ -261,7 +275,7 @@ export interface ITimeEntryRepository {
   updateHourlyRate(args: ITimeEntryHourlyRateInput): Promise<boolean>;
   totalDuration(args: ITotalDurationInput): Promise<number>;
   unlockTimeEntries(args: ITimeEntryUnlockInput): Promise<boolean>;
-  bulkUpdate(args: ITimeEntryBulkUpdateInput): Promise<boolean>;
+  bulkUpdate(args: ITimeEntryBulkUpdateInput): Promise<ITimeEntryBulkUpdateResult>;
   /**
    * Get total expense and invoiced duration for the periodic time entries
    * Update the timesheets with the total expense and invoiced duration

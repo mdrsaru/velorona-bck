@@ -15,9 +15,11 @@ import { CompanyRole, entities, TimeEntryApprovalStatus } from '../config/consta
 import { timeEntry, userPayRate, projects } from '../config/db/columns';
 import * as apiError from '../utils/api-error';
 import TimeEntry from '../entities/time-entry.entity';
+import Timesheet from '../entities/timesheet.entity';
 import { NotFoundError } from '../utils/api-error';
 import BaseRepository from './base.repository';
 
+import { Maybe } from '../interfaces/common.interface';
 import { ICompanyRepository } from '../interfaces/company.interface';
 import { IProjectRepository } from '../interfaces/project.interface';
 import { IUserPayRateRepository } from '../interfaces/user-payrate.interface';
@@ -43,6 +45,7 @@ import {
   IMarkPeriodicApprovedTimeEntriesWithInvoice,
   IPeriodicTimeEntriesInput,
   IExpenseAndInvoicedDuration,
+  ITimeEntryBulkUpdateResult,
 } from '../interfaces/time-entry.interface';
 import { IUserRepository } from '../interfaces/user.interface';
 import { IGetOptions, IGetAllAndCountResult } from '../interfaces/paging.interface';
@@ -598,7 +601,6 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
         LEFT JOIN ${entities.userPayRate} up ON t.project_id = up.project_id AND t.created_by = up.user_id
         WHERE t.approval_status = 'Approved'
         AND t.timesheet_id IS NOT NULL
-        AND t.time_entry_id IS NULL
         AND t.${timeEntry.start_time} >= $1
         AND t.${timeEntry.start_time} <= $2
         AND t.${timeEntry.company_id} = $3
@@ -815,7 +817,7 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
     }
   };
 
-  bulkUpdate = async (args: ITimeEntryBulkUpdateInput): Promise<boolean> => {
+  bulkUpdate = async (args: ITimeEntryBulkUpdateInput): Promise<ITimeEntryBulkUpdateResult> => {
     try {
       const duration = args.duration;
       const project_id = args.project_id;
@@ -824,7 +826,18 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
 
       const timeEntries = await this.repo
         .createQueryBuilder(entities.timeEntry)
-        .select(['time_entries.id', 'time_entries.startTime', 'time_entries.endTime', 'time_entries.duration'])
+        .select([
+          'time_entries.id',
+          'time_entries.startTime',
+          'time_entries.endTime',
+          'time_entries.duration',
+          'time_entries.clientLocation',
+          'time_entries.project_id',
+          'time_entries.company_id',
+          'time_entries.created_by',
+          'time_entries.entryType',
+          'time_entries.description',
+        ])
         .where('project_id = :project_id', { project_id })
         .andWhere('approval_status = :approvalStatus', { approvalStatus: 'Pending' })
         .andWhere('timesheet_id = :timesheet_id', { timesheet_id })
@@ -840,7 +853,7 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
 
       const timesheet = await this.timesheetRepository.getById({
         id: timesheet_id,
-        select: ['duration'],
+        select: ['id', 'duration'],
       });
 
       if (duration <= totalDuration) {
@@ -861,27 +874,29 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
             duration: timesheetDuration,
           });
         }
+
+        return {
+          updated: true,
+        };
       } else if (duration > totalDuration) {
-        await this.updateHighDuration({
+        const additionalDuration = duration - totalDuration;
+        const length = timeEntries.length;
+
+        const result = await this.updateHighDuration({
           entries: timeEntries,
-          duration: duration - totalDuration,
+          duration: additionalDuration,
+          timesheet,
         });
 
-        /**
-         * Update the total timesheet duration
-         * Add the additional duration to the total timesheet duration
-         */
-        const additionalDuration = duration - totalDuration;
-        if (additionalDuration >= 0 && timesheet) {
-          const timesheetDuration = timesheet.duration + additionalDuration;
-          const t = await this.timesheetRepository.update({
-            id: timesheet_id,
-            duration: timesheetDuration,
-          });
-        }
+        return {
+          updated: true,
+          newEntryDetails: result.newEntryDetails,
+        };
       }
 
-      return true;
+      return {
+        updated: true,
+      };
     } catch (err) {
       throw err;
     }
@@ -928,23 +943,88 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
   /**
    * Update entries with the duration greater than that of the total duration
    */
-  updateHighDuration = (args: { entries: TimeEntry[]; duration: number }) => {
+  updateHighDuration = async (args: { entries: TimeEntry[]; duration: number; timesheet: Timesheet | undefined }) => {
     try {
       const entries = args.entries;
-      const duration = args.duration;
+      let duration = args.duration;
+      const timesheet = args.timesheet;
       const length = entries.length;
 
       if (length) {
         const lastEntry = entries[length - 1];
         if (lastEntry.endTime) {
-          const endTime = moment(lastEntry.endTime).utc().format('YYYY-MM-DDTHH:mm:ss');
-          lastEntry.endTime = moment(endTime).add(duration, 'seconds').toDate();
+          const startTime = lastEntry?.startTime;
+          let startDay: undefined | string;
+          let endDay: undefined | string;
+          let mondayStartTime: undefined | Date;
+          let mondayEndTime: undefined | Date;
+
+          let lastEntryEndTime = moment(lastEntry.endTime).utc().format('YYYY-MM-DDTHH:mm:ss');
+          let endTime = moment(lastEntryEndTime).add(duration, 'seconds').format('YYYY-MM-DDTHH:mm:ss');
+
+          if (startTime) {
+            startDay = moment(startTime).format('dddd');
+            endDay = moment(endTime).format('dddd');
+          }
+
+          // Check for breaking Sunday to Monday
+          if (startDay === 'Sunday' && endDay === 'Monday') {
+            mondayStartTime = new Date(moment(endTime).format('YYYY-MM-DD') + ' 00:00:00');
+            mondayEndTime = new Date(endTime);
+
+            endTime = moment(startTime).format('YYYY-MM-DD') + ' 23:59:59';
+
+            const startDate = moment(startTime);
+            const endDate = moment(endTime);
+
+            /**
+             * New duration after breaking from Sunday to Monday
+             */
+            duration = endDate.diff(startDate, 'seconds') - (lastEntry.duration ?? 0);
+          }
+
+          lastEntry.endTime = new Date(endTime);
           lastEntry.duration += duration;
-          return this.repo.save(lastEntry);
+
+          const savedEntry = await this.repo.save(lastEntry);
+
+          /**
+           * Update the total timesheet duration
+           * Add the additional duration to the total timesheet duration
+           */
+          if (duration >= 0 && timesheet) {
+            const timesheetDuration = timesheet.duration + duration;
+            const t = await this.timesheetRepository.update({
+              id: timesheet.id,
+              duration: timesheetDuration,
+            });
+          }
+
+          const result: any = {
+            entries: [savedEntry],
+          };
+
+          if (mondayStartTime && mondayEndTime) {
+            result.newEntryDetails = {
+              startTime: mondayStartTime,
+              endTime: mondayEndTime,
+              clientLocation: lastEntry?.clientLocation ?? '',
+              project_id: lastEntry.project_id,
+              company_id: lastEntry.company_id,
+              created_by: lastEntry.created_by,
+              entryType: lastEntry.entryType,
+              description: lastEntry.description,
+            };
+          }
+
+          return result;
         }
       }
 
-      return entries;
+      return {
+        entries,
+        newEntryDetails: undefined,
+      };
     } catch (err) {}
   };
 
