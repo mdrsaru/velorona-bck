@@ -113,21 +113,22 @@ export default class UserPayRateRepository extends BaseRepository<UserPayRate> i
           details: [strings.projectNotFound],
         });
       }
-
-      const currency = await this.currencyRepository.getById({ id: user_rate_currency_id });
-      if (!currency) {
-        throw new apiError.NotFoundError({
-          details: [strings.currencyNotFound],
-        });
+      if (user_rate_currency_id) {
+        const currency = await this.currencyRepository.getById({ id: user_rate_currency_id });
+        if (!currency) {
+          throw new apiError.NotFoundError({
+            details: [strings.currencyNotFound],
+          });
+        }
       }
-
-      const invoiceCurrency = await this.currencyRepository.getById({ id: invoice_rate_currency_id });
-      if (!invoiceCurrency) {
-        throw new apiError.NotFoundError({
-          details: [strings.currencyNotFound],
-        });
+      if (invoice_rate_currency_id) {
+        const invoiceCurrency = await this.currencyRepository.getById({ id: invoice_rate_currency_id });
+        if (!invoiceCurrency) {
+          throw new apiError.NotFoundError({
+            details: [strings.currencyNotFound],
+          });
+        }
       }
-
       const UserPayRate = await this.repo.save({
         startDate,
         endDate,
