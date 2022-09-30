@@ -20,18 +20,22 @@ import { IProjectRepository } from '../interfaces/project.interface';
 import UserPayRate from '../entities/user-payrate.entity';
 import { IGetAllAndCountResult, IGetOptions } from '../interfaces/paging.interface';
 import { isArray } from 'lodash';
+import { ICurrencyRepository } from '../interfaces/currency.interface';
 
 @injectable()
 export default class UserPayRateRepository extends BaseRepository<UserPayRate> implements IUserPayRateRepository {
   private userRepository: IUserRepository;
   private projectRepository: IProjectRepository;
+  private currencyRepository: ICurrencyRepository;
   constructor(
     @inject(TYPES.ProjectRepository) _projectRepository: IProjectRepository,
-    @inject(TYPES.UserRepository) _userRepository: IUserRepository
+    @inject(TYPES.UserRepository) _userRepository: IUserRepository,
+    @inject(TYPES.CurrencyRepository) _currencyRepository: ICurrencyRepository
   ) {
     super(getRepository(UserPayRate));
     this.projectRepository = _projectRepository;
     this.userRepository = _userRepository;
+    this.currencyRepository = _currencyRepository;
   }
 
   getAllAndCount = async (args: IGetOptions): Promise<IGetAllAndCountResult<UserPayRate>> => {
@@ -79,6 +83,8 @@ export default class UserPayRateRepository extends BaseRepository<UserPayRate> i
       const user_id = args.user_id;
       const project_id = args.project_id;
       const invoiceRate = args.invoiceRate;
+      const user_rate_currency_id = args.user_rate_currency_id;
+      const invoice_rate_currency_id = args.invoice_rate_currency_id;
 
       const errors: string[] = [];
 
@@ -108,6 +114,20 @@ export default class UserPayRateRepository extends BaseRepository<UserPayRate> i
         });
       }
 
+      const currency = await this.currencyRepository.getById({ id: user_rate_currency_id });
+      if (!currency) {
+        throw new apiError.NotFoundError({
+          details: [strings.currencyNotFound],
+        });
+      }
+
+      const invoiceCurrency = await this.currencyRepository.getById({ id: invoice_rate_currency_id });
+      if (!invoiceCurrency) {
+        throw new apiError.NotFoundError({
+          details: [strings.currencyNotFound],
+        });
+      }
+
       const UserPayRate = await this.repo.save({
         startDate,
         endDate,
@@ -115,6 +135,8 @@ export default class UserPayRateRepository extends BaseRepository<UserPayRate> i
         user_id,
         project_id,
         invoiceRate,
+        user_rate_currency_id,
+        invoice_rate_currency_id,
       });
 
       return UserPayRate;
@@ -132,6 +154,8 @@ export default class UserPayRateRepository extends BaseRepository<UserPayRate> i
       const user_id = args.user_id;
       const project_id = args.project_id;
       const invoiceRate = args.invoiceRate;
+      const user_rate_currency_id = args.user_rate_currency_id;
+      const invoice_rate_currency_id = args.invoice_rate_currency_id;
 
       const found = await this.getById({ id });
       if (!found) {
@@ -147,6 +171,8 @@ export default class UserPayRateRepository extends BaseRepository<UserPayRate> i
         user_id,
         project_id,
         invoiceRate,
+        user_rate_currency_id,
+        invoice_rate_currency_id,
       });
 
       let UserPayRate = await this.repo.save(update);

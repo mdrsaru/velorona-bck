@@ -24,6 +24,7 @@ import { SubscriptionPaymentResolver } from './resolvers/subscription-payment.re
 import { TimesheetCommentResolver } from './resolvers/timesheet-comment.resolver';
 import { InvoicePaymentConfigResolver } from './resolvers/invoice-payment-config.resolver';
 import { DemoRequestResolver } from './resolvers/demo-request.resolver';
+import { CurrencyResolver } from './resolvers/currency';
 
 export default buildSchema({
   container,
@@ -53,5 +54,6 @@ export default buildSchema({
     TimesheetCommentResolver,
     InvoicePaymentConfigResolver,
     DemoRequestResolver,
+    CurrencyResolver,
   ],
 });

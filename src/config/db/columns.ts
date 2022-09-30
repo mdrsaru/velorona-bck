@@ -107,6 +107,8 @@ export const userPayRate = {
   user_id: 'user_id',
   project_id: 'project_id',
   invoice_rate: 'invoice_rate',
+  user_rate_currency_id: 'user_rate_currency_id',
+  invoice_rate_currency_id: 'invoice_rate_currency_id',
 };
 
 export const projects = {
