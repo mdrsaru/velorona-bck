@@ -181,6 +181,7 @@ export enum InvoiceSchedule {
   Monthly = 'Monthly',
   Biweekly = 'Biweekly',
   Weekly = 'Weekly',
+  Custom = 'Custom',
 }
 
 export enum DemoRequestStatus {

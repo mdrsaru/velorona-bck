@@ -81,7 +81,7 @@ export default class ClientRepository extends BaseRepository<Client> implements 
       const phone = args.phone;
       const invoiceSchedule = args.invoiceSchedule;
       const invoice_payment_config_id = args.invoice_payment_config_id;
-      const biweeklyStartDate = args.biweeklyStartDate;
+      const scheduleStartDate = args.scheduleStartDate;
 
       const errors: string[] = [];
 
@@ -140,7 +140,7 @@ export default class ClientRepository extends BaseRepository<Client> implements 
         phone,
         invoiceSchedule,
         invoice_payment_config_id,
-        biweeklyStartDate,
+        scheduleStartDate,
       });
 
       return client;
@@ -161,7 +161,7 @@ export default class ClientRepository extends BaseRepository<Client> implements 
       const invoiceSchedule = args.invoiceSchedule;
       const invoice_payment_config_id = args.invoice_payment_config_id;
       const invoicingEmail = args.invoicingEmail;
-      const biweeklyStartDate = args.biweeklyStartDate;
+      const scheduleStartDate = args.scheduleStartDate;
 
       const errors: string[] = [];
 
@@ -192,7 +192,7 @@ export default class ClientRepository extends BaseRepository<Client> implements 
         invoiceSchedule,
         invoicingEmail,
         invoice_payment_config_id,
-        biweeklyStartDate,
+        scheduleStartDate,
         ...(!!address && {
           address: {
             ...(found.address ?? {}),

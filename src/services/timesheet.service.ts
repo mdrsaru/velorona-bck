@@ -90,7 +90,7 @@ export default class TimesheetService implements ITimesheetService {
       let _count: number;
 
       if (showGroupedTimesheet) {
-        const { rows, count } = await this.timesheetRepository.getByFortnightOrMonth(args);
+        const { rows, count } = await this.timesheetRepository.getByFortnightOrMonthOrCustom(args);
         _rows = rows;
         _count = count;
       } else {

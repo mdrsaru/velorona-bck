@@ -27,6 +27,7 @@ import {
   IMarkPeriodicApprovedTimeEntriesWithInvoice,
   IPeriodicTimeEntriesInput,
   IExpenseAndInvoicedDuration,
+  ITimeEntryBulkUpdateResult,
 } from '../../interfaces/time-entry.interface';
 import { timeEntries } from './data';
 import { generateUuid } from './utils';
@@ -182,7 +183,7 @@ export default class TimeEntryRepository implements ITimeEntryRepository {
     throw new Error('Not implemented');
   }
 
-  bulkUpdate(args: ITimeEntryBulkUpdateInput): Promise<boolean> {
+  bulkUpdate(args: ITimeEntryBulkUpdateInput): Promise<ITimeEntryBulkUpdateResult> {
     throw new Error('Not implemented');
   }
 

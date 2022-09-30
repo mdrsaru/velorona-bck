@@ -16,7 +16,7 @@ export interface IClient {
   company_id: string;
   invoiceSchedule: InvoiceSchedule;
   invoice_payment_config_id: string;
-  biweeklyStartDate: string;
+  scheduleStartDate: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -32,7 +32,7 @@ export interface IClientCreateInput {
   address: IAddressInput;
   invoiceSchedule?: IClient['invoiceSchedule'];
   invoice_payment_config_id?: IClient['invoice_payment_config_id'];
-  biweeklyStartDate?: IClient['biweeklyStartDate'];
+  scheduleStartDate?: IClient['scheduleStartDate'];
 }
 
 export interface IClientUpdateInput {
@@ -45,7 +45,7 @@ export interface IClientUpdateInput {
   address: IAddressInput;
   invoiceSchedule?: IClient['invoiceSchedule'];
   invoice_payment_config_id?: IClient['invoice_payment_config_id'];
-  biweeklyStartDate?: IClient['biweeklyStartDate'];
+  scheduleStartDate?: IClient['scheduleStartDate'];
 }
 
 export interface IClientCountInput extends ICountInput {}

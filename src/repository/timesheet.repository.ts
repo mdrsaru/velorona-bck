@@ -321,6 +321,7 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
     }
   };
 
+  // Not used any more(replaced by getByFortnightOrMonthOrCustom)
   getByFortnightOrMonth = async (args: IPagingArgs): Promise<IGetAllAndCountResult<Timesheet>> => {
     try {
       const skip = args?.skip ?? 0;
@@ -374,7 +375,7 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
       }
 
       /**
-       * First Case: Biweekly - Get the biweekly_start_date(if not get created_at) of the client and truncate to Monday to calculate the biweekly timesheet
+       * First Case: Biweekly - Get the schedule_start_date(if not get created_at) of the client and truncate to Monday to calculate the biweekly timesheet
        * Second Case: Monthly - Truncate start date to month
        * Third Case: Weekly - Truncate start date to week
        */
@@ -394,7 +395,7 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
           CASE
             WHEN invoice_schedule = 'Biweekly' THEN
               CASE
-                WHEN c.biweekly_start_date is NULL THEN (to_char(date_trunc('week', c.created_at), 'YYYY-MM-DD')::date + floor((week_start_date - to_char(date_trunc('week', c.created_at), 'YYYY-MM-DD')::date ) / 14)::int * 14)::text
+                WHEN c.schedule_start_date is NULL THEN (to_char(date_trunc('week', c.created_at), 'YYYY-MM-DD')::date + floor((week_start_date - to_char(date_trunc('week', c.created_at), 'YYYY-MM-DD')::date ) / 14)::int * 14)::text
                 ELSE  (to_char(date_trunc('week', c.created_at), 'YYYY-MM-DD')::date + floor((week_start_date - to_char(date_trunc('week', c.created_at), 'YYYY-MM-DD')::date ) / 14)::int * 14)::text
               END
             WHEN invoice_schedule = 'Monthly'  THEN to_char(date_trunc('month', week_start_date::timestamp)::date, 'YYYY-MM-DD')
@@ -437,6 +438,164 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
           "totalExpense",
           "userPayment"
           from grouped_timesheet ${paginationQuery};
+        `,
+        parameters
+      );
+
+      return {
+        count: Number(get(countResult, '[0].count', 0)),
+        rows: queryResult,
+      };
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  getByFortnightOrMonthOrCustom = async (args: IPagingArgs): Promise<IGetAllAndCountResult<Timesheet>> => {
+    try {
+      const skip = args?.skip ?? 0;
+      const take = args?.take;
+      const company_id = args.query?.company_id;
+      const client_id = args.query?.client_id;
+      const user_id = args.query?.user_id;
+
+      let fields: any = [];
+
+      if (company_id) {
+        fields.push({
+          column: 't.company_id',
+          value: company_id,
+        });
+      }
+
+      if (client_id) {
+        fields.push({
+          column: 'p.client_id',
+          value: client_id,
+        });
+      }
+
+      if (user_id) {
+        fields.push({
+          column: 't.created_by',
+          value: user_id,
+        });
+      }
+
+      const conditions = [];
+      const parameters = [];
+
+      for (let i = 0; i < fields.length; i++) {
+        parameters.push(fields[i].value);
+        conditions.push(`${fields[i].column} = $${i + 1} `);
+      }
+
+      let where = '';
+      if (conditions.length) {
+        where = 'where ' + conditions.join(' and ');
+      }
+
+      let paginationQuery = '';
+      if (!isNil(skip)) {
+        paginationQuery += ` offset ${skip}`;
+      }
+      if (!isNil(take)) {
+        paginationQuery += ` limit ${take}`;
+      }
+
+      /**
+       * First Case: Biweekly - Get the schedule_start_date(if not get created_at) of the client and truncate to Monday to calculate the biweekly timesheet
+       * Second Case: Biweekly - Get the custom_start_date(if not get created_at) of the client and truncate to Monday to calculate the biweekly timesheet
+       * Third Case: Monthly - Truncate start date to month
+       * Fourth Case: Weekly - Truncate start date to week
+       */
+      const cte = `
+        with grouped_timesheet as (
+            select
+            sum(t.duration) as total_duration,
+            round(
+              sum(
+                case
+                  when invoice_id is not null then (t.duration::numeric / 3600) * t.hourly_invoice_rate
+                  else 0
+                end
+              )::numeric, 2
+            ) AS "totalExpense",
+            round(
+              sum(
+                case
+                  when invoice_id is not null then (t.duration::numeric / 3600) * t.hourly_rate
+                  else 0
+                end
+              )::numeric, 2
+            ) AS "userPayment",
+            t.created_by as _user_id,
+            p.client_id as _client_id,
+            t.company_id as _company_id,
+            c.invoice_schedule,
+            string_agg(distinct ts.id::text, ',') as timesheet_id,
+            string_agg(distinct ts.status::text, ',') as timesheet_status,
+            max(last_approved_at) as timesheet_last_approved_at,
+            CASE
+            WHEN invoice_schedule = 'Biweekly' THEN
+              CASE
+              WHEN c.schedule_start_date is NULL THEN (to_char(date_trunc('week', c.created_at), 'YYYY-MM-DD')::date + floor((to_char(start_time, 'YYYY-MM-DD')::date - to_char(date_trunc('week', c.created_at), 'YYYY-MM-DD')::date ) / 14)::int * 14)::text
+              ELSE  (to_char(date_trunc('week', c.schedule_start_date), 'YYYY-MM-DD')::date + floor((to_char(start_time, 'YYYY-MM-DD')::date - to_char(date_trunc('week', c.schedule_start_date), 'YYYY-MM-DD')::date ) / 14)::int * 14)::text
+              END
+
+            WHEN invoice_schedule = 'Custom' THEN
+              CASE
+              WHEN c.schedule_start_date is NULL THEN (to_char(date_trunc('week', c.created_at), 'YYYY-MM-DD')::date + floor((week_start_date - to_char(date_trunc('week', c.created_at), 'YYYY-MM-DD')::date ) / 30)::int * 30)::text
+              ELSE  (c.schedule_start_date + floor((to_char(start_time, 'YYYY-MM-DD'):: date - c.schedule_start_date) / 30)::int * 30)::text
+              END
+
+            WHEN invoice_schedule = 'Monthly'  THEN to_char(date_trunc('month', start_time::timestamp)::date, 'YYYY-MM-DD')
+            ELSE to_char(date_trunc('week', start_time::timestamp)::date, 'YYYY-MM-DD')
+            END AS start_date,
+            created_by, p.client_id, t.company_id
+          from time_entries as t
+          join projects as p on t.project_id = p.id
+          join clients as c on c.id = p.client_id
+          join timesheet as ts on t.timesheet_id = ts.id
+
+          ${where}
+
+          group by start_date, p.client_id, t.created_by, t.company_id, c.invoice_schedule
+          order by start_date desc
+        )
+      `;
+
+      const countResult = await this.manager.query(
+        `
+          ${cte}
+          select count(start_date) from grouped_timesheet;
+        `,
+        parameters
+      );
+
+      let queryResult = await this.manager.query(
+        `${cte}
+          select
+            start_date as "weekStartDate",
+            invoice_schedule as period,
+            case
+            when invoice_schedule = 'Biweekly' then to_char(start_date::date + 13, 'YYYY-MM-DD')
+            when invoice_schedule = 'Custom' then to_char(start_date::date + 29, 'YYYY-MM-DD')
+            when invoice_schedule = 'Monthly' then to_char(start_date::date + interval '1 month' - interval '1 day', 'YYYY-MM-DD')
+            else to_char(start_date::date + 6, 'YYYY-MM-DD')
+            end as "weekEndDate",
+            timesheet_status as status,
+            timesheet_last_approved_at as "lastApprovedAt",
+            _company_id as company_id,
+            timesheet_id as id,
+            _user_id as user_id,
+            invoice_schedule as period,
+            _client_id as client_id,
+            total_duration as "totalDuration",
+            "totalExpense",
+            "userPayment"
+          from grouped_timesheet 
+          ${paginationQuery};
         `,
         parameters
       );
