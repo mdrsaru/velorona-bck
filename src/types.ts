@@ -179,6 +179,12 @@ const BREAK_TIME = {
   BreakTimeRepository: Symbol('BreakTimeRepository'),
 };
 
+const CURRENCY = {
+  CurrencyRepository: Symbol('CurrencyRepository'),
+  CurrencyService: Symbol('  CurrencyService'),
+  CurrencyResolver: Symbol('  CurrencyResolver'),
+};
+
 const TYPES = {
   ...COMMON,
   ...COMPANY,
@@ -209,6 +215,7 @@ const TYPES = {
   ...INVOICE_SCHEDULE,
   ...DEMO_REQUEST,
   ...BREAK_TIME,
+  ...CURRENCY,
 };
 
 export { TYPES };

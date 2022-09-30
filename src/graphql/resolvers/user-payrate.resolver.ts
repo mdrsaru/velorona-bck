@@ -78,6 +78,8 @@ export class UserPayRateResolver {
       const user_id = args.user_id;
       const project_id = args.project_id;
       const invoiceRate = args.invoiceRate;
+      const user_rate_currency_id = args.user_rate_currency_id;
+      const invoice_rate_currency_id = args.invoice_rate_currency_id;
 
       const schema = UserPayRateValidation.create();
       await this.joiService.validate({
@@ -97,6 +99,8 @@ export class UserPayRateResolver {
         user_id,
         project_id,
         invoiceRate,
+        user_rate_currency_id,
+        invoice_rate_currency_id,
       });
       return userPayRate;
     } catch (err) {
@@ -122,6 +126,8 @@ export class UserPayRateResolver {
       const user_id = args.user_id;
       const project_id = args.project_id;
       const invoiceRate = args.invoiceRate;
+      const user_rate_currency_id = args.user_rate_currency_id;
+      const invoice_rate_currency_id = args.invoice_rate_currency_id;
 
       const schema = UserPayRateValidation.update();
       await this.joiService.validate({
@@ -144,6 +150,8 @@ export class UserPayRateResolver {
         user_id,
         project_id,
         invoiceRate,
+        user_rate_currency_id,
+        invoice_rate_currency_id,
       });
 
       return userPayRate;
@@ -185,5 +193,19 @@ export class UserPayRateResolver {
   @FieldResolver()
   project(@Root() root: UserPayRate, @Ctx() ctx: IGraphqlContext) {
     return ctx.loaders.projectByIdLoader.load(root.project_id);
+  }
+
+  @FieldResolver()
+  userRateCurrency(@Root() root: UserPayRate, @Ctx() ctx: IGraphqlContext) {
+    if (root.user_rate_currency_id) {
+      return ctx.loaders.currencyByIdLoader.load(root.user_rate_currency_id);
+    }
+  }
+
+  @FieldResolver()
+  invoiceRateCurrency(@Root() root: UserPayRate, @Ctx() ctx: IGraphqlContext) {
+    if (root.invoice_rate_currency_id) {
+      return ctx.loaders.currencyByIdLoader.load(root.invoice_rate_currency_id);
+    }
   }
 }

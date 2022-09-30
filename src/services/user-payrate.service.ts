@@ -60,6 +60,8 @@ export default class UserPayRateService implements IUserPayRateService {
     const user_id = args.user_id;
     const project_id = args.project_id;
     const invoiceRate = args.invoiceRate;
+    const user_rate_currency_id = args.user_rate_currency_id;
+    const invoice_rate_currency_id = args.invoice_rate_currency_id;
 
     try {
       let userPayRate = await this.userPayRateRepository.create({
@@ -69,6 +71,8 @@ export default class UserPayRateService implements IUserPayRateService {
         user_id,
         project_id,
         invoiceRate,
+        user_rate_currency_id,
+        invoice_rate_currency_id,
       });
 
       /**
@@ -102,6 +106,8 @@ export default class UserPayRateService implements IUserPayRateService {
     const user_id = args?.user_id;
     const project_id = args?.project_id;
     const invoiceRate = args.invoiceRate;
+    const user_rate_currency_id = args.user_rate_currency_id;
+    const invoice_rate_currency_id = args.invoice_rate_currency_id;
 
     try {
       let userPayRate = await this.userPayRateRepository.update({
@@ -112,6 +118,8 @@ export default class UserPayRateService implements IUserPayRateService {
         user_id,
         project_id,
         invoiceRate,
+        user_rate_currency_id,
+        invoice_rate_currency_id,
       });
 
       if (!isNil(amount)) {

@@ -73,6 +73,7 @@ export const entities = {
   userProject: 'user_project',
   demoRequest: 'demo_requests',
   breakTimes: 'break_times',
+  currency: 'currency',
 };
 
 export enum CompanyStatus {
