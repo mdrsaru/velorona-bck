@@ -113,7 +113,7 @@ export class ProjectUpdateInput {
   @Field()
   company_id: string;
 
-  @Field()
+  @Field({ nullable: true })
   name: string;
 
   @Field((type) => ProjectStatus, { nullable: true })
