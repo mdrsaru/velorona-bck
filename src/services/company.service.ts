@@ -71,6 +71,7 @@ export default class CompanyService implements ICompanyService {
         user: result.user,
         password,
       });
+
       if (plan === plans.Professional) {
         companyEmitter.emit(events.onSubscriptionCreate, {
           company_id: result.company?.id,

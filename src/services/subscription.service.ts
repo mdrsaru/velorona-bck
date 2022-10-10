@@ -123,6 +123,9 @@ export default class SubscriptionService implements ISubscriptionService {
         subscriptionId,
         subscriptionItemId,
         stripeCustomerId: customer.id,
+        subscriptionPeriodEnd: subscription.current_period_end
+          ? new Date(subscription.current_period_end * 1000)
+          : undefined,
       });
 
       return {
