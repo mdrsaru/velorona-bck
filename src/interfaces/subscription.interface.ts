@@ -25,6 +25,11 @@ export interface ISubscriptionUpdateInput {
   plan?: string;
   subscriptionStatus?: string;
   trialEnded?: boolean;
+  subscriptionPeriodEnd?: Date;
+}
+
+export interface ISubscriptionCancelInput {
+  company_id: string;
 }
 
 export interface ISubscriptionService {
@@ -36,4 +41,8 @@ export interface ISubscriptionService {
    * Update subscription for a company
    */
   updateSubscription(args: ISubscriptionUpdateInput): Promise<Company>;
+  /**
+   * Cancel subscription
+   */
+  cancelSubscription(args: ISubscriptionCancelInput): Promise<Company>;
 }

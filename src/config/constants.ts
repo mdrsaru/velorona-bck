@@ -251,6 +251,7 @@ export const stripePrices = {
 export const subscriptionStatus = {
   active: 'active',
   inactive: 'inactive',
+  canceled: 'canceled',
 };
 
 export enum SubscriptionPaymentStatus {

@@ -122,4 +122,6 @@ export default {
   symbolRequired: 'Symbol required',
   currencyNotFound: 'Currency not found',
   currencyIdRequired: 'Currency required',
+  companySubscriptionNotFound: 'Company does not have any active subscription',
+  subscriptionIdRequired: 'Subscription ID required',
 };

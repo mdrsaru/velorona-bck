@@ -2,8 +2,15 @@ import { inject, injectable } from 'inversify';
 import { Resolver, Query, Ctx, Arg, Mutation, UseMiddleware, FieldResolver, Root } from 'type-graphql';
 
 import { TYPES } from '../../types';
-import { stripePrices } from '../../config/constants';
-import { SubscriptionCreateInput, SubscriptionCreateResult } from '../../entities/subscription.entity';
+import { stripePrices, Role as RoleEnum } from '../../config/constants';
+import authenticate from '../middlewares/authenticate';
+import authorize from '../middlewares/authorize';
+import { checkCompanyAccess } from '../middlewares/company';
+import {
+  SubscriptionCreateInput,
+  SubscriptionCreateResult,
+  SubscriptionCancelInput,
+} from '../../entities/subscription.entity';
 
 import { IErrorService } from '../../interfaces/common.interface';
 import { IGraphqlContext } from '../../interfaces/graphql.interface';
@@ -40,6 +47,29 @@ export class SubscriptionResolver {
       });
 
       return subscription;
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
+    }
+  }
+
+  @Mutation((returns) => String)
+  @UseMiddleware(authenticate, authorize(RoleEnum.CompanyAdmin), checkCompanyAccess)
+  async SubscriptionCancel(@Arg('input') args: SubscriptionCancelInput, @Ctx() ctx: any): Promise<string> {
+    const operation = 'SubscriptionCancel';
+
+    try {
+      const company_id = args.company_id;
+
+      const subscription = await this.subscriptionService.cancelSubscription({
+        company_id,
+      });
+
+      return 'Your subscription will be cancelled at the end of the period.';
     } catch (err) {
       this.errorService.throwError({
         err,

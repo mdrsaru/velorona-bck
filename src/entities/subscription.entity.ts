@@ -14,3 +14,9 @@ export class SubscriptionCreateInput {
   @Field()
   company_id: string;
 }
+
+@InputType()
+export class SubscriptionCancelInput {
+  @Field()
+  company_id: string;
+}

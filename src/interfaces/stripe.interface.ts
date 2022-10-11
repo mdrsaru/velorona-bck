@@ -33,3 +33,12 @@ export interface IStripeUsageRecordCreateArgs {
 export interface IStripeInvoiceArgs {
   invoiceId: string;
 }
+
+export interface IStripeSubscriptionCancelArgs {
+  subscription_id: string;
+  cancel_at_period_end: boolean;
+}
+
+export interface IStripeSubscriptionRetrieveArgs {
+  subscription_id: string;
+}

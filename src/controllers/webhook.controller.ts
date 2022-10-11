@@ -66,11 +66,25 @@ export default class WebhookController {
               });
             });
 
+          const subscription_id = (event.data.object as any)?.subscription;
+          let subscriptionPeriodEnd: Date | undefined;
+
+          if (subscription_id) {
+            const subscription = await this.stripeService.retrieveSubscription({
+              subscription_id,
+            });
+
+            if (subscription.current_period_end) {
+              subscriptionPeriodEnd = new Date(subscription.current_period_end * 1000);
+            }
+          }
+
           this.subscriptionService
             .updateSubscription({
               plan: plans.Professional,
               eventObject: event,
               subscriptionStatus: subscriptionStatus.active,
+              subscriptionPeriodEnd,
             })
             .then((company) => {
               this.logger.info({
@@ -94,6 +108,34 @@ export default class WebhookController {
 
           break;
 
+        case 'customer.subscription.deleted':
+          this.subscriptionService
+            .updateSubscription({
+              eventObject: event,
+              subscriptionStatus: (event?.data?.object as any)?.status ?? subscriptionStatus.inactive,
+            })
+            .then((company) => {
+              this.logger.info({
+                operation,
+                message: `Subscription deleted/canceled for. company ${company.id} - ${company.companyCode}`,
+                data: {
+                  company: company.id,
+                  companyCode: company.companyCode,
+                },
+              });
+            })
+            .catch((err) => {
+              this.logger.error({
+                operation,
+                message: `Error updating the subscription.`,
+                data: {
+                  err,
+                  event,
+                },
+              });
+            });
+
+        // TODO: Notify customer and handle the payment
         case 'invoice.payment_failed':
           this.subscriptionService
             .updateSubscription({
@@ -122,6 +164,7 @@ export default class WebhookController {
             });
 
           break;
+
         case 'customer.subscription.updated':
           let eventObject = event as any;
           const invoice = await this.stripeService.getInvoiceDetail({

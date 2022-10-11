@@ -13,6 +13,8 @@ import {
   IStripeInvoiceArgs,
   IStripeSubscriptionCreateArgs,
   IStripeUsageRecordCreateArgs,
+  IStripeSubscriptionCancelArgs,
+  IStripeSubscriptionRetrieveArgs,
 } from '../interfaces/stripe.interface';
 
 @injectable()
@@ -142,6 +144,50 @@ export default class StripeService {
 
       let invoice = await this.stripe.invoices.retrieve(invoiceId);
       return invoice;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  cancelSubscription = async (args: IStripeSubscriptionCancelArgs) => {
+    try {
+      const subscription_id = args.subscription_id;
+      const cancel_at_period_end = args.cancel_at_period_end;
+
+      if (!subscription_id) {
+        throw new apiError.ValidationError({
+          details: ['Subscription is required'],
+        });
+      }
+
+      const subscription = await this.stripe.subscriptions.update(subscription_id, {
+        cancel_at_period_end,
+      });
+
+      return subscription;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  retrieveSubscription = async (args: IStripeSubscriptionRetrieveArgs) => {
+    try {
+      const subscription_id = args.subscription_id;
+
+      let errors = [];
+      if (isNil(subscription_id) || !isString(subscription_id)) {
+        errors.push(strings.subscriptionIdRequired);
+      }
+
+      if (errors.length) {
+        throw new apiError.ValidationError({
+          details: errors,
+        });
+      }
+
+      const subscription = await this.stripe.subscriptions.retrieve(subscription_id);
+
+      return subscription;
     } catch (err) {
       throw err;
     }
