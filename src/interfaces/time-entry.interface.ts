@@ -5,12 +5,16 @@ import User from '../entities/user.entity';
 import TimeEntry from '../entities/time-entry.entity';
 import { IEntityID, IEntityRemove } from './common.interface';
 import { IGetAllAndCountResult, IPaginationData, IPagingArgs, IGetOptions } from './paging.interface';
+import BreakTime from '../entities/break-time.entity';
 
 export interface ITimeEntry {
   id: string;
   startTime: Date;
   endTime?: Date;
   duration?: number;
+  breakTime?: number;
+  startBreakTime?: Date;
+  endBreakTime?: Date;
   clientLocation: string;
   approver_id: string;
   project_id: string;
@@ -44,6 +48,9 @@ export interface ITimeEntryUpdateInput {
   id: ITimeEntry['id'];
   startTime?: ITimeEntry['startTime'];
   endTime?: ITimeEntry['endTime'];
+  breakTime?: ITimeEntry['breakTime'];
+  startBreakTime?: ITimeEntry['startBreakTime'];
+  endBreakTime?: ITimeEntry['endBreakTime'];
   clientLocation?: ITimeEntry['clientLocation'];
   approver_id?: ITimeEntry['approver_id'];
   project_id?: ITimeEntry['project_id'];
@@ -155,8 +162,27 @@ export interface IMarkApprovedTimeEntriesWithInvoice {
   invoice_id: string;
 }
 
+export interface IPeriodicTimeEntriesInput {
+  startDate: string;
+  endDate: string;
+  client_id: string;
+  user_id: string;
+  company_id: string;
+}
+
+export interface IMarkPeriodicApprovedTimeEntriesWithInvoice extends IPeriodicTimeEntriesInput {
+  invoice_id: string;
+}
+
 export interface ITimeEntryPaginationData extends IPaginationData<TimeEntry> {
   activeEntry?: TimeEntry;
+  activeBreakEntry?: BreakTime;
+}
+
+export interface IExpenseAndInvoicedDuration {
+  timesheet_id: string;
+  duration: number;
+  expense: number;
 }
 
 export interface ITimeEntryHourlyRateInput {
@@ -185,6 +211,20 @@ export interface ITimeEntryBulkUpdateInput {
   timesheet_id: string;
   duration: number;
   project_id: string;
+}
+
+export interface ITimeEntryBulkUpdateResult {
+  updated: boolean;
+  newEntryDetails?: {
+    startTime: Date;
+    endTime: Date;
+    clientLocation: string;
+    project_id: string;
+    company_id: string;
+    created_by: string;
+    entryType: EntryType;
+    description: string;
+  };
 }
 
 export interface ITimeEntryRepository {
@@ -224,6 +264,10 @@ export interface ITimeEntryRepository {
    */
   approveRejectTimeEntries(args: ITimeEntriesApproveRejectInput): Promise<boolean>;
   markApprovedTimeEntriesWithInvoice(args: IMarkApprovedTimeEntriesWithInvoice): Promise<boolean>;
+  /**
+   * Mark the approved time entries within a provided interval with the invoice
+   */
+  markedPeriodicApprovedTimeEntriesWithInvoice(args: IMarkPeriodicApprovedTimeEntriesWithInvoice): Promise<boolean>;
   countEntities(args: IGetOptions): Promise<number>;
   /**
    * Update hourly rate of non invoiced entries
@@ -231,7 +275,16 @@ export interface ITimeEntryRepository {
   updateHourlyRate(args: ITimeEntryHourlyRateInput): Promise<boolean>;
   totalDuration(args: ITotalDurationInput): Promise<number>;
   unlockTimeEntries(args: ITimeEntryUnlockInput): Promise<boolean>;
-  bulkUpdate(args: ITimeEntryBulkUpdateInput): Promise<boolean>;
+  bulkUpdate(args: ITimeEntryBulkUpdateInput): Promise<ITimeEntryBulkUpdateResult>;
+  /**
+   * Get total expense and invoiced duration for the periodic time entries
+   * Update the timesheets with the total expense and invoiced duration
+   */
+  updateExpenseAndInvoicedDuration(args: IPeriodicTimeEntriesInput): Promise<IExpenseAndInvoicedDuration[]>;
+  /**
+   * Check if there any approved time entries for which the invoice is to be generated
+   */
+  canGenerateInvoice(args: IPeriodicTimeEntriesInput): Promise<boolean>;
 }
 
 export interface ITimeEntryService {

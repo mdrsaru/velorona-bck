@@ -7,6 +7,7 @@ import { Base } from './base.entity';
 import { PagingInput, PagingResult } from './common.entity';
 import Project from './project.entity';
 import User from './user.entity';
+import Currency from './currency.entity';
 
 @ObjectType()
 @Unique(['user_id', 'project_id'])
@@ -21,8 +22,26 @@ export default class UserPayRate extends Base {
   endDate: Date;
 
   @Field()
+  @Column({ nullable: true })
+  user_rate_currency_id: string;
+
+  @Field((type) => Currency, { nullable: true })
+  @ManyToOne(() => Currency, { nullable: true })
+  @JoinColumn({ name: userPayRate.user_rate_currency_id })
+  userRateCurrency: Currency;
+
+  @Field()
   @Column({ default: 0 })
   amount: number;
+
+  @Field()
+  @Column({ nullable: true })
+  invoice_rate_currency_id: string;
+
+  @Field((type) => Currency, { nullable: true })
+  @ManyToOne(() => Currency, { nullable: true })
+  @JoinColumn({ name: userPayRate.invoice_rate_currency_id })
+  invoiceRateCurrency: Currency;
 
   @Field()
   @Column({ name: userPayRate.invoice_rate, default: 0 })
@@ -69,6 +88,12 @@ export class UserPayRateCreateInput {
 
   @Field()
   company_id: string;
+
+  @Field({ nullable: true })
+  user_rate_currency_id: string;
+
+  @Field({ nullable: true })
+  invoice_rate_currency_id: string;
 }
 
 @InputType()
@@ -93,6 +118,12 @@ export class UserPayRateUpdateInput {
 
   @Field({ nullable: true })
   invoiceRate: number;
+
+  @Field({ nullable: true })
+  user_rate_currency_id: string;
+
+  @Field({ nullable: true })
+  invoice_rate_currency_id: string;
 }
 
 @InputType()
@@ -105,6 +136,9 @@ export class UserPayRateQuery {
 
   @Field({ nullable: true })
   user_id: string;
+
+  @Field({ nullable: true })
+  company_id: string;
 }
 
 @InputType()

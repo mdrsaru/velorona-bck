@@ -29,6 +29,7 @@ import { ITimesheetRepository } from '../interfaces/timesheet.interface';
 import { IProjectRepository } from '../interfaces/project.interface';
 import { timeEntryEmitter } from '../subscribers/emitters';
 import Project from '../entities/project.entity';
+import { IBreakTimeRepository } from '../interfaces/break-time.interface';
 
 @injectable()
 export default class TimeEntryService implements ITimeEntryService {
@@ -37,6 +38,7 @@ export default class TimeEntryService implements ITimeEntryService {
   private userPayRateRepository: IUserPayRateRepository;
   private timesheetRepository: ITimesheetRepository;
   private projectRepository: IProjectRepository;
+  private breakTimeRepository: IBreakTimeRepository;
   private logger: ILogger;
   private errorService: IErrorService;
 
@@ -46,7 +48,8 @@ export default class TimeEntryService implements ITimeEntryService {
     @inject(TYPES.LoggerFactory) loggerFactory: (name: string) => ILogger,
     @inject(TYPES.ErrorService) errorService: IErrorService,
     @inject(TYPES.TimesheetRepository) _timesheetRepository: ITimesheetRepository,
-    @inject(TYPES.ProjectRepository) _projectRepository: IProjectRepository
+    @inject(TYPES.ProjectRepository) _projectRepository: IProjectRepository,
+    @inject(TYPES.BreakTimeRepository) _breakTimeRepository: IBreakTimeRepository
   ) {
     this.timeEntryRepository = timeEntryRepository;
     this.userPayRateRepository = userPayRateRepository;
@@ -54,6 +57,7 @@ export default class TimeEntryService implements ITimeEntryService {
     this.errorService = errorService;
     this.timesheetRepository = _timesheetRepository;
     this.projectRepository = _projectRepository;
+    this.breakTimeRepository = _breakTimeRepository;
   }
 
   getAllAndCount = async (args: IPagingArgs): Promise<ITimeEntryPaginationData> => {
@@ -65,6 +69,9 @@ export default class TimeEntryService implements ITimeEntryService {
         created_by: args?.query?.created_by ?? undefined,
       });
 
+      const activeBreakEntry = await this.breakTimeRepository.getActiveBreak({
+        time_entry_id: activeEntry?.id as string,
+      });
       const paging = Paging.getPagingResult({
         ...args,
         total: count,
@@ -74,6 +81,7 @@ export default class TimeEntryService implements ITimeEntryService {
         paging,
         data: rows,
         activeEntry,
+        activeBreakEntry,
       };
     } catch (err) {
       throw err;
@@ -112,7 +120,68 @@ export default class TimeEntryService implements ITimeEntryService {
     }
   };
 
-  create = async (args: ITimeEntryCreateInput) => {
+  create = async (args: ITimeEntryCreateInput): Promise<TimeEntry> => {
+    const operation = 'create';
+    try {
+      const startTime = args.startTime;
+      const endTime = args.endTime;
+      const clientLocation = args.clientLocation;
+      const project_id = args.project_id;
+      const company_id = args.company_id;
+      const created_by = args.created_by;
+      const entryType = args.entryType;
+      const description = args.description;
+
+      const project: any = await this.projectRepository.getById({ id: project_id });
+      const weekStartDate = moment(startTime).startOf('isoWeek');
+      const weekEndDate = moment(startTime).endOf('isoWeek');
+
+      const startDay = moment(startTime).format('dddd');
+      const endDay = endTime ? moment(endTime).format('dddd') : undefined;
+
+      // Break time entries for Sunday and Monday
+      if (startDay === 'Sunday' && endDay === 'Monday') {
+        const entries: any = [];
+        entries.push({
+          startTime,
+          endTime: new Date(moment(startTime).format('YYYY-MM-DD') + ' 23:59:59'),
+        });
+
+        entries.push({
+          startTime: new Date(moment(endTime).format('YYYY-MM-DD') + ' 00:00:00'),
+          endTime,
+        });
+
+        const result: TimeEntry[] = [];
+        for (let entry of entries) {
+          const timeEntry = await this.createEntry({
+            ...args,
+            startTime: entry.startTime,
+            endTime: entry.endTime,
+          });
+
+          result.push(timeEntry);
+        }
+
+        return result[0];
+      } else {
+        const timeEntry = await this.createEntry(args);
+        return timeEntry;
+      }
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        operation,
+        name: this.name,
+        logError: true,
+      });
+    }
+  };
+
+  /**
+   * Create a new time entry
+   */
+  createEntry = async (args: ITimeEntryCreateInput) => {
     const operation = 'create';
     const startTime = args.startTime;
     const endTime = args.endTime;
@@ -216,13 +285,50 @@ export default class TimeEntryService implements ITimeEntryService {
     const operation = 'update';
     const id = args?.id;
     const startTime = args.startTime;
-    const endTime = args.endTime;
+    let endTime = args.endTime;
     const clientLocation = args.clientLocation;
     const approver_id = args.approver_id;
     const project_id = args.project_id;
     const company_id = args.company_id;
     const created_by = args.created_by;
     const description = args.description;
+    const breakTime = args.breakTime;
+    const startBreakTime = args.startBreakTime;
+    const endBreakTime = args.endBreakTime;
+
+    let mondayStartTime: Maybe<Date>;
+    let mondayEndTime: Maybe<Date>;
+
+    /**
+     * Comment: Break Time
+     * Break time entries for Sunday and Monday
+     */
+    if (endTime) {
+      let startDay: string | undefined;
+      let __startTime = startTime;
+
+      if (__startTime) {
+        startDay = moment(__startTime).format('dddd');
+      } else {
+        const entry = await this.timeEntryRepository.getById({
+          id,
+          select: ['id', 'startTime'],
+        });
+
+        if (entry?.startTime) {
+          __startTime = entry.startTime;
+          startDay = moment(__startTime).format('dddd');
+        }
+      }
+
+      const endDay = moment(endTime).format('dddd');
+
+      if (__startTime && startDay === 'Sunday' && endDay === 'Monday') {
+        (mondayStartTime = new Date(moment(endTime).format('YYYY-MM-DD') + ' 00:00:00')), (mondayEndTime = endTime);
+
+        endTime = new Date(moment(__startTime).format('YYYY-MM-DD') + ' 23:59:59');
+      }
+    }
 
     try {
       let timeEntry = await this.timeEntryRepository.update({
@@ -235,6 +341,9 @@ export default class TimeEntryService implements ITimeEntryService {
         company_id,
         created_by,
         description,
+        breakTime,
+        startBreakTime,
+        endBreakTime,
       });
       try {
         /* Create/Update timesheet if the start/end time is provided */
@@ -285,6 +394,24 @@ export default class TimeEntryService implements ITimeEntryService {
           });
         }
       }
+
+      /**
+       * Add time entries for Monday if the start ttime is Sunday and end time is Monday
+       * Check Commment: Break Time above
+       */
+      if (mondayStartTime && mondayEndTime) {
+        await this.createEntry({
+          startTime: mondayStartTime,
+          endTime: mondayEndTime,
+          clientLocation: timeEntry?.clientLocation,
+          project_id: timeEntry.project_id,
+          company_id: timeEntry.company_id,
+          created_by: timeEntry.created_by,
+          entryType: timeEntry.entryType,
+          description: timeEntry.description,
+        });
+      }
+
       return timeEntry;
     } catch (err) {
       this.errorService.throwError({
@@ -490,7 +617,7 @@ export default class TimeEntryService implements ITimeEntryService {
       const duration = args.duration;
       const project_id = args.project_id;
 
-      const updated = await this.timeEntryRepository.bulkUpdate({
+      const result = await this.timeEntryRepository.bulkUpdate({
         date,
         timesheet_id,
         duration,
@@ -508,9 +635,16 @@ export default class TimeEntryService implements ITimeEntryService {
           endDate: timesheet.weekEndDate,
           company_id: timesheet.company_id,
         });
+
+        if (result?.newEntryDetails?.startTime && result?.newEntryDetails?.endTime) {
+          const startTime = result?.newEntryDetails?.startTime;
+          const endTime = result?.newEntryDetails?.endTime;
+
+          await this.createEntry(result.newEntryDetails);
+        }
       }
 
-      return updated;
+      return result.updated;
     } catch (err) {
       throw err;
     }

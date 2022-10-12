@@ -62,4 +62,7 @@ export default class TimesheetRepository implements ITimesheetRepository {
   getByFortnightOrMonth = async (args: IPagingArgs): Promise<IGetAllAndCountResult<Timesheet>> => {
     throw new Error('not implemented');
   };
+  getByFortnightOrMonthOrCustom(args: IPagingArgs): Promise<IGetAllAndCountResult<Timesheet>> {
+    throw new Error('not implemented');
+  }
 }

@@ -11,15 +11,18 @@ import {
 } from 'typeorm';
 import { ObjectType, Field, ID, InputType, registerEnumType } from 'type-graphql';
 
+import { AttachmentType } from '../config/constants';
 import { invoices } from '../config/db/columns';
 import { Base } from './base.entity';
 import Client from './client.entity';
 import Company from './company.entity';
 import InvoiceItem from './invoice-item.entity';
 import Timesheet from './timesheet.entity';
+import User from './user.entity';
 import { entities, InvoiceStatus } from '../config/constants';
 import { PagingResult, PagingInput } from './common.entity';
 import { InvoiceItemCreateInput, InvoiceItemUpdateInput } from './invoice-item.entity';
+import Attachment from './attached-timesheet.entity';
 
 registerEnumType(InvoiceStatus, {
   name: 'InvoiceStatus',
@@ -143,6 +146,9 @@ export default class Invoice extends Base {
   @OneToMany(() => InvoiceItem, (item) => item.invoice)
   items: InvoiceItem[];
 
+  @OneToMany(() => Attachment, (attachment) => attachment.invoice, { cascade: ['insert', 'update'] })
+  attachments: Attachment[];
+
   @Field({ nullable: true })
   @Column({
     type: 'float',
@@ -168,6 +174,34 @@ export default class Invoice extends Base {
     default: true,
   })
   needProject: boolean;
+
+  @Field()
+  @Column({
+    name: 'start_date',
+    type: 'date',
+    nullable: true,
+  })
+  startDate: string;
+
+  @Field()
+  @Column({
+    name: 'end_date',
+    type: 'date',
+    nullable: true,
+  })
+  endDate: string;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  user_id: string;
+
+  @Field((type) => User, {
+    nullable: true,
+    description: 'Employee id for the provided time entries',
+  })
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'user_id' })
+  user: User;
 }
 
 @ObjectType()
@@ -177,6 +211,27 @@ export class InvoicePagingResult {
 
   @Field(() => [Invoice])
   data: Invoice[];
+}
+
+@InputType()
+export class AttachmentCreateInput {
+  @Field()
+  description: string;
+
+  @Field()
+  attachment_id: string;
+
+  @Field()
+  created_by: string;
+
+  @Field((type) => AttachmentType)
+  type: AttachmentType;
+
+  @Field({ nullable: true })
+  amount: number;
+
+  @Field({ nullable: true })
+  date: Date;
 }
 
 @InputType()
@@ -229,8 +284,20 @@ export class InvoiceCreateInput {
   @Field({ defaultValue: true })
   needProject: boolean;
 
+  @Field({ nullable: true })
+  user_id: string;
+
+  @Field({ nullable: true })
+  startDate: string;
+
+  @Field({ nullable: true })
+  endDate: string;
+
   @Field(() => [InvoiceItemCreateInput])
   items: InvoiceItemCreateInput[];
+
+  @Field(() => [AttachmentCreateInput], { nullable: true })
+  attachments: AttachmentCreateInput[];
 }
 
 @InputType()

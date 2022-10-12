@@ -7,7 +7,13 @@ import { inject, injectable } from 'inversify';
 import { TYPES } from '../types';
 import strings from '../config/strings';
 import * as apiError from '../utils/api-error';
-import { stripeSetting, stripePrices, plans, Role as RoleEnum, subscriptionStatus } from '../config/constants';
+import {
+  stripeSetting,
+  stripePrices,
+  plans,
+  Role as RoleEnum,
+  subscriptionStatus as subscriptionStatusConfig,
+} from '../config/constants';
 import Company from '../entities/company.entity';
 import StripeService from '../services/stripe.service';
 
@@ -17,6 +23,7 @@ import {
   ISubscriptionUpdateInput,
   ISubscriptionService,
   ISubscriptionUpgradeInput,
+  ISubscriptionCancelInput,
 } from '../interfaces/subscription.interface';
 import { IStripeSubscriptionCreateArgs } from '../interfaces/stripe.interface';
 import { ICompanyRepository } from '../interfaces/company.interface';
@@ -88,7 +95,6 @@ export default class SubscriptionService implements ISubscriptionService {
 
       const subscription = (await this.stripeService.createSubscription({
         ...subscriptionPayload,
-        payment_behavior: 'default_incomplete',
         expand: ['latest_invoice.payment_intent'],
         payment_settings: { save_default_payment_method: 'on_subscription' },
       })) as any;
@@ -125,6 +131,9 @@ export default class SubscriptionService implements ISubscriptionService {
         subscriptionId,
         subscriptionItemId,
         stripeCustomerId: customer.id,
+        subscriptionPeriodEnd: subscription.current_period_end
+          ? new Date(subscription.current_period_end * 1000)
+          : undefined,
       });
 
       return {
@@ -143,6 +152,7 @@ export default class SubscriptionService implements ISubscriptionService {
       const subscriptionId = eventObject?.data?.object?.subscription ?? eventObject?.data?.object?.id;
       const subscriptionStatus = args.subscriptionStatus;
       const trialEnded = args?.trialEnded;
+      const subscriptionPeriodEnd = args?.subscriptionPeriodEnd;
 
       const company = await this.companyRepository.getSingleEntity({
         query: {
@@ -163,6 +173,42 @@ export default class SubscriptionService implements ISubscriptionService {
         plan,
         subscriptionStatus,
         trialEnded,
+        subscriptionPeriodEnd,
+      });
+
+      return company;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  cancelSubscription = async (args: ISubscriptionCancelInput): Promise<Company> => {
+    try {
+      const company_id = args.company_id;
+
+      const company = await this.companyRepository.getSingleEntity({
+        query: {
+          id: company_id,
+        },
+        select: ['id', 'companyCode', 'subscriptionId'],
+      });
+
+      if (!company) {
+        throw new apiError.NotFoundError({
+          details: [strings.companyNotFound],
+        });
+      }
+
+      if (!company.subscriptionId) {
+        throw new apiError.NotFoundError({
+          details: [strings.companySubscriptionNotFound],
+        });
+      }
+
+      //Update the company with the required plan for provisioning the service.
+      await this.stripeService.cancelSubscription({
+        subscription_id: company.subscriptionId,
+        cancel_at_period_end: true,
       });
 
       return company;
@@ -198,7 +244,7 @@ export default class SubscriptionService implements ISubscriptionService {
 
       await this.companyRepository.update({
         id: company_id,
-        subscriptionStatus: subscriptionStatus.active,
+        subscriptionStatus: subscriptionStatusConfig.active,
         trialEnded: false,
       });
       return subscription;

@@ -18,6 +18,8 @@ import Project, {
   ProjectPagingResult,
   ProjectQueryInput,
   ProjectUpdateInput,
+  ProjectItem,
+  ProjectItemInput,
 } from '../../entities/project.entity';
 
 import { IPaginationData } from '../../interfaces/paging.interface';
@@ -25,6 +27,7 @@ import { IGraphqlContext } from '../../interfaces/graphql.interface';
 import { IErrorService, IJoiService } from '../../interfaces/common.interface';
 import { IUserClientRepository } from '../../interfaces/user-client.interface';
 import { IProject, IProjectRepository, IProjectService } from '../../interfaces/project.interface';
+import { ITimeEntryRepository } from '../../interfaces/time-entry.interface';
 
 @injectable()
 @Resolver((of) => Project)
@@ -35,19 +38,22 @@ export class ProjectResolver {
   private errorService: IErrorService;
   private projectRepository: IProjectRepository;
   private userClientRepository: IUserClientRepository;
+  private timeEntryRepository: ITimeEntryRepository;
 
   constructor(
     @inject(TYPES.ProjectService) _projectService: IProjectService,
     @inject(TYPES.JoiService) _joiService: IJoiService,
     @inject(TYPES.ErrorService) _errorService: IErrorService,
     @inject(TYPES.ProjectRepository) _projectRepository: IProjectRepository,
-    @inject(TYPES.UserClientRepository) _userClientRepository: IUserClientRepository
+    @inject(TYPES.UserClientRepository) _userClientRepository: IUserClientRepository,
+    @inject(TYPES.TimeEntryRepository) _timeEntryRepository: ITimeEntryRepository
   ) {
     this.projectService = _projectService;
     this.joiService = _joiService;
     this.errorService = _errorService;
     this.projectRepository = _projectRepository;
     this.userClientRepository = _userClientRepository;
+    this.timeEntryRepository = _timeEntryRepository;
   }
 
   @Query((returns) => ProjectPagingResult)
@@ -78,6 +84,25 @@ export class ProjectResolver {
       let result: IPaginationData<Project> = await this.projectService.getAllAndCount(pagingArgs);
 
       return result;
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
+    }
+  }
+
+  @Query((returns) => [ProjectItem])
+  @UseMiddleware(authenticate, checkCompanyAccess)
+  async ProjectItems(@Arg('input') args: ProjectItemInput): Promise<ProjectItem[]> {
+    const operation = 'ProjectItems';
+
+    try {
+      let projectItems = await this.timeEntryRepository.getProjectItems(args);
+
+      return projectItems;
     } catch (err) {
       this.errorService.throwError({
         err,

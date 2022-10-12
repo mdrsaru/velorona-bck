@@ -114,7 +114,11 @@ export class InvoiceResolver {
       const discount = args.discount;
       const shipping = args.shipping;
       const needProject = args.needProject;
+      const startDate = args.startDate;
+      const endDate = args.endDate;
+      const user_id = args.user_id;
       const items = args.items;
+      const attachments = args.attachments;
 
       const schema = InvoiceValidation.create();
       await this.joiService.validate({
@@ -132,6 +136,7 @@ export class InvoiceResolver {
           company_id,
           client_id,
           items,
+          attachments,
         },
       });
 
@@ -152,7 +157,11 @@ export class InvoiceResolver {
         discount,
         shipping,
         needProject,
+        startDate,
+        endDate,
+        user_id,
         items,
+        attachments,
       });
 
       return invoice;

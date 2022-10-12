@@ -39,7 +39,7 @@ export default class ProjectValidation {
   static update() {
     return Joi.object({
       id: Joi.string().required().messages(messages.id),
-      name: Joi.string().required().messages(messages.name),
+      name: Joi.string(),
       status: Joi.string(),
       archived: Joi.boolean(),
       user_ids: Joi.array(),

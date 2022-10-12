@@ -13,6 +13,8 @@ import strings from '../config/strings';
 import Invoice from '../entities/invoice.entity';
 import BaseRepository from './base.repository';
 import * as apiError from '../utils/api-error';
+import { AttachmentType } from '../config/constants';
+import Attachment from '../entities/attached-timesheet.entity';
 
 import {
   IInvoice,
@@ -129,7 +131,11 @@ export default class InvoiceRepository extends BaseRepository<Invoice> implement
       const discount = args.discount ?? 0;
       const shipping = args.shipping ?? 0;
       const needProject = args.needProject;
+      const startDate = args.startDate;
+      const endDate = args.endDate;
+      const user_id = args.user_id;
       const items = args.items;
+      const attachments = args.attachments ?? [];
 
       const errors: string[] = [];
 
@@ -173,6 +179,22 @@ export default class InvoiceRepository extends BaseRepository<Invoice> implement
         });
       }
 
+      const attachmentEntities: Attachment[] = [];
+      if (attachments?.length) {
+        for (let att of attachments) {
+          const attachment = new Attachment();
+          attachment.description = att.description;
+          attachment.attachment_id = att.attachment_id;
+          attachment.company_id = company_id;
+          attachment.created_by = att.created_by;
+          attachment.type = att.type;
+          attachment.amount = 25;
+          attachment.date = new Date();
+
+          attachmentEntities.push(attachment);
+        }
+      }
+
       // TODO: Add transaction for rollback
       const invoice = await this.repo.save({
         status,
@@ -191,6 +213,10 @@ export default class InvoiceRepository extends BaseRepository<Invoice> implement
         discount,
         shipping,
         needProject,
+        startDate,
+        endDate,
+        user_id,
+        attachments: attachmentEntities,
       });
 
       await this.invoiceItemRepository.createMultiple({
@@ -198,9 +224,29 @@ export default class InvoiceRepository extends BaseRepository<Invoice> implement
         items,
       });
 
+      if (startDate && endDate && user_id) {
+        await this.timeEntryRepository.markedPeriodicApprovedTimeEntriesWithInvoice({
+          client_id,
+          company_id,
+          startDate,
+          endDate,
+          invoice_id: invoice.id,
+          user_id,
+        });
+
+        await this.timeEntryRepository.updateExpenseAndInvoicedDuration({
+          client_id,
+          company_id,
+          startDate,
+          endDate,
+          user_id,
+        });
+      }
+
       /**
        * As invoice is generated for particular timesheet, need to mark all the time entries with the invoice_id
        */
+      /*
       if (timesheet_id) {
         await this.timeEntryRepository.markApprovedTimeEntriesWithInvoice({
           timesheet_id,
@@ -243,6 +289,7 @@ export default class InvoiceRepository extends BaseRepository<Invoice> implement
           });
         }
       }
+      */
 
       return invoice;
     } catch (err) {

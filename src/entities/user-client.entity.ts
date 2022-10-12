@@ -86,6 +86,12 @@ export class UserClientQuery {
 
   @Field({ nullable: true })
   user_id: string;
+
+  @Field({ nullable: true })
+  company_id: string;
+
+  @Field({ nullable: true })
+  status: string;
 }
 
 @InputType()

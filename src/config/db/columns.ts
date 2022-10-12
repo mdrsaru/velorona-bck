@@ -11,6 +11,12 @@ export const taskAssignmentTable = {
   task_id: 'task_id',
 };
 
+export const breakTimeTable = {
+  start_time: 'start_time',
+  end_time: 'end_time',
+  time_entry_id: 'time_entry_id',
+};
+
 export const userProjectTable = {
   user_id: 'user_id',
   project_id: 'project_id',
@@ -42,6 +48,8 @@ export const timeEntry = {
   timesheet_id: 'timesheet_id',
   hourly_rate: 'hourly_rate',
   hourly_invoice_rate: 'hourly_invoice_rate',
+  start_break_time: 'start_break_time',
+  break_duration: 'break_duration',
 };
 
 export const timesheet = {
@@ -99,6 +107,8 @@ export const userPayRate = {
   user_id: 'user_id',
   project_id: 'project_id',
   invoice_rate: 'invoice_rate',
+  user_rate_currency_id: 'user_rate_currency_id',
+  invoice_rate_currency_id: 'invoice_rate_currency_id',
 };
 
 export const projects = {

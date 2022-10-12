@@ -17,11 +17,16 @@ import * as invoiceItemLoader from '../loaders/dataloader/invoice-item.dataloade
 import * as taskLoader from '../loaders/dataloader/task.dataloader';
 import * as timesheetLoader from '../loaders/dataloader/timesheet.dataloader';
 import * as timesheetCommentLoader from '../loaders/dataloader/timesheet-comment.dataloader';
+import * as invoicePaymentConfigLoader from '../loaders/dataloader/invoice-payment-config.dataloader';
+import * as timeEntryLoader from '../loaders/dataloader/time-entry.dataloader';
+import * as currencyLoader from '../loaders/dataloader/currency.dataloader';
 
 import { IGraphql, IGraphqlContext } from '../interfaces/graphql.interface';
 import { ITokenService, ILogger } from '../interfaces/common.interface';
 import { IUserAuth } from '../interfaces/auth.interface';
 import { IUserRepository } from '../interfaces/user.interface';
+import breakTime from '../config/inversify/break-time';
+import currency from '../config/inversify/currency';
 
 @injectable()
 export default class GraphqlService implements IGraphql {
@@ -104,6 +109,9 @@ export default class GraphqlService implements IGraphql {
         replyCountByParentIdLoader: timesheetCommentLoader.replyCountByParentIdLoader(),
         usersByEmailLoader: userLoader.usersByEmailLoader(),
         usersByProjectIdLoader: projectLoader.usersByProjectIdLoader(),
+        invoicePaymentConfigByIdLoader: invoicePaymentConfigLoader.invoicePaymentConfigByIdLoader(),
+        breakTimesByTimeEntryIdLoader: timeEntryLoader.breakTimesByTimeEntryIdLoader(),
+        currencyByIdLoader: currencyLoader.currencyByIdLoader(),
       },
     };
   };

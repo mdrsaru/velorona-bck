@@ -92,6 +92,10 @@ export default class Company extends Base {
   @Column({ name: 'subscription_status', type: 'varchar', nullable: true })
   subscriptionStatus: string;
 
+  @Field({ nullable: true, description: 'Subscription period end' })
+  @Column({ name: 'subscription_period_end', type: 'timestamp with time zone', nullable: true })
+  subscriptionPeriodEnd: Date;
+
   @Field(() => User)
   admin: User;
 }

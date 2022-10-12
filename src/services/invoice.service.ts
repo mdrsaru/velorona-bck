@@ -101,7 +101,11 @@ export default class InvoiceService implements IInvoiceService {
       const discount = args.discount;
       const shipping = args.shipping;
       const needProject = args.needProject;
+      const startDate = args.startDate;
+      const endDate = args.endDate;
+      const user_id = args.user_id;
       const items = args.items;
+      const attachments = args.attachments;
 
       const invoice = await this.invoiceRepository.create({
         timesheet_id,
@@ -120,7 +124,11 @@ export default class InvoiceService implements IInvoiceService {
         discount,
         shipping,
         needProject,
+        startDate,
+        endDate,
+        user_id,
         items,
+        attachments,
       });
 
       if (invoice.timesheet_id) {

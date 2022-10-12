@@ -28,3 +28,9 @@ export class SubscriptionUpgradeInput {
   @Field()
   paymentId: string;
 }
+
+@InputType()
+export class SubscriptionCancelInput {
+  @Field()
+  company_id: string;
+}

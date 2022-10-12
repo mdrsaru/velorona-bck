@@ -21,6 +21,7 @@ export interface ICompany {
   subscriptionItemId?: string;
   subscriptionStatus?: string;
   trialEnded?: boolean;
+  subscriptionPeriodEnd?: Date;
   createdAt: string;
   updatedAt: string;
 }
@@ -70,6 +71,7 @@ export interface ICompanyUpdate {
   subscriptionItemId?: ICompany['subscriptionItemId'];
   subscriptionStatus?: ICompany['subscriptionStatus'];
   user?: IUserUpdate;
+  subscriptionPeriodEnd?: ICompany['subscriptionPeriodEnd'];
 }
 
 export interface ICompanyCodeInput {

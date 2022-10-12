@@ -119,4 +119,9 @@ export default {
   demoAlreadyRequested: 'Demo has already been requested for the provided email',
   demoRequestNotFound: 'Demo request not found',
   trialEnded: 'Trial Ended.Please subscribe to Professional plan to use this feature again.',
+  symbolRequired: 'Symbol required',
+  currencyNotFound: 'Currency not found',
+  currencyIdRequired: 'Currency required',
+  companySubscriptionNotFound: 'Company does not have any active subscription',
+  subscriptionIdRequired: 'Subscription ID required',
 };

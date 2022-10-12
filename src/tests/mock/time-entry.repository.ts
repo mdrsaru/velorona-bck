@@ -24,6 +24,10 @@ import {
   ITotalDurationInput,
   ITimeEntryUnlockInput,
   ITimeEntryBulkUpdateInput,
+  IMarkPeriodicApprovedTimeEntriesWithInvoice,
+  IPeriodicTimeEntriesInput,
+  IExpenseAndInvoicedDuration,
+  ITimeEntryBulkUpdateResult,
 } from '../../interfaces/time-entry.interface';
 import { timeEntries } from './data';
 import { generateUuid } from './utils';
@@ -179,7 +183,23 @@ export default class TimeEntryRepository implements ITimeEntryRepository {
     throw new Error('Not implemented');
   }
 
-  bulkUpdate(args: ITimeEntryBulkUpdateInput): Promise<boolean> {
+  bulkUpdate(args: ITimeEntryBulkUpdateInput): Promise<ITimeEntryBulkUpdateResult> {
+    throw new Error('Not implemented');
+  }
+
+  markedPeriodicApprovedTimeEntriesWithInvoice = async (
+    args: IMarkPeriodicApprovedTimeEntriesWithInvoice
+  ): Promise<boolean> => {
+    throw new Error('Not implemented');
+  };
+
+  updateExpenseAndInvoicedDuration(args: IPeriodicTimeEntriesInput): Promise<IExpenseAndInvoicedDuration[]> {
+    throw new Error('Not implemented');
+  }
+  /**
+   * Check if there any approved time entries for which the invoice is to be generated
+   */
+  canGenerateInvoice(args: IPeriodicTimeEntriesInput): Promise<boolean> {
     throw new Error('Not implemented');
   }
 }

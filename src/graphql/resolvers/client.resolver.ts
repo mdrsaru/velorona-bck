@@ -98,7 +98,7 @@ export class ClientResolver {
       const phone = args.phone;
       const invoiceSchedule = args.invoiceSchedule;
       const invoice_payment_config_id = args.invoice_payment_config_id;
-      const biweeklyStartDate = args.biweeklyStartDate;
+      const scheduleStartDate = args.scheduleStartDate;
 
       const schema = ClientValidation.create();
       await this.joiService.validate({
@@ -126,7 +126,7 @@ export class ClientResolver {
         phone,
         invoiceSchedule,
         invoice_payment_config_id,
-        biweeklyStartDate,
+        scheduleStartDate,
       });
 
       return client;
@@ -156,7 +156,7 @@ export class ClientResolver {
       const phone = args.phone;
       const invoiceSchedule = args.invoiceSchedule;
       const invoice_payment_config_id = args.invoice_payment_config_id;
-      const biweeklyStartDate = args.biweeklyStartDate;
+      const scheduleStartDate = args.scheduleStartDate;
 
       const schema = ClientValidation.update();
       await this.joiService.validate({
@@ -183,7 +183,7 @@ export class ClientResolver {
         invoiceSchedule,
         invoice_payment_config_id,
         invoicingEmail,
-        biweeklyStartDate,
+        scheduleStartDate,
       });
 
       return client;
@@ -226,5 +226,12 @@ export class ClientResolver {
   @FieldResolver()
   address(@Root() root: User, @Ctx() ctx: IGraphqlContext) {
     return ctx.loaders.addressByIdLoader.load(root.address_id);
+  }
+
+  @FieldResolver()
+  invoicePayment(@Root() root: Client, @Ctx() ctx: IGraphqlContext) {
+    if (root.invoice_payment_config_id) {
+      return ctx.loaders.invoicePaymentConfigByIdLoader.load(root.invoice_payment_config_id);
+    }
   }
 }

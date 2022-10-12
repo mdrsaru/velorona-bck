@@ -39,9 +39,9 @@ export default class PDFService {
           args.doc
             .fontSize(10)
             .text(args.item, 50, args.y)
-            .fillColor('#808080')
-            .fontSize(9)
-            .text(args.description, 50, args.y + 12)
+            //.fillColor('#808080')
+            //.fontSize(9)
+            //.text(args.description, 50, args.y + 12)
             .fillColor('#444444')
             .fontSize(10)
             .text(args.quantity, 280, args.y, { width: 90, align: 'right' })
@@ -100,7 +100,17 @@ export default class PDFService {
           .text(`$${invoice.totalAmount}`, 480, customerInformationTop + 45)
           .moveDown();
 
-        this.generateHr(doc, 270);
+        if (invoice?.startDate && invoice?.endDate) {
+          doc
+            .font('Helvetica-Bold')
+            .text('Period: ', 380, customerInformationTop + 60)
+            .font('Helvetica')
+            .text(`${invoice?.startDate} - ${invoice?.endDate}`, 480, customerInformationTop + 60);
+
+          this.generateHr(doc, 285);
+        } else {
+          this.generateHr(doc, 270);
+        }
 
         // Generate table
         const invoiceTableTop = 330;

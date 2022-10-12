@@ -175,6 +175,16 @@ const DEMO_REQUEST = {
   DemoRequestResolver: Symbol('  DemoRequestResolver'),
 };
 
+const BREAK_TIME = {
+  BreakTimeRepository: Symbol('BreakTimeRepository'),
+};
+
+const CURRENCY = {
+  CurrencyRepository: Symbol('CurrencyRepository'),
+  CurrencyService: Symbol('  CurrencyService'),
+  CurrencyResolver: Symbol('  CurrencyResolver'),
+};
+
 const TYPES = {
   ...COMMON,
   ...COMPANY,
@@ -204,6 +214,8 @@ const TYPES = {
   ...INVOICE_PAYMENT_CONFIG,
   ...INVOICE_SCHEDULE,
   ...DEMO_REQUEST,
+  ...BREAK_TIME,
+  ...CURRENCY,
 };
 
 export { TYPES };

@@ -17,6 +17,7 @@ import TimeEntry, {
   TotalDurationCountInput,
   TimeEntryUnlockInput,
   TimeEntryBulkUpdateInput,
+  TimeEntryPeriodicInput,
 } from '../../entities/time-entry.entity';
 import Paging from '../../utils/paging';
 import authenticate from '../middlewares/authenticate';
@@ -165,6 +166,40 @@ export class TimeEntryResolver {
     }
   }
 
+  @Query((returns) => Boolean)
+  @UseMiddleware(authenticate, checkCompanyAccess)
+  async CanGenerateInvoice(
+    @Arg('input', { nullable: true }) args: TimeEntryPeriodicInput,
+    @Ctx() ctx: any
+  ): Promise<Boolean> {
+    const operation = 'CanGenerateInvoice';
+
+    try {
+      const startDate = args.startDate;
+      const endDate = args.endDate;
+      const client_id = args.client_id;
+      const user_id = args.user_id;
+      const company_id = args.company_id;
+
+      let result = await this.timeEntryRepository.canGenerateInvoice({
+        startDate,
+        endDate,
+        client_id,
+        user_id,
+        company_id,
+      });
+
+      return result;
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
+    }
+  }
+
   @Mutation((returns) => TimeEntry)
   @UseMiddleware(authenticate, authorize(RoleEnum.Employee), checkCompanyAccess)
   async TimeEntryCreate(@Arg('input') args: TimeEntryCreateInput, @Ctx() ctx: IGraphqlContext): Promise<TimeEntry> {
@@ -233,6 +268,9 @@ export class TimeEntryResolver {
       const company_id = args.company_id;
       const created_by = args.created_by;
       const description = args.description;
+      const startBreakTime = args.startBreakTime;
+      const endBreakTime = args.endBreakTime;
+      const breakTime = args.breakTime;
 
       const schema = TimeEntryValidation.update();
       await this.joiService.validate({
@@ -258,6 +296,9 @@ export class TimeEntryResolver {
         company_id,
         created_by,
         description,
+        startBreakTime,
+        endBreakTime,
+        breakTime,
       });
 
       return timeEntry;
@@ -465,5 +506,10 @@ export class TimeEntryResolver {
     if (root.timesheet_id) {
       return ctx.loaders.timesheetByIdLoader.load(root.timesheet_id);
     }
+  }
+
+  @FieldResolver()
+  async breakTime(@Root() root: TimeEntry, @Ctx() ctx: IGraphqlContext) {
+    return ctx.loaders.breakTimesByTimeEntryIdLoader.load(root.id);
   }
 }

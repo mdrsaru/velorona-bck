@@ -105,7 +105,7 @@ export class TimesheetResolver {
   @Query((returns) => Number)
   @UseMiddleware(authenticate, checkCompanyAccess)
   async TimesheetCount(@Arg('input', { nullable: true }) args: TimesheetCountInput, @Ctx() ctx: any): Promise<Number> {
-    const operation = 'User';
+    const operation = 'TimesheetCount';
     try {
       let result: Number = await this.timesheetRepository.countTimesheet(args);
       return result;
@@ -181,7 +181,9 @@ export class TimesheetResolver {
 
   @FieldResolver()
   status(@Root() root: Timesheet) {
-    const status = root.status.split(',');
+    let status = root.status.split(',');
+    status = _.uniq(status);
+
     if (status.length === 1) {
       return status[0];
     }
@@ -194,8 +196,11 @@ export class TimesheetResolver {
       return TimesheetStatus.Rejected;
     }
 
-    return 'Pending';
-    return root.status ?? 'Pending';
+    if (status.length > 1) {
+      return TimesheetStatus.PartiallyApproved;
+    }
+
+    return TimesheetStatus.Pending;
   }
 
   @FieldResolver()

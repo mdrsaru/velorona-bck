@@ -72,6 +72,8 @@ export const entities = {
   invoiceSchedule: 'invoice_schedule',
   userProject: 'user_project',
   demoRequest: 'demo_requests',
+  breakTimes: 'break_times',
+  currency: 'currency',
 };
 
 export enum CompanyStatus {
@@ -180,6 +182,7 @@ export enum InvoiceSchedule {
   Monthly = 'Monthly',
   Biweekly = 'Biweekly',
   Weekly = 'Weekly',
+  Custom = 'Custom',
 }
 
 export enum DemoRequestStatus {
@@ -248,6 +251,7 @@ export const stripePrices = {
 export const subscriptionStatus = {
   active: 'active',
   inactive: 'inactive',
+  canceled: 'canceled',
 };
 
 export enum SubscriptionPaymentStatus {

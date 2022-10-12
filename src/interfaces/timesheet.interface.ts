@@ -97,6 +97,10 @@ export interface ITimesheetRepository {
    * Get biweekly or monthly timesheet
    */
   getByFortnightOrMonth(args: IPagingArgs): Promise<IGetAllAndCountResult<Timesheet>>;
+  /**
+   * Get custom(will be monthly) or biweekly or monthly timesheet
+   */
+  getByFortnightOrMonthOrCustom(args: IPagingArgs): Promise<IGetAllAndCountResult<Timesheet>>;
 }
 
 export interface ITimesheetService {

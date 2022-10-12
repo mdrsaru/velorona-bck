@@ -3,7 +3,7 @@ import { Field, InputType, ObjectType, registerEnumType } from 'type-graphql';
 import { Column, Entity, Index, JoinColumn, ManyToOne, Unique } from 'typeorm';
 import { GraphQLJSON } from 'graphql-type-json';
 
-import { entities, TimesheetStatus } from '../config/constants';
+import { entities, TimesheetStatus, InvoiceSchedule } from '../config/constants';
 import { timesheet } from '../config/db/columns';
 import { Base } from './base.entity';
 import Client from './client.entity';
@@ -11,9 +11,14 @@ import TimeEntry from './time-entry.entity';
 import { PagingInput, PagingResult } from './common.entity';
 import Company from './company.entity';
 import User from './user.entity';
+import { ProjectItem } from './project.entity';
 
 registerEnumType(TimesheetStatus, {
   name: 'TimesheetStatus',
+});
+
+registerEnumType(InvoiceSchedule, {
+  name: 'InvoiceSchedule',
 });
 
 const indexPrefix = entities.timesheet;
@@ -74,9 +79,13 @@ export default class Timesheet extends Base {
   @Field({ nullable: true, description: 'Weekly duration format in HH:mm:ss' })
   durationFormat: string;
 
-  @Field({ nullable: true })
+  @Field({ nullable: true, description: 'Total invoiced amount' })
   @Column({ name: timesheet.total_expense, type: 'float', nullable: true })
   totalExpense: number;
+
+  @Field({ nullable: true, description: 'User payment for the timesheet' })
+  @Column({ name: 'user_payment', type: 'float', nullable: true, default: 0 })
+  userPayment: number;
 
   @Field({
     nullable: true,
@@ -195,24 +204,9 @@ export default class Timesheet extends Base {
     `,
   })
   entriesGroup: TimeEntryGroupByStatusInvoice;
-}
 
-@ObjectType({ description: 'Projects related to timesheet with total duration and expense' })
-export class ProjectItem {
-  @Field()
-  project_id: string;
-
-  @Field({ description: 'Total duration in hours' })
-  totalHours: number;
-
-  @Field()
-  totalDuration: number;
-
-  @Field()
-  hourlyRate: number;
-
-  @Field()
-  totalExpense: number;
+  @Field(() => InvoiceSchedule, { nullable: true })
+  period: InvoiceSchedule;
 }
 
 @InputType()
