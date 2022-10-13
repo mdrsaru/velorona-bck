@@ -1,3 +1,5 @@
+import fs from 'fs';
+
 import { timesheetEmitter, timeEntryEmitter } from './emitters';
 import { TYPES } from '../types';
 import { events } from '../config/constants';
@@ -214,10 +216,12 @@ timeEntryEmitter.on(events.onTimesheetUnlock, async (args: TimesheetUnlock) => {
       });
     }
 
+    let emailTemplate = fs.readFileSync(`${__dirname}/../templates/unlock-timesheet-template.html`, 'utf8').toString();
     const userHtml = handlebarsService.compile({
-      template: emailBody,
+      template: emailTemplate,
       data: {
         week: `${timesheet.weekStartDate} - ${timesheet.weekEndDate}`,
+        user: timesheet.user.firstName,
       },
     });
 

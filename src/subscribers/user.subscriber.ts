@@ -3,6 +3,7 @@ import constants, { emailSetting, events } from '../config/constants';
 import { TYPES } from '../types';
 import container from '../inversify.config';
 import Company from '../entities/company.entity';
+import fs from 'fs';
 
 import { IEmailService, ITemplateService, ILogger } from '../interfaces/common.interface';
 import { ICompanyRepository } from '../interfaces/company.interface';
@@ -38,13 +39,16 @@ userEmitter.on(events.onUserCreate, async (data: any) => {
       id: data.company_id,
     });
   }
+  let emailTemplate = fs.readFileSync(`${__dirname}/../templates/new-user-template.html`, 'utf8').toString();
 
   const userHtml = handlebarsService.compile({
-    template: emailBody,
+    template: emailTemplate,
     data: {
+      fullName: data?.user?.firstName ?? 'User!',
       companyCode: company?.companyCode ?? '',
       password: data?.password,
       link: `${constants.frontEndUrl}/login`,
+      email: data?.user?.email,
     },
   });
 
