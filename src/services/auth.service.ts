@@ -1,4 +1,5 @@
 import { inject, injectable } from 'inversify';
+import fs from 'fs';
 
 import { TYPES } from '../types';
 import constants, {
@@ -304,8 +305,10 @@ export default class AuthService implements IAuthService {
 
       const emailBody: string = emailSetting.resetPassword.body;
       const resetPasswordLink = `${constants.frontendUrl}/reset-password?token=${token}`;
+      let emailTemplate = fs.readFileSync(`${__dirname}/../templates/reset-password-template.html`, 'utf8').toString();
+
       const resetPasswordHtml = this.handlebarsService.compile({
-        template: emailBody,
+        template: emailTemplate,
         data: {
           resetPasswordLink,
         },
