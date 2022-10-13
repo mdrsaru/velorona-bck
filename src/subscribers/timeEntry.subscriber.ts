@@ -216,7 +216,9 @@ timeEntryEmitter.on(events.onTimesheetUnlock, async (args: TimesheetUnlock) => {
       });
     }
 
-    let emailTemplate = fs.readFileSync(`${__dirname}/../templates/unlock-timesheet-template.html`, 'utf8').toString();
+    let emailTemplate = fs
+      .readFileSync(`${__dirname}/../../templates/unlock-timesheet-template.html`, 'utf8')
+      .toString();
     const userHtml = handlebarsService.compile({
       template: emailTemplate,
       data: {

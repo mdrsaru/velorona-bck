@@ -97,7 +97,7 @@ invoiceEmitter.on(events.sendInvoice, async (data: any) => {
     let emailBody: string = emailSetting.invoice.body;
     let company: Company | undefined;
 
-    let emailTemplate = fs.readFileSync(`${__dirname}/../templates/invoice-template.html`, 'utf8').toString();
+    let emailTemplate = fs.readFileSync(`${__dirname}/../../templates/invoice-template.html`, 'utf8').toString();
 
     const invoiceHtml = handlebarsService.compile({
       template: emailTemplate,

@@ -39,7 +39,7 @@ userEmitter.on(events.onUserCreate, async (data: any) => {
       id: data.company_id,
     });
   }
-  let emailTemplate = fs.readFileSync(`${__dirname}/../templates/new-user-template.html`, 'utf8').toString();
+  let emailTemplate = fs.readFileSync(`${__dirname}/../../templates/new-user-template.html`, 'utf8').toString();
 
   const userHtml = handlebarsService.compile({
     template: emailTemplate,
