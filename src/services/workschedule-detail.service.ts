@@ -218,7 +218,7 @@ export default class WorkscheduleDetailService implements IWorkscheduleDetailSer
 
   bulkCreate = async (args: IWorkscheduleDetailCopyInput) => {
     const operation = 'create';
-    const given_schedule_date: any = args.schedule_date;
+    let given_schedule_date: any = args.schedule_date;
     const workscheduleId = args.workschedule_id;
     const copy_workschedule_id = args.copy_workschedule_id;
     const user_id = args.user_id;
@@ -235,11 +235,11 @@ export default class WorkscheduleDetailService implements IWorkscheduleDetailSer
       if (!workscheduleDetails?.length) {
         throw new NotFoundError({ details: ['Workschedule of this user in selected date not found'] });
       } else {
-        let diffDays = await this.dateDifference(given_schedule_date, workscheduleDetails?.[0]?.schedule_date);
+        let weekStartDate = moment(workscheduleDetails?.[0]?.schedule_date).startOf('isoWeek');
         workscheduleDetails.map(async (workscheduleDetail, index) => {
-          let schedule_date = new Date(
-            workscheduleDetail?.schedule_date.setDate(workscheduleDetail?.schedule_date.getDate() + diffDays)
-          );
+          let diffDays = await this.dateDifference(workscheduleDetails?.[index]?.schedule_date, weekStartDate);
+          let schedule_date = new Date(moment(given_schedule_date).add(diffDays, 'days').format('YYYY-MM-DD'));
+
           let workschedule_id = workscheduleId;
           let duration = workscheduleDetail?.duration;
           let user_id = workscheduleDetail.user_id;
