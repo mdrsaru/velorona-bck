@@ -225,4 +225,49 @@ export default class StripeService {
       throw err;
     }
   };
+
+  /**
+   * Create setup intent
+   * Docs: https://stripe.com/docs/api/setup_intents
+   */
+  createSetupIntent = async (args: Stripe.SetupIntentCreateParams) => {
+    try {
+      const { customer, ...rest } = args;
+
+      let errors = [];
+      if (isNil(customer) || !isString(customer)) {
+        errors.push(strings.customerRequired);
+      }
+
+      if (errors.length) {
+        throw new apiError.ValidationError({
+          details: errors,
+        });
+      }
+
+      const setupIntent = await this.stripe.setupIntents.create({
+        customer,
+        ...rest,
+      });
+
+      return setupIntent;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  /**
+   * Update subscription
+   * @param {string} id - Subscription id
+   * @param {Object} params - Subscription Update Params(Stripe.SubscriptionUpdateParams)
+   */
+  updateSubscription = async (id: string, params?: Stripe.SubscriptionUpdateParams) => {
+    try {
+      const subscription = await this.stripe.subscriptions.update(id, params);
+
+      return subscription;
+    } catch (err) {
+      throw err;
+    }
+  };
 }

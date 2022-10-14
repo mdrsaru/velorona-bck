@@ -124,4 +124,7 @@ export default {
   currencyIdRequired: 'Currency required',
   companySubscriptionNotFound: 'Company does not have any active subscription',
   subscriptionIdRequired: 'Subscription ID required',
+  customerOrSubscriptionMissing: 'Either customer or subscription is missing.',
+  alreadyInStarterPlan: 'Your company is already in Starter plan.',
+  subscriptionNotFound: 'Subscription not found',
 };

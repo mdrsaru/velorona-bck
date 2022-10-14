@@ -252,6 +252,11 @@ export const subscriptionStatus = {
   active: 'active',
   inactive: 'inactive',
   canceled: 'canceled',
+  trialing: 'trialing',
+  past_due: 'past_due',
+  unpaid: 'unpaid',
+  incomplete: 'incomplete',
+  incomplete_expired: 'incomplete_expired',
 };
 
 export enum SubscriptionPaymentStatus {

@@ -96,6 +96,10 @@ export default class Company extends Base {
   @Column({ name: 'subscription_period_end', type: 'timestamp with time zone', nullable: true })
   subscriptionPeriodEnd: Date;
 
+  @Field({ nullable: true, description: 'Subscription trial end date' })
+  @Column({ name: 'trial_end_date', type: 'timestamp with time zone', nullable: true })
+  trialEndDate: Date;
+
   @Field(() => User)
   admin: User;
 }

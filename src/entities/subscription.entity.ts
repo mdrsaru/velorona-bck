@@ -34,3 +34,21 @@ export class SubscriptionCancelInput {
   @Field()
   company_id: string;
 }
+
+@InputType()
+export class SetupIntentSecretInput {
+  @Field()
+  company_id: string;
+}
+
+@ObjectType()
+export class SetupIntentResult {
+  @Field()
+  clientSecret: string;
+}
+
+@InputType()
+export class SubscriptionDowngradeInput {
+  @Field()
+  company_id: string;
+}

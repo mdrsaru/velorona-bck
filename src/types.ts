@@ -17,6 +17,7 @@ const COMMON = {
   HandlebarsService: Symbol('HandlebarsService'),
   UserClientRepository: Symbol('UserClientRepository'),
   WebhookController: Symbol('WebhookController'),
+  WebhookService: Symbol('WebhookService'),
 };
 
 const COMPANY = {

@@ -27,6 +27,7 @@ import TokenService from '../../services/jwt.service';
 import SendGridService from '../../services/sendgrid.service';
 import HandlebarsService from '../../services/handlebars.service';
 import WebhookController from '../../controllers/webhook.controller';
+import WebhookService from '../../services/webhook.service';
 
 export const app = new ContainerModule((bind: interfaces.Bind, unbind: interfaces.Unbind) => {
   bind<IAppService>(TYPES.AppService).to(AppService);
@@ -74,4 +75,5 @@ export const joi = new ContainerModule((bind: interfaces.Bind, unbind: interface
 
 export const webhook = new ContainerModule((bind: interfaces.Bind, unbind: interfaces.Unbind) => {
   bind<WebhookController>(TYPES.WebhookController).to(WebhookController);
+  bind<WebhookService>(TYPES.WebhookService).to(WebhookService);
 });
