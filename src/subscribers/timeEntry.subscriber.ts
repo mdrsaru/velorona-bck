@@ -1,4 +1,4 @@
-import fs from 'fs';
+import fs from 'fs/promises';
 
 import { timesheetEmitter, timeEntryEmitter } from './emitters';
 import { TYPES } from '../types';
@@ -216,9 +216,10 @@ timeEntryEmitter.on(events.onTimesheetUnlock, async (args: TimesheetUnlock) => {
       });
     }
 
-    let emailTemplate = fs
-      .readFileSync(`${__dirname}/../../templates/unlock-timesheet-template.html`, 'utf8')
-      .toString();
+    let emailTemplate = await fs.readFile(`${__dirname}/../../templates/unlock-timesheet-template.html`, {
+      encoding: 'utf-8',
+    });
+
     const userHtml = handlebarsService.compile({
       template: emailTemplate,
       data: {
@@ -227,12 +228,23 @@ timeEntryEmitter.on(events.onTimesheetUnlock, async (args: TimesheetUnlock) => {
       },
     });
 
+    const logo = await fs.readFile(`${__dirname}/../../public/logo.png`, { encoding: 'base64' });
+
     emailService
       .sendEmail({
         to: timesheet.user.email as string,
         from: emailSetting.fromEmail,
         subject: emailSetting.unlockTimesheet.subject,
         html: userHtml,
+        attachments: [
+          {
+            content: logo,
+            filename: `velorona.png`,
+            content_id: 'logo',
+            disposition: 'inline',
+            type: 'image/png',
+          },
+        ],
       })
       .then((response) => {
         logger.info({

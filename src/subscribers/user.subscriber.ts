@@ -3,7 +3,7 @@ import constants, { emailSetting, events } from '../config/constants';
 import { TYPES } from '../types';
 import container from '../inversify.config';
 import Company from '../entities/company.entity';
-import fs from 'fs';
+import fs from 'fs/promises';
 
 import { IEmailService, ITemplateService, ILogger } from '../interfaces/common.interface';
 import { ICompanyRepository } from '../interfaces/company.interface';
@@ -39,7 +39,7 @@ userEmitter.on(events.onUserCreate, async (data: any) => {
       id: data.company_id,
     });
   }
-  let emailTemplate = fs.readFileSync(`${__dirname}/../../templates/new-user-template.html`, 'utf8').toString();
+  let emailTemplate = await fs.readFile(`${__dirname}/../../templates/new-user-template.html`, { encoding: 'utf-8' });
 
   const userHtml = handlebarsService.compile({
     template: emailTemplate,
@@ -52,12 +52,23 @@ userEmitter.on(events.onUserCreate, async (data: any) => {
     },
   });
 
+  const logo = await fs.readFile(`${__dirname}/../../public/logo.png`, { encoding: 'base64' });
+
   emailService
     .sendEmail({
       to: data.user.email,
       from: emailSetting.fromEmail,
       subject: emailSetting.newUser.subject,
       html: userHtml,
+      attachments: [
+        {
+          content: logo,
+          filename: `velorona.png`,
+          content_id: 'logo',
+          disposition: 'inline',
+          type: 'image/png',
+        },
+      ],
     })
     .then((response) => {
       logger.info({

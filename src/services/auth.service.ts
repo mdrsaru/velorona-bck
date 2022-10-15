@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import fs from 'fs';
+import fs from 'fs/promises';
 
 import { TYPES } from '../types';
 import constants, {
@@ -305,9 +305,9 @@ export default class AuthService implements IAuthService {
 
       const emailBody: string = emailSetting.resetPassword.body;
       const resetPasswordLink = `${constants.frontendUrl}/reset-password?token=${token}`;
-      let emailTemplate = fs
-        .readFileSync(`${__dirname}/../../templates/reset-password-template.html`, 'utf8')
-        .toString();
+      let emailTemplate = await fs.readFile(`${__dirname}/../../templates/reset-password-template.html`, {
+        encoding: 'utf-8',
+      });
 
       const resetPasswordHtml = this.handlebarsService.compile({
         template: emailTemplate,
@@ -316,6 +316,8 @@ export default class AuthService implements IAuthService {
         },
       });
 
+      const logo = await fs.readFile(`${__dirname}/../../public/logo.png`, { encoding: 'base64' });
+
       // send email asynchronously
       this.emailService
         .sendEmail({
@@ -323,6 +325,15 @@ export default class AuthService implements IAuthService {
           from: emailSetting.fromEmail,
           subject: emailSetting.resetPassword.subject,
           html: resetPasswordHtml,
+          attachments: [
+            {
+              content: logo,
+              filename: `velorona.png`,
+              content_id: 'logo',
+              disposition: 'inline',
+              type: 'image/png',
+            },
+          ],
         })
         .then((response) => {
           this.logger.info({
