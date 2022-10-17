@@ -35,11 +35,6 @@ export default class Company extends Base {
   @Column({ default: false })
   archived: boolean;
 
-  @Index(`${indexPrefix}_trial_ended`)
-  @Field()
-  @Column({ default: false, name: 'trial_ended' })
-  trialEnded: boolean;
-
   @Index(`${indexPrefix}_company_code`)
   @Field()
   @Column({ unique: true, name: 'company_code' })
