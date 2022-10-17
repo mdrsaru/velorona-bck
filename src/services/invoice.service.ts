@@ -24,7 +24,6 @@ import {
 import { IInvoiceItemRepository } from '../interfaces/invoice-item.interface';
 import { IClientRepository } from '../interfaces/client.interface';
 import { IUserRepository } from '../interfaces/user.interface';
-import { IInvoiceScheduleRepository } from '../interfaces/invoice-schedule.interface';
 import { ITimeEntryRepository } from '../interfaces/time-entry.interface';
 import { ITimesheetRepository } from '../interfaces/timesheet.interface';
 import { IAttachedTimesheetRepository } from '../interfaces/attached-timesheet.interface';
@@ -35,7 +34,6 @@ export default class InvoiceService implements IInvoiceService {
   private invoiceItemRepository: IInvoiceItemRepository;
   private clientRepository: IClientRepository;
   private userRepository: IUserRepository;
-  private invoiceScheduleRepository: IInvoiceScheduleRepository;
   private timeEntryRepository: ITimeEntryRepository;
   private timesheetRepository: ITimesheetRepository;
   private attachedTimesheetRepository: IAttachedTimesheetRepository;
@@ -47,7 +45,6 @@ export default class InvoiceService implements IInvoiceService {
     @inject(TYPES.InvoiceItemRepository) _invoiceItemRepository: IInvoiceItemRepository,
     @inject(TYPES.ClientRepository) _clientRepository: IClientRepository,
     @inject(TYPES.UserRepository) _userRepository: IUserRepository,
-    @inject(TYPES.InvoiceScheduleRepository) _invoiceScheduleRepository: IInvoiceScheduleRepository,
     @inject(TYPES.TimeEntryRepository) _timeEntryRepository: ITimeEntryRepository,
     @inject(TYPES.TimesheetRepository) _timesheetRepository: ITimesheetRepository,
     @inject(TYPES.AttachedTimesheetRepository) _attachedTimesheetRepository: IAttachedTimesheetRepository,
@@ -58,7 +55,6 @@ export default class InvoiceService implements IInvoiceService {
     this.invoiceItemRepository = _invoiceItemRepository;
     this.clientRepository = _clientRepository;
     this.userRepository = _userRepository;
-    this.invoiceScheduleRepository = _invoiceScheduleRepository;
     this.timeEntryRepository = _timeEntryRepository;
     this.timesheetRepository = _timesheetRepository;
     this.attachedTimesheetRepository = _attachedTimesheetRepository;
@@ -290,6 +286,8 @@ export default class InvoiceService implements IInvoiceService {
     }
   };
 
+  /**
+   * Not needed now, might need in the future for reference
   createInvoiceFromScheduleDate = async (args: IInvoiceScheduleInput): Promise<Invoice[]> => {
     try {
       const date = args.date;
@@ -377,4 +375,5 @@ export default class InvoiceService implements IInvoiceService {
       throw err;
     }
   };
+  */
 }
