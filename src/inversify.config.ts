@@ -28,7 +28,6 @@ import workscheduleTimeDetail from './config/inversify/workschedule-time-detail'
 import subscriptionPayment from './config/inversify/subscription-payment';
 import timesheetComment from './config/inversify/timesheet-comment';
 import invoicePaymentConfig from './config/inversify/invoice-payment-config';
-import invoiceSchedule from './config/inversify/invoice-schedule';
 import demoRequest from './config/inversify/demo-request';
 import breakTime from './config/inversify/break-time';
 import currency from './config/inversify/currency';
@@ -73,7 +72,6 @@ container.load(
   subscriptionPayment,
   timesheetComment,
   invoicePaymentConfig,
-  invoiceSchedule,
   demoRequest,
   breakTime,
   currency,

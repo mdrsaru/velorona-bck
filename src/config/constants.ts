@@ -69,7 +69,6 @@ export const entities = {
   subscriptionPayments: 'subscription_payments',
   timesheetComments: 'timesheet_comments',
   invoicePaymentConfig: 'invoice_payment_config',
-  invoiceSchedule: 'invoice_schedule',
   userProject: 'user_project',
   demoRequest: 'demo_requests',
   breakTimes: 'break_times',
@@ -227,7 +226,6 @@ export const events = {
   onTimeSheetApproveOrReject: 'onTimeSheetApproveOrReject',
   updateCompanySubscriptionUsage: 'updateCompanySubscriptionUsage',
   onTimesheetUnlock: 'onTimesheetUnlock',
-  onTimesheetCreate: 'onTimesheetCreate',
   onSubscriptionCreate: 'onSubscriptionCreate',
   updateWorkscheduleUsage: 'updateWorkscheduleUsage',
 };
