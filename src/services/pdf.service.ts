@@ -139,7 +139,7 @@ export default class PDFService {
             y: position,
             item: items[i]?.project?.name,
             description: items[i]?.description,
-            quantity: `$${items[i]?.quantity}`,
+            quantity: `${items[i]?.quantity}`,
             price: `$${items[i]?.rate}`,
             amount: `$${items[i]?.amount}`,
           });
