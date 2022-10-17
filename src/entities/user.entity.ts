@@ -395,6 +395,9 @@ export class UserCountInput {
 
   @Field({ nullable: true })
   manager_id: string;
+
+  @Field({ nullable: true })
+  role: string;
 }
 
 @InputType()
