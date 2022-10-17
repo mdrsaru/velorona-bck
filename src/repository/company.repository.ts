@@ -209,6 +209,7 @@ export default class CompanyRepository extends BaseRepository<Company> implement
       const user = args.user;
       const trialEnded = args.trialEnded;
       const subscriptionPeriodEnd = args.subscriptionPeriodEnd;
+      const trialEndDate = args.trialEndDate;
 
       const found = await this.getById({ id });
 
@@ -231,6 +232,7 @@ export default class CompanyRepository extends BaseRepository<Company> implement
         subscriptionStatus,
         trialEnded,
         subscriptionPeriodEnd,
+        trialEndDate,
       });
 
       const company = await this.repo.save(update);

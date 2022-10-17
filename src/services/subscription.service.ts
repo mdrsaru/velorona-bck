@@ -22,7 +22,9 @@ import {
   ISubscriptionCreateResult,
   ISubscriptionUpdateInput,
   ISubscriptionService,
+  ISubscriptionUpgradeInput,
   ISubscriptionCancelInput,
+  ISubscriptionDowngradeInput,
 } from '../interfaces/subscription.interface';
 import { IStripeSubscriptionCreateArgs } from '../interfaces/stripe.interface';
 import { ICompanyRepository } from '../interfaces/company.interface';
@@ -73,13 +75,21 @@ export default class SubscriptionService implements ISubscriptionService {
         });
       }
 
-      const customer = await this.stripeService.createCustomer({
-        email: company.adminEmail,
-      });
+      let customerId: string;
+
+      if (company.stripeCustomerId) {
+        customerId = company.stripeCustomerId;
+      } else {
+        const customer = await this.stripeService.createCustomer({
+          email: company.adminEmail,
+        });
+        customerId = customer.id;
+      }
 
       const subscriptionPayload: IStripeSubscriptionCreateArgs = {
-        customer: customer.id,
+        customer: customerId,
         items: prices.map((price) => ({ price })),
+        cancel_at_period_end: false,
       };
 
       if (trial) {
@@ -93,7 +103,6 @@ export default class SubscriptionService implements ISubscriptionService {
 
       const subscription = (await this.stripeService.createSubscription({
         ...subscriptionPayload,
-        payment_behavior: 'default_incomplete',
         expand: ['latest_invoice.payment_intent'],
         payment_settings: { save_default_payment_method: 'on_subscription' },
       })) as any;
@@ -129,10 +138,7 @@ export default class SubscriptionService implements ISubscriptionService {
         id: company.id,
         subscriptionId,
         subscriptionItemId,
-        stripeCustomerId: customer.id,
-        subscriptionPeriodEnd: subscription.current_period_end
-          ? new Date(subscription.current_period_end * 1000)
-          : undefined,
+        stripeCustomerId: customerId,
       });
 
       return {
@@ -148,10 +154,11 @@ export default class SubscriptionService implements ISubscriptionService {
     try {
       const plan = args.plan;
       const eventObject = args.eventObject;
-      const subscriptionId = eventObject?.data?.object?.subscription ?? eventObject?.data?.object?.id;
+      const subscriptionId = args.subscription_id;
       const subscriptionStatus = args.subscriptionStatus;
       const trialEnded = args?.trialEnded;
       const subscriptionPeriodEnd = args?.subscriptionPeriodEnd;
+      const trialEndDate = args?.trialEndDate;
 
       const company = await this.companyRepository.getSingleEntity({
         query: {
@@ -173,6 +180,7 @@ export default class SubscriptionService implements ISubscriptionService {
         subscriptionStatus,
         trialEnded,
         subscriptionPeriodEnd,
+        trialEndDate,
       });
 
       return company;
@@ -211,6 +219,160 @@ export default class SubscriptionService implements ISubscriptionService {
       });
 
       return company;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  upgradeSubscription = async (args: ISubscriptionUpgradeInput): Promise<any> => {
+    try {
+      const company_id = args.company_id;
+      const userId = args.userId;
+      const paymentId = args.paymentId;
+
+      const company = await this.companyRepository.getSingleEntity({
+        query: {
+          id: company_id,
+          adminEmail: userId,
+        },
+        select: ['id', 'subscriptionId'],
+      });
+
+      if (!company) {
+        throw new apiError.NotFoundError({
+          details: [strings.companyNotFound],
+        });
+      }
+
+      const subscription = await this.stripeService.upgradeSubscription({
+        subscriptionId: company?.subscriptionId as string,
+        paymentId,
+      });
+
+      await this.companyRepository.update({
+        id: company_id,
+        subscriptionStatus: subscriptionStatusConfig.active,
+        trialEnded: false,
+      });
+      return subscription;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  createSetupIntent = async (args: ISubscriptionUpgradeInput): Promise<any> => {
+    try {
+      const company_id = args.company_id;
+
+      const company = await this.companyRepository.getSingleEntity({
+        query: {
+          id: company_id,
+        },
+        select: ['id', 'subscriptionId', 'stripeCustomerId'],
+      });
+
+      if (!company) {
+        throw new apiError.NotFoundError({
+          details: [strings.companyNotFound],
+        });
+      }
+
+      const subscription_id = company.subscriptionId;
+      const customer_id = company.stripeCustomerId;
+
+      if (!subscription_id || !customer_id) {
+        throw new apiError.NotFoundError({
+          details: [strings.customerOrSubscriptionMissing],
+        });
+      }
+
+      if (company.subscriptionStatus === 'trialing') {
+        const subscription = await this.stripeService.retrieveSubscription({
+          subscription_id,
+        });
+
+        if (subscription.default_payment_method) {
+          throw new apiError.ConflictError({
+            message: 'Details already updated',
+            details: ['Payment details has already been updated'],
+          });
+        }
+      }
+
+      const setupIntent = await this.stripeService.createSetupIntent({
+        customer: customer_id,
+        metadata: {
+          customer_id,
+          company_id,
+          subscription_id,
+        },
+      });
+
+      return setupIntent;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  downgradeSubscription = async (args: ISubscriptionDowngradeInput): Promise<void> => {
+    try {
+      const company_id = args.company_id;
+
+      const company = await this.companyRepository.getById({
+        id: company_id,
+        select: ['id', 'subscriptionId'],
+      });
+
+      if (!company) {
+        throw new apiError.NotFoundError({
+          details: [strings.companyNotFound],
+        });
+      }
+
+      const subscription_id = company.subscriptionId;
+      if (!subscription_id) {
+        throw new apiError.ConflictError({
+          details: [strings.companySubscriptionNotFound],
+        });
+      }
+
+      if (company.plan === 'Starter') {
+        throw new apiError.ConflictError({
+          details: [strings.alreadyInStarterPlan],
+        });
+      }
+
+      const subscription = await this.stripeService.retrieveSubscription({
+        subscription_id,
+      });
+
+      if (!subscription) {
+        throw new apiError.NotFoundError({
+          details: [strings.subscriptionNotFound],
+        });
+      }
+
+      /**
+       * If the cancel_at_period_end is true, subscription is already to ready to be cancelled at the period end
+       */
+      if (subscription.cancel_at_period_end) {
+        throw new apiError.ConflictError({
+          message: 'Cannot downgrade',
+          details: ['Subscription already in process of downgrading. It will be drowngraded at the period end'],
+        });
+      }
+
+      /**
+       * Adding meta data to be used in the customer.subscription.deleted webhook
+       * Check customer.subscription.deleted webhook in the src/controllers/webhook.controller.ts
+       */
+      await this.stripeService.updateSubscription(company.subscriptionId, {
+        cancel_at_period_end: true,
+        metadata: {
+          company_id: company.id,
+          downgrade: args.plan,
+        },
+      });
     } catch (err) {
       throw err;
     }

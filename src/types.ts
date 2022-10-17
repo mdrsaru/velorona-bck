@@ -17,6 +17,7 @@ const COMMON = {
   HandlebarsService: Symbol('HandlebarsService'),
   UserClientRepository: Symbol('UserClientRepository'),
   WebhookController: Symbol('WebhookController'),
+  WebhookService: Symbol('WebhookService'),
 };
 
 const COMPANY = {
@@ -165,10 +166,6 @@ const INVOICE_PAYMENT_CONFIG = {
   InvoicePaymentConfigResolver: Symbol('  InvoicePaymentConfigResolver'),
 };
 
-const INVOICE_SCHEDULE = {
-  InvoiceScheduleRepository: Symbol('InvoiceScheduleRepository'),
-};
-
 const DEMO_REQUEST = {
   DemoRequestRepository: Symbol('DemoRequestRepository'),
   DemoRequestService: Symbol('  DemoRequestService'),
@@ -212,7 +209,6 @@ const TYPES = {
   ...SUBSCRIPTION_PAYMENT,
   ...TIMESHEET_COMMENT,
   ...INVOICE_PAYMENT_CONFIG,
-  ...INVOICE_SCHEDULE,
   ...DEMO_REQUEST,
   ...BREAK_TIME,
   ...CURRENCY,

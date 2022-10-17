@@ -69,7 +69,6 @@ export const entities = {
   subscriptionPayments: 'subscription_payments',
   timesheetComments: 'timesheet_comments',
   invoicePaymentConfig: 'invoice_payment_config',
-  invoiceSchedule: 'invoice_schedule',
   userProject: 'user_project',
   demoRequest: 'demo_requests',
   breakTimes: 'break_times',
@@ -227,7 +226,6 @@ export const events = {
   onTimeSheetApproveOrReject: 'onTimeSheetApproveOrReject',
   updateCompanySubscriptionUsage: 'updateCompanySubscriptionUsage',
   onTimesheetUnlock: 'onTimesheetUnlock',
-  onTimesheetCreate: 'onTimesheetCreate',
   onSubscriptionCreate: 'onSubscriptionCreate',
   updateWorkscheduleUsage: 'updateWorkscheduleUsage',
 };
@@ -252,6 +250,11 @@ export const subscriptionStatus = {
   active: 'active',
   inactive: 'inactive',
   canceled: 'canceled',
+  trialing: 'trialing',
+  past_due: 'past_due',
+  unpaid: 'unpaid',
+  incomplete: 'incomplete',
+  incomplete_expired: 'incomplete_expired',
 };
 
 export enum SubscriptionPaymentStatus {
@@ -293,4 +296,5 @@ export default {
   frontendUrl: process.env.FRONT_END_URL || 'http://localhost:3000',
   mediaDestination: './public/uploads',
   fileSize: 10000000,
+  amount: 1000,
 };

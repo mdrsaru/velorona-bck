@@ -17,6 +17,7 @@ export default (): void => {
   const invoiceService = container.get<IInvoiceService>(TYPES.InvoiceService);
   const timesheetService = container.get<ITimesheetService>(TYPES.TimesheetService);
 
+  /**
   new CronJob(
     '0 0 1 * * *',
     function () {
@@ -44,6 +45,7 @@ export default (): void => {
     true,
     'Asia/Kathmandu'
   );
+  */
 
   new CronJob(
     '0 5 * * MON',

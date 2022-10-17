@@ -562,12 +562,6 @@ export default class TimeEntryService implements ITimeEntryService {
           client_id,
           company_id,
         });
-
-        timesheetEmitter.emit(events.onTimesheetCreate, {
-          timesheet_id: timesheet.id,
-          client_id,
-          weekStartDate,
-        });
       }
 
       workscheduleEmitter.emit(events.updateWorkscheduleUsage, {

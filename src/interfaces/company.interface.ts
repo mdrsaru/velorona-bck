@@ -22,6 +22,7 @@ export interface ICompany {
   subscriptionStatus?: string;
   trialEnded?: boolean;
   subscriptionPeriodEnd?: Date;
+  trialEndDate?: Date;
   createdAt: string;
   updatedAt: string;
 }
@@ -66,12 +67,13 @@ export interface ICompanyUpdate {
   logo_id?: ICompany['logo_id'];
   plan?: ICompany['plan'];
   trialEnded?: ICompany['trialEnded'];
-  stripeCustomerId?: ICompany['stripeCustomerId'];
-  subscriptionId?: ICompany['subscriptionId'];
-  subscriptionItemId?: ICompany['subscriptionItemId'];
-  subscriptionStatus?: ICompany['subscriptionStatus'];
+  stripeCustomerId?: ICompany['stripeCustomerId'] | null;
+  subscriptionId?: ICompany['subscriptionId'] | null;
+  subscriptionItemId?: ICompany['subscriptionItemId'] | null;
+  subscriptionStatus?: ICompany['subscriptionStatus'] | null;
   user?: IUserUpdate;
-  subscriptionPeriodEnd?: ICompany['subscriptionPeriodEnd'];
+  subscriptionPeriodEnd?: ICompany['subscriptionPeriodEnd'] | null;
+  trialEndDate?: ICompany['trialEndDate'] | null;
 }
 
 export interface ICompanyCodeInput {

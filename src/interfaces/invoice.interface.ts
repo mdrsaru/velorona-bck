@@ -101,5 +101,4 @@ export interface IInvoiceService {
   update(args: IInvoiceUpdateInput): Promise<Invoice>;
   remove(args: IEntityRemove): Promise<Invoice>;
   getPDF(args: { id: string }): Promise<string>;
-  createInvoiceFromScheduleDate(args: IInvoiceScheduleInput): Promise<Invoice[]>;
 }

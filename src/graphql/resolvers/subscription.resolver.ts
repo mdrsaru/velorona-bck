@@ -9,7 +9,12 @@ import { checkCompanyAccess } from '../middlewares/company';
 import {
   SubscriptionCreateInput,
   SubscriptionCreateResult,
+  SubscriptionUpgradeInput,
+  SubscriptionUpgradeResult,
   SubscriptionCancelInput,
+  SetupIntentSecretInput,
+  SetupIntentResult,
+  SubscriptionDowngradeInput,
 } from '../../entities/subscription.entity';
 
 import { IErrorService } from '../../interfaces/common.interface';
@@ -57,6 +62,36 @@ export class SubscriptionResolver {
     }
   }
 
+  @Mutation((returns) => SubscriptionUpgradeResult)
+  @UseMiddleware(authenticate)
+  async SubscriptionUpgrade(
+    @Arg('input') args: SubscriptionUpgradeInput,
+    @Ctx() ctx: any
+  ): Promise<SubscriptionUpgradeResult> {
+    const operation = 'SubscriptionUpgrade';
+
+    try {
+      const company_id = args.company_id;
+      const paymentId = args.paymentId;
+      const userId = ctx.user.email;
+
+      const subscription = await this.subscriptionService.upgradeSubscription({
+        company_id,
+        userId,
+        paymentId,
+      });
+
+      return subscription;
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
+    }
+  }
+
   @Mutation((returns) => String)
   @UseMiddleware(authenticate, authorize(RoleEnum.CompanyAdmin), checkCompanyAccess)
   async SubscriptionCancel(@Arg('input') args: SubscriptionCancelInput, @Ctx() ctx: any): Promise<string> {
@@ -70,6 +105,55 @@ export class SubscriptionResolver {
       });
 
       return 'Your subscription will be cancelled at the end of the period.';
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
+    }
+  }
+
+  @Query((returns) => SetupIntentResult)
+  @UseMiddleware(authenticate, authorize(RoleEnum.CompanyAdmin), checkCompanyAccess)
+  async SetupIntentSecret(@Arg('input') args: SetupIntentSecretInput): Promise<SetupIntentResult> {
+    const operation = 'SetupIntentSecret';
+
+    try {
+      const company_id = args.company_id;
+
+      const setupIntent = await this.subscriptionService.createSetupIntent({
+        company_id,
+      });
+
+      return {
+        clientSecret: setupIntent.client_secret,
+      };
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
+    }
+  }
+
+  @Mutation((returns) => String)
+  @UseMiddleware(authenticate, authorize(RoleEnum.CompanyAdmin), checkCompanyAccess)
+  async SubscriptionDowngrade(@Arg('input') args: SubscriptionDowngradeInput): Promise<String> {
+    const operation = 'SubscriptionDowngrade';
+
+    try {
+      const company_id = args.company_id;
+
+      await this.subscriptionService.downgradeSubscription({
+        company_id,
+        plan: 'Starter',
+      });
+
+      return 'Your subscription will be downgraded at the end of the period.';
     } catch (err) {
       this.errorService.throwError({
         err,

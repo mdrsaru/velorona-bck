@@ -35,11 +35,6 @@ export default class Company extends Base {
   @Column({ default: false })
   archived: boolean;
 
-  @Index(`${indexPrefix}_trial_ended`)
-  @Field()
-  @Column({ default: false, name: 'trial_ended' })
-  trialEnded: boolean;
-
   @Index(`${indexPrefix}_company_code`)
   @Field()
   @Column({ unique: true, name: 'company_code' })
@@ -95,6 +90,10 @@ export default class Company extends Base {
   @Field({ nullable: true, description: 'Subscription period end' })
   @Column({ name: 'subscription_period_end', type: 'timestamp with time zone', nullable: true })
   subscriptionPeriodEnd: Date;
+
+  @Field({ nullable: true, description: 'Subscription trial end date' })
+  @Column({ name: 'trial_end_date', type: 'timestamp with time zone', nullable: true })
+  trialEndDate: Date;
 
   @Field(() => User)
   admin: User;

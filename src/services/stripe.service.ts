@@ -6,12 +6,13 @@ import { inject, injectable } from 'inversify';
 
 import strings from '../config/strings';
 import * as apiError from '../utils/api-error';
-import { stripeSetting } from '../config/constants';
+import constants, { stripeSetting } from '../config/constants';
 
 import {
   IStripeCustomerCreateArgs,
   IStripeInvoiceArgs,
   IStripeSubscriptionCreateArgs,
+  IStripeSubscriptionUpgradeArgs,
   IStripeUsageRecordCreateArgs,
   IStripeSubscriptionCancelArgs,
   IStripeSubscriptionRetrieveArgs,
@@ -138,6 +139,38 @@ export default class StripeService {
     }
   };
 
+  upgradeSubscription = async (args: IStripeSubscriptionUpgradeArgs) => {
+    try {
+      const paymentId = args.paymentId;
+      const subscriptionId = args.subscriptionId;
+      const subscription = await this.stripe.subscriptions.retrieve(subscriptionId);
+
+      await this.stripe.paymentMethods.attach(paymentId, { customer: subscription.customer as string });
+
+      const result = await this.stripe.subscriptions.update(subscriptionId, {
+        trial_end: 'now',
+        cancel_at_period_end: false,
+        default_payment_method: paymentId,
+      });
+
+      let paymentIntent = await this.stripe.paymentIntents.create({
+        amount: constants.amount,
+        currency: 'usd',
+        customer: subscription.customer as string,
+        payment_method: result.default_payment_method as string,
+        payment_method_types: ['card'],
+      });
+
+      await this.stripe.paymentIntents.confirm(paymentIntent.id, { payment_method: 'pm_card_visa' });
+
+      return {
+        subscriptionId: result?.id,
+      };
+    } catch (err) {
+      throw err;
+    }
+  };
+
   getInvoiceDetail = async (args: IStripeInvoiceArgs) => {
     try {
       const invoiceId = args.invoiceId;
@@ -186,6 +219,51 @@ export default class StripeService {
       }
 
       const subscription = await this.stripe.subscriptions.retrieve(subscription_id);
+
+      return subscription;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  /**
+   * Create setup intent
+   * Docs: https://stripe.com/docs/api/setup_intents
+   */
+  createSetupIntent = async (args: Stripe.SetupIntentCreateParams) => {
+    try {
+      const { customer, ...rest } = args;
+
+      let errors = [];
+      if (isNil(customer) || !isString(customer)) {
+        errors.push(strings.customerRequired);
+      }
+
+      if (errors.length) {
+        throw new apiError.ValidationError({
+          details: errors,
+        });
+      }
+
+      const setupIntent = await this.stripe.setupIntents.create({
+        customer,
+        ...rest,
+      });
+
+      return setupIntent;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  /**
+   * Update subscription
+   * @param {string} id - Subscription id
+   * @param {Object} params - Subscription Update Params(Stripe.SubscriptionUpdateParams)
+   */
+  updateSubscription = async (id: string, params?: Stripe.SubscriptionUpdateParams) => {
+    try {
+      const subscription = await this.stripe.subscriptions.update(id, params);
 
       return subscription;
     } catch (err) {
