@@ -127,4 +127,5 @@ export default {
   customerOrSubscriptionMissing: 'Either customer or subscription is missing.',
   alreadyInStarterPlan: 'Your company is already in Starter plan.',
   subscriptionNotFound: 'Subscription not found',
+  invoiceReceivedToPendingError: 'Invoice status cannot be changed from Received to Pending',
 };

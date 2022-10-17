@@ -174,11 +174,18 @@ export default class InvoiceService implements IInvoiceService {
 
       const found = await this.invoiceRepository.getById({
         id,
+        select: ['id', 'status'],
       });
 
       if (!found) {
         throw new apiError.NotFoundError({
           details: [strings.invoiceNotFound],
+        });
+      }
+
+      if (found.status === InvoiceStatus.Received && status === InvoiceStatus.Pending) {
+        throw new apiError.ValidationError({
+          details: [strings.invoiceReceivedToPendingError],
         });
       }
 
