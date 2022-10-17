@@ -1,3 +1,5 @@
+import fs from 'fs/promises';
+
 import { timesheetEmitter, timeEntryEmitter } from './emitters';
 import { TYPES } from '../types';
 import { events } from '../config/constants';
@@ -214,12 +216,19 @@ timeEntryEmitter.on(events.onTimesheetUnlock, async (args: TimesheetUnlock) => {
       });
     }
 
+    let emailTemplate = await fs.readFile(`${__dirname}/../../templates/unlock-timesheet-template.html`, {
+      encoding: 'utf-8',
+    });
+
     const userHtml = handlebarsService.compile({
-      template: emailBody,
+      template: emailTemplate,
       data: {
         week: `${timesheet.weekStartDate} - ${timesheet.weekEndDate}`,
+        user: timesheet.user.firstName,
       },
     });
+
+    const logo = await fs.readFile(`${__dirname}/../../public/logo.png`, { encoding: 'base64' });
 
     emailService
       .sendEmail({
@@ -227,6 +236,15 @@ timeEntryEmitter.on(events.onTimesheetUnlock, async (args: TimesheetUnlock) => {
         from: emailSetting.fromEmail,
         subject: emailSetting.unlockTimesheet.subject,
         html: userHtml,
+        attachments: [
+          {
+            content: logo,
+            filename: `velorona.png`,
+            content_id: 'logo',
+            disposition: 'inline',
+            type: 'image/png',
+          },
+        ],
       })
       .then((response) => {
         logger.info({

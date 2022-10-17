@@ -58,8 +58,10 @@ export interface IValidationInput {
 type EmailAttachmentInput = {
   content: string;
   filename: string;
-  type: string;
-  disposition: string;
+  type?: string;
+  disposition?: string;
+  contentId?: string;
+  content_id?: string;
 };
 
 export interface IJoiService {

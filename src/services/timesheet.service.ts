@@ -8,7 +8,7 @@ import strings from '../config/strings';
 import Paging from '../utils/paging';
 import Timesheet from '../entities/timesheet.entity';
 import * as apiError from '../utils/api-error';
-import { EntryType, Role, UserClientStatus, InvoiceSchedule } from '../config/constants';
+import { EntryType, Role, UserClientStatus, InvoiceSchedule, events } from '../config/constants';
 
 import {
   ITimesheetCreateInput,
@@ -26,6 +26,7 @@ import { NotFoundError } from '../utils/api-error';
 import { IUserRepository } from '../interfaces/user.interface';
 import { IUserClientRepository } from '../interfaces/user-client.interface';
 import { IClientRepository } from '../interfaces/client.interface';
+import timeEntryEmitter from '../subscribers/timeEntry.subscriber';
 
 @injectable()
 export default class TimesheetService implements ITimesheetService {
@@ -184,7 +185,12 @@ export default class TimesheetService implements ITimesheetService {
         lastSubmittedAt,
         approver_id,
       });
-
+      if (!isSubmitted) {
+        // Emit onTimesheetUnlock event
+        timeEntryEmitter.emit(events.onTimesheetUnlock, {
+          timesheet_id: id,
+        });
+      }
       return timesheet;
     } catch (err) {
       throw err;

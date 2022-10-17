@@ -1,4 +1,5 @@
 import path from 'path';
+import fs from 'fs/promises';
 
 import InvoiceItem from '../entities/invoice-item.entity';
 import Client from '../entities/client.entity';
@@ -96,10 +97,16 @@ invoiceEmitter.on(events.sendInvoice, async (data: any) => {
     let emailBody: string = emailSetting.invoice.body;
     let company: Company | undefined;
 
+    let emailTemplate = await fs.readFile(`${__dirname}/../../templates/invoice-template.html`, { encoding: 'utf-8' });
+
     const invoiceHtml = handlebarsService.compile({
-      template: emailBody,
-      data: {},
+      template: emailTemplate,
+      data: {
+        email: email,
+      },
     });
+
+    const logo = await fs.readFile(`${__dirname}/../../public/logo.png`, { encoding: 'base64' });
 
     const attachments = [
       {
@@ -107,6 +114,13 @@ invoiceEmitter.on(events.sendInvoice, async (data: any) => {
         filename: `invoice-${invoice.invoiceNumber}.pdf`,
         type: 'application/pdf',
         disposition: 'attachment',
+      },
+      {
+        content: logo,
+        filename: `velorona.png`,
+        content_id: 'logo',
+        disposition: 'inline',
+        type: 'image/png',
       },
     ];
 
