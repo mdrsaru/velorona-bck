@@ -2,7 +2,7 @@ import { injectable, inject } from 'inversify';
 
 import Paging from '../utils/paging';
 import { TYPES } from '../types';
-import { Role as RoleEnum } from '../config/constants';
+import { Role as RoleEnum, UserStatus } from '../config/constants';
 import User from '../entities/user.entity';
 import Company from '../entities/company.entity';
 import { generateRandomStrings } from '../utils/strings';
@@ -162,11 +162,20 @@ export default class UserService implements IUserService {
     try {
       const id = args.id;
       const archived = args?.archived;
+      let status: UserStatus | undefined;
 
-      const user = await this.userRepository.update({
+      const update: IUserUpdate = {
         id,
         archived,
-      });
+      };
+
+      if (archived) {
+        update.status = UserStatus.Inactive;
+      } else if (archived === false) {
+        update.status = UserStatus.Active;
+      }
+
+      const user = await this.userRepository.update(update);
 
       // Emit event for updateCompanySubscriptionUsage
       if (user.company_id) {
