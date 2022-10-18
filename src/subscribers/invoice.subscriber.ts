@@ -1,5 +1,6 @@
 import path from 'path';
 import fs from 'fs/promises';
+import axios from 'axios';
 
 import InvoiceItem from '../entities/invoice-item.entity';
 import Client from '../entities/client.entity';
@@ -43,7 +44,7 @@ invoiceEmitter.on(events.sendInvoice, async (data: any) => {
   try {
     const client: Client = (await clientRepo.getById({
       id: invoice.client_id,
-      relations: ['address', 'company'],
+      relations: ['address', 'company', 'company.logo'],
     })) as Client;
 
     const items: InvoiceItem[] = await invoiceItemRepo.getAll({
@@ -97,33 +98,44 @@ invoiceEmitter.on(events.sendInvoice, async (data: any) => {
     let emailBody: string = emailSetting.invoice.body;
     let company: Company | undefined;
 
+    let hasLogo: boolean = false;
+    if (client?.company?.logo_id) {
+      hasLogo = true;
+    }
+
     let emailTemplate = await fs.readFile(`${__dirname}/../../templates/invoice-template.html`, { encoding: 'utf-8' });
 
     const invoiceHtml = handlebarsService.compile({
       template: emailTemplate,
       data: {
-        email: email,
+        name: client?.name,
+        hasLogo: hasLogo,
+        companyName: client?.company?.name ?? '',
       },
     });
 
     const logo = await fs.readFile(`${__dirname}/../../public/logo.png`, { encoding: 'base64' });
 
-    const attachments = [
+    const image = await axios.get(client?.company?.logo?.url as string, { responseType: 'arraybuffer' });
+    const raw = Buffer.from(image.data).toString('base64');
+    const attachments: any = [
       {
         content: pdfBase64,
         filename: `invoice-${invoice.invoiceNumber}.pdf`,
         type: 'application/pdf',
         disposition: 'attachment',
       },
-      {
-        content: logo,
-        filename: `velorona.png`,
-        content_id: 'logo',
-        disposition: 'inline',
-        type: 'image/png',
-      },
     ];
 
+    if (hasLogo) {
+      attachments.push({
+        content: raw,
+        filename: client?.company?.logo.name as string,
+        content_id: 'logo',
+        disposition: 'inline',
+        // type: 'image/png',
+      });
+    }
     if (data?.timesheet_id) {
       const attached = await attachedTimesheetRepository.getBase64Attachments({
         timesheet_id: data.timesheet_id,
