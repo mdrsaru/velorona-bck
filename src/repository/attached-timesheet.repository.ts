@@ -202,7 +202,7 @@ export default class AttachedTimesheetRepository
       const result = await this.repo
         .createQueryBuilder(entities.timesheetAttachments)
         .select('SUM(amount)', 'totalAmount')
-        .where('attachment_type = :attachmentType', { attachmentType: AttachmentType.Attachment })
+        .where('attachment_type = :attachmentType', { attachmentType: AttachmentType.Expense })
         .andWhere('invoice_id = :invoice_id', { invoice_id })
         .execute();
 

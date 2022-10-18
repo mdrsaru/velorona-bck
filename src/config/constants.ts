@@ -157,7 +157,7 @@ export enum InvoiceStatus {
 
 export enum AttachmentType {
   Timesheet = 'Timesheet',
-  Attachment = 'Attachment',
+  Expense = 'Expense',
   Others = 'Others',
 }
 
