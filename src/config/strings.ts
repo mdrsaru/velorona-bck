@@ -128,4 +128,5 @@ export default {
   alreadyInStarterPlan: 'Your company is already in Starter plan.',
   subscriptionNotFound: 'Subscription not found',
   invoiceReceivedToPendingError: 'Invoice status cannot be changed from Received to Pending',
+  cannotAddAttachment: 'Expense cannot be added for submitted timesheet.',
 };

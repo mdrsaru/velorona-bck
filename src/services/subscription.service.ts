@@ -69,7 +69,7 @@ export default class SubscriptionService implements ISubscriptionService {
         });
       }
 
-      if (company.subscriptionStatus === 'active') {
+      if (company.plan === 'Professional' && company.subscriptionStatus === 'active') {
         throw new apiError.ConflictError({
           details: [strings.companyAlreadySubscribed],
         });

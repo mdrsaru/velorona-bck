@@ -74,4 +74,24 @@ export default (): void => {
     true,
     'Asia/Kathmandu'
   );
+
+  /**
+   * Work schedule: Update status according to the start and end date
+   */
+  new CronJob(
+    '0 5 * * Sat,Sun,Mon,Tue',
+    function () {
+      try {
+      } catch (err) {
+        return logger.error({
+          operation,
+          message: ``,
+          data: {},
+        });
+      }
+    },
+    null,
+    true,
+    'Asia/Kathmandu'
+  );
 };

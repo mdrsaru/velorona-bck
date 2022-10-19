@@ -72,10 +72,20 @@ export default class AttachedTimesheetRepository
         });
       }
       if (timesheet_id) {
-        const timesheet = await this.timesheetRepository.getById({ id: timesheet_id });
+        const timesheet = await this.timesheetRepository.getById({
+          id: timesheet_id,
+          select: ['id', 'isSubmitted'],
+        });
+
         if (!timesheet) {
           throw new NotFoundError({
             details: [strings.timesheetNotFound],
+          });
+        }
+
+        if (timesheet.isSubmitted) {
+          throw new ValidationError({
+            details: [strings.cannotAddAttachment],
           });
         }
       }
