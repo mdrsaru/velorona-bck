@@ -196,6 +196,7 @@ export class InvoiceResolver {
       const shipping = args.shipping;
       const needProject = args.needProject;
       const items = args.items;
+      const sendEmail = args.sendEmail;
 
       const schema = InvoiceValidation.update();
       await this.joiService.validate({
@@ -231,6 +232,7 @@ export class InvoiceResolver {
         shipping,
         needProject,
         items,
+        sendEmail,
       });
 
       return invoice;

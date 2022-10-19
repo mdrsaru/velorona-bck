@@ -20,6 +20,7 @@ import {
   IInvoiceRepository,
   IInvoiceService,
   IInvoiceScheduleInput,
+  IInvoiceUpdateServiceInput,
 } from '../interfaces/invoice.interface';
 import { IInvoiceItemRepository } from '../interfaces/invoice-item.interface';
 import { IClientRepository } from '../interfaces/client.interface';
@@ -154,7 +155,7 @@ export default class InvoiceService implements IInvoiceService {
     }
   };
 
-  update = async (args: IInvoiceUpdateInput): Promise<Invoice> => {
+  update = async (args: IInvoiceUpdateServiceInput): Promise<Invoice> => {
     try {
       const id = args.id;
       const status = args.status;
@@ -171,6 +172,7 @@ export default class InvoiceService implements IInvoiceService {
       const shipping = args.shipping;
       const needProject = args.needProject;
       const items = args.items;
+      const sendEmail = args.sendEmail;
 
       const found = await this.invoiceRepository.getById({
         id,
@@ -221,7 +223,7 @@ export default class InvoiceService implements IInvoiceService {
         }
       }
 
-      if (found.status !== invoice.status && invoice.status === InvoiceStatus.Sent) {
+      if (sendEmail || (found.status !== invoice.status && invoice.status === InvoiceStatus.Sent)) {
         invoiceEmitter.emit(events.sendInvoice, {
           invoice,
           timesheet_id: invoice.timesheet_id,

@@ -82,6 +82,13 @@ export interface IInvoiceUpdateInput {
   items?: IInvoiceItemUpdateInput[];
 }
 
+/**
+ * Update interface for the service
+ */
+export interface IInvoiceUpdateServiceInput extends IInvoiceUpdateInput {
+  sendEmail?: boolean;
+}
+
 export interface IInvoiceScheduleInput {
   date: string;
 }
@@ -98,7 +105,7 @@ export interface IInvoiceRepository {
 export interface IInvoiceService {
   getAllAndCount(args: IPagingArgs): Promise<IPaginationData<Invoice>>;
   create(args: IInvoiceCreateInput): Promise<Invoice>;
-  update(args: IInvoiceUpdateInput): Promise<Invoice>;
+  update(args: IInvoiceUpdateServiceInput): Promise<Invoice>;
   remove(args: IEntityRemove): Promise<Invoice>;
   getPDF(args: { id: string }): Promise<string>;
 }

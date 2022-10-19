@@ -349,6 +349,9 @@ export class InvoiceUpdateInput {
 
   @Field((type) => [InvoiceItemUpdateInput], { nullable: true })
   items: InvoiceItemUpdateInput[];
+
+  @Field({ nullable: true })
+  sendEmail: boolean;
 }
 
 @InputType()
