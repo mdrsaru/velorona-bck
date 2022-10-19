@@ -6,7 +6,7 @@ import { events } from '../config/constants';
 import container from '../inversify.config';
 
 import { emailSetting } from '../config/constants';
-import { IEmailService, ITemplateService, ILogger } from '../interfaces/common.interface';
+import { IEmailService, ITemplateService, ILogger, IEmailBasicArgs } from '../interfaces/common.interface';
 import ActivityLogRepository from '../repository/activity-log.repository';
 import { IUserRepository } from '../interfaces/user.interface';
 import moment from 'moment';
@@ -14,6 +14,7 @@ import moment from 'moment';
 import { ITimeEntryRepository } from '../interfaces/time-entry.interface';
 import { IActivityLogRepository } from '../interfaces/activity-log.interface';
 import { ITimesheetRepository } from '../interfaces/timesheet.interface';
+import axios from 'axios';
 
 type TimeEntryStop = {
   created_by: string;
@@ -205,7 +206,7 @@ timeEntryEmitter.on(events.onTimesheetUnlock, async (args: TimesheetUnlock) => {
     const timesheet = await timesheetRepository.getById({
       id: timesheet_id,
       select: ['id', 'weekStartDate', 'weekEndDate'],
-      relations: ['user'],
+      relations: ['user', 'company', 'company.logo'],
     });
 
     if (!timesheet) {
@@ -214,6 +215,11 @@ timeEntryEmitter.on(events.onTimesheetUnlock, async (args: TimesheetUnlock) => {
         message: `User Email not found for sending timesheet unlock email`,
         data: {},
       });
+    }
+
+    let hasLogo: boolean = false;
+    if (timesheet?.company?.logo_id) {
+      hasLogo = true;
     }
 
     let emailTemplate = await fs.readFile(`${__dirname}/../../templates/unlock-timesheet-template.html`, {
@@ -225,27 +231,37 @@ timeEntryEmitter.on(events.onTimesheetUnlock, async (args: TimesheetUnlock) => {
       data: {
         week: `${timesheet.weekStartDate} - ${timesheet.weekEndDate}`,
         user: timesheet.user.firstName,
+        hasLogo: hasLogo,
+        companyName: timesheet?.company?.name ?? '',
       },
     });
 
     const logo = await fs.readFile(`${__dirname}/../../public/logo.png`, { encoding: 'base64' });
 
+    const image = await axios.get(timesheet?.company?.logo?.url as string, { responseType: 'arraybuffer' });
+    const raw = Buffer.from(image.data).toString('base64');
+
+    const obj: IEmailBasicArgs = {
+      to: timesheet.user.email as string,
+      from: emailSetting.fromEmail,
+      subject: emailSetting.unlockTimesheet.subject,
+      html: userHtml,
+    };
+
+    if (hasLogo) {
+      obj.attachments = [
+        {
+          content: raw,
+          filename: timesheet?.company?.logo.name as string,
+          content_id: 'logo',
+          disposition: 'inline',
+          // type: 'image/png',
+        },
+      ];
+    }
+
     emailService
-      .sendEmail({
-        to: timesheet.user.email as string,
-        from: emailSetting.fromEmail,
-        subject: emailSetting.unlockTimesheet.subject,
-        html: userHtml,
-        attachments: [
-          {
-            content: logo,
-            filename: `velorona.png`,
-            content_id: 'logo',
-            disposition: 'inline',
-            type: 'image/png',
-          },
-        ],
-      })
+      .sendEmail(obj)
       .then((response) => {
         logger.info({
           operation,

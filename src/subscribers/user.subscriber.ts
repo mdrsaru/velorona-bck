@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 import { userEmitter } from './emitters';
 import constants, { emailSetting, events } from '../config/constants';
 import { TYPES } from '../types';
@@ -5,7 +7,7 @@ import container from '../inversify.config';
 import Company from '../entities/company.entity';
 import fs from 'fs/promises';
 
-import { IEmailService, ITemplateService, ILogger } from '../interfaces/common.interface';
+import { IEmailService, ITemplateService, ILogger, IEmailBasicArgs } from '../interfaces/common.interface';
 import { ICompanyRepository } from '../interfaces/company.interface';
 
 /*
@@ -37,10 +39,15 @@ userEmitter.on(events.onUserCreate, async (data: any) => {
     emailBody = emailSetting.newUser.companyBody;
     company = await companyRepository.getById({
       id: data.company_id,
+      relations: ['logo'],
     });
   }
-  let emailTemplate = await fs.readFile(`${__dirname}/../../templates/new-user-template.html`, { encoding: 'utf-8' });
 
+  let hasLogo: boolean = false;
+  if (company?.logo_id) {
+    hasLogo = true;
+  }
+  let emailTemplate = await fs.readFile(`${__dirname}/../../templates/new-user-template.html`, { encoding: 'utf-8' });
   const userHtml = handlebarsService.compile({
     template: emailTemplate,
     data: {
@@ -49,27 +56,35 @@ userEmitter.on(events.onUserCreate, async (data: any) => {
       password: data?.password,
       link: `${constants.frontEndUrl}/login`,
       email: data?.user?.email,
+      hasLogo: hasLogo,
+      companyName: company?.name ?? '',
     },
   });
 
-  const logo = await fs.readFile(`${__dirname}/../../public/logo.png`, { encoding: 'base64' });
+  const image = await axios.get(company?.logo?.url as string, { responseType: 'arraybuffer' });
+  const raw = Buffer.from(image.data).toString('base64');
+
+  const obj: IEmailBasicArgs = {
+    to: data.user.email,
+    from: emailSetting.fromEmail,
+    subject: emailSetting.newUser.subject,
+    html: userHtml,
+  };
+
+  if (hasLogo) {
+    obj.attachments = [
+      {
+        content: raw,
+        filename: company?.logo.name as string,
+        content_id: 'logo',
+        disposition: 'inline',
+        // type: 'image/png',
+      },
+    ];
+  }
 
   emailService
-    .sendEmail({
-      to: data.user.email,
-      from: emailSetting.fromEmail,
-      subject: emailSetting.newUser.subject,
-      html: userHtml,
-      attachments: [
-        {
-          content: logo,
-          filename: `velorona.png`,
-          content_id: 'logo',
-          disposition: 'inline',
-          type: 'image/png',
-        },
-      ],
-    })
+    .sendEmail(obj)
     .then((response) => {
       logger.info({
         operation,

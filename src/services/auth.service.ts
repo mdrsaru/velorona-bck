@@ -43,6 +43,7 @@ import { IUserTokenService } from '../interfaces/user-token.interface';
 import { IRoleRepository } from '../interfaces/role.interface';
 import { ICompanyRepository } from '../interfaces/company.interface';
 import userEmitter from '../subscribers/user.subscriber';
+import axios from 'axios';
 
 @injectable()
 export default class AuthService implements IAuthService {
@@ -272,6 +273,7 @@ export default class AuthService implements IAuthService {
         user = await this.userRepository.getByEmailAndCompanyCode({
           companyCode,
           email,
+          relations: ['company', 'company.logo'],
         });
       } else if (userType === ForgotPasswordUserType.SystemAdmin) {
         user = await this.userRepository.getByEmailAndNoCompany({
@@ -309,15 +311,37 @@ export default class AuthService implements IAuthService {
         encoding: 'utf-8',
       });
 
+      let hasLogo: boolean = false;
+      if (user?.company?.logo_id) {
+        hasLogo = true;
+      }
+
       const resetPasswordHtml = this.handlebarsService.compile({
         template: emailTemplate,
         data: {
           resetPasswordLink,
+          hasLogo: hasLogo,
+          companyName: user?.company?.name ?? '',
         },
       });
 
       const logo = await fs.readFile(`${__dirname}/../../public/logo.png`, { encoding: 'base64' });
 
+      const image = await axios.get(user?.company?.logo?.url as string, { responseType: 'arraybuffer' });
+      const raw = Buffer.from(image.data).toString('base64');
+
+      let attachments;
+      if (hasLogo) {
+        attachments = [
+          {
+            content: raw,
+            filename: user?.company?.logo.name as string,
+            content_id: 'logo',
+            disposition: 'inline',
+            // type: 'image/png',
+          },
+        ];
+      }
       // send email asynchronously
       this.emailService
         .sendEmail({
@@ -325,15 +349,7 @@ export default class AuthService implements IAuthService {
           from: emailSetting.fromEmail,
           subject: emailSetting.resetPassword.subject,
           html: resetPasswordHtml,
-          attachments: [
-            {
-              content: logo,
-              filename: `velorona.png`,
-              content_id: 'logo',
-              disposition: 'inline',
-              type: 'image/png',
-            },
-          ],
+          attachments,
         })
         .then((response) => {
           this.logger.info({
