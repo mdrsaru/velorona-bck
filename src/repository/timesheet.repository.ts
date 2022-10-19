@@ -591,7 +591,7 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
             _user_id as user_id,
             invoice_schedule as period,
             _client_id as client_id,
-            total_duration as "totalDuration",
+            total_duration as "duration",
             "totalExpense",
             "userPayment"
           from grouped_timesheet 
