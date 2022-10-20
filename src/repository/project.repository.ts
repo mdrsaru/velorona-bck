@@ -200,7 +200,7 @@ export default class ProjectRepository extends BaseRepository<Project> implement
 
   create = async (args: IProjectCreateInput): Promise<Project> => {
     try {
-      const name = args.name;
+      const name = args.name.trim();
       const client_id = args.client_id;
       const company_id = args.company_id;
       const status = args.status;
@@ -222,6 +222,20 @@ export default class ProjectRepository extends BaseRepository<Project> implement
       if (errors.length) {
         throw new apiError.ValidationError({
           details: errors,
+        });
+      }
+
+      const projectFound = await this.getAll({
+        query: {
+          name,
+          client_id,
+          company_id,
+        },
+      });
+
+      if (projectFound.length) {
+        throw new apiError.ConflictError({
+          details: [strings.projectAlreadyExist],
         });
       }
 

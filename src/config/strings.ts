@@ -130,4 +130,5 @@ export default {
   invoiceReceivedToPendingError: 'Invoice status cannot be changed from Received to Pending',
   cannotAddAttachment: 'Expense cannot be added for submitted timesheet.',
   userNotActive: 'User is currently Inactive',
+  projectAlreadyExist: 'Project already exist with same name and client',
 };

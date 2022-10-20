@@ -8,7 +8,7 @@ const indexPrefix = 'address';
 @Entity({ name: entities.addresses })
 @ObjectType()
 export default class Address extends Base {
-  @Field()
+  @Field({ nullable: true })
   @Column({ name: 'street_address', nullable: true })
   streetAddress: string;
 
