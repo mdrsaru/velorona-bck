@@ -6,16 +6,17 @@ import container from '../inversify.config';
 import { IInvoiceService } from '../interfaces/invoice.interface';
 import { ILogger } from '../interfaces/common.interface';
 import { ITimesheetService } from '../interfaces/timesheet.interface';
+import { IWorkscheduleRepository } from '../interfaces/workschedule.interface';
 
 const CronJob = cron.CronJob;
 
 export default (): void => {
-  const operation = 'scheduleInvoice';
   const logger = container.get<ILogger>(TYPES.Logger);
   logger.init('cron.loader');
 
   const invoiceService = container.get<IInvoiceService>(TYPES.InvoiceService);
   const timesheetService = container.get<ITimesheetService>(TYPES.TimesheetService);
+  const workscheduleRepository = container.get<IWorkscheduleRepository>(TYPES.WorkscheduleRepository);
 
   /**
   new CronJob(
@@ -50,6 +51,8 @@ export default (): void => {
   new CronJob(
     '0 5 * * MON',
     function () {
+      const operation = 'bulkCreate';
+
       try {
         timesheetService
           .bulkCreate({
@@ -76,22 +79,102 @@ export default (): void => {
   );
 
   /**
-   * Work schedule: Update status according to the start and end date
+   * Work schedule: Update status to Closed
    */
   new CronJob(
-    '0 5 * * Sat,Sun,Mon,Tue',
+    '50 23 * * 0',
     function () {
+      const operation = 'openCloseSchedules';
+      const date = moment().format('YYYY-MM-DD');
+
       try {
+        workscheduleRepository
+          .openCloseSchedules({
+            status: 'Closed',
+            date,
+          })
+          .then(() => {
+            logger.info({
+              operation,
+              message: `Updated workschedules with Closed status`,
+              data: {
+                date,
+              },
+            });
+          })
+          .catch((err) => {
+            logger.error({
+              operation,
+              message: 'Error closing schedules',
+              data: {
+                date,
+                err,
+              },
+            });
+          });
       } catch (err) {
-        return logger.error({
+        logger.error({
           operation,
-          message: ``,
-          data: {},
+          message: 'Error closing schedules',
+          data: {
+            date,
+            err,
+          },
         });
       }
     },
     null,
     true,
-    'Asia/Kathmandu'
+    'UTC'
+  );
+
+  /**
+   * Work schedule: Update status to Open
+   */
+  new CronJob(
+    '0 1 * * *',
+    function () {
+      const operation = 'openCloseSchedules';
+      const date = moment().format('YYYY-MM-DD');
+
+      try {
+        workscheduleRepository
+          .openCloseSchedules({
+            status: 'Open',
+            date,
+          })
+          .then(() => {
+            logger.info({
+              operation,
+              message: `Updated workschedules with Open status`,
+              data: {
+                date,
+              },
+            });
+          })
+          .catch((err) => {
+            logger.error({
+              operation,
+              message: 'Error opening schedules',
+              data: {
+                date,
+                err,
+              },
+            });
+          });
+      } catch (err) {
+        logger.error({
+          operation,
+          message: 'Error opening schedules',
+          data: {
+            date,
+            err,
+          },
+        });
+      }
+    },
+    null,
+    true,
+    'UTC'
   );
 };

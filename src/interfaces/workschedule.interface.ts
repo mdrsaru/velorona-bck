@@ -41,6 +41,11 @@ export interface IPayrollUpdateInput {
   company_id: string;
 }
 
+export interface IOpenCloseSchedulesInput {
+  status: string;
+  date: string;
+}
+
 export interface IWorkscheduleService {
   getAllAndCount(filters?: any): Promise<IPaginationData<Workschedule>>;
   create(args: IWorkscheduleCreateInput): Promise<Workschedule>;
@@ -57,4 +62,5 @@ export interface IWorkscheduleRepository {
   update(args: IWorkscheduleUpdateInput): Promise<Workschedule>;
   remove(args: IEntityRemove): Promise<Workschedule>;
   getSingleEntity(args: ISingleEntityQuery): Promise<Workschedule | undefined>;
+  openCloseSchedules(args: IOpenCloseSchedulesInput): Promise<void>;
 }

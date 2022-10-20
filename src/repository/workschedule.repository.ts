@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { getRepository } from 'typeorm';
+import { getRepository, getManager, EntityManager } from 'typeorm';
 import isNil from 'lodash/isNil';
 import isNumber from 'lodash/isNumber';
 import isString from 'lodash/isString';
@@ -19,6 +19,7 @@ import {
   IWorkscheduleCreateInput,
   IWorkscheduleRepository,
   IWorkscheduleUpdateInput,
+  IOpenCloseSchedulesInput,
 } from '../interfaces/workschedule.interface';
 import { ITaskRepository } from '../interfaces/task.interface';
 
@@ -27,6 +28,8 @@ export default class WorkscheduleRepository extends BaseRepository<Workschedule>
   private companyRepository: ICompanyRepository;
   private userRepository: IUserRepository;
   private taskRepository: ITaskRepository;
+  private manager: EntityManager;
+
   constructor(
     @inject(TYPES.CompanyRepository) _companyRepository: ICompanyRepository,
     @inject(TYPES.UserRepository) _userRepository: IUserRepository,
@@ -36,6 +39,7 @@ export default class WorkscheduleRepository extends BaseRepository<Workschedule>
     this.companyRepository = _companyRepository;
     this.userRepository = _userRepository;
     this.taskRepository = _taskRepository;
+    this.manager = getManager();
   }
 
   create = async (args: IWorkscheduleCreateInput): Promise<Workschedule> => {
@@ -128,6 +132,29 @@ export default class WorkscheduleRepository extends BaseRepository<Workschedule>
       let workschedule = await this.repo.save(update);
 
       return workschedule;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  openCloseSchedules = async (args: IOpenCloseSchedulesInput): Promise<void> => {
+    try {
+      const status = args.status;
+      const date = args.date;
+
+      let query = `
+        update workschedule 
+        set status = $1
+        where status != $1 
+      `;
+
+      if (status === 'Open') {
+        query += ` and start_date = $2`;
+      } else {
+        query += ` and end_date = $2`;
+      }
+
+      await this.manager.query(query, [status, date]);
     } catch (err) {
       throw err;
     }
