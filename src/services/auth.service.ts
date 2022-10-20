@@ -245,6 +245,7 @@ export default class AuthService implements IAuthService {
         id: user_id,
         password,
       });
+
       // Emit event for onUserCreate
       userEmitter.emit(events.onUserCreate, {
         company_id,

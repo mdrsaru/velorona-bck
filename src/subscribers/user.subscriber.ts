@@ -43,10 +43,8 @@ userEmitter.on(events.onUserCreate, async (data: any) => {
     });
   }
 
-  let hasLogo: boolean = false;
-  if (company?.logo_id) {
-    hasLogo = true;
-  }
+  const hasLogo = !!company?.logo_id;
+
   let emailTemplate = await fs.readFile(`${__dirname}/../../templates/new-user-template.html`, { encoding: 'utf-8' });
   const userHtml = handlebarsService.compile({
     template: emailTemplate,
@@ -61,9 +59,6 @@ userEmitter.on(events.onUserCreate, async (data: any) => {
     },
   });
 
-  const image = await axios.get(company?.logo?.url as string, { responseType: 'arraybuffer' });
-  const raw = Buffer.from(image.data).toString('base64');
-
   const obj: IEmailBasicArgs = {
     to: data.user.email,
     from: emailSetting.fromEmail,
@@ -72,6 +67,9 @@ userEmitter.on(events.onUserCreate, async (data: any) => {
   };
 
   if (hasLogo) {
+    const image = await axios.get(company?.logo?.url as string, { responseType: 'arraybuffer' });
+    const raw = Buffer.from(image.data).toString('base64');
+
     obj.attachments = [
       {
         content: raw,

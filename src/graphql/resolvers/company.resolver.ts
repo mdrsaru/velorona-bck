@@ -1,3 +1,4 @@
+import { groupBy } from 'lodash';
 import { inject, injectable } from 'inversify';
 import { Resolver, Query, Ctx, Arg, Mutation, UseMiddleware, FieldResolver, Root } from 'type-graphql';
 
@@ -17,6 +18,7 @@ import {
   CompanyCreateInput,
   CompanyUpdateInput,
   CompanySignUpInput,
+  CompanyResendInvitationInput,
 } from '../../entities/company.entity';
 import { PagingInput, DeleteInput, MessageResponse } from '../../entities/common.entity';
 
@@ -25,7 +27,7 @@ import { ICompanyRepository, ICompanyService } from '../../interfaces/company.in
 import { IErrorService, IJoiService } from '../../interfaces/common.interface';
 import { IGraphqlContext } from '../../interfaces/graphql.interface';
 import { IUserRepository } from '../../interfaces/user.interface';
-import { groupBy } from 'lodash';
+import { IAuthService } from '../../interfaces/auth.interface';
 
 @injectable()
 @Resolver((of) => Company)
@@ -36,19 +38,22 @@ export class CompanyResolver {
   private errorService: IErrorService;
   private companyRepository: ICompanyRepository;
   private userRepository: IUserRepository;
+  private authService: IAuthService;
 
   constructor(
     @inject(TYPES.CompanyService) companyService: ICompanyService,
     @inject(TYPES.JoiService) joiService: IJoiService,
     @inject(TYPES.ErrorService) errorService: IErrorService,
     @inject(TYPES.CompanyRepository) _companyRepostitory: ICompanyRepository,
-    @inject(TYPES.UserRepository) _userRepostitory: IUserRepository
+    @inject(TYPES.UserRepository) _userRepostitory: IUserRepository,
+    @inject(TYPES.AuthService) _authService: IAuthService
   ) {
     this.companyService = companyService;
     this.joiService = joiService;
     this.errorService = errorService;
     this.companyRepository = _companyRepostitory;
     this.userRepository = _userRepostitory;
+    this.authService = _authService;
   }
 
   @Query((returns) => Company)
@@ -283,6 +288,54 @@ export class CompanyResolver {
         name: this.name,
         operation,
         logError: false,
+      });
+    }
+  }
+
+  @Mutation((returns) => String)
+  @UseMiddleware(authenticate, authorize(RoleEnum.SuperAdmin))
+  async CompanyResendInvitation(@Arg('input') args: CompanyResendInvitationInput, @Ctx() ctx: any): Promise<String> {
+    const operation = 'CompanyResendInvitation';
+
+    try {
+      const id = args.id;
+
+      const company = await this.companyRepository.getById({
+        id,
+        select: ['adminEmail'],
+      });
+
+      if (!company) {
+        throw new apiError.NotFoundError({
+          details: ['Company not found'],
+        });
+      }
+
+      const user = await this.userRepository.getSingleEntity({
+        query: {
+          email: company.adminEmail,
+          company_id: id,
+        },
+      });
+
+      if (!user) {
+        throw new apiError.NotFoundError({
+          details: ['User not found'],
+        });
+      }
+
+      await this.authService.resendInvitation({
+        company_id: id,
+        user_id: user.id,
+      });
+
+      return 'Email has been re-sent.';
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
       });
     }
   }

@@ -258,3 +258,9 @@ export class CompanyGrowthOutput {
   @Field({ nullable: true })
   createdAt: Date;
 }
+
+@InputType()
+export class CompanyResendInvitationInput {
+  @Field()
+  id: string;
+}
