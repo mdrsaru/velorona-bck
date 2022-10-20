@@ -163,7 +163,7 @@ export default class AuthService implements IAuthService {
 
       if (user.status == UserStatus.Inactive) {
         throw new NotAuthenticatedError({
-          details: [strings.emailPasswordNotCorrect],
+          details: [strings.userNotActive],
           data: {
             status: 'Inactive',
           },
