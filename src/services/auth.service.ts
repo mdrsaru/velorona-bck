@@ -312,10 +312,7 @@ export default class AuthService implements IAuthService {
         encoding: 'utf-8',
       });
 
-      let hasLogo: boolean = false;
-      if (user?.company?.logo_id) {
-        hasLogo = true;
-      }
+      const hasLogo = !!user?.company?.logo_id;
 
       const resetPasswordHtml = this.handlebarsService.compile({
         template: emailTemplate,
@@ -328,11 +325,11 @@ export default class AuthService implements IAuthService {
 
       const logo = await fs.readFile(`${__dirname}/../../public/logo.png`, { encoding: 'base64' });
 
-      const image = await axios.get(user?.company?.logo?.url as string, { responseType: 'arraybuffer' });
-      const raw = Buffer.from(image.data).toString('base64');
-
       let attachments;
       if (hasLogo) {
+        const image = await axios.get(user?.company?.logo?.url as string, { responseType: 'arraybuffer' });
+        const raw = Buffer.from(image.data).toString('base64');
+
         attachments = [
           {
             content: raw,
