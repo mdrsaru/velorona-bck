@@ -217,10 +217,7 @@ timeEntryEmitter.on(events.onTimesheetUnlock, async (args: TimesheetUnlock) => {
       });
     }
 
-    let hasLogo: boolean = false;
-    if (timesheet?.company?.logo_id) {
-      hasLogo = true;
-    }
+    const hasLogo = !!timesheet?.company?.logo_id;
 
     let emailTemplate = await fs.readFile(`${__dirname}/../../templates/unlock-timesheet-template.html`, {
       encoding: 'utf-8',
@@ -238,9 +235,6 @@ timeEntryEmitter.on(events.onTimesheetUnlock, async (args: TimesheetUnlock) => {
 
     const logo = await fs.readFile(`${__dirname}/../../public/logo.png`, { encoding: 'base64' });
 
-    const image = await axios.get(timesheet?.company?.logo?.url as string, { responseType: 'arraybuffer' });
-    const raw = Buffer.from(image.data).toString('base64');
-
     const obj: IEmailBasicArgs = {
       to: timesheet.user.email as string,
       from: emailSetting.fromEmail,
@@ -249,6 +243,9 @@ timeEntryEmitter.on(events.onTimesheetUnlock, async (args: TimesheetUnlock) => {
     };
 
     if (hasLogo) {
+      const image = await axios.get(timesheet?.company?.logo?.url as string, { responseType: 'arraybuffer' });
+      const raw = Buffer.from(image.data).toString('base64');
+
       obj.attachments = [
         {
           content: raw,

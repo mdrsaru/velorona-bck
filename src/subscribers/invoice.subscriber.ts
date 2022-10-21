@@ -98,10 +98,7 @@ invoiceEmitter.on(events.sendInvoice, async (data: any) => {
     let emailBody: string = emailSetting.invoice.body;
     let company: Company | undefined;
 
-    let hasLogo: boolean = false;
-    if (client?.company?.logo_id) {
-      hasLogo = true;
-    }
+    const hasLogo = !!client?.company?.logo_id;
 
     let emailTemplate = await fs.readFile(`${__dirname}/../../templates/invoice-template.html`, { encoding: 'utf-8' });
 
@@ -116,8 +113,6 @@ invoiceEmitter.on(events.sendInvoice, async (data: any) => {
 
     const logo = await fs.readFile(`${__dirname}/../../public/logo.png`, { encoding: 'base64' });
 
-    const image = await axios.get(client?.company?.logo?.url as string, { responseType: 'arraybuffer' });
-    const raw = Buffer.from(image.data).toString('base64');
     const attachments: any = [
       {
         content: pdfBase64,
@@ -128,6 +123,9 @@ invoiceEmitter.on(events.sendInvoice, async (data: any) => {
     ];
 
     if (hasLogo) {
+      const image = await axios.get(client?.company?.logo?.url as string, { responseType: 'arraybuffer' });
+      const raw = Buffer.from(image.data).toString('base64');
+
       attachments.push({
         content: raw,
         filename: client?.company?.logo.name as string,
