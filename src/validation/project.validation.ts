@@ -29,7 +29,7 @@ export default class ProjectValidation {
   static create() {
     return Joi.object({
       name: Joi.string().required().messages(messages.name),
-      client_id: Joi.string().required().messages(messages.client),
+      client_id: Joi.string(),
       company_id: Joi.string().required().messages(messages.company),
       status: Joi.string(),
       archived: Joi.boolean(),
