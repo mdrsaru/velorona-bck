@@ -41,13 +41,13 @@ export default class Project extends Base {
   @Column({ default: false })
   archived: boolean;
 
-  @Field(() => Client)
-  @ManyToOne(() => Client)
+  @Field(() => Client, { nullable: true })
+  @ManyToOne(() => Client, { nullable: true })
   @JoinColumn({ name: 'client_id' })
   client: Client;
 
-  @Field()
-  @Column()
+  @Field({ nullable: true })
+  @Column({ nullable: true })
   client_id: string;
 
   @Field(() => TimeEntry, { nullable: true, description: 'Field for timeEntry' })
@@ -92,7 +92,7 @@ export class ProjectCreateInput {
   @Field()
   company_id: string;
 
-  @Field()
+  @Field({ nullable: true })
   client_id: string;
 
   @Field((type) => ProjectStatus, { nullable: true })

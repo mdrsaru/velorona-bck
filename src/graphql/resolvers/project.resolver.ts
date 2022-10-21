@@ -266,7 +266,9 @@ export class ProjectResolver {
 
   @FieldResolver()
   client(@Root() root: Project, @Ctx() ctx: IGraphqlContext) {
-    return ctx.loaders.clientByIdLoader.load(root.client_id);
+    if (root.client_id) {
+      return ctx.loaders.clientByIdLoader.load(root.client_id);
+    }
   }
   @FieldResolver()
   async users(@Root() root: Project, @Ctx() ctx: IGraphqlContext) {

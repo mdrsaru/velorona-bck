@@ -212,9 +212,6 @@ export default class ProjectRepository extends BaseRepository<Project> implement
       if (isNil(name) || !isString(name)) {
         errors.push(strings.nameRequired);
       }
-      if (isNil(client_id) || !isString(client_id)) {
-        errors.push(strings.clientRequired);
-      }
       if (isNil(company_id) || !isString(company_id)) {
         errors.push(strings.companyRequired);
       }
@@ -239,14 +236,15 @@ export default class ProjectRepository extends BaseRepository<Project> implement
         });
       }
 
-      const client = await this.clientRepository.getById({ id: client_id });
+      if (client_id) {
+        let client = await this.clientRepository.getById({ id: client_id });
 
-      if (!client) {
-        throw new apiError.NotFoundError({
-          details: [strings.clientNotFound],
-        });
+        if (!client) {
+          throw new apiError.NotFoundError({
+            details: [strings.clientNotFound],
+          });
+        }
       }
-
       const company = await this.companyRepository.getById({ id: company_id });
       if (!company) {
         throw new apiError.NotFoundError({

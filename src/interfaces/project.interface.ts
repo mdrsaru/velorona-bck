@@ -16,7 +16,7 @@ export interface IProject {
 
 export interface IProjectCreateInput {
   name: IProject['name'];
-  client_id: IProject['client_id'];
+  client_id?: IProject['client_id'];
   company_id: IProject['company_id'];
   status?: IProject['status'];
   archived?: IProject['archived'];
