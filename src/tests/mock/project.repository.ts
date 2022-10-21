@@ -56,7 +56,7 @@ export default class ProjectRepository implements IProjectRepository {
       project.id = generateUuid();
       project.name = args.name;
       project.company_id = args.company_id;
-      project.client_id = args.client_id;
+      project.client_id = args.client_id as string;
       project.createdAt = new Date();
       project.updatedAt = new Date();
 

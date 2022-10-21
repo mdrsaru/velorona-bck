@@ -72,7 +72,7 @@ const _companies: ICompany[] = [
     id: 'ce351c02-3681-43df-9cdb-3a4f864dcb0b',
     name: 'Vellorum',
     companyCode: 'vellorum',
-    admin_email: 'company@admin.com',
+    adminEmail: 'company@admin.com',
     status: CompanyStatus.Active,
     archived: false,
     createdAt: '2022-03-08T08:01:04.776Z',
