@@ -1,11 +1,13 @@
 import { injectable, inject } from 'inversify';
 
+import { TYPES } from '../types';
+import strings from '../config/strings';
 import { events, plans, stripePrices } from '../config/constants';
 import Company from '../entities/company.entity';
 import Paging from '../utils/paging';
-import { TYPES } from '../types';
 import userEmitter from '../subscribers/user.subscriber';
 import { generateRandomStrings } from '../utils/strings';
+import * as apiError from '../utils/api-error';
 
 import { IPagingArgs, IPaginationData } from '../interfaces/paging.interface';
 import { IEntityRemove, IEntityID } from '../interfaces/common.interface';
@@ -92,10 +94,6 @@ export default class CompanyService implements ICompanyService {
       const archived = args?.archived;
       const logo_id = args?.logo_id;
       const user = args?.user;
-
-      if (user) {
-        await this.userRepository.update(user);
-      }
 
       const company = await this.companyRepository.update({
         id,

@@ -219,25 +219,73 @@ export default class CompanyRepository extends BaseRepository<Company> implement
         });
       }
 
-      const update = merge(found, {
-        id,
-        name,
-        status,
-        archived,
-        logo_id,
-        plan,
-        subscriptionId,
-        stripeCustomerId,
-        subscriptionItemId,
-        subscriptionStatus,
-        trialEnded,
-        subscriptionPeriodEnd,
-        trialEndDate,
+      let changeAdminEmail = false;
+
+      let result = await this.manager.transaction(async (entityManager) => {
+        const companyRepo = entityManager.getRepository(Company);
+        const userRepo = entityManager.getRepository(User);
+
+        let updatedUser: User | undefined;
+
+        if (user?.id) {
+          const foundUser = await userRepo.findOne(user.id);
+
+          if (!foundUser) {
+            throw new apiError.NotFoundError({
+              details: [strings.userNotFound],
+            });
+          }
+
+          const email = user?.email?.trim();
+          if (email && foundUser.email !== email) {
+            user.email = email; //trimming out the email
+            const existingUserCount = await userRepo.count({
+              where: {
+                email,
+                company_id: found.id, // can have same email across multiple companies
+              },
+            });
+
+            if (existingUserCount) {
+              throw new apiError.ConflictError({
+                details: [strings.userAlreadyExists],
+              });
+            }
+
+            changeAdminEmail = true;
+          }
+
+          const userUpdate = merge(foundUser, user);
+
+          updatedUser = await userRepo.save(userUpdate);
+        }
+
+        const update = merge(found, {
+          id,
+          name,
+          status,
+          archived,
+          logo_id,
+          plan,
+          subscriptionId,
+          stripeCustomerId,
+          subscriptionItemId,
+          subscriptionStatus,
+          trialEnded,
+          subscriptionPeriodEnd,
+          trialEndDate,
+          ...(changeAdminEmail && updatedUser && { adminEmail: updatedUser.email }),
+        });
+
+        const company = await companyRepo.save(update);
+
+        return {
+          user,
+          company,
+        };
       });
 
-      const company = await this.repo.save(update);
-
-      return company;
+      return result.company;
     } catch (err) {
       throw err;
     }

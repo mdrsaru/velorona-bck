@@ -12,7 +12,7 @@ export interface ICompany {
   status: CompanyStatus;
   archived: boolean;
   companyCode: string;
-  admin_email: string;
+  adminEmail: string;
   logo?: Media;
   logo_id?: string;
   plan?: string;
@@ -59,6 +59,10 @@ export interface ICompanyCreate {
   logo_id?: ICompany['logo_id'];
 }
 
+export interface ICompanyAdminUpdate extends IUserUpdate {
+  email?: string;
+}
+
 export interface ICompanyUpdate {
   id: string;
   name?: ICompany['name'];
@@ -71,7 +75,7 @@ export interface ICompanyUpdate {
   subscriptionId?: ICompany['subscriptionId'] | null;
   subscriptionItemId?: ICompany['subscriptionItemId'] | null;
   subscriptionStatus?: ICompany['subscriptionStatus'] | null;
-  user?: IUserUpdate;
+  user?: ICompanyAdminUpdate;
   subscriptionPeriodEnd?: ICompany['subscriptionPeriodEnd'] | null;
   trialEndDate?: ICompany['trialEndDate'] | null;
 }

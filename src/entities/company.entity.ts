@@ -191,6 +191,12 @@ export class CompanySignUpInput {
 }
 
 @InputType()
+export class CompanyAdminUpdateInput extends UserUpdateInput {
+  @Field({ nullable: true })
+  adminEmail: string;
+}
+
+@InputType()
 export class CompanyUpdateInput {
   @Field()
   id: string;
@@ -208,7 +214,7 @@ export class CompanyUpdateInput {
   logo_id: string;
 
   @Field({ nullable: true })
-  user: UserUpdateInput;
+  user: CompanyAdminUpdateInput;
 }
 
 @InputType()
