@@ -184,66 +184,96 @@ timesheetEmitter.on(events.onTimeEntriesApprove, async (args: TimesheetApprove) 
     let emailTemplate = await fs.readFile(`${__dirname}/../../templates/approveReject-timesheet-template.html`, {
       encoding: 'utf-8',
     });
+
+    const names = [
+      timesheet?.user?.firstName ?? '',
+      timesheet?.user?.middleName ?? '',
+      timesheet?.user?.lastName ?? '',
+    ];
     const timesheetHtml = handlebarsService.compile({
       template: emailTemplate,
       data: {
         week: `${timesheet.weekStartDate} - ${timesheet.weekEndDate}`,
-        user: `${timesheet.user.firstName} ${timesheet.user.middleName && timesheet.user.middleName} ${
-          timesheet.user.lastName
-        } `,
+        user: names.join(' '),
         manager: timesheet.user?.manager?.firstName,
         hasLogo: hasLogo,
         status: status,
         companyName: timesheet?.company?.name ?? '',
       },
     });
+
+    let employeeTemplate = await fs.readFile(`${__dirname}/../../templates/approve-reject-timesheet-employee.html`, {
+      encoding: 'utf-8',
+    });
+
+    const employeeHtml = handlebarsService.compile({
+      template: employeeTemplate,
+      data: {
+        week: `${timesheet.weekStartDate} - ${timesheet.weekEndDate}`,
+        name: names.join(' '),
+        hasLogo: hasLogo,
+        status: status,
+        companyName: timesheet?.company?.name ?? '',
+      },
+    });
+
+    let attachments: EmailAttachmentInput[] | undefined;
+
+    if (hasLogo) {
+      const image = await axios.get(timesheet?.company?.logo?.url as string, { responseType: 'arraybuffer' });
+      const raw = Buffer.from(image.data).toString('base64');
+      attachments = [
+        {
+          content: raw,
+          filename: timesheet?.company?.logo.name as string,
+          content_id: 'logo',
+          disposition: 'inline',
+        },
+      ];
+    }
+
+    const promises: any = [];
     if (timesheet?.user?.manager?.email) {
       const obj: IEmailBasicArgs = {
         to: timesheet.user?.manager?.email as string,
         from: emailSetting.fromEmail,
         subject: `Timesheet ${status}`,
         html: timesheetHtml,
+        ...(hasLogo && {
+          attachments,
+        }),
       };
 
-      if (hasLogo) {
-        const image = await axios.get(timesheet?.company?.logo?.url as string, { responseType: 'arraybuffer' });
-        const raw = Buffer.from(image.data).toString('base64');
-
-        obj.attachments = [
-          {
-            content: raw,
-            filename: timesheet?.company?.logo.name as string,
-            content_id: 'logo',
-            disposition: 'inline',
-            // type: 'image/png',
-          },
-        ];
-      }
-
-      emailService
-        .sendEmail(obj)
-        .then((response) => {
-          logger.info({
-            operation,
-            message: `Email response for ${timesheet.user?.manager?.email}`,
-            data: response,
-          });
-        })
-        .catch((err) => {
-          logger.error({
-            operation,
-            message: 'Error sending approve/reject email',
-            data: err,
-          });
-        });
+      promises.push(emailService.sendEmail(obj));
     }
-    logger.info({
-      operation,
-      message: `Updated timesheet with the required status`,
-      data: {
-        timesheet_id,
-      },
-    });
+
+    const employeeObj: IEmailBasicArgs = {
+      to: timesheet.user?.email as string,
+      from: emailSetting.fromEmail,
+      subject: `Timesheet ${status}`,
+      html: employeeHtml,
+      ...(hasLogo && {
+        attachments,
+      }),
+    };
+
+    promises.push(emailService.sendEmail(employeeObj));
+
+    Promise.all(promises)
+      .then((response) => {
+        logger.info({
+          operation,
+          message: `Email response for ${timesheet.user?.manager?.email}`,
+          data: response,
+        });
+      })
+      .catch((err) => {
+        logger.error({
+          operation,
+          message: 'Error sending approve/reject email',
+          data: err,
+        });
+      });
   } catch (err) {
     logger.error({
       operation,
