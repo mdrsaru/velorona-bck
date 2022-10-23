@@ -216,6 +216,10 @@ export const emailSetting = {
   submitTimesheet: {
     subject: process.env.SUBMIT_TIMESHEET_EMAIL_SUBJECT || '',
   },
+  contactUs: {
+    contactEmailAddress: process.env.CONTACT_EMAIL_ADDRESS as string,
+    subject: process.env.CONTACT_US_SUBJECT || 'Contact us',
+  },
 };
 
 export const events = {

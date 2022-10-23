@@ -31,6 +31,7 @@ import invoicePaymentConfig from './config/inversify/invoice-payment-config';
 import demoRequest from './config/inversify/demo-request';
 import breakTime from './config/inversify/break-time';
 import currency from './config/inversify/currency';
+import contactUs from './config/inversify/contact-us';
 
 const container = new Container({ skipBaseClassChecks: true });
 
@@ -75,6 +76,7 @@ container.load(
   demoRequest,
   breakTime,
   currency,
+  contactUs,
 );
 
 export default container;
