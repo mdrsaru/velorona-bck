@@ -191,6 +191,12 @@ export default class TimesheetService implements ITimesheetService {
           timesheet_id: id,
         });
       }
+      if (isSubmitted) {
+        // Emit onTimesheetSubmit event
+        timeEntryEmitter.emit(events.onTimesheetSubmit, {
+          timesheet_id: id,
+        });
+      }
       return timesheet;
     } catch (err) {
       throw err;

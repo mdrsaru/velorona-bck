@@ -282,4 +282,93 @@ timeEntryEmitter.on(events.onTimesheetUnlock, async (args: TimesheetUnlock) => {
   }
 });
 
+timeEntryEmitter.on(events.onTimesheetSubmit, async (args: TimesheetUnlock) => {
+  const operation = events.onTimesheetUnlock;
+
+  const timesheetRepository: ITimesheetRepository = container.get<ITimesheetRepository>(TYPES.TimesheetRepository);
+  const logger = container.get<ILogger>(TYPES.Logger);
+  logger.init('timeEntryEmitter.subscriber');
+
+  const emailService: IEmailService = container.get<IEmailService>(TYPES.EmailService);
+  const handlebarsService: ITemplateService = container.get<ITemplateService>(TYPES.HandlebarsService);
+  try {
+    const timesheet_id = args.timesheet_id;
+    const timesheet = await timesheetRepository.getById({
+      id: timesheet_id,
+      select: ['id', 'weekStartDate', 'weekEndDate'],
+      relations: ['user', 'company', 'company.logo', 'user.manager'],
+    });
+
+    if (!timesheet) {
+      return logger.info({
+        operation,
+        message: `User Email not found for sending timesheet unlock email`,
+        data: {},
+      });
+    }
+
+    const hasLogo = !!timesheet?.company?.logo_id;
+
+    let emailTemplate = await fs.readFile(`${__dirname}/../../templates/submit-timesheet-template.html`, {
+      encoding: 'utf-8',
+    });
+
+    const userHtml = handlebarsService.compile({
+      template: emailTemplate,
+      data: {
+        week: `${timesheet.weekStartDate} - ${timesheet.weekEndDate}`,
+        user: `${timesheet.user.firstName} ${timesheet.user.lastName} `,
+        manager: timesheet.user?.manager?.firstName,
+        hasLogo: hasLogo,
+        companyName: timesheet?.company?.name ?? '',
+      },
+    });
+
+    const obj: IEmailBasicArgs = {
+      to: timesheet.user?.manager?.email as string,
+      from: emailSetting.fromEmail,
+      subject: emailSetting.submitTimesheet.subject,
+      html: userHtml,
+    };
+
+    if (hasLogo) {
+      const image = await axios.get(timesheet?.company?.logo?.url as string, { responseType: 'arraybuffer' });
+      const raw = Buffer.from(image.data).toString('base64');
+
+      obj.attachments = [
+        {
+          content: raw,
+          filename: timesheet?.company?.logo.name as string,
+          content_id: 'logo',
+          disposition: 'inline',
+          // type: 'image/png',
+        },
+      ];
+    }
+
+    emailService
+      .sendEmail(obj)
+      .then((response) => {
+        logger.info({
+          operation,
+          message: `Email response for ${timesheet.user.email}`,
+          data: response,
+        });
+      })
+      .catch((err) => {
+        logger.error({
+          operation,
+          message: 'Error sending unlock email',
+          data: err,
+        });
+      });
+  } catch (err) {
+    logger.error({
+      operation,
+      message: 'Error sending unlock email',
+      data: err,
+    });
+  }
+});
+
 export default timeEntryEmitter;

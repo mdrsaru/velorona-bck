@@ -213,6 +213,9 @@ export const emailSetting = {
     subject: process.env.UNLOCK_TIMESHEET_EMAIL_SUBJECT || '',
     body: process.env.UNLOCK_TIMESHEET_EMAIL_BODY || '',
   },
+  submitTimesheet: {
+    subject: process.env.SUBMIT_TIMESHEET_EMAIL_SUBJECT || '',
+  },
 };
 
 export const events = {
@@ -228,6 +231,7 @@ export const events = {
   onTimesheetUnlock: 'onTimesheetUnlock',
   onSubscriptionCreate: 'onSubscriptionCreate',
   updateWorkscheduleUsage: 'updateWorkscheduleUsage',
+  onTimesheetSubmit: 'onTimesheetSubmit',
 };
 
 export const stripeSetting = {
