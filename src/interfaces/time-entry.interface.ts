@@ -151,6 +151,7 @@ export interface ITimeEntriesApproveRejectInput {
   approver_id: string;
   approvalStatus: ITimeEntry['approvalStatus'];
   timesheet_id?: string;
+  reason?: string;
 }
 
 export interface ITimeEntryByStatusInvoiceInput {

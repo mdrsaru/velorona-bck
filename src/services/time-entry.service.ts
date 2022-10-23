@@ -582,6 +582,7 @@ export default class TimeEntryService implements ITimeEntryService {
       const approver_id = args.approver_id;
       const approvalStatus = args.approvalStatus;
       const timesheet_id = args.timesheet_id;
+      const reason = args.reason;
 
       const result = await this.timeEntryRepository.approveRejectTimeEntries({
         ids,
@@ -595,6 +596,7 @@ export default class TimeEntryService implements ITimeEntryService {
           timesheet_id,
           approver_id,
           lastApprovedAt: new Date(),
+          reason,
         });
       }
 

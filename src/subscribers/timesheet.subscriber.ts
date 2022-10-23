@@ -32,6 +32,7 @@ type TimesheetApprove = {
   timesheet_id: string;
   approver_id: string;
   lastApprovedAt: Date;
+  reason?: string;
 };
 
 type TimesheetSubmit = {
@@ -190,6 +191,7 @@ timesheetEmitter.on(events.onTimeEntriesApprove, async (args: TimesheetApprove) 
       timesheet?.user?.middleName ?? '',
       timesheet?.user?.lastName ?? '',
     ];
+
     const timesheetHtml = handlebarsService.compile({
       template: emailTemplate,
       data: {
@@ -214,6 +216,8 @@ timesheetEmitter.on(events.onTimeEntriesApprove, async (args: TimesheetApprove) 
         hasLogo: hasLogo,
         status: status,
         companyName: timesheet?.company?.name ?? '',
+        reason: args?.reason,
+        needReason: timesheet?.status === TimesheetStatus.Rejected && args.reason,
       },
     });
 
@@ -293,7 +297,6 @@ type TimesheetCreate = {
 };
 
 timesheetEmitter.on(events.sendTimesheetSubmitEmail, async (args: TimesheetSubmit) => {
-  console.log('hello from event\n\n');
   const operation = events.sendTimesheetSubmitEmail;
 
   const timesheetRepository: ITimesheetRepository = container.get<ITimesheetRepository>(TYPES.TimesheetRepository);

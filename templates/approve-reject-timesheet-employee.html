@@ -32,7 +32,12 @@
 
     <div class="container-body">
       <h1>Hi {{name}}!,</h1>
-      The timesheet for the week <b>{{week}}</b> has been {{status}}.
+      <p>The timesheet for the week <b>{{week}}</b> has been {{status}}.</p>
+
+      {{#if needReason}}
+      <p><b>Reason: </b>{{reason}}</p>
+      {{/if}}
+
       <p>If you have any questions, feel free too email us</p>
       <p>Thanks,</p>
       <p>Vellorona Team</p>

@@ -44,7 +44,6 @@ export class ContactUsResolver {
       const contact = args?.contact;
       const message = args.message;
 
-      console.log(args);
       const logo = await fs.readFile(`${__dirname}/../../../public/logo.png`, { encoding: 'base64' });
 
       let emailTemplate = await fs.readFile(`${__dirname}/../../../templates/contact-us.template.html`, {

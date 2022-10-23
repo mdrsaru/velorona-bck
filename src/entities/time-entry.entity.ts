@@ -332,6 +332,9 @@ export class TimeEntryApproveRejectInput {
 
   @Field()
   approvalStatus: TimeEntryApprovalStatus;
+
+  @Field({ nullable: true })
+  reason: string;
 }
 
 @InputType()
