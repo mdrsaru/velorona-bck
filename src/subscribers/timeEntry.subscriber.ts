@@ -323,45 +323,46 @@ timeEntryEmitter.on(events.onTimesheetSubmit, async (args: TimesheetUnlock) => {
         companyName: timesheet?.company?.name ?? '',
       },
     });
+    if (timesheet.user?.manager?.email) {
+      const obj: IEmailBasicArgs = {
+        to: timesheet.user?.manager?.email as string,
+        from: emailSetting.fromEmail,
+        subject: emailSetting.submitTimesheet.subject,
+        html: userHtml,
+      };
 
-    const obj: IEmailBasicArgs = {
-      to: timesheet.user?.manager?.email as string,
-      from: emailSetting.fromEmail,
-      subject: emailSetting.submitTimesheet.subject,
-      html: userHtml,
-    };
+      if (hasLogo) {
+        const image = await axios.get(timesheet?.company?.logo?.url as string, { responseType: 'arraybuffer' });
+        const raw = Buffer.from(image.data).toString('base64');
 
-    if (hasLogo) {
-      const image = await axios.get(timesheet?.company?.logo?.url as string, { responseType: 'arraybuffer' });
-      const raw = Buffer.from(image.data).toString('base64');
+        obj.attachments = [
+          {
+            content: raw,
+            filename: timesheet?.company?.logo.name as string,
+            content_id: 'logo',
+            disposition: 'inline',
+            // type: 'image/png',
+          },
+        ];
+      }
 
-      obj.attachments = [
-        {
-          content: raw,
-          filename: timesheet?.company?.logo.name as string,
-          content_id: 'logo',
-          disposition: 'inline',
-          // type: 'image/png',
-        },
-      ];
+      emailService
+        .sendEmail(obj)
+        .then((response) => {
+          logger.info({
+            operation,
+            message: `Email response for ${timesheet.user.email}`,
+            data: response,
+          });
+        })
+        .catch((err) => {
+          logger.error({
+            operation,
+            message: 'Error sending unlock email',
+            data: err,
+          });
+        });
     }
-
-    emailService
-      .sendEmail(obj)
-      .then((response) => {
-        logger.info({
-          operation,
-          message: `Email response for ${timesheet.user.email}`,
-          data: response,
-        });
-      })
-      .catch((err) => {
-        logger.error({
-          operation,
-          message: 'Error sending unlock email',
-          data: err,
-        });
-      });
   } catch (err) {
     logger.error({
       operation,

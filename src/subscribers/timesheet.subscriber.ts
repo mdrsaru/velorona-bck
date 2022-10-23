@@ -123,7 +123,6 @@ timesheetEmitter.on(events.onTimeEntriesApprove, async (args: TimesheetApprove) 
         data: {},
       });
     }
-    console.log(timesheet, ' \n timesheet \n ');
     let date =
       moment(timesheet?.weekStartDate).format('MMM D') + ' - ' + moment(timesheet?.weekEndDate).format('MMM D');
 
@@ -188,46 +187,46 @@ timesheetEmitter.on(events.onTimeEntriesApprove, async (args: TimesheetApprove) 
         companyName: timesheet?.company?.name ?? '',
       },
     });
+    if (timesheet?.user?.manager?.email) {
+      const obj: IEmailBasicArgs = {
+        to: timesheet.user?.manager?.email as string,
+        from: emailSetting.fromEmail,
+        subject: `Timesheet ${status}`,
+        html: timesheetHtml,
+      };
 
-    const obj: IEmailBasicArgs = {
-      to: timesheet.user?.manager?.email as string,
-      from: emailSetting.fromEmail,
-      subject: emailSetting.submitTimesheet.subject,
-      html: timesheetHtml,
-    };
+      if (hasLogo) {
+        const image = await axios.get(timesheet?.company?.logo?.url as string, { responseType: 'arraybuffer' });
+        const raw = Buffer.from(image.data).toString('base64');
 
-    if (hasLogo) {
-      const image = await axios.get(timesheet?.company?.logo?.url as string, { responseType: 'arraybuffer' });
-      const raw = Buffer.from(image.data).toString('base64');
+        obj.attachments = [
+          {
+            content: raw,
+            filename: timesheet?.company?.logo.name as string,
+            content_id: 'logo',
+            disposition: 'inline',
+            // type: 'image/png',
+          },
+        ];
+      }
 
-      obj.attachments = [
-        {
-          content: raw,
-          filename: timesheet?.company?.logo.name as string,
-          content_id: 'logo',
-          disposition: 'inline',
-          // type: 'image/png',
-        },
-      ];
+      emailService
+        .sendEmail(obj)
+        .then((response) => {
+          logger.info({
+            operation,
+            message: `Email response for ${timesheet.user?.manager?.email}`,
+            data: response,
+          });
+        })
+        .catch((err) => {
+          logger.error({
+            operation,
+            message: 'Error sending approve/reject email',
+            data: err,
+          });
+        });
     }
-
-    emailService
-      .sendEmail(obj)
-      .then((response) => {
-        logger.info({
-          operation,
-          message: `Email response for ${timesheet.user.email}`,
-          data: response,
-        });
-      })
-      .catch((err) => {
-        logger.error({
-          operation,
-          message: 'Error sending unlock email',
-          data: err,
-        });
-      });
-
     logger.info({
       operation,
       message: `Updated timesheet with the required status`,
