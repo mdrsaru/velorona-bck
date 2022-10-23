@@ -13,7 +13,13 @@ import {
 } from '../config/constants';
 import container from '../inversify.config';
 
-import { IEmailBasicArgs, IEmailService, ILogger, ITemplateService } from '../interfaces/common.interface';
+import {
+  IEmailBasicArgs,
+  IEmailService,
+  ILogger,
+  ITemplateService,
+  EmailAttachmentInput,
+} from '../interfaces/common.interface';
 import { ITimesheetRepository } from '../interfaces/timesheet.interface';
 import { ITimeEntryRepository } from '../interfaces/time-entry.interface';
 import { IUserRepository } from '../interfaces/user.interface';
@@ -26,6 +32,10 @@ type TimesheetApprove = {
   timesheet_id: string;
   approver_id: string;
   lastApprovedAt: Date;
+};
+
+type TimesheetSubmit = {
+  timesheet_id: string;
 };
 
 timesheetEmitter.on(events.onTimeEntriesApprove, async (args: TimesheetApprove) => {
@@ -251,5 +261,135 @@ type TimesheetCreate = {
   client_id: string;
   weekStartDate: string | Date;
 };
+
+timesheetEmitter.on(events.sendTimesheetSubmitEmail, async (args: TimesheetSubmit) => {
+  console.log('hello from event\n\n');
+  const operation = events.sendTimesheetSubmitEmail;
+
+  const timesheetRepository: ITimesheetRepository = container.get<ITimesheetRepository>(TYPES.TimesheetRepository);
+  const logger = container.get<ILogger>(TYPES.Logger);
+  logger.init('timesheet.subscriber');
+
+  const emailService: IEmailService = container.get<IEmailService>(TYPES.EmailService);
+  const handlebarsService: ITemplateService = container.get<ITemplateService>(TYPES.HandlebarsService);
+  try {
+    const timesheet_id = args.timesheet_id;
+    const timesheet = await timesheetRepository.getById({
+      id: timesheet_id,
+      select: ['id', 'weekStartDate', 'weekEndDate'],
+      relations: ['user', 'company', 'company.logo', 'user.manager'],
+    });
+
+    if (!timesheet) {
+      return logger.info({
+        operation,
+        message: `User Email not found for sending timesheet unlock email`,
+        data: {},
+      });
+    }
+
+    const hasLogo = !!timesheet?.company?.logo_id;
+
+    let emailTemplate = await fs.readFile(`${__dirname}/../../templates/submit-timesheet-template.html`, {
+      encoding: 'utf-8',
+    });
+
+    let userTemplate = await fs.readFile(`${__dirname}/../../templates/timesheet-submit-user.html`, {
+      encoding: 'utf-8',
+    });
+
+    const managerHtml = handlebarsService.compile({
+      template: emailTemplate,
+      data: {
+        week: `${timesheet.weekStartDate} - ${timesheet.weekEndDate}`,
+        user: `${timesheet.user.firstName} ${timesheet.user.lastName} `,
+        manager: timesheet.user?.manager?.firstName,
+        hasLogo: hasLogo,
+        companyName: timesheet?.company?.name ?? '',
+      },
+    });
+
+    const names = [
+      timesheet?.user?.firstName ?? '',
+      timesheet?.user?.middleName ?? '',
+      timesheet?.user?.lastName ?? '',
+    ];
+    const userHtml = handlebarsService.compile({
+      template: userTemplate,
+      data: {
+        week: `${timesheet.weekStartDate} - ${timesheet.weekEndDate}`,
+        hasLogo: hasLogo,
+        companyName: timesheet?.company?.name ?? '',
+        name: names.join(' '),
+      },
+    });
+
+    let attachments: EmailAttachmentInput[] | undefined;
+    if (hasLogo) {
+      const image = await axios.get(timesheet?.company?.logo?.url as string, { responseType: 'arraybuffer' });
+      const raw = Buffer.from(image.data).toString('base64');
+
+      attachments = [
+        {
+          content: raw,
+          filename: timesheet?.company?.logo.name as string,
+          content_id: 'logo',
+          disposition: 'inline',
+          // type: 'image/png',
+        },
+      ];
+    }
+
+    let promises: any = [];
+    if (timesheet.user?.manager?.email) {
+      const obj: IEmailBasicArgs = {
+        to: timesheet.user?.manager?.email as string,
+        from: emailSetting.fromEmail,
+        subject: emailSetting.submitTimesheet.subject,
+        html: managerHtml,
+        ...(hasLogo && {
+          attachments,
+        }),
+      };
+
+      const sendToManager = emailService.sendEmail(obj);
+      promises.push(sendToManager);
+    }
+
+    const userObj: IEmailBasicArgs = {
+      to: timesheet.user?.email as string,
+      from: emailSetting.fromEmail,
+      subject: emailSetting.submitTimesheet.subject,
+      html: userHtml,
+      ...(hasLogo && {
+        attachments,
+      }),
+    };
+
+    promises.push(emailService.sendEmail(userObj));
+
+    Promise.all(promises)
+      .then((response) => {
+        logger.info({
+          operation,
+          message: `Email response for ${timesheet.user.email}`,
+          data: response,
+        });
+      })
+      .catch((err) => {
+        logger.error({
+          operation,
+          message: 'Error sending timesheet submit email',
+          data: err,
+        });
+      });
+  } catch (err) {
+    logger.error({
+      operation,
+      message: 'Error sending timesheet submit email',
+      data: err,
+    });
+  }
+});
 
 export default timesheetEmitter;

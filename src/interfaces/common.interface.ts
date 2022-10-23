@@ -55,7 +55,7 @@ export interface IValidationInput {
   input: any;
 }
 
-type EmailAttachmentInput = {
+export type EmailAttachmentInput = {
   content: string;
   filename: string;
   type?: string;

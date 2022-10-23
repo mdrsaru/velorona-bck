@@ -27,6 +27,7 @@ import { IUserRepository } from '../interfaces/user.interface';
 import { IUserClientRepository } from '../interfaces/user-client.interface';
 import { IClientRepository } from '../interfaces/client.interface';
 import timeEntryEmitter from '../subscribers/timeEntry.subscriber';
+import timesheetEmitter from '../subscribers/timesheet.subscriber';
 
 @injectable()
 export default class TimesheetService implements ITimesheetService {
@@ -158,6 +159,7 @@ export default class TimesheetService implements ITimesheetService {
       throw err;
     }
   };
+
   update = async (args: ITimesheetUpdateInput): Promise<Timesheet> => {
     try {
       const id = args.id;
@@ -177,6 +179,7 @@ export default class TimesheetService implements ITimesheetService {
             details: [strings.timesheetMandatory],
           });
       }
+
       const timesheet = await this.timesheetRepository.update({
         id,
         status,
@@ -185,15 +188,17 @@ export default class TimesheetService implements ITimesheetService {
         lastSubmittedAt,
         approver_id,
       });
+
       if (!isSubmitted) {
         // Emit onTimesheetUnlock event
         timeEntryEmitter.emit(events.onTimesheetUnlock, {
           timesheet_id: id,
         });
       }
+
       if (isSubmitted) {
-        // Emit onTimesheetSubmit event
-        timeEntryEmitter.emit(events.onTimesheetSubmit, {
+        // Emit sendTimesheetSubmitEmail event
+        timesheetEmitter.emit(events.sendTimesheetSubmitEmail, {
           timesheet_id: id,
         });
       }

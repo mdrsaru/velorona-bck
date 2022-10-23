@@ -161,7 +161,7 @@ export default class AuthService implements IAuthService {
         });
       }
 
-      if (user.status == UserStatus.Inactive || user.status == UserStatus.InvitationSent) {
+      if (user.status == UserStatus.Inactive) {
         throw new NotAuthenticatedError({
           details: [strings.userNotActive],
           data: {

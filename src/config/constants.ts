@@ -231,7 +231,7 @@ export const events = {
   onTimesheetUnlock: 'onTimesheetUnlock',
   onSubscriptionCreate: 'onSubscriptionCreate',
   updateWorkscheduleUsage: 'updateWorkscheduleUsage',
-  onTimesheetSubmit: 'onTimesheetSubmit',
+  sendTimesheetSubmitEmail: 'sendTimesheetSubmitEmail',
 };
 
 export const stripeSetting = {
