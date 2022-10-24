@@ -25,6 +25,8 @@
     <div class="container">
       {{#if hasLogo}}
       <img src="cid:logo" alt="Vellorona" class="logo-img" />
+      {{else if superAdmin}}
+      <img src="cid:logo" alt="Vellorona" class="logo-img" />
       {{else}}
       <p>{{companyName}}</p>
       {{/if}}

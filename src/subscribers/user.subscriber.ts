@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 import { userEmitter } from './emitters';
-import constants, { emailSetting, events } from '../config/constants';
+import constants, { emailSetting, events, Role } from '../config/constants';
 import { TYPES } from '../types';
 import container from '../inversify.config';
 import Company from '../entities/company.entity';
@@ -43,6 +43,10 @@ userEmitter.on(events.onUserCreate, async (data: any) => {
     });
   }
 
+  let superAdmin = false;
+  if (data?.user.roles?.[0]?.name === Role.SuperAdmin) {
+    superAdmin = true;
+  }
   const hasLogo = !!company?.logo_id;
 
   let emailTemplate = await fs.readFile(`${__dirname}/../../templates/new-user-template.html`, { encoding: 'utf-8' });
@@ -56,6 +60,7 @@ userEmitter.on(events.onUserCreate, async (data: any) => {
       email: data?.user?.email,
       hasLogo: hasLogo,
       companyName: company?.name ?? '',
+      superAdmin: superAdmin,
     },
   });
 
@@ -79,8 +84,19 @@ userEmitter.on(events.onUserCreate, async (data: any) => {
         // type: 'image/png',
       },
     ];
-  }
+  } else if (data?.user.roles?.[0].name === Role.SuperAdmin) {
+    const logo = await fs.readFile(`${__dirname}/../../public/logo.png`, { encoding: 'base64' });
 
+    obj.attachments = [
+      {
+        content: logo,
+        filename: 'logo.png',
+        content_id: 'logo',
+        disposition: 'inline',
+        type: 'image/png',
+      },
+    ];
+  }
   emailService
     .sendEmail(obj)
     .then((response) => {
