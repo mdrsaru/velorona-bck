@@ -15,6 +15,8 @@ import { IWorkscheduleRepository } from '../interfaces/workschedule.interface';
 import WorkscheduleTimeDetail from '../entities/workschedule-time-details.entity';
 import moment from 'moment';
 import { IWorkscheduleDetailRepository } from '../interfaces/workschedule-detail.interface';
+import workscheduleDetailEmitter from '../subscribers/workscheduleDetail.subscriber';
+import { events } from '../config/constants';
 
 @injectable()
 export default class WorkscheduleTimeDetailService implements IWorkscheduleTimeDetailService {
@@ -87,6 +89,12 @@ export default class WorkscheduleTimeDetailService implements IWorkscheduleTimeD
         workschedule_id: workscheduleDetail?.workschedule_id,
       });
 
+      // Emit event for onWorkscheduleDetailCreate
+      workscheduleDetailEmitter.emit(events.onWorkscheduleDetailCreate, {
+        workscheduleDetail,
+        startTime,
+        endTime,
+      });
       return workscheduleTimeDetail;
     } catch (err) {
       this.errorService.throwError({

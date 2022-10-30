@@ -22,6 +22,8 @@ import moment from 'moment';
 import _ from 'lodash';
 import workscheduleTimeDetail from '../config/inversify/workschedule-time-detail';
 import { NotFoundError } from '../utils/api-error';
+import { events } from '../config/constants';
+import workscheduleDetailEmitter from '../subscribers/workscheduleDetail.subscriber';
 
 @injectable()
 export default class WorkscheduleDetailService implements IWorkscheduleDetailService {
@@ -91,6 +93,13 @@ export default class WorkscheduleDetailService implements IWorkscheduleDetailSer
       await this.updateWorkschedule({
         startTime,
         workschedule_id: workschedule_id,
+      });
+
+      // Emit event for onWorkscheduleDetailCreate
+      workscheduleDetailEmitter.emit(events.onWorkscheduleDetailCreate, {
+        workscheduleDetail,
+        startTime,
+        endTime,
       });
 
       return workscheduleDetail;

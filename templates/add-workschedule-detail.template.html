@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <style>
+      .container {
+        background-color: #ebecf7;
+        text-align: center;
+        padding: 2rem;
+      }
+
+      .container-body {
+        margin-left: 10rem;
+        justify-content: center;
+        font-size: 18px;
+      }
+      .logo-img {
+        width: 150px;
+        height: 150px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      {{#if hasLogo}}
+      <img src="cid:logo" alt="Vellorona" class="logo-img" />
+      {{else}}
+      <p>{{companyName}}</p>
+      {{/if}}
+    </div>
+
+    <div class="container-body">
+      <h1>Hi {{name}}!,</h1>
+      <p>New workschedule added for you.Here is the detail:</p>
+      <p>Schedule Date:{{scheduleDate}},</p>
+      <p>Start time-End time:{{startTime}}-{{endTime}}</p>
+
+      <p>If you have any questions, feel free too email us</p>
+      <p>Thanks,</p>
+      <p>Vellorona Team</p>
+    </div>
+
+    <div class="container">
+      <ul type="none">
+        <li>&#169; All rights reserved</li>
+        <li>Vellorona</li>
+        <li>1001 W Euless Blvd, Euless, TX 76040, USA</li>
+        <li>contact@velorona.com</li>
+      </ul>
+    </div>
+  </body>
+</html>

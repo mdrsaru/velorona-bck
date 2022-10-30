@@ -9,3 +9,4 @@ export const payRateEmitter = new Emitter();
 export const timeEntryEmitter = new Emitter();
 export const companyEmitter = new Emitter();
 export const workscheduleEmitter = new Emitter();
+export const workscheduleDetailEmitter = new Emitter();

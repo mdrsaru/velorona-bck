@@ -220,6 +220,9 @@ export const emailSetting = {
     contactEmailAddress: process.env.CONTACT_EMAIL_ADDRESS as string,
     subject: process.env.CONTACT_US_SUBJECT || 'Contact us',
   },
+  workscheduleDetail: {
+    subject: process.env.WORKSCHEDULE_DETAIL_ADDED_SUBJECT || '',
+  },
 };
 
 export const events = {
@@ -236,6 +239,7 @@ export const events = {
   onSubscriptionCreate: 'onSubscriptionCreate',
   updateWorkscheduleUsage: 'updateWorkscheduleUsage',
   sendTimesheetSubmitEmail: 'sendTimesheetSubmitEmail',
+  onWorkscheduleDetailCreate: 'onWorkscheduleDetailCreate',
 };
 
 export const stripeSetting = {

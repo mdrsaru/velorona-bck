@@ -64,7 +64,7 @@ export default class WorkscheduleService implements IWorkscheduleService {
     const company_id = args.company_id;
 
     try {
-      const project = await this.workscheduleRepository.create({
+      const workschedule = await this.workscheduleRepository.create({
         startDate,
         endDate,
         payrollAllocatedHours,
@@ -73,7 +73,7 @@ export default class WorkscheduleService implements IWorkscheduleService {
         company_id,
       });
 
-      return project;
+      return workschedule;
     } catch (err) {
       this.errorService.throwError({
         err,
