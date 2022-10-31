@@ -8,7 +8,7 @@ import strings from '../config/strings';
 import Paging from '../utils/paging';
 import Timesheet from '../entities/timesheet.entity';
 import * as apiError from '../utils/api-error';
-import { EntryType, Role, UserClientStatus, InvoiceSchedule, events } from '../config/constants';
+import { EntryType, Role, UserClientStatus, InvoiceSchedule, events, TimesheetStatus } from '../config/constants';
 
 import {
   ITimesheetCreateInput,
@@ -17,6 +17,7 @@ import {
   ITimesheetUpdateInput,
   ITimesheetApproveRejectInput,
   ITimesheetBulkCreateInput,
+  ITimesheetReminderInput,
 } from '../interfaces/timesheet.interface';
 import { IEntityRemove, IErrorService, ILogger } from '../interfaces/common.interface';
 import { IPaginationData, IPagingArgs } from '../interfaces/paging.interface';
@@ -203,6 +204,50 @@ export default class TimesheetService implements ITimesheetService {
         });
       }
       return timesheet;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  submitReminder = async (args: ITimesheetReminderInput): Promise<void> => {
+    try {
+      const date = args.date;
+
+      const timesheets = await this.timesheetRepository.getAll({ relations: ['company', 'user', 'company.logo'] });
+
+      timesheets.map((timesheet) => {
+        if (!timesheet.isSubmitted) {
+          if (date > timesheet.weekEndDate) {
+            // Emit sendTimesheetSubmitReminderEmail event
+            timesheetEmitter.emit(events.onTimesheetSubmitReminder, {
+              timesheet,
+            });
+          }
+        }
+      });
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  approveReminder = async (args: ITimesheetReminderInput): Promise<void> => {
+    try {
+      const date = args.date;
+
+      const timesheets = await this.timesheetRepository.getAll({
+        relations: ['company', 'user', 'company.logo', 'user.manager'],
+      });
+
+      timesheets.map((timesheet) => {
+        if (timesheet.status === TimesheetStatus.Pending && timesheet.isSubmitted) {
+          if (date > timesheet.weekEndDate) {
+            //Emit sendTimesheetApproveReminderEmail event
+            timesheetEmitter.emit(events.onTimesheetApproveReminder, {
+              timesheet,
+            });
+          }
+        }
+      });
     } catch (err) {
       throw err;
     }

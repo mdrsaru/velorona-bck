@@ -27,6 +27,7 @@ import { IActivityLogRepository } from '../interfaces/activity-log.interface';
 import { IClientRepository } from '../interfaces/client.interface';
 import { IAttachedTimesheetRepository } from '../interfaces/attached-timesheet.interface';
 import axios from 'axios';
+import Timesheet from '../entities/timesheet.entity';
 
 type TimesheetApprove = {
   timesheet_id: string;
@@ -421,6 +422,179 @@ timesheetEmitter.on(events.sendTimesheetSubmitEmail, async (args: TimesheetSubmi
       operation,
       message: 'Error sending timesheet submit email',
       data: err,
+    });
+  }
+});
+
+type TimesheetReminderUsage = {
+  timesheet: Timesheet;
+};
+
+timesheetEmitter.on(events.onTimesheetSubmitReminder, async (args: TimesheetReminderUsage) => {
+  const operation = events.sendTimesheetSubmitEmail;
+
+  const timesheetRepository: ITimesheetRepository = container.get<ITimesheetRepository>(TYPES.TimesheetRepository);
+  const logger = container.get<ILogger>(TYPES.Logger);
+  logger.init('timesheet.subscriber');
+
+  const emailService: IEmailService = container.get<IEmailService>(TYPES.EmailService);
+  const handlebarsService: ITemplateService = container.get<ITemplateService>(TYPES.HandlebarsService);
+
+  const timesheet = args.timesheet;
+
+  try {
+    const hasLogo = !!timesheet?.company?.logo_id;
+
+    let emailTemplate = await fs.readFile(`${__dirname}/../../templates/submit-timesheet-reminder.template.html`, {
+      encoding: 'utf-8',
+    });
+    const timesheetHtml = handlebarsService.compile({
+      template: emailTemplate,
+      data: {
+        hasLogo: hasLogo,
+        companyName: timesheet?.company?.name ?? '',
+        weekStartDate: moment(timesheet.weekStartDate).format('MMM DD,YYYY'),
+        weekEndDate: moment(timesheet.weekEndDate).format('MMM DD,YYYY'),
+        user: timesheet?.user?.firstName,
+      },
+    });
+    const obj: IEmailBasicArgs = {
+      to: timesheet?.user.email ?? '',
+      from: emailSetting.fromEmail,
+      subject: emailSetting.submitTimesheetReminder.subject,
+      html: timesheetHtml,
+    };
+
+    if (hasLogo) {
+      const image = await axios.get(timesheet?.company?.logo?.url as string, {
+        responseType: 'arraybuffer',
+      });
+      const raw = Buffer.from(image.data).toString('base64');
+
+      obj.attachments = [
+        {
+          content: raw,
+          filename: timesheet?.company?.logo.name as string,
+          content_id: 'logo',
+          disposition: 'inline',
+          // type: 'image/png',
+        },
+      ];
+    }
+    emailService
+      .sendEmail(obj)
+      .then((response) => {
+        logger.info({
+          operation,
+          message: `Email response for ${timesheet?.user?.email}`,
+          data: response,
+        });
+      })
+      .catch((err) => {
+        logger.error({
+          operation,
+          message: 'Error sending workschedule added email',
+          data: err,
+        });
+      });
+  } catch (err) {
+    logger.error({
+      operation,
+      message: 'Error on creating workschedule detail',
+      data: {
+        timesheet,
+        err,
+      },
+    });
+  }
+});
+
+timesheetEmitter.on(events.onTimesheetApproveReminder, async (args: TimesheetReminderUsage) => {
+  const operation = events.sendTimesheetSubmitEmail;
+
+  const timesheetRepository: ITimesheetRepository = container.get<ITimesheetRepository>(TYPES.TimesheetRepository);
+  const logger = container.get<ILogger>(TYPES.Logger);
+  logger.init('timesheet.subscriber');
+
+  const emailService: IEmailService = container.get<IEmailService>(TYPES.EmailService);
+  const handlebarsService: ITemplateService = container.get<ITemplateService>(TYPES.HandlebarsService);
+
+  const timesheet = args.timesheet;
+
+  try {
+    const hasLogo = !!timesheet?.company?.logo_id;
+
+    let emailTemplate = await fs.readFile(`${__dirname}/../../templates/approve-timesheet-reminder.template.html`, {
+      encoding: 'utf-8',
+    });
+
+    const names = [
+      timesheet?.user?.firstName ?? '',
+      timesheet?.user?.middleName ?? '',
+      timesheet?.user?.lastName ?? '',
+    ];
+
+    const timesheetHtml = handlebarsService.compile({
+      template: emailTemplate,
+      data: {
+        hasLogo: hasLogo,
+        companyName: timesheet?.company?.name ?? '',
+        weekStartDate: moment(timesheet.weekStartDate).format('MMM DD,YYYY'),
+        weekEndDate: moment(timesheet.weekEndDate).format('MMM DD,YYYY'),
+        user: names.join(' '),
+        manager: timesheet.user?.manager?.firstName,
+      },
+    });
+
+    if (timesheet?.user?.manager?.email) {
+      const obj: IEmailBasicArgs = {
+        to: timesheet?.user.manager.email ?? '',
+        from: emailSetting.fromEmail,
+        subject: emailSetting.approveTimesheetReminder.subject,
+        html: timesheetHtml,
+      };
+
+      if (hasLogo) {
+        const image = await axios.get(timesheet?.company?.logo?.url as string, {
+          responseType: 'arraybuffer',
+        });
+        const raw = Buffer.from(image.data).toString('base64');
+
+        obj.attachments = [
+          {
+            content: raw,
+            filename: timesheet?.company?.logo.name as string,
+            content_id: 'logo',
+            disposition: 'inline',
+            // type: 'image/png',
+          },
+        ];
+      }
+      emailService
+        .sendEmail(obj)
+        .then((response) => {
+          logger.info({
+            operation,
+            message: `Email response for ${timesheet?.user?.manager?.email}`,
+            data: response,
+          });
+        })
+        .catch((err) => {
+          logger.error({
+            operation,
+            message: 'Error sending workschedule added email',
+            data: err,
+          });
+        });
+    }
+  } catch (err) {
+    logger.error({
+      operation,
+      message: 'Error on creating workschedule detail',
+      data: {
+        timesheet,
+        err,
+      },
     });
   }
 });

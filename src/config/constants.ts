@@ -223,6 +223,12 @@ export const emailSetting = {
   workscheduleDetail: {
     subject: process.env.WORKSCHEDULE_DETAIL_ADDED_SUBJECT || '',
   },
+  submitTimesheetReminder: {
+    subject: process.env.SUBMIT_TIMESHEET_REMINDER_EMAIL_SUBJECT || '',
+  },
+  approveTimesheetReminder: {
+    subject: process.env.APPROVE_TIMESHEET_REMINDER_EMAIL_SUBJECT || '',
+  },
 };
 
 export const events = {
@@ -240,6 +246,8 @@ export const events = {
   updateWorkscheduleUsage: 'updateWorkscheduleUsage',
   sendTimesheetSubmitEmail: 'sendTimesheetSubmitEmail',
   onWorkscheduleDetailCreate: 'onWorkscheduleDetailCreate',
+  onTimesheetSubmitReminder: 'onTimesheetSubmitReminder',
+  onTimesheetApproveReminder: 'onTimesheetApproveReminder',
 };
 
 export const stripeSetting = {
