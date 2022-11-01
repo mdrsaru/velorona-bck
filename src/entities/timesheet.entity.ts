@@ -3,7 +3,7 @@ import { Field, InputType, ObjectType, registerEnumType } from 'type-graphql';
 import { Column, Entity, Index, JoinColumn, ManyToOne, Unique } from 'typeorm';
 import { GraphQLJSON } from 'graphql-type-json';
 
-import { entities, TimesheetStatus, InvoiceSchedule } from '../config/constants';
+import { entities, TimesheetStatus, InvoiceSchedule, InvoiceStatus } from '../config/constants';
 import { timesheet } from '../config/db/columns';
 import { Base } from './base.entity';
 import Client from './client.entity';
@@ -19,6 +19,10 @@ registerEnumType(TimesheetStatus, {
 
 registerEnumType(InvoiceSchedule, {
   name: 'InvoiceSchedule',
+});
+
+registerEnumType(InvoiceStatus, {
+  name: 'InvoiceStatus',
 });
 
 const indexPrefix = entities.timesheet;
@@ -207,6 +211,9 @@ export default class Timesheet extends Base {
 
   @Field(() => InvoiceSchedule, { nullable: true })
   period: InvoiceSchedule;
+
+  @Field(() => InvoiceStatus, { nullable: true })
+  invoiceStatus: InvoiceStatus;
 }
 
 @InputType()

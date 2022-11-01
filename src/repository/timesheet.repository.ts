@@ -504,65 +504,84 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
       }
 
       /**
+       * Using two CTEs, one for selecting the needed fields and second one for grouping the time entries to make timesheet
+       *
+       * CHECK THE CASE EXPRESSION FROM THE QUERY
        * First Case: Biweekly - Get the schedule_start_date(if not get created_at) of the client and truncate to Monday to calculate the biweekly timesheet
-       * Second Case: Biweekly - Get the custom_start_date(if not get created_at) of the client and truncate to Monday to calculate the biweekly timesheet
+       * Second Case: Custom - Get the custom_start_date(if not get created_at) of the client and truncate to Monday to calculate the biweekly timesheet
        * Third Case: Monthly - Truncate start date to month
        * Fourth Case: Weekly - Truncate start date to week
        */
-      const cte = `
-        with grouped_timesheet as (
-            select
-            sum(t.duration) as total_duration,
-            round(
-              sum(
-                case
-                  when invoice_id is not null then (t.duration::numeric / 3600) * t.hourly_invoice_rate
-                  else 0
-                end
-              )::numeric, 2
-            ) AS "totalExpense",
-            round(
-              sum(
-                case
-                  when invoice_id is not null then (t.duration::numeric / 3600) * t.hourly_rate
-                  else 0
-                end
-              )::numeric, 2
-            ) AS "userPayment",
-            t.created_by as _user_id,
-            p.client_id as _client_id,
-            t.company_id as _company_id,
-            c.invoice_schedule,
-            string_agg(distinct ts.id::text, ',') as timesheet_id,
-            string_agg(distinct ts.status::text, ',') as timesheet_status,
-            max(last_approved_at) as timesheet_last_approved_at,
-            CASE
-            WHEN invoice_schedule = 'Biweekly' THEN
-              CASE
-              WHEN c.schedule_start_date is NULL THEN (to_char(date_trunc('week', c.created_at), 'YYYY-MM-DD')::date + floor((to_char(start_time, 'YYYY-MM-DD')::date - to_char(date_trunc('week', c.created_at), 'YYYY-MM-DD')::date ) / 14)::int * 14)::text
-              ELSE  (to_char(date_trunc('week', c.schedule_start_date), 'YYYY-MM-DD')::date + floor((to_char(start_time, 'YYYY-MM-DD')::date - to_char(date_trunc('week', c.schedule_start_date), 'YYYY-MM-DD')::date ) / 14)::int * 14)::text
-              END
 
-            WHEN invoice_schedule = 'Custom' THEN
-              CASE
-              WHEN c.schedule_start_date is NULL THEN (to_char(date_trunc('week', c.created_at), 'YYYY-MM-DD')::date + floor((week_start_date - to_char(date_trunc('week', c.created_at), 'YYYY-MM-DD')::date ) / 30)::int * 30)::text
-              ELSE  (c.schedule_start_date + floor((to_char(start_time, 'YYYY-MM-DD'):: date - c.schedule_start_date) / 30)::int * 30)::text
-              END
+      const cte = `with time_entry_cte as (
+        select
+        ts.id as timesheet_id,
+        ts.status as timesheet_status,
+        last_approved_at,
+        t.invoice_id as invoice_id,
+        t.duration as duration,
+        hourly_invoice_rate,
+        hourly_rate,
+        t.created_by as _user_id,
+        p.client_id as _client_id,
+        t.company_id as _company_id,
+        c.invoice_schedule as invoice_schedule,
+        inv.status as invoice_status,
+        CASE
+        WHEN invoice_schedule = 'Biweekly' THEN
+          CASE
+          WHEN c.schedule_start_date is NULL THEN (to_char(date_trunc('week', c.created_at), 'YYYY-MM-DD')::date + floor((to_char(start_time, 'YYYY-MM-DD')::date - to_char(date_trunc('week', c.created_at), 'YYYY-MM-DD')::date ) / 14)::int * 14)::text
+          ELSE  (to_char(date_trunc('week', c.schedule_start_date), 'YYYY-MM-DD')::date + floor((to_char(start_time, 'YYYY-MM-DD')::date - to_char(date_trunc('week', c.schedule_start_date), 'YYYY-MM-DD')::date ) / 14)::int * 14)::text
+          END
 
-            WHEN invoice_schedule = 'Monthly'  THEN to_char(date_trunc('month', start_time::timestamp)::date, 'YYYY-MM-DD')
-            ELSE to_char(date_trunc('week', start_time::timestamp)::date, 'YYYY-MM-DD')
-            END AS start_date,
-            created_by, p.client_id, t.company_id
-          from time_entries as t
-          join projects as p on t.project_id = p.id
-          join clients as c on c.id = p.client_id
-          join timesheet as ts on t.timesheet_id = ts.id
+        WHEN invoice_schedule = 'Custom' THEN
+          CASE
+          WHEN c.schedule_start_date is NULL THEN (to_char(date_trunc('week', c.created_at), 'YYYY-MM-DD')::date + floor((week_start_date - to_char(date_trunc('week', c.created_at), 'YYYY-MM-DD')::date ) / 30)::int * 30)::text
+          ELSE  (c.schedule_start_date + floor((to_char(start_time, 'YYYY-MM-DD'):: date - c.schedule_start_date) / 30)::int * 30)::text
+          END
 
-          ${where}
-
-          group by start_date, p.client_id, t.created_by, t.company_id, c.invoice_schedule
-          order by start_date desc
-        )
+        WHEN invoice_schedule = 'Monthly'  THEN to_char(date_trunc('month', start_time::timestamp)::date, 'YYYY-MM-DD')
+        ELSE to_char(date_trunc('week', start_time::timestamp)::date, 'YYYY-MM-DD')
+        END AS start_date
+        from time_entries as t
+        left join invoices as inv on inv.id = t.invoice_id
+        join projects as p on t.project_id = p.id
+        join clients as c on c.id = p.client_id
+        join timesheet as ts on t.timesheet_id = ts.id
+        ${where}
+      ),
+      grouped_timesheet as (
+        select
+        start_date,
+        sum(duration) as total_duration,
+        round(
+          sum(
+          case
+            when invoice_id is not null then (duration::numeric / 3600) * hourly_invoice_rate
+            else 0
+          end
+          )::numeric, 2
+        ) AS "totalExpense",
+        round(
+          sum(
+          case
+            when invoice_id is not null then (duration::numeric / 3600) * hourly_rate
+            else 0
+          end
+          )::numeric, 2
+        ) AS "userPayment",
+        _user_id,
+        _client_id,
+        _company_id,
+        invoice_schedule,
+        string_agg(distinct invoice_status::text, ',') as invoice_status,
+        string_agg(distinct timesheet_id::text, ',') as timesheet_id,
+        string_agg(distinct timesheet_status::text, ',') as timesheet_status,
+        max(last_approved_at) as timesheet_last_approved_at
+        from time_entry_cte
+        group by start_date, _client_id, _user_id, _company_id, invoice_schedule
+        order by start_date desc
+      )
       `;
 
       const countResult = await this.manager.query(
@@ -579,15 +598,16 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
             start_date as "weekStartDate",
             invoice_schedule as period,
             case
-            when invoice_schedule = 'Biweekly' then to_char(start_date::date + 13, 'YYYY-MM-DD')
-            when invoice_schedule = 'Custom' then to_char(start_date::date + 29, 'YYYY-MM-DD')
-            when invoice_schedule = 'Monthly' then to_char(start_date::date + interval '1 month' - interval '1 day', 'YYYY-MM-DD')
-            else to_char(start_date::date + 6, 'YYYY-MM-DD')
+              when invoice_schedule = 'Biweekly' then to_char(start_date::date + 13, 'YYYY-MM-DD')
+              when invoice_schedule = 'Custom' then to_char(start_date::date + 29, 'YYYY-MM-DD')
+              when invoice_schedule = 'Monthly' then to_char(start_date::date + interval '1 month' - interval '1 day', 'YYYY-MM-DD')
+              else to_char(start_date::date + 6, 'YYYY-MM-DD')
             end as "weekEndDate",
+            timesheet_id as id,
+            invoice_status as "invoiceStatus",
             timesheet_status as status,
             timesheet_last_approved_at as "lastApprovedAt",
             _company_id as company_id,
-            timesheet_id as id,
             _user_id as user_id,
             invoice_schedule as period,
             _client_id as client_id,
