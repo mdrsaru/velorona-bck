@@ -10,10 +10,11 @@ import { generateRandomStrings } from '../utils/strings';
 import * as apiError from '../utils/api-error';
 
 import { IPagingArgs, IPaginationData } from '../interfaces/paging.interface';
-import { IEntityRemove, IEntityID } from '../interfaces/common.interface';
+import { IEntityRemove, IReminderInput } from '../interfaces/common.interface';
 import { ICompanyCreate, ICompanyUpdate, ICompanyRepository, ICompanyService } from '../interfaces/company.interface';
 import { IUserRepository } from '../interfaces/user.interface';
 import companyEmitter from '../subscribers/company.subscriber';
+import moment from 'moment';
 
 @injectable()
 export default class CompanyService implements ICompanyService {
@@ -110,6 +111,28 @@ export default class CompanyService implements ICompanyService {
     }
   };
 
+  subscriptionReminder = async (args: IReminderInput): Promise<Company[]> => {
+    try {
+      const date = args.date;
+
+      const companies = await this.companyRepository.getAll({ relations: ['logo'] });
+      companies.map((company) => {
+        if (company.subscriptionPeriodEnd) {
+          let threeDayPriorDate = moment(company.subscriptionPeriodEnd).subtract(3, 'days').utc().format('YYYY-MM-DD');
+          if (date === threeDayPriorDate) {
+            // Emit sendSubscriptionEndReminderEmail event
+            companyEmitter.emit(events.onSubscriptionEndReminder, {
+              company,
+              date: company.subscriptionPeriodEnd,
+            });
+          }
+        }
+      });
+      return companies;
+    } catch (err) {
+      throw err;
+    }
+  };
   remove = async (args: IEntityRemove): Promise<Company> => {
     try {
       const id = args.id;

@@ -47,6 +47,9 @@ export default class WebhookController {
         case 'customer.subscription.updated':
           this.webhookService.handleCustomerSubscriptionUpdated(event);
           break;
+        case 'customer.subscription.trial_will_end':
+          this.webhookService.handleTrialEndReminder(event);
+          break;
         default:
           throw new apiError.NotImplementedError({
             details: [`Unexpected event type: ${event.type}`],

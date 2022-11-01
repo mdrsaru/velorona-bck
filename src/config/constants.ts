@@ -229,6 +229,9 @@ export const emailSetting = {
   approveTimesheetReminder: {
     subject: process.env.APPROVE_TIMESHEET_REMINDER_EMAIL_SUBJECT || '',
   },
+  subscriptionEndReminder: {
+    subject: process.env.SUBSCRIPTION_END_REMINDER_EMAIL_SUBJECT || '',
+  },
 };
 
 export const events = {
@@ -248,6 +251,7 @@ export const events = {
   onWorkscheduleDetailCreate: 'onWorkscheduleDetailCreate',
   onTimesheetSubmitReminder: 'onTimesheetSubmitReminder',
   onTimesheetApproveReminder: 'onTimesheetApproveReminder',
+  onSubscriptionEndReminder: 'onSubscriptionEndReminder',
 };
 
 export const stripeSetting = {

@@ -2,7 +2,7 @@ import { inject, injectable } from 'inversify';
 import { Request, Response, NextFunction } from 'express';
 
 import { TYPES } from '../types';
-import { plans, subscriptionStatus, SubscriptionPaymentStatus, stripeSetting } from '../config/constants';
+import { plans, subscriptionStatus, SubscriptionPaymentStatus, stripeSetting, events } from '../config/constants';
 import * as apiError from '../utils/api-error';
 import StripeService from '../services/stripe.service';
 
@@ -10,6 +10,7 @@ import { ILogger } from '../interfaces/common.interface';
 import { ICompanyRepository } from '../interfaces/company.interface';
 import { ISubscriptionService } from '../interfaces/subscription.interface';
 import { ISubscriptionPaymentRepository } from '../interfaces/subscription-payment.interface';
+import { companyEmitter } from '../subscribers/emitters';
 
 @injectable()
 export default class WebhookService {
@@ -304,6 +305,52 @@ export default class WebhookService {
             subscription_id,
             customer_id,
             company_id,
+          },
+        });
+      }
+    } catch (err) {
+      this.logger.error({
+        operation,
+        message: 'Error updating subscription with the payment method.',
+        data: err,
+      });
+    }
+  };
+
+  /**
+   * Trial end reminder
+   */
+  handleTrialEndReminder = async (eventObject: any): Promise<void> => {
+    const operation = 'handleTrialEndReminder';
+    try {
+      const obj = eventObject?.data?.object;
+      const subscriptionId = obj?.id;
+      const stripeCustomerId = obj?.customer;
+      const trialEndDate = obj?.trial_end;
+
+      if (subscriptionId && stripeCustomerId) {
+        const company = await this.companyRepository.getSingleEntity({
+          query: {
+            subscriptionId,
+            stripeCustomerId,
+          },
+          relations: ['logo'],
+        });
+
+        let trialPeriodEnd = new Date(trialEndDate * 1000);
+
+        // Emit sendSubscriptionEndReminderEmail event
+        companyEmitter.emit(events.onSubscriptionEndReminder, {
+          company,
+          date: trialPeriodEnd,
+        });
+
+        this.logger.info({
+          operation,
+          message: `Email reminder send to ${stripeCustomerId}`,
+          data: {
+            subscriptionId,
+            stripeCustomerId,
           },
         });
       }

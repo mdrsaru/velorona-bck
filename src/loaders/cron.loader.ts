@@ -7,6 +7,7 @@ import { IInvoiceService } from '../interfaces/invoice.interface';
 import { ILogger } from '../interfaces/common.interface';
 import { ITimesheetService } from '../interfaces/timesheet.interface';
 import { IWorkscheduleRepository } from '../interfaces/workschedule.interface';
+import { ICompanyService } from '../interfaces/company.interface';
 
 const CronJob = cron.CronJob;
 
@@ -16,6 +17,7 @@ export default (): void => {
 
   const invoiceService = container.get<IInvoiceService>(TYPES.InvoiceService);
   const timesheetService = container.get<ITimesheetService>(TYPES.TimesheetService);
+  const companyService = container.get<ICompanyService>(TYPES.CompanyService);
   const workscheduleRepository = container.get<IWorkscheduleRepository>(TYPES.WorkscheduleRepository);
 
   /**
@@ -235,7 +237,6 @@ export default (): void => {
     function () {
       const operation = 'timesheetapproveReminder';
       const date = moment().format('YYYY-MM-DD');
-      console.log(date, 'approve');
       try {
         timesheetService
           .approveReminder({
@@ -264,6 +265,54 @@ export default (): void => {
         logger.error({
           operation,
           message: 'Error sending timesheet reminder',
+          data: {
+            date,
+            err,
+          },
+        });
+      }
+    },
+    null,
+    true,
+    'UTC'
+  );
+
+  /**
+   * Company subscription due date reminder
+   */
+  new CronJob(
+    '0 1 * * *',
+    function () {
+      const operation = 'subscriptionEndReminder';
+      const date = moment().format('YYYY-MM-DD');
+      try {
+        companyService
+          .subscriptionReminder({
+            date,
+          })
+          .then(() => {
+            logger.info({
+              operation,
+              message: `Subscription end reminder send sucessfully`,
+              data: {
+                date,
+              },
+            });
+          })
+          .catch((err) => {
+            logger.error({
+              operation,
+              message: 'Error sending subscription end reminder',
+              data: {
+                date,
+                err,
+              },
+            });
+          });
+      } catch (err) {
+        logger.error({
+          operation,
+          message: 'Error sending subscription end reminder',
           data: {
             date,
             err,

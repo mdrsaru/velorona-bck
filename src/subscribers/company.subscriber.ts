@@ -1,14 +1,18 @@
+import fs from 'fs/promises';
+
 import { companyEmitter } from './emitters';
-import constants, { events, Role as RoleEnum } from '../config/constants';
+import constants, { emailSetting, events, Role as RoleEnum } from '../config/constants';
 import { TYPES } from '../types';
 import container from '../inversify.config';
 import Company from '../entities/company.entity';
 import StripeService from '../services/stripe.service';
 
-import { ILogger } from '../interfaces/common.interface';
+import { IEmailBasicArgs, IEmailService, ILogger, ITemplateService } from '../interfaces/common.interface';
 import { ICompanyRepository } from '../interfaces/company.interface';
 import { IUserRepository } from '../interfaces/user.interface';
 import { ISubscriptionService } from '../interfaces/subscription.interface';
+import axios from 'axios';
+import moment from 'moment';
 
 type UpdateCompanySubscriptionUsage = {
   company_id: string;
@@ -120,4 +124,86 @@ companyEmitter.on(events.onSubscriptionCreate, async (args: CreateCompanySubscri
     });
 });
 
+type SubscriptionEndReminderUsage = {
+  company: Company;
+  date: Date;
+};
+
+companyEmitter.on(events.onSubscriptionEndReminder, async (args: SubscriptionEndReminderUsage) => {
+  const operation = events.sendTimesheetSubmitEmail;
+
+  const logger = container.get<ILogger>(TYPES.Logger);
+  logger.init('timesheet.subscriber');
+
+  const emailService: IEmailService = container.get<IEmailService>(TYPES.EmailService);
+  const handlebarsService: ITemplateService = container.get<ITemplateService>(TYPES.HandlebarsService);
+
+  const company = args.company;
+  try {
+    const hasLogo = !!company?.logo_id;
+
+    let emailTemplate = await fs.readFile(`${__dirname}/../../templates/subscription-end-reminder.template.html`, {
+      encoding: 'utf-8',
+    });
+
+    const timesheetHtml = handlebarsService.compile({
+      template: emailTemplate,
+      data: {
+        hasLogo: hasLogo,
+        companyName: company?.name ?? '',
+        user: company?.name,
+        date: moment(args.date).format('YYYY-MM-DD'),
+      },
+    });
+
+    const obj: IEmailBasicArgs = {
+      to: company?.adminEmail ?? '',
+      from: emailSetting.fromEmail,
+      subject: emailSetting.subscriptionEndReminder.subject,
+      html: timesheetHtml,
+    };
+
+    if (hasLogo) {
+      const image = await axios.get(company?.logo?.url as string, {
+        responseType: 'arraybuffer',
+      });
+      const raw = Buffer.from(image.data).toString('base64');
+
+      obj.attachments = [
+        {
+          content: raw,
+          filename: company?.logo.name as string,
+          content_id: 'logo',
+          disposition: 'inline',
+          // type: 'image/png',
+        },
+      ];
+    }
+    emailService
+      .sendEmail(obj)
+      .then((response) => {
+        logger.info({
+          operation,
+          message: `Email response for ${company?.adminEmail}`,
+          data: response,
+        });
+      })
+      .catch((err) => {
+        logger.error({
+          operation,
+          message: 'Error sending workschedule added email',
+          data: err,
+        });
+      });
+  } catch (err) {
+    logger.error({
+      operation,
+      message: 'Error on creating workschedule detail',
+      data: {
+        company,
+        err,
+      },
+    });
+  }
+});
 export default companyEmitter;

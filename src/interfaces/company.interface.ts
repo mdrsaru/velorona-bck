@@ -1,5 +1,5 @@
 import { IPagingArgs, IGetAllAndCountResult, IPaginationData, IGetOptions } from './paging.interface';
-import { IEntityRemove, IEntityID, ISingleEntityQuery } from './common.interface';
+import { IEntityRemove, IEntityID, ISingleEntityQuery, IReminderInput } from './common.interface';
 import { IUserUpdate } from './user.interface';
 import Company, { CompanyGrowthOutput } from '../entities/company.entity';
 import User from '../entities/user.entity';
@@ -102,4 +102,5 @@ export interface ICompanyService {
   create(args: ICompanyCreate): Promise<Company>;
   update(args: ICompanyUpdate): Promise<Company>;
   remove(args: IEntityRemove): Promise<Company>;
+  subscriptionReminder(args: IReminderInput): Promise<Company[]>;
 }
