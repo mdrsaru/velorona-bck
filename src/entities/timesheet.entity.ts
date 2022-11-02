@@ -207,6 +207,9 @@ export default class Timesheet extends Base {
 
   @Field(() => InvoiceSchedule, { nullable: true })
   period: InvoiceSchedule;
+
+  @Field({ nullable: true, description: 'Comma separated invoice status' })
+  invoiceStatus: string;
 }
 
 @InputType()
