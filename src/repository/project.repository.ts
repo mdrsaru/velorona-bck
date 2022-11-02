@@ -280,6 +280,7 @@ export default class ProjectRepository extends BaseRepository<Project> implement
       const name = args.name;
       const status = args.status;
       const archived = args.archived;
+      const client_id = args.client_id;
 
       const found = await this.getById({ id });
       if (!found) {
@@ -293,6 +294,7 @@ export default class ProjectRepository extends BaseRepository<Project> implement
         name,
         status,
         archived,
+        client_id,
       });
 
       let project = await this.repo.save(update);

@@ -40,6 +40,7 @@ export default class ProjectValidation {
     return Joi.object({
       id: Joi.string().required().messages(messages.id),
       name: Joi.string(),
+      client_id: Joi.string(),
       status: Joi.string(),
       archived: Joi.boolean(),
       user_ids: Joi.array(),

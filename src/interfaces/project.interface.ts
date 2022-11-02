@@ -27,6 +27,7 @@ export interface IProjectUpdateInput {
   id: IProject['id'];
   name: IProject['name'];
   status?: IProject['status'];
+  client_id?: IProject['client_id'];
   archived?: IProject['archived'];
   user_ids?: string[];
 }

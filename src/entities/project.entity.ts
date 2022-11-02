@@ -120,6 +120,9 @@ export class ProjectUpdateInput {
   status: ProjectStatus;
 
   @Field({ nullable: true })
+  client_id: string;
+
+  @Field({ nullable: true })
   archived: boolean;
 
   @Field(() => [String], { nullable: true })
