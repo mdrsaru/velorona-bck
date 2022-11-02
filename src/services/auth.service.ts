@@ -37,6 +37,8 @@ import {
   ITokenService,
   ILogger,
   ITemplateService,
+  IEmailArgs,
+  EmailAttachmentInput,
 } from '../interfaces/common.interface';
 import { IUserRepository } from '../interfaces/user.interface';
 import { IUserTokenService } from '../interfaces/user-token.interface';
@@ -325,30 +327,33 @@ export default class AuthService implements IAuthService {
 
       const logo = await fs.readFile(`${__dirname}/../../public/logo.png`, { encoding: 'base64' });
 
-      let attachments;
+      const emailOptions: IEmailArgs = {
+        to: user.email,
+        from: emailSetting.fromEmail,
+        subject: emailSetting.resetPassword.subject,
+        html: resetPasswordHtml,
+      };
+
       if (hasLogo) {
         const image = await axios.get(user?.company?.logo?.url as string, { responseType: 'arraybuffer' });
         const raw = Buffer.from(image.data).toString('base64');
 
-        attachments = [
+        const attachments: EmailAttachmentInput[] = [
           {
             content: raw,
             filename: user?.company?.logo.name as string,
-            content_id: 'logo',
-            disposition: 'inline',
+            cid: 'logo',
+            contentDisposition: 'inline',
+            encoding: 'base64',
             // type: 'image/png',
           },
         ];
+
+        emailOptions.attachments = attachments;
       }
       // send email asynchronously
       this.emailService
-        .sendEmail({
-          to: user.email,
-          from: emailSetting.fromEmail,
-          subject: emailSetting.resetPassword.subject,
-          html: resetPasswordHtml,
-          attachments,
-        })
+        .sendEmail(emailOptions)
         .then((response) => {
           this.logger.info({
             operation,

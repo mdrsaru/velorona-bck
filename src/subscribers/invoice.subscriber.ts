@@ -12,7 +12,7 @@ import Company from '../entities/company.entity';
 import User from '../entities/user.entity';
 import Address from '../entities/address.entity';
 
-import { IEmailService, ITemplateService, ILogger } from '../interfaces/common.interface';
+import { IEmailService, ITemplateService, ILogger, EmailAttachmentInput } from '../interfaces/common.interface';
 import { ICompanyRepository } from '../interfaces/company.interface';
 import { IInvoiceItemRepository } from '../interfaces/invoice-item.interface';
 import { IClientRepository } from '../interfaces/client.interface';
@@ -113,12 +113,12 @@ invoiceEmitter.on(events.sendInvoice, async (data: any) => {
 
     const logo = await fs.readFile(`${__dirname}/../../public/logo.png`, { encoding: 'base64' });
 
-    const attachments: any = [
+    const attachments: EmailAttachmentInput[] = [
       {
         content: pdfBase64,
         filename: `invoice-${invoice.invoiceNumber}.pdf`,
-        type: 'application/pdf',
-        disposition: 'attachment',
+        contentType: 'application/pdf',
+        contentDisposition: 'attachment',
       },
     ];
 
@@ -129,8 +129,9 @@ invoiceEmitter.on(events.sendInvoice, async (data: any) => {
       attachments.push({
         content: raw,
         filename: client?.company?.logo.name as string,
-        content_id: 'logo',
-        disposition: 'inline',
+        cid: 'logo',
+        contentDisposition: 'inline',
+        encoding: 'base64',
         // type: 'image/png',
       });
     }
@@ -144,8 +145,8 @@ invoiceEmitter.on(events.sendInvoice, async (data: any) => {
         attachments.push({
           content: att.base64,
           filename: att.name,
-          type: att.contentType,
-          disposition: 'attachment',
+          contentType: att.contentType,
+          contentDisposition: 'attachment',
         });
       });
     }

@@ -440,11 +440,6 @@ export class TimeEntryResolver {
         statusToUnlock,
       });
 
-      // Emit onTimesheetUnlock event
-      timeEntryEmitter.emit(events.onTimesheetUnlock, {
-        timesheet_id,
-      });
-
       return timeEntry;
     } catch (err) {
       this.errorService.throwError({

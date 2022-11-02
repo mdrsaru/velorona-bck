@@ -79,8 +79,9 @@ userEmitter.on(events.onUserCreate, async (data: any) => {
       {
         content: raw,
         filename: company?.logo.name as string,
-        content_id: 'logo',
-        disposition: 'inline',
+        cid: 'logo',
+        contentDisposition: 'inline',
+        encoding: 'base64',
         // type: 'image/png',
       },
     ];
@@ -91,9 +92,10 @@ userEmitter.on(events.onUserCreate, async (data: any) => {
       {
         content: logo,
         filename: 'logo.png',
-        content_id: 'logo',
-        disposition: 'inline',
-        type: 'image/png',
+        cid: 'logo',
+        contentDisposition: 'inline',
+        encoding: 'base64',
+        contentType: 'image/png',
       },
     ];
   }

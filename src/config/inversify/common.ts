@@ -28,6 +28,7 @@ import SendGridService from '../../services/sendgrid.service';
 import HandlebarsService from '../../services/handlebars.service';
 import WebhookController from '../../controllers/webhook.controller';
 import WebhookService from '../../services/webhook.service';
+import NodemailerService from '../../services/nodemailer.service';
 
 export const app = new ContainerModule((bind: interfaces.Bind, unbind: interfaces.Unbind) => {
   bind<IAppService>(TYPES.AppService).to(AppService);
@@ -58,7 +59,8 @@ export const token = new ContainerModule((bind: interfaces.Bind, unbind: interfa
 });
 
 export const email = new ContainerModule((bind: interfaces.Bind, unbind: interfaces.Unbind) => {
-  bind<IEmailService>(TYPES.EmailService).to(SendGridService);
+  //bind<IEmailService>(TYPES.EmailService).to(SendGridService);
+  bind<IEmailService>(TYPES.EmailService).to(NodemailerService);
 });
 
 export const handlebars = new ContainerModule((bind: interfaces.Bind, unbind: interfaces.Unbind) => {

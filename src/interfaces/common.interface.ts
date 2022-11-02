@@ -56,12 +56,12 @@ export interface IValidationInput {
 }
 
 export type EmailAttachmentInput = {
-  content: string;
+  content: string | Buffer;
   filename: string;
-  type?: string;
-  disposition?: string;
-  contentId?: string;
-  content_id?: string;
+  contentType?: string;
+  cid?: string;
+  encoding?: string | undefined;
+  contentDisposition?: 'attachment' | 'inline' | undefined;
 };
 
 export interface IJoiService {

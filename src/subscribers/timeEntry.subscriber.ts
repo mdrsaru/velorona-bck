@@ -256,8 +256,9 @@ timeEntryEmitter.on(events.onTimesheetUnlock, async (args: TimesheetUnlock) => {
         {
           content: raw,
           filename: timesheet?.company?.logo.name as string,
-          content_id: 'logo',
-          disposition: 'inline',
+          cid: 'logo',
+          contentDisposition: 'inline',
+          encoding: 'base64',
           // type: 'image/png',
         },
       ];

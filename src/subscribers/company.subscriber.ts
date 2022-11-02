@@ -173,8 +173,9 @@ companyEmitter.on(events.onSubscriptionEndReminder, async (args: SubscriptionEnd
         {
           content: raw,
           filename: company?.logo.name as string,
-          content_id: 'logo',
-          disposition: 'inline',
+          cid: 'logo',
+          contentDisposition: 'inline',
+          encoding: 'base64',
           // type: 'image/png',
         },
       ];

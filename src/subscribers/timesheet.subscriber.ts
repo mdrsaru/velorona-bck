@@ -231,8 +231,9 @@ timesheetEmitter.on(events.onTimeEntriesApprove, async (args: TimesheetApprove) 
         {
           content: raw,
           filename: timesheet?.company?.logo.name as string,
-          content_id: 'logo',
-          disposition: 'inline',
+          cid: 'logo',
+          contentDisposition: 'inline',
+          encoding: 'base64',
         },
       ];
     }
@@ -367,8 +368,9 @@ timesheetEmitter.on(events.sendTimesheetSubmitEmail, async (args: TimesheetSubmi
         {
           content: raw,
           filename: timesheet?.company?.logo.name as string,
-          content_id: 'logo',
-          disposition: 'inline',
+          cid: 'logo',
+          contentDisposition: 'inline',
+          encoding: 'base64',
           // type: 'image/png',
         },
       ];
@@ -475,8 +477,9 @@ timesheetEmitter.on(events.onTimesheetSubmitReminder, async (args: TimesheetRemi
         {
           content: raw,
           filename: timesheet?.company?.logo.name as string,
-          content_id: 'logo',
-          disposition: 'inline',
+          cid: 'logo',
+          contentDisposition: 'inline',
+          encoding: 'base64',
           // type: 'image/png',
         },
       ];
@@ -564,8 +567,9 @@ timesheetEmitter.on(events.onTimesheetApproveReminder, async (args: TimesheetRem
           {
             content: raw,
             filename: timesheet?.company?.logo.name as string,
-            content_id: 'logo',
-            disposition: 'inline',
+            cid: 'logo',
+            contentDisposition: 'inline',
+            encoding: 'base64',
             // type: 'image/png',
           },
         ];

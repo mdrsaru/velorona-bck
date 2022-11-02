@@ -69,8 +69,9 @@ export class ContactUsResolver {
         {
           content: logo,
           filename: 'logo.png',
-          content_id: 'logo',
-          disposition: 'inline',
+          cid: 'logo',
+          contentDisposition: 'inline',
+          encoding: 'base64',
           // type: 'image/png',
         },
       ];

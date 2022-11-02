@@ -66,8 +66,9 @@ workscheduleDetailEmitter.on(events.onWorkscheduleDetailCreate, async (args: Cre
         {
           content: raw,
           filename: workscheduleDetail?.workschedule?.company?.logo.name as string,
-          content_id: 'logo',
-          disposition: 'inline',
+          cid: 'logo',
+          contentDisposition: 'inline',
+          encoding: 'base64',
           // type: 'image/png',
         },
       ];
