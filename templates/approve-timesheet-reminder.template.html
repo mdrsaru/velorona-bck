@@ -2,25 +2,34 @@
 <html>
   <head>
     <title></title>
-    <style>
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <style scoped>
       .container {
-        background-color: #ebecf7;
         text-align: center;
         padding: 2rem;
       }
 
+      .container-outer-body {
+        margin-top: 20px;
+        margin-left: auto;
+        margin-right: auto;
+        min-width: 450px;
+        max-width: 600px;
+      }
       .container-body {
-        margin-left: 10rem;
         justify-content: center;
         font-size: 18px;
+        background: white;
+        padding: 3rem;
       }
+
       .logo-img {
         width: 150px;
         height: 150px;
       }
     </style>
   </head>
-  <body>
+  <body style="background-color: #ebecf7">
     <div class="container">
       {{#if hasLogo}}
       <img src="cid:logo" alt="Vellorona" class="logo-img" />
@@ -28,12 +37,14 @@
       <p>{{companyName}}</p>
       {{/if}}
     </div>
-    <div class="container-body">
-      <h1>Hi {{user}}!,</h1>
-      <p>You haven't approved/rejected timesheet of {{user}} of date: <b>{{weekStartDate}}-{{weekEndDate}}</b> .</p>
-      <p>If you have any questions, feel free too email us</p>
-      <p>Thanks,</p>
-      <p>Vellorona Team</p>
+    <div class="container-outer-body">
+      <div class="container-body">
+        <h1>Hi {{user}}!,</h1>
+        <p>You haven't approved/rejected timesheet of {{user}} of date: <b>{{weekStartDate}}-{{weekEndDate}}</b> .</p>
+        <p>If you have any questions, feel free too email us</p>
+        <p>Thanks,</p>
+        <p>Vellorona Team</p>
+      </div>
     </div>
     <div class="container">
       <ul type="none">

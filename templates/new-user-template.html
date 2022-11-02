@@ -1,18 +1,26 @@
-<!DOCTYPE html>
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "w3.org/TR/REC-html40/loose.dtd">
+<html xmlns="w3.org/1999/xhtml">
   <head>
     <title></title>
-    <style>
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <style scoped>
       .container {
-        background-color: #ebecf7;
         text-align: center;
         padding: 2rem;
       }
 
+      .container-outer-body {
+        margin-top: 20px;
+        margin-left: auto;
+        margin-right: auto;
+        min-width: 450px;
+        max-width: 900px;
+      }
       .container-body {
-        margin-left: 10rem;
         justify-content: center;
         font-size: 18px;
+        background: white;
+        padding: 3rem;
       }
 
       .logo-img {
@@ -21,7 +29,7 @@
       }
     </style>
   </head>
-  <body>
+  <body style="background-color: #ebecf7">
     <div class="container">
       {{#if hasLogo}}
       <img src="cid:logo" alt="Vellorona" class="logo-img" />
@@ -31,20 +39,22 @@
       <p>{{companyName}}</p>
       {{/if}}
     </div>
-    <div class="container-body">
-      <h1>Welcome {{fullName}}</h1>
-      <p>
-        To log on to Vellorona, visit the homepage
-        <a href="{{link}}target" ="_blank">{{link}}</a>
-        and enter your credential in the login area.
-      </p>
-      <p>For reference ,here's the login information</p>
-      <p><b>Company Code:</b> {{companyCode}}</p>
-      <p><b>Email:</b> {{email}}</p>
-      <p><b>Password:</b> {{password}}</p>
-      <p>If you have any questions, feel free too email us</p>
-      <p>Thanks,</p>
-      <p>Vellorona Team</p>
+    <div class="container-outer-body">
+      <div class="container-body">
+        <h1>Welcome {{fullName}}</h1>
+        <p>
+          To log on to Vellorona, visit the homepage
+          <a href="{{link}}target" ="_blank">{{link}}</a>
+          and enter your credential in the login area.
+        </p>
+        <p>For reference ,here's the login information</p>
+        <p><b>Company Code:</b> {{companyCode}}</p>
+        <p><b>Email:</b> {{email}}</p>
+        <p><b>Password:</b> {{password}}</p>
+        <p>If you have any questions, feel free too email us</p>
+        <p>Thanks,</p>
+        <p>Vellorona Team</p>
+      </div>
     </div>
     <div class="container">
       <ul type="none">
