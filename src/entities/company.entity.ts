@@ -188,6 +188,9 @@ export class CompanySignUpInput {
 
   @Field({ nullable: true })
   logo_id: string;
+
+  @Field({ nullable: true })
+  plan: string;
 }
 
 @InputType()

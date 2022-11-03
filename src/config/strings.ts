@@ -114,7 +114,7 @@ export default {
   commentRequired: 'Comment required',
   daysRequired: 'Days required',
   entryTypeRequired: 'Entry type required',
-  companyNotApproved: 'The company has not been approved yet.',
+  companyNotApproved: 'The company has not been approved yet.Please wait until the admin approves you',
   companyInactive: 'The company is inactive',
   demoAlreadyRequested: 'Demo has already been requested for the provided email',
   demoRequestNotFound: 'Demo request not found',
