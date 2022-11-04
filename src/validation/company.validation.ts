@@ -44,6 +44,7 @@ const userValidation = {
     middleName: Joi.string().allow('', null),
     phone: Joi.string().allow('', null),
     status: Joi.string().allow('', null),
+    password: Joi.string(),
     address: Joi.object({
       country: Joi.string().allow('', null),
       streetAddress: Joi.string().allow('', null),

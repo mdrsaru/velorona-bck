@@ -155,6 +155,9 @@ export class CompanyAdminInformationInput {
 export class CompanyAdminInput extends CompanyAdminInformationInput {
   @Field()
   email: string;
+
+  @Field({ nullable: true })
+  password: string;
 }
 
 @InputType()
