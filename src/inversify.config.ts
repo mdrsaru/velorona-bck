@@ -1,7 +1,19 @@
 import 'reflect-metadata';
 import { Container, interfaces } from 'inversify';
 
-import { app, logger, graphql, hash, error, joi, token, email, handlebars, webhook } from './config/inversify/common';
+import {
+  app,
+  logger,
+  graphql,
+  hash,
+  error,
+  joi,
+  token,
+  email,
+  handlebars,
+  webhook,
+  aws,
+} from './config/inversify/common';
 import company from './config/inversify/company';
 import role from './config/inversify/role';
 import user from './config/inversify/user';
@@ -32,6 +44,7 @@ import demoRequest from './config/inversify/demo-request';
 import breakTime from './config/inversify/break-time';
 import currency from './config/inversify/currency';
 import contactUs from './config/inversify/contact-us';
+import blockedEmails from './config/inversify/blocked-emails';
 
 const container = new Container({ skipBaseClassChecks: true });
 
@@ -77,6 +90,8 @@ container.load(
   breakTime,
   currency,
   contactUs,
+  aws,
+  blockedEmails,
 );
 
 export default container;

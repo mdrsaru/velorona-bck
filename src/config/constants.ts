@@ -78,6 +78,7 @@ export const entities = {
   demoRequest: 'demo_requests',
   breakTimes: 'break_times',
   currency: 'currency',
+  blockedEmails: 'blocked_emails',
 };
 
 export enum CompanyStatus {

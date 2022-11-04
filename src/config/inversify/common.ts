@@ -29,6 +29,8 @@ import HandlebarsService from '../../services/handlebars.service';
 import WebhookController from '../../controllers/webhook.controller';
 import WebhookService from '../../services/webhook.service';
 import NodemailerService from '../../services/nodemailer.service';
+import AWSController from '../../controllers/aws.controller';
+import AWSService from '../../services/aws.service';
 
 export const app = new ContainerModule((bind: interfaces.Bind, unbind: interfaces.Unbind) => {
   bind<IAppService>(TYPES.AppService).to(AppService);
@@ -78,4 +80,9 @@ export const joi = new ContainerModule((bind: interfaces.Bind, unbind: interface
 export const webhook = new ContainerModule((bind: interfaces.Bind, unbind: interfaces.Unbind) => {
   bind<WebhookController>(TYPES.WebhookController).to(WebhookController);
   bind<WebhookService>(TYPES.WebhookService).to(WebhookService);
+});
+
+export const aws = new ContainerModule((bind: interfaces.Bind, unbind: interfaces.Unbind) => {
+  bind<AWSController>(TYPES.AWSController).to(AWSController);
+  bind<AWSService>(TYPES.AWSService).to(AWSService);
 });

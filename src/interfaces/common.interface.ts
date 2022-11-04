@@ -143,3 +143,8 @@ export interface ISingleEntityQuery {
 export interface ICountInput {
   company_id: string;
 }
+
+export interface IBlockedEmailsRepository {
+  create(args: { emails: string[] }): any;
+  removeMany(args: { emails: string[] }): any;
+}

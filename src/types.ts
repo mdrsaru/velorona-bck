@@ -18,6 +18,8 @@ const COMMON = {
   UserClientRepository: Symbol('UserClientRepository'),
   WebhookController: Symbol('WebhookController'),
   WebhookService: Symbol('WebhookService'),
+  AWSController: Symbol('AWSController'),
+  AWSService: Symbol('AWSService'),
 };
 
 const COMPANY = {
@@ -182,6 +184,10 @@ const CURRENCY = {
   CurrencyResolver: Symbol('  CurrencyResolver'),
 };
 
+const BLOCKED_EMAILS = {
+  BlockedEmailsRepository: Symbol('BlockedEmailRepository'),
+};
+
 const TYPES = {
   ...COMMON,
   ...COMPANY,
@@ -212,6 +218,7 @@ const TYPES = {
   ...DEMO_REQUEST,
   ...BREAK_TIME,
   ...CURRENCY,
+  ...BLOCKED_EMAILS,
 };
 
 export { TYPES };

@@ -6,6 +6,7 @@ import tokenRouter from './token';
 import mediaRouter from './media';
 import webhookRouter from './webhook';
 import authenticate from '../middlewares/authenticate';
+import awsRouter from './aws';
 
 const routes = () => {
   const app: express.Application = express();
@@ -14,6 +15,7 @@ const routes = () => {
   app.use('/token', tokenRouter());
   app.use('/media', authenticate, mediaRouter());
   app.use('/webhook', webhookRouter());
+  app.use('/aws', awsRouter());
 
   return app;
 };
