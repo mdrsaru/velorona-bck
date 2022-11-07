@@ -56,8 +56,12 @@ export default class CompanyService implements ICompanyService {
       const logo_id = args?.logo_id;
       const plan = args?.plan;
 
-      const password = generateRandomStrings({ length: 8 });
-      user.password = password;
+      let password = user.password;
+
+      if (!user.password) {
+        password = generateRandomStrings({ length: 8 });
+        user.password = password;
+      }
 
       const result = await this.companyRepository.create({
         name,

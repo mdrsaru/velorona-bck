@@ -198,6 +198,7 @@ export class CompanyResolver {
       const user = args.user;
       const status = CompanyStatus.Unapproved;
       const logo_id = args?.logo_id;
+      const plan = args?.plan;
 
       const schema = CompanyValidation.signUp();
       await this.joiService.validate({
@@ -214,6 +215,7 @@ export class CompanyResolver {
         status,
         logo_id,
         user,
+        plan,
       });
 
       return company;
