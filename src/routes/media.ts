@@ -8,25 +8,6 @@ import MediaController from '../controllers/media.controller';
 
 import config from '../config/constants';
 
-let storage = multer.diskStorage({
-  destination: config.mediaDestination,
-  filename: (req: Request, file: any, cb: any) => {
-    cb(null, file.originalname);
-  },
-});
-
-const checkFileType = (file: any, cb: any) => {
-  return cb(null, true);
-};
-
-//export const upload = multer({
-//storage: storage,
-//limits: { fileSize: config.fileSize },
-//fileFilter: (req: Request, file: any, cb: any) => {
-//checkFileType(file, cb);
-//},
-//}).single('file');
-
 export const upload = multer().single('file');
 
 const _router = () => {
