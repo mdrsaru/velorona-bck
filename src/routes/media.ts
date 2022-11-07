@@ -19,13 +19,15 @@ const checkFileType = (file: any, cb: any) => {
   return cb(null, true);
 };
 
-export const upload = multer({
-  storage: storage,
-  limits: { fileSize: config.fileSize },
-  fileFilter: (req: Request, file: any, cb: any) => {
-    checkFileType(file, cb);
-  },
-}).single('file');
+//export const upload = multer({
+//storage: storage,
+//limits: { fileSize: config.fileSize },
+//fileFilter: (req: Request, file: any, cb: any) => {
+//checkFileType(file, cb);
+//},
+//}).single('file');
+
+export const upload = multer().single('file');
 
 const _router = () => {
   const router = Router();

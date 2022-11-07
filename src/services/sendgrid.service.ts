@@ -8,7 +8,7 @@ import strings from '../config/strings';
 import { emailSetting } from '../config/constants';
 import * as apiError from '../utils/api-error';
 
-import { IEmailService, IEmailArgs, ILogger } from '../interfaces/common.interface';
+import { IEmailService, IEmailArgs, ILogger, EmailAttachmentInput } from '../interfaces/common.interface';
 
 sgMail.setApiKey(emailSetting.sendGridApi);
 
@@ -71,7 +71,28 @@ export default class SendGridService implements IEmailService {
       };
 
       if (args?.attachments) {
-        msg.attachments = args.attachments;
+        /**
+         * We have used our own interface so that the implementation of the service will be the same
+         * Adding fields according to the SendGrid attachments
+         */
+        msg.attachments = args.attachments?.map((attachment) => {
+          const _attachment: any = {
+            content: attachment.content,
+            filename: attachment.filename,
+          };
+
+          if (attachment.contentDisposition) {
+            _attachment.disposition = attachment.contentDisposition;
+          }
+          if (attachment.cid) {
+            _attachment.content_id = attachment.cid;
+          }
+          if (attachment.contentType) {
+            _attachment.type = attachment.contentType;
+          }
+
+          return _attachment;
+        });
       }
 
       return sgMail.send(msg);

@@ -45,6 +45,8 @@ export const databaseSetting = {
 export const aws = {
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  bucket: process.env.AWS_BUCKET as string,
+  bucketKey: process.env.AWS_BUCKET_KEY as string,
 };
 
 export const entities = {

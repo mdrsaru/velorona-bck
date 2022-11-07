@@ -1,6 +1,7 @@
 import { ResetPasswordResponse } from '../entities/auth.entity';
 import { CustomError } from '../utils/api-error';
 import { IPagingArgs, IGetAllAndCountResult, IGetOptions } from './paging.interface';
+import { Express } from 'express';
 
 export type Maybe<T> = T | undefined;
 
@@ -56,7 +57,7 @@ export interface IValidationInput {
 }
 
 export type EmailAttachmentInput = {
-  content: string | Buffer;
+  content: string;
   filename: string;
   contentType?: string;
   cid?: string;
@@ -144,7 +145,15 @@ export interface ICountInput {
   company_id: string;
 }
 
+export interface IUploadArgs {
+  file: Express.Multer.File | undefined;
+}
+
 export interface IBlockedEmailsRepository {
   create(args: { emails: string[] }): any;
   removeMany(args: { emails: string[] }): any;
+}
+
+export interface IUploadService {
+  upload(args: IUploadArgs): Promise<string>;
 }

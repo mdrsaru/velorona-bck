@@ -12,6 +12,7 @@ import {
   ITokenService,
   IEmailService,
   ITemplateService,
+  IUploadService,
 } from '../../interfaces/common.interface';
 import { IGraphql } from '../../interfaces/graphql.interface';
 
@@ -31,6 +32,7 @@ import WebhookService from '../../services/webhook.service';
 import NodemailerService from '../../services/nodemailer.service';
 import AWSController from '../../controllers/aws.controller';
 import AWSService from '../../services/aws.service';
+import UploadService from '../../services/upload.service';
 
 export const app = new ContainerModule((bind: interfaces.Bind, unbind: interfaces.Unbind) => {
   bind<IAppService>(TYPES.AppService).to(AppService);
@@ -61,8 +63,8 @@ export const token = new ContainerModule((bind: interfaces.Bind, unbind: interfa
 });
 
 export const email = new ContainerModule((bind: interfaces.Bind, unbind: interfaces.Unbind) => {
-  //bind<IEmailService>(TYPES.EmailService).to(SendGridService);
-  bind<IEmailService>(TYPES.EmailService).to(NodemailerService);
+  bind<IEmailService>(TYPES.EmailService).to(SendGridService);
+  //bind<IEmailService>(TYPES.EmailService).to(NodemailerService);
 });
 
 export const handlebars = new ContainerModule((bind: interfaces.Bind, unbind: interfaces.Unbind) => {
@@ -85,4 +87,8 @@ export const webhook = new ContainerModule((bind: interfaces.Bind, unbind: inter
 export const aws = new ContainerModule((bind: interfaces.Bind, unbind: interfaces.Unbind) => {
   bind<AWSController>(TYPES.AWSController).to(AWSController);
   bind<AWSService>(TYPES.AWSService).to(AWSService);
+});
+
+export const upload = new ContainerModule((bind: interfaces.Bind, unbind: interfaces.Unbind) => {
+  bind<IUploadService>(TYPES.UploadService).to(UploadService);
 });

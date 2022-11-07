@@ -13,6 +13,7 @@ import {
   handlebars,
   webhook,
   aws,
+  upload,
 } from './config/inversify/common';
 import company from './config/inversify/company';
 import role from './config/inversify/role';
@@ -92,6 +93,7 @@ container.load(
   contactUs,
   aws,
   blockedEmails,
+  upload,
 );
 
 export default container;

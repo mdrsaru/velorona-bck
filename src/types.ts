@@ -20,6 +20,7 @@ const COMMON = {
   WebhookService: Symbol('WebhookService'),
   AWSController: Symbol('AWSController'),
   AWSService: Symbol('AWSService'),
+  UploadService: Symbol('UploadService'),
 };
 
 const COMPANY = {

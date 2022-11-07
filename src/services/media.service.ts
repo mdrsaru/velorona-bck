@@ -1,21 +1,22 @@
 import { inject, injectable } from 'inversify';
-import { IMediaRepository, IMediaService } from '../interfaces/media.interface';
+
 import { TYPES } from '../types';
+import Media from '../entities/media.entity';
+
+import { IMediaRepository, IMediaService, IMediaCreateInput } from '../interfaces/media.interface';
 
 @injectable()
 export default class MediaService implements IMediaService {
   private name = 'MediaService';
   private mediaRepository: IMediaRepository;
 
-  constructor(
-    @inject(TYPES.MediaRepository) mediaRepository: IMediaRepository
-  ) {
+  constructor(@inject(TYPES.MediaRepository) mediaRepository: IMediaRepository) {
     this.mediaRepository = mediaRepository;
   }
 
-  upload = async (args: any): Promise<any> => {
+  create = async (args: IMediaCreateInput): Promise<Media> => {
     try {
-      return await this.mediaRepository.upload(args);
+      return await this.mediaRepository.create(args);
     } catch (err) {
       throw err;
     }

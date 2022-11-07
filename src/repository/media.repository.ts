@@ -4,7 +4,7 @@ import { getRepository } from 'typeorm';
 import config, { entities } from '../config/constants';
 import Media from '../entities/media.entity';
 import Task from '../entities/task.entity';
-import { IMediaRepository, IMediaUpload } from '../interfaces/media.interface';
+import { IMediaRepository, IMediaCreateInput } from '../interfaces/media.interface';
 import BaseRepository from './base.repository';
 
 @injectable()
@@ -13,10 +13,11 @@ export default class MediaRepository extends BaseRepository<Media> implements IM
     super(getRepository(Media));
   }
 
-  upload = async (args: IMediaUpload): Promise<Media> => {
+  create = async (args: IMediaCreateInput): Promise<Media> => {
     try {
-      const url = config.baseUrl + '/uploads/' + args.file.filename;
-      const name = args.file.filename;
+      const name = args.name;
+      const url = args.url;
+
       const media = await this.repo.save({
         name,
         url,
