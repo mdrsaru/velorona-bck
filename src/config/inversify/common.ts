@@ -63,8 +63,8 @@ export const token = new ContainerModule((bind: interfaces.Bind, unbind: interfa
 });
 
 export const email = new ContainerModule((bind: interfaces.Bind, unbind: interfaces.Unbind) => {
-  bind<IEmailService>(TYPES.EmailService).to(SendGridService);
-  //bind<IEmailService>(TYPES.EmailService).to(NodemailerService);
+  //bind<IEmailService>(TYPES.EmailService).to(SendGridService);
+  bind<IEmailService>(TYPES.EmailService).to(NodemailerService);
 });
 
 export const handlebars = new ContainerModule((bind: interfaces.Bind, unbind: interfaces.Unbind) => {
