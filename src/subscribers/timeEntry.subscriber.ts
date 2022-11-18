@@ -243,7 +243,7 @@ timeEntryEmitter.on(events.onTimesheetUnlock, async (args: TimesheetUnlock) => {
 
     const obj: IEmailBasicArgs = {
       to: timesheet.user.email as string,
-      from: emailSetting.fromEmail,
+      from: `${timesheet?.company?.name} ${emailSetting.fromEmail}`,
       subject: emailSetting.unlockTimesheet.subject,
       html: userHtml,
     };

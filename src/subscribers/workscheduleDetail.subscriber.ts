@@ -52,7 +52,7 @@ workscheduleDetailEmitter.on(events.onWorkscheduleDetailCreate, async (args: Cre
 
     const obj: IEmailBasicArgs = {
       to: workscheduleDetail?.user.email ?? '',
-      from: emailSetting.fromEmail,
+      from: `${workscheduleDetail?.workschedule?.company?.name} ${emailSetting.fromEmail}`,
       subject: emailSetting.workscheduleDetail.subject,
       html: workscheduleDetailHtml,
     };

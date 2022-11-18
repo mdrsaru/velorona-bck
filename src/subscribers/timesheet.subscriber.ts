@@ -242,7 +242,7 @@ timesheetEmitter.on(events.onTimeEntriesApprove, async (args: TimesheetApprove) 
     if (timesheet?.user?.manager?.email) {
       const obj: IEmailBasicArgs = {
         to: timesheet.user?.manager?.email as string,
-        from: emailSetting.fromEmail,
+        from: `${timesheet?.company?.name} ${emailSetting.fromEmail}`,
         subject: `Timesheet ${status}`,
         html: timesheetHtml,
         ...(hasLogo && {
@@ -255,7 +255,7 @@ timesheetEmitter.on(events.onTimeEntriesApprove, async (args: TimesheetApprove) 
 
     const employeeObj: IEmailBasicArgs = {
       to: timesheet.user?.email as string,
-      from: emailSetting.fromEmail,
+      from: `${timesheet?.company?.name} ${emailSetting.fromEmail}`,
       subject: `Timesheet ${status}`,
       html: employeeHtml,
       ...(hasLogo && {
@@ -380,7 +380,7 @@ timesheetEmitter.on(events.sendTimesheetSubmitEmail, async (args: TimesheetSubmi
     if (timesheet.user?.manager?.email) {
       const obj: IEmailBasicArgs = {
         to: timesheet.user?.manager?.email as string,
-        from: emailSetting.fromEmail,
+        from: `${timesheet?.company?.name} ${emailSetting.fromEmail}`,
         subject: emailSetting.submitTimesheet.subject,
         html: managerHtml,
         ...(hasLogo && {
@@ -394,7 +394,7 @@ timesheetEmitter.on(events.sendTimesheetSubmitEmail, async (args: TimesheetSubmi
 
     const userObj: IEmailBasicArgs = {
       to: timesheet.user?.email as string,
-      from: emailSetting.fromEmail,
+      from: `${timesheet?.company?.name} ${emailSetting.fromEmail}`,
       subject: emailSetting.submitTimesheet.subject,
       html: userHtml,
       ...(hasLogo && {
@@ -462,7 +462,7 @@ timesheetEmitter.on(events.onTimesheetSubmitReminder, async (args: TimesheetRemi
     });
     const obj: IEmailBasicArgs = {
       to: timesheet?.user.email ?? '',
-      from: emailSetting.fromEmail,
+      from: `${timesheet?.company?.name} ${emailSetting.fromEmail}`,
       subject: emailSetting.submitTimesheetReminder.subject,
       html: timesheetHtml,
     };
@@ -552,7 +552,7 @@ timesheetEmitter.on(events.onTimesheetApproveReminder, async (args: TimesheetRem
     if (timesheet?.user?.manager?.email) {
       const obj: IEmailBasicArgs = {
         to: timesheet?.user.manager.email ?? '',
-        from: emailSetting.fromEmail,
+        from: `${timesheet?.company?.name} ${emailSetting.fromEmail}`,
         subject: emailSetting.approveTimesheetReminder.subject,
         html: timesheetHtml,
       };

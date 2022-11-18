@@ -60,7 +60,7 @@ export class ContactUsResolver {
       });
       const obj: IEmailBasicArgs = {
         to: emailSetting.contactUs.contactEmailAddress as string,
-        from: emailSetting.fromEmail,
+        from: `Vellorona ${emailSetting.fromEmail}`,
         subject: emailSetting.contactUs.subject,
         html: timesheetHtml,
       };

@@ -329,7 +329,7 @@ export default class AuthService implements IAuthService {
 
       const emailOptions: IEmailArgs = {
         to: user.email,
-        from: emailSetting.fromEmail,
+        from: `${user?.company?.name} ${emailSetting.fromEmail}`,
         subject: emailSetting.resetPassword.subject,
         html: resetPasswordHtml,
       };

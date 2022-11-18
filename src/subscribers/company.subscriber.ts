@@ -158,7 +158,7 @@ companyEmitter.on(events.onSubscriptionEndReminder, async (args: SubscriptionEnd
 
     const obj: IEmailBasicArgs = {
       to: company?.adminEmail ?? '',
-      from: emailSetting.fromEmail,
+      from: `${company?.name} ${emailSetting.fromEmail}`,
       subject: emailSetting.subscriptionEndReminder.subject,
       html: timesheetHtml,
     };

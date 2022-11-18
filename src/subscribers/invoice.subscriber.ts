@@ -154,7 +154,7 @@ invoiceEmitter.on(events.sendInvoice, async (data: any) => {
     emailService
       .sendEmail({
         to: email,
-        from: emailSetting.fromEmail,
+        from: `${client?.company?.name} ${emailSetting.fromEmail}`,
         subject: emailSetting.invoice.subject,
         html: invoiceHtml,
         attachments,
