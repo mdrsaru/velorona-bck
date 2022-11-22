@@ -33,6 +33,7 @@ export default class ClientValidation {
       status: Joi.string(),
       archived: Joi.boolean(),
       phone: Joi.string().allow(null, ''),
+      email: Joi.string().allow('', null),
       invoicingEmail: Joi.string().allow('', null),
       address: Joi.object({
         country: Joi.string(),

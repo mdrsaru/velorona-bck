@@ -1,7 +1,7 @@
 import fs from 'fs/promises';
 
 import { companyEmitter } from './emitters';
-import constants, { emailSetting, events, Role as RoleEnum } from '../config/constants';
+import constants, { CompanyStatus, emailSetting, events, Role as RoleEnum } from '../config/constants';
 import { TYPES } from '../types';
 import container from '../inversify.config';
 import Company from '../entities/company.entity';
@@ -180,22 +180,24 @@ companyEmitter.on(events.onSubscriptionEndReminder, async (args: SubscriptionEnd
         },
       ];
     }
-    emailService
-      .sendEmail(obj)
-      .then((response) => {
-        logger.info({
-          operation,
-          message: `Email response for ${company?.adminEmail}`,
-          data: response,
+    if (company?.status === CompanyStatus.Active && !company?.archived) {
+      emailService
+        .sendEmail(obj)
+        .then((response) => {
+          logger.info({
+            operation,
+            message: `Email response for ${company?.adminEmail}`,
+            data: response,
+          });
+        })
+        .catch((err) => {
+          logger.error({
+            operation,
+            message: 'Error sending workschedule added email',
+            data: err,
+          });
         });
-      })
-      .catch((err) => {
-        logger.error({
-          operation,
-          message: 'Error sending workschedule added email',
-          data: err,
-        });
-      });
+    }
   } catch (err) {
     logger.error({
       operation,

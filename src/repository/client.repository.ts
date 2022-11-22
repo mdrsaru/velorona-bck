@@ -160,6 +160,7 @@ export default class ClientRepository extends BaseRepository<Client> implements 
       const streetAddress = args.address?.streetAddress;
       const invoiceSchedule = args.invoiceSchedule;
       const invoice_payment_config_id = args.invoice_payment_config_id;
+      const email = args.email;
       const invoicingEmail = args.invoicingEmail;
       const scheduleStartDate = args.scheduleStartDate;
 
@@ -183,6 +184,24 @@ export default class ClientRepository extends BaseRepository<Client> implements 
         });
       }
 
+      const emailFound = await this.repo.findOne(
+        { email: email },
+        {
+          relations: ['address'],
+        }
+      );
+      if (emailFound) {
+        throw new apiError.ConflictError({
+          details: [strings.emailAlreadyExist],
+        });
+      }
+
+      if (!found) {
+        throw new apiError.NotFoundError({
+          details: ['Client not found'],
+        });
+      }
+
       const update: Client = merge(found, {
         id,
         name,
@@ -190,6 +209,7 @@ export default class ClientRepository extends BaseRepository<Client> implements 
         archived,
         phone,
         invoiceSchedule,
+        email,
         invoicingEmail,
         invoice_payment_config_id,
         scheduleStartDate,

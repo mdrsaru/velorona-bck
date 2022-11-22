@@ -150,6 +150,7 @@ export class ClientResolver {
       const name = args.name;
       const status = args.status;
       const address = args.address;
+      const email = args.email;
       const invoicingEmail = args.invoicingEmail;
       const company_id = args.company_id;
       const archived = args.archived;
@@ -170,6 +171,7 @@ export class ClientResolver {
           address,
           phone,
           invoicingEmail,
+          email,
         },
       });
 
@@ -182,6 +184,7 @@ export class ClientResolver {
         phone,
         invoiceSchedule,
         invoice_payment_config_id,
+        email,
         invoicingEmail,
         scheduleStartDate,
       });

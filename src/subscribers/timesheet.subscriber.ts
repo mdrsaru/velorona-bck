@@ -10,6 +10,7 @@ import {
   AttachedTimesheetStatus,
   InvoiceSchedule,
   emailSetting,
+  UserStatus,
 } from '../config/constants';
 import container from '../inversify.config';
 
@@ -484,22 +485,24 @@ timesheetEmitter.on(events.onTimesheetSubmitReminder, async (args: TimesheetRemi
         },
       ];
     }
-    emailService
-      .sendEmail(obj)
-      .then((response) => {
-        logger.info({
-          operation,
-          message: `Email response for ${timesheet?.user?.email}`,
-          data: response,
+    if (timesheet?.user?.status === UserStatus.Active && !timesheet?.user?.archived) {
+      emailService
+        .sendEmail(obj)
+        .then((response) => {
+          logger.info({
+            operation,
+            message: `Email response for ${timesheet?.user?.email}`,
+            data: response,
+          });
+        })
+        .catch((err) => {
+          logger.error({
+            operation,
+            message: 'Error sending workschedule added email',
+            data: err,
+          });
         });
-      })
-      .catch((err) => {
-        logger.error({
-          operation,
-          message: 'Error sending workschedule added email',
-          data: err,
-        });
-      });
+    }
   } catch (err) {
     logger.error({
       operation,
@@ -574,22 +577,24 @@ timesheetEmitter.on(events.onTimesheetApproveReminder, async (args: TimesheetRem
           },
         ];
       }
-      emailService
-        .sendEmail(obj)
-        .then((response) => {
-          logger.info({
-            operation,
-            message: `Email response for ${timesheet?.user?.manager?.email}`,
-            data: response,
+      if (timesheet?.user?.status === UserStatus.Active && !timesheet?.user?.archived) {
+        emailService
+          .sendEmail(obj)
+          .then((response) => {
+            logger.info({
+              operation,
+              message: `Email response for ${timesheet?.user?.manager?.email}`,
+              data: response,
+            });
+          })
+          .catch((err) => {
+            logger.error({
+              operation,
+              message: 'Error sending workschedule added email',
+              data: err,
+            });
           });
-        })
-        .catch((err) => {
-          logger.error({
-            operation,
-            message: 'Error sending workschedule added email',
-            data: err,
-          });
-        });
+      }
     }
   } catch (err) {
     logger.error({

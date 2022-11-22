@@ -2,7 +2,7 @@ import fs from 'fs/promises';
 
 import { timesheetEmitter, timeEntryEmitter } from './emitters';
 import { TYPES } from '../types';
-import { events } from '../config/constants';
+import { events, UserStatus } from '../config/constants';
 import container from '../inversify.config';
 
 import { emailSetting } from '../config/constants';
@@ -263,23 +263,24 @@ timeEntryEmitter.on(events.onTimesheetUnlock, async (args: TimesheetUnlock) => {
         },
       ];
     }
-
-    emailService
-      .sendEmail(obj)
-      .then((response) => {
-        logger.info({
-          operation,
-          message: `Email response for ${timesheet.user.email}`,
-          data: response,
+    if (timesheet?.user?.status === UserStatus.Active && !timesheet?.user?.archived) {
+      emailService
+        .sendEmail(obj)
+        .then((response) => {
+          logger.info({
+            operation,
+            message: `Email response for ${timesheet.user.email}`,
+            data: response,
+          });
+        })
+        .catch((err) => {
+          logger.error({
+            operation,
+            message: 'Error sending unlock email',
+            data: err,
+          });
         });
-      })
-      .catch((err) => {
-        logger.error({
-          operation,
-          message: 'Error sending unlock email',
-          data: err,
-        });
-      });
+    }
   } catch (err) {
     logger.error({
       operation,

@@ -159,6 +159,9 @@ export class ClientUpdateInput {
   status: ClientStatus;
 
   @Field({ nullable: true })
+  email: string;
+
+  @Field({ nullable: true })
   invoicingEmail: string;
 
   @Field({ nullable: true })

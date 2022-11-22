@@ -232,6 +232,7 @@ export default class UserRepository extends BaseRepository<User> implements IUse
       const middleName = args.middleName;
       const status = args.status;
       const phone = args.phone;
+      const email = args.email;
       const address = args?.address ?? {};
       const password = args?.password;
       const avatar_id = args?.avatar_id;
@@ -254,7 +255,17 @@ export default class UserRepository extends BaseRepository<User> implements IUse
           details: [strings.userNotFound],
         });
       }
-
+      const emailFound = await this.repo.findOne(
+        { email: email },
+        {
+          relations: ['address', 'roles'],
+        }
+      );
+      if (emailFound) {
+        throw new apiError.ConflictError({
+          details: [strings.emailAlreadyExist],
+        });
+      }
       const existingRoles = await this.roleRepository.getAll({
         query: {
           name: roles,
@@ -288,6 +299,7 @@ export default class UserRepository extends BaseRepository<User> implements IUse
         middleName,
         status,
         phone,
+        email,
         avatar_id,
         password: hashedPassword,
         address: {

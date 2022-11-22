@@ -131,4 +131,5 @@ export default {
   cannotAddAttachment: 'Expense cannot be added for submitted timesheet.',
   userNotActive: 'User is currently Inactive',
   projectAlreadyExist: 'Project already exist with same name and client',
+  emailAlreadyExist: 'Email already exist',
 };

@@ -73,6 +73,7 @@ export interface IUserUpdate {
   firstName?: IUser['firstName'];
   lastName?: IUser['lastName'];
   middleName?: IUser['middleName'];
+  email?: IUser['email'];
   phone?: IUser['phone'];
   status?: IUser['status'];
   designation?: IUser['designation'];

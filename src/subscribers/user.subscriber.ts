@@ -66,7 +66,7 @@ userEmitter.on(events.onUserCreate, async (data: any) => {
 
   const obj: IEmailBasicArgs = {
     to: data.user.email,
-    from: `${company?.name} ${emailSetting.fromEmail}`,
+    from: `${company?.name ?? 'Vellorona'} ${emailSetting.fromEmail}`,
     subject: emailSetting.newUser.subject,
     html: userHtml,
   };

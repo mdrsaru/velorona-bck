@@ -266,6 +266,7 @@ export class UserResolver {
       const manager_id = args.manager_id;
       const roles = args.roles;
       const designation = args.designation;
+      const email = args.email;
 
       const schema = UserValidation.update();
       await this.joiService.validate({
@@ -300,6 +301,7 @@ export class UserResolver {
         manager_id,
         roles,
         designation,
+        email,
       });
 
       return user;

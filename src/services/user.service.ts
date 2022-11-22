@@ -133,6 +133,7 @@ export default class UserService implements IUserService {
       const manager_id = args?.manager_id;
       const roles = args?.roles;
       const designation = args.designation;
+      const email = args?.email;
 
       const user = await this.userRepository.update({
         id,
@@ -150,6 +151,7 @@ export default class UserService implements IUserService {
         manager_id,
         roles,
         designation,
+        email,
       });
 
       return user;

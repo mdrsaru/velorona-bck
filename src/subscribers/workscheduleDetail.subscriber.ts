@@ -1,6 +1,6 @@
 import fs from 'fs/promises';
 
-import constants, { emailSetting, events } from '../config/constants';
+import constants, { emailSetting, events, UserStatus } from '../config/constants';
 import { IEmailBasicArgs, IEmailService, ILogger, ITemplateService } from '../interfaces/common.interface';
 import container from '../inversify.config';
 import { TYPES } from '../types';
@@ -33,6 +33,7 @@ workscheduleDetailEmitter.on(events.onWorkscheduleDetailCreate, async (args: Cre
       relations: ['user', 'workschedule', 'workschedule.company', 'workschedule.company.logo'],
     });
 
+    console.log(workscheduleDetail);
     const hasLogo = !!workscheduleDetail?.workschedule?.company?.logo_id;
 
     let emailTemplate = await fs.readFile(`${__dirname}/../../templates/add-workschedule-detail.template.html`, {
@@ -73,22 +74,24 @@ workscheduleDetailEmitter.on(events.onWorkscheduleDetailCreate, async (args: Cre
         },
       ];
     }
-    emailService
-      .sendEmail(obj)
-      .then((response) => {
-        logger.info({
-          operation,
-          message: `Email response for ${workscheduleDetail?.user?.email}`,
-          data: response,
+    if (workscheduleDetail?.user?.status === UserStatus.Active && !workscheduleDetail?.user?.archived) {
+      emailService
+        .sendEmail(obj)
+        .then((response) => {
+          logger.info({
+            operation,
+            message: `Email response for ${workscheduleDetail?.user?.email}`,
+            data: response,
+          });
+        })
+        .catch((err) => {
+          logger.error({
+            operation,
+            message: 'Error sending workschedule added email',
+            data: err,
+          });
         });
-      })
-      .catch((err) => {
-        logger.error({
-          operation,
-          message: 'Error sending workschedule added email',
-          data: err,
-        });
-      });
+    }
   } catch (err) {
     logger.error({
       operation,

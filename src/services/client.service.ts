@@ -81,6 +81,7 @@ export default class ClientService implements IClientService {
       const phone = args?.phone;
       const invoiceSchedule = args.invoiceSchedule;
       const invoice_payment_config_id = args.invoice_payment_config_id;
+      const email = args.email;
       const invoicingEmail = args.invoicingEmail;
       const scheduleStartDate = args.scheduleStartDate;
 
@@ -93,6 +94,7 @@ export default class ClientService implements IClientService {
         phone,
         invoiceSchedule,
         invoice_payment_config_id,
+        email,
         invoicingEmail,
         scheduleStartDate,
       });

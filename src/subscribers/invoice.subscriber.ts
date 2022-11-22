@@ -5,7 +5,7 @@ import axios from 'axios';
 import InvoiceItem from '../entities/invoice-item.entity';
 import Client from '../entities/client.entity';
 import { invoiceEmitter } from './emitters';
-import { emailSetting, events } from '../config/constants';
+import { ClientStatus, emailSetting, events } from '../config/constants';
 import { TYPES } from '../types';
 import container from '../inversify.config';
 import Company from '../entities/company.entity';
@@ -150,29 +150,30 @@ invoiceEmitter.on(events.sendInvoice, async (data: any) => {
         });
       });
     }
-
-    emailService
-      .sendEmail({
-        to: email,
-        from: `${client?.company?.name} ${emailSetting.fromEmail}`,
-        subject: emailSetting.invoice.subject,
-        html: invoiceHtml,
-        attachments,
-      })
-      .then((response) => {
-        logger.info({
-          operation,
-          message: `Invoice email response for ${email}`,
-          data: response,
+    if (client.status === ClientStatus.Active && !client?.archived) {
+      emailService
+        .sendEmail({
+          to: email,
+          from: `${client?.company?.name} ${emailSetting.fromEmail}`,
+          subject: emailSetting.invoice.subject,
+          html: invoiceHtml,
+          attachments,
+        })
+        .then((response) => {
+          logger.info({
+            operation,
+            message: `Invoice email response for ${email}`,
+            data: response,
+          });
+        })
+        .catch((err) => {
+          logger.error({
+            operation,
+            message: 'Error sending invoice email',
+            data: err,
+          });
         });
-      })
-      .catch((err) => {
-        logger.error({
-          operation,
-          message: 'Error sending invoice email',
-          data: err,
-        });
-      });
+    }
   } catch (err) {
     logger.error({
       operation,
