@@ -23,7 +23,7 @@ import { PagingInput, PagingResult } from './common.entity';
 import Address, { AddressCreateInput, AddressUpdateInput } from './address.entity';
 import { AdminRole, CompanyRole, entities, UserStatus, Role as RoleEnum, EntryType } from '../config/constants';
 import Workschedule from './workschedule.entity';
-import { userRolesTable } from '../config/db/columns';
+import { userProjectTable, userRolesTable } from '../config/db/columns';
 import UserPayRate from './user-payrate.entity';
 import Timesheet from './timesheet.entity';
 
@@ -338,6 +338,15 @@ export class UserUpdateInput {
 
   @Field({ nullable: true })
   manager_id: string;
+}
+
+@InputType()
+export class AttachProjectInput {
+  @Field(() => [String], { nullable: true })
+  user_id: string[];
+
+  @Field(() => [String], { nullable: true })
+  project_ids: string[];
 }
 
 @InputType()

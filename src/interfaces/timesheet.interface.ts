@@ -76,6 +76,7 @@ export interface ITimesheetCountInput {
 
 export interface ITimesheetBulkCreateInput {
   date: string;
+  user_id?: string;
 }
 
 export interface ITimesheetBulkCreateRepoInput {

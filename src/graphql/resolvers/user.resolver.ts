@@ -22,6 +22,7 @@ import User, {
   UserArchiveOrUnArchiveInput,
   UserCountInput,
   UserCountByAdminInput,
+  AttachProjectInput,
 } from '../../entities/user.entity';
 
 import { IPaginationData } from '../../interfaces/paging.interface';
@@ -302,6 +303,31 @@ export class UserResolver {
         roles,
         designation,
         email,
+      });
+
+      return user;
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
+    }
+  }
+
+  @Mutation((returns) => User)
+  @UseMiddleware(authenticate, isSelf)
+  async AttachProjectToUser(@Arg('input') args: AttachProjectInput): Promise<User> {
+    const operation = 'UserUpdate';
+
+    try {
+      const user_id = args.user_id;
+      const project_ids = args.project_ids;
+
+      let user: any = await this.userService.attachProject({
+        user_id,
+        project_ids,
       });
 
       return user;

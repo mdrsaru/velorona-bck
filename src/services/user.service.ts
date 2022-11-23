@@ -12,14 +12,21 @@ import companyEmitter from '../subscribers/company.subscriber';
 
 import { IPagingArgs, IPaginationData } from '../interfaces/paging.interface';
 import { IEntityRemove, IEntityID, ITemplateService, IEmailService, ILogger } from '../interfaces/common.interface';
-import { IChangeProfilePictureInput, IUserArchiveOrUnArchive, IUserRepository } from '../interfaces/user.interface';
+import {
+  IChangeProfilePictureInput,
+  IUserArchiveOrUnArchive,
+  IUserRepository,
+  IUserAttachProject,
+} from '../interfaces/user.interface';
 import { IUserCreate, IUserUpdate, IUserService } from '../interfaces/user.interface';
 import { ICompanyRepository } from '../interfaces/company.interface';
+import { IProjectRepository } from '../interfaces/project.interface';
 
 @injectable()
 export default class UserService implements IUserService {
   private userRepository: IUserRepository;
   private companyRepository: ICompanyRepository;
+  private projectRepository: IProjectRepository;
   private handlebarsService: ITemplateService;
   private emailService: IEmailService;
   private logger: ILogger;
@@ -27,12 +34,14 @@ export default class UserService implements IUserService {
   constructor(
     @inject(TYPES.UserRepository) _userRepository: IUserRepository,
     @inject(TYPES.CompanyRepository) _companyRepository: ICompanyRepository,
+    @inject(TYPES.ProjectRepository) _projectRepository: IProjectRepository,
     @inject(TYPES.HandlebarsService) _handlebarsService: ITemplateService,
     @inject(TYPES.EmailService) _emailService: IEmailService,
     @inject(TYPES.LoggerFactory) loggerFactory: (name: string) => ILogger
   ) {
     this.userRepository = _userRepository;
     this.companyRepository = _companyRepository;
+    this.projectRepository = _projectRepository;
     this.handlebarsService = _handlebarsService;
     this.emailService = _emailService;
     this.logger = loggerFactory('UserService');
@@ -213,6 +222,24 @@ export default class UserService implements IUserService {
         id,
         avatar_id,
       });
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  attachProject = async (args: IUserAttachProject): Promise<User | undefined> => {
+    try {
+      const user_id = args.user_id;
+      const project_ids = args.project_ids;
+      const user = await this.userRepository.getById({ id: user_id?.[0] });
+      project_ids.map(async (project_id, index) => {
+        await this.projectRepository.assignProjectToUsers({
+          user_id,
+          project_id,
+        });
+      });
+
+      return user;
     } catch (err) {
       throw err;
     }

@@ -95,6 +95,11 @@ export interface IUserArchiveOrUnArchive {
   archived: boolean;
 }
 
+export interface IUserAttachProject {
+  user_id: string[];
+  project_ids: string[];
+}
+
 export interface IUserCountInput extends ICountInput {}
 
 export interface IUserRepository {
@@ -123,5 +128,6 @@ export interface IUserService {
   userArchiveOrUnArchive(args: IUserArchiveOrUnArchive): Promise<User>;
   remove(args: IEntityRemove): Promise<User>;
   getById(args: IEntityID): Promise<User | undefined>;
+  attachProject(args: IUserAttachProject): Promise<User | undefined>;
   changeProfilePicture(args: IChangeProfilePictureInput): Promise<User>;
 }

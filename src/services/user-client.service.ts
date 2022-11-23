@@ -13,6 +13,8 @@ import {
 import { IPaginationData, IPagingArgs } from '../interfaces/paging.interface';
 import UserClient from '../entities/user-client.entity';
 import Paging from '../utils/paging';
+import { ITimesheetService } from '../interfaces/timesheet.interface';
+import moment from 'moment';
 
 @injectable()
 export default class UserClientService implements IUserClientService {
@@ -20,15 +22,18 @@ export default class UserClientService implements IUserClientService {
   private userClientRepository: IUserClientRepository;
   private logger: ILogger;
   private errorService: IErrorService;
+  private timesheetService: ITimesheetService;
 
   constructor(
     @inject(TYPES.LoggerFactory) loggerFactory: (name: string) => ILogger,
     @inject(TYPES.ErrorService) errorService: IErrorService,
+    @inject(TYPES.TimesheetService) timesheetService: ITimesheetService,
     @inject(TYPES.UserClientRepository) _userClientRepository: IUserClientRepository
   ) {
     this.userClientRepository = _userClientRepository;
     this.logger = loggerFactory(this.name);
     this.errorService = errorService;
+    this.timesheetService = timesheetService;
   }
 
   getAllAndCount = async (args: IPagingArgs): Promise<IPaginationData<UserClient>> => {
@@ -59,6 +64,11 @@ export default class UserClientService implements IUserClientService {
       const userClient = await this.userClientRepository.create({
         client_id,
         user_id,
+      });
+
+      this.timesheetService.bulkCreate({
+        date: moment().format('YYYY-MM-DD'),
+        user_id: user_id,
       });
 
       return userClient;

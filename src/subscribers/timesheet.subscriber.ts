@@ -376,50 +376,51 @@ timesheetEmitter.on(events.sendTimesheetSubmitEmail, async (args: TimesheetSubmi
         },
       ];
     }
+    if (timesheet?.user?.status === UserStatus.Active && !timesheet?.user?.archived) {
+      let promises: any = [];
+      if (timesheet.user?.manager?.email) {
+        const obj: IEmailBasicArgs = {
+          to: timesheet.user?.manager?.email as string,
+          from: `${timesheet?.company?.name} ${emailSetting.fromEmail}`,
+          subject: emailSetting.submitTimesheet.subject,
+          html: managerHtml,
+          ...(hasLogo && {
+            attachments,
+          }),
+        };
 
-    let promises: any = [];
-    if (timesheet.user?.manager?.email) {
-      const obj: IEmailBasicArgs = {
-        to: timesheet.user?.manager?.email as string,
+        const sendToManager = emailService.sendEmail(obj);
+        promises.push(sendToManager);
+      }
+
+      const userObj: IEmailBasicArgs = {
+        to: timesheet.user?.email as string,
         from: `${timesheet?.company?.name} ${emailSetting.fromEmail}`,
         subject: emailSetting.submitTimesheet.subject,
-        html: managerHtml,
+        html: userHtml,
         ...(hasLogo && {
           attachments,
         }),
       };
 
-      const sendToManager = emailService.sendEmail(obj);
-      promises.push(sendToManager);
+      promises.push(emailService.sendEmail(userObj));
+
+      Promise.all(promises)
+        .then((response) => {
+          logger.info({
+            operation,
+            message: `Email response for ${timesheet.user.email}`,
+            data: response,
+          });
+        })
+        .catch((err) => {
+          logger.error({
+            operation,
+            message: 'Error sending timesheet submit email',
+            data: err,
+          });
+        });
     }
-
-    const userObj: IEmailBasicArgs = {
-      to: timesheet.user?.email as string,
-      from: `${timesheet?.company?.name} ${emailSetting.fromEmail}`,
-      subject: emailSetting.submitTimesheet.subject,
-      html: userHtml,
-      ...(hasLogo && {
-        attachments,
-      }),
-    };
-
-    promises.push(emailService.sendEmail(userObj));
-
-    Promise.all(promises)
-      .then((response) => {
-        logger.info({
-          operation,
-          message: `Email response for ${timesheet.user.email}`,
-          data: response,
-        });
-      })
-      .catch((err) => {
-        logger.error({
-          operation,
-          message: 'Error sending timesheet submit email',
-          data: err,
-        });
-      });
   } catch (err) {
     logger.error({
       operation,

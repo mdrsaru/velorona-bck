@@ -122,6 +122,7 @@ export default class TimesheetService implements ITimesheetService {
         query: {
           role: Role.Employee,
           entryType: EntryType.Timesheet,
+          id: args.user_id,
         },
       });
 
