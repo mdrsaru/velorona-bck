@@ -165,7 +165,7 @@ export class ClientUpdateInput {
   invoicingEmail: string;
 
   @Field({ nullable: true })
-  address: AddressInput;
+  address: AddressUpdateInput;
 
   @Field({ nullable: true })
   phone: string;
