@@ -85,7 +85,7 @@ export interface ITokenService {
 }
 
 export interface IEmailBasicArgs {
-  to: string;
+  to: any;
   from: string;
   subject: string;
   data?: any;

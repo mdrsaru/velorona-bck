@@ -2,7 +2,7 @@ import { injectable, inject } from 'inversify';
 
 import { TYPES } from '../types';
 import strings from '../config/strings';
-import { events, plans, stripePrices } from '../config/constants';
+import { CompanyStatus, events, plans, stripePrices } from '../config/constants';
 import Company from '../entities/company.entity';
 import Paging from '../utils/paging';
 import userEmitter from '../subscribers/user.subscriber';
@@ -55,6 +55,10 @@ export default class CompanyService implements ICompanyService {
       const user = args.user;
       const logo_id = args?.logo_id;
       const plan = args?.plan;
+      let unapprovedNotification = false;
+      if (status === CompanyStatus.Unapproved) {
+        unapprovedNotification = true;
+      }
 
       let password = user.password;
 
@@ -70,7 +74,16 @@ export default class CompanyService implements ICompanyService {
         user,
         logo_id,
         plan,
+        unapprovedNotification,
       });
+
+      if (result?.company?.status === CompanyStatus.Unapproved) {
+        // Emit event for onCompanyRegistered
+        companyEmitter.emit(events.onCompanyRegistered, {
+          name: result?.company?.name,
+          email: result?.company?.adminEmail,
+        });
+      }
 
       // Emit event for onUserCreate
       userEmitter.emit(events.onUserCreate, {
@@ -100,14 +113,22 @@ export default class CompanyService implements ICompanyService {
       const logo_id = args?.logo_id;
       const user = args?.user;
 
-      const company = await this.companyRepository.update({
+      let data: ICompanyUpdate = {
         id,
         name,
         status,
         archived,
         logo_id,
         user,
-      });
+      };
+
+      if (status !== CompanyStatus.Unapproved) {
+        data.unapprovedNotification = false;
+      } else if (status === CompanyStatus.Unapproved) {
+        data.unapprovedNotification = true;
+      }
+
+      const company = await this.companyRepository.update(data);
 
       return company;
     } catch (err) {

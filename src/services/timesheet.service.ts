@@ -118,12 +118,16 @@ export default class TimesheetService implements ITimesheetService {
 
   bulkCreate = async (args: ITimesheetBulkCreateInput): Promise<string> => {
     try {
+      let query: any;
+      query = {
+        role: Role.Employee,
+        entryType: EntryType.Timesheet,
+      };
+      if (args.user_id) {
+        query.id = args.user_id;
+      }
       let { rows } = await this.userRepository.getAllAndCount({
-        query: {
-          role: Role.Employee,
-          entryType: EntryType.Timesheet,
-          id: args.user_id,
-        },
+        query: query,
       });
 
       let date = args.date;
@@ -165,7 +169,7 @@ export default class TimesheetService implements ITimesheetService {
   update = async (args: ITimesheetUpdateInput): Promise<Timesheet> => {
     try {
       const id = args.id;
-      const status = args.status;
+      let status = args.status;
       const lastApprovedAt = args.lastApprovedAt;
       const isSubmitted = args.isSubmitted;
       const lastSubmittedAt = args.lastSubmittedAt;
@@ -173,7 +177,7 @@ export default class TimesheetService implements ITimesheetService {
 
       let found: any = await this.timesheetRepository.getById({ id, relations: ['user'] });
 
-      if (found.user.timesheet_attachment) {
+      if (found.user.timesheet_attachment && isSubmitted) {
         let attachedTimesheet = await this.attachedTimesheetRepository.getAll({ created_by: found.user.id });
 
         if (!attachedTimesheet.length)
@@ -182,6 +186,9 @@ export default class TimesheetService implements ITimesheetService {
           });
       }
 
+      if (isSubmitted) {
+        status = TimesheetStatus.Submitted;
+      }
       const timesheet = await this.timesheetRepository.update({
         id,
         status,
@@ -240,7 +247,7 @@ export default class TimesheetService implements ITimesheetService {
       });
 
       timesheets.map((timesheet) => {
-        if (timesheet.status === TimesheetStatus.Pending && timesheet.isSubmitted) {
+        if (timesheet.status === TimesheetStatus.Open && timesheet.isSubmitted) {
           if (date > timesheet.weekEndDate) {
             //Emit sendTimesheetApproveReminderEmail event
             timesheetEmitter.emit(events.onTimesheetApproveReminder, {

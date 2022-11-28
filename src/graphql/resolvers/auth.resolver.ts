@@ -159,7 +159,6 @@ export class AuthResolver {
         input: {
           email,
           userType,
-          companyCode,
         },
       });
 

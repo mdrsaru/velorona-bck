@@ -104,7 +104,7 @@ timesheetEmitter.on(events.onTimeEntriesApprove, async (args: TimesheetApprove) 
       status = TimesheetStatus.PartiallyApproved;
       attachedTimesheetStatus = AttachedTimesheetStatus.PartiallyApproved;
     } else {
-      status = TimesheetStatus.Pending;
+      status = TimesheetStatus.Open;
       attachedTimesheetStatus = AttachedTimesheetStatus.Pending;
     }
 

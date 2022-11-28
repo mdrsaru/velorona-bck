@@ -200,7 +200,7 @@ export class TimesheetResolver {
       return TimesheetStatus.PartiallyApproved;
     }
 
-    return TimesheetStatus.Pending;
+    return TimesheetStatus.Open;
   }
 
   @FieldResolver()

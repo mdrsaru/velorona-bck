@@ -105,7 +105,7 @@ export default class Timesheet extends Base {
   @Field((type) => TimesheetStatus)
   @Column({
     type: 'varchar',
-    default: TimesheetStatus.Pending,
+    default: TimesheetStatus.Open,
   })
   status: TimesheetStatus;
 

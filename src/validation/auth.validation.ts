@@ -65,7 +65,6 @@ export default class AuthValidation {
     return Joi.object({
       email: Joi.string().required().messages(messages.email),
       userType: Joi.string().required().messages(messages.userType),
-      companyCode: Joi.string().messages(messages.company),
     });
   }
   static resetPassword() {

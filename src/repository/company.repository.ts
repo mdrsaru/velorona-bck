@@ -103,6 +103,7 @@ export default class CompanyRepository extends BaseRepository<Company> implement
       const email = args.user.email;
       const logo_id = args?.logo_id;
       const plan = args?.plan;
+      const unapprovedNotification = args?.unapprovedNotification;
 
       const errors: string[] = [];
 
@@ -147,6 +148,7 @@ export default class CompanyRepository extends BaseRepository<Company> implement
           adminEmail: email,
           logo_id,
           plan,
+          unapprovedNotification,
         });
 
         //const password = generateRandomStrings({ length: 8 });
@@ -210,6 +212,7 @@ export default class CompanyRepository extends BaseRepository<Company> implement
       const trialEnded = args.trialEnded;
       const subscriptionPeriodEnd = args.subscriptionPeriodEnd;
       const trialEndDate = args.trialEndDate;
+      const unapprovedNotification = args?.unapprovedNotification;
 
       const found = await this.getById({ id });
 
@@ -274,6 +277,7 @@ export default class CompanyRepository extends BaseRepository<Company> implement
           trialEnded,
           subscriptionPeriodEnd,
           trialEndDate,
+          unapprovedNotification,
           ...(changeAdminEmail && updatedUser && { adminEmail: updatedUser.email }),
         });
 

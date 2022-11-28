@@ -23,6 +23,7 @@ export interface ICompany {
   trialEnded?: boolean;
   subscriptionPeriodEnd?: Date;
   trialEndDate?: Date;
+  unapprovedNotification?: Boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -54,6 +55,7 @@ export interface ICompanyCreate {
   name: ICompany['name'];
   status: ICompany['status'];
   archived?: ICompany['archived'];
+  unapprovedNotification?: ICompany['unapprovedNotification'];
   plan?: ICompany['plan'];
   user: ICompanyAdminCreateInput;
   logo_id?: ICompany['logo_id'];
@@ -78,6 +80,7 @@ export interface ICompanyUpdate {
   user?: ICompanyAdminUpdate;
   subscriptionPeriodEnd?: ICompany['subscriptionPeriodEnd'] | null;
   trialEndDate?: ICompany['trialEndDate'] | null;
+  unapprovedNotification?: ICompany['unapprovedNotification'];
 }
 
 export interface ICompanyCodeInput {

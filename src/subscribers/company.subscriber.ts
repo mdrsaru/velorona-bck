@@ -1,7 +1,7 @@
 import fs from 'fs/promises';
 
 import { companyEmitter } from './emitters';
-import constants, { CompanyStatus, emailSetting, events, Role as RoleEnum } from '../config/constants';
+import constants, { CompanyStatus, emailSetting, events, Role, Role as RoleEnum } from '../config/constants';
 import { TYPES } from '../types';
 import container from '../inversify.config';
 import Company from '../entities/company.entity';
@@ -209,4 +209,88 @@ companyEmitter.on(events.onSubscriptionEndReminder, async (args: SubscriptionEnd
     });
   }
 });
+
+type CompanyRegisteredUsage = {
+  name: string;
+  email: string;
+};
+
+companyEmitter.on(events.onCompanyRegistered, async (args: CompanyRegisteredUsage) => {
+  const operation = events.sendTimesheetSubmitEmail;
+  const logger = container.get<ILogger>(TYPES.Logger);
+  logger.init('timesheet.subscriber');
+
+  const emailService: IEmailService = container.get<IEmailService>(TYPES.EmailService);
+  const handlebarsService: ITemplateService = container.get<ITemplateService>(TYPES.HandlebarsService);
+  const userRepository: IUserRepository = container.get<IUserRepository>(TYPES.UserRepository);
+
+  const name = args.name;
+  const email = args.email;
+  try {
+    let emailTemplate = await fs.readFile(`${__dirname}/../../templates/company-registered-template.html`, {
+      encoding: 'utf-8',
+    });
+
+    const timesheetHtml = handlebarsService.compile({
+      template: emailTemplate,
+      data: {
+        name,
+        email,
+      },
+    });
+
+    const { rows: users } = await userRepository.getAllAndCount({
+      query: {
+        role: Role.SuperAdmin,
+      },
+    });
+
+    const mailList = users?.map((user, index) => {
+      return user.email;
+    });
+    const logo = await fs.readFile(`${__dirname}/../../public/logo.png`, { encoding: 'base64' });
+    const obj: any = {
+      to: mailList,
+      from: `Vellorona ${emailSetting.fromEmail}`,
+      subject: emailSetting.companyRegistered.subject,
+      html: timesheetHtml,
+    };
+
+    obj.attachments = [
+      {
+        content: logo,
+        filename: 'Vellorona Logo',
+        cid: 'logo',
+        contentDisposition: 'inline',
+        encoding: 'base64',
+        // type: 'image/png',
+      },
+    ];
+    emailService
+      .sendEmail(obj)
+      .then((response) => {
+        logger.info({
+          operation,
+          message: `Email response for ${mailList}`,
+          data: response,
+        });
+      })
+      .catch((err) => {
+        logger.error({
+          operation,
+          message: 'Error sending company added email',
+          data: err,
+        });
+      });
+  } catch (err) {
+    logger.error({
+      operation,
+      message: 'Error on creating company',
+      data: {
+        err,
+      },
+    });
+  }
+});
+
 export default companyEmitter;

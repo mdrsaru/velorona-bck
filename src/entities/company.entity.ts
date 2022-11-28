@@ -95,6 +95,11 @@ export default class Company extends Base {
   @Column({ name: 'trial_end_date', type: 'timestamp with time zone', nullable: true })
   trialEndDate: Date;
 
+  // Admin field to know if there is any pending unapproved company
+  @Field({ defaultValue: false, nullable: true })
+  @Column({ name: 'unapproved_notification', default: false, nullable: true })
+  unapprovedNotification: Boolean;
+
   @Field(() => User)
   admin: User;
 }

@@ -557,7 +557,7 @@ export default class TimeEntryService implements ITimeEntryService {
           weekStartDate,
           weekEndDate,
           duration: totalTimeInSeconds,
-          status: TimesheetStatus.Pending,
+          status: TimesheetStatus.Open,
           user_id,
           client_id,
           company_id,

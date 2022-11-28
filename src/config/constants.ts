@@ -111,7 +111,8 @@ export enum ProjectStatus {
 }
 
 export enum TimesheetStatus {
-  Pending = 'Pending',
+  Open = 'Open',
+  Submitted = 'Submitted',
   Approved = 'Approved',
   PartiallyApproved = 'PartiallyApproved',
   Rejected = 'Rejected',
@@ -240,6 +241,9 @@ export const emailSetting = {
   subscriptionEndReminder: {
     subject: process.env.SUBSCRIPTION_END_REMINDER_EMAIL_SUBJECT || '',
   },
+  companyRegistered: {
+    subject: process.env.COMPANY_REGISTERED_EMAIL_SUBJECT || '',
+  },
 };
 
 export const events = {
@@ -260,6 +264,7 @@ export const events = {
   onTimesheetSubmitReminder: 'onTimesheetSubmitReminder',
   onTimesheetApproveReminder: 'onTimesheetApproveReminder',
   onSubscriptionEndReminder: 'onSubscriptionEndReminder',
+  onCompanyRegistered: 'onCompanyRegistered',
 };
 
 export const stripeSetting = {
