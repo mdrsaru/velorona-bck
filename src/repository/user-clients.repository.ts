@@ -93,7 +93,7 @@ export default class UserClientRepository extends BaseRepository<UserClient> imp
       left join ${entities.userProject} as up on up.project_id = p.id
       left join ${entities.userPayRate} as ur on ur.project_id = p.id
       where uc.user_id=$1 
-      and (up.user_id = $1 or up.user_id is NULL)
+      and (up.user_id = $1 )
       and (ur.user_id = $1 or ur.user_id is NULL)
       `,
         [user_id]
