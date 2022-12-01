@@ -1,12 +1,12 @@
 import { inject, injectable } from 'inversify';
-import { getRepository, In, SelectQueryBuilder } from 'typeorm';
+import { EntityManager, getManager, getRepository, In, SelectQueryBuilder } from 'typeorm';
 import BaseRepository from './base.repository';
 
 import { TYPES } from '../types';
 import strings from '../config/strings';
 import User from '../entities/user.entity';
 import UserClient from '../entities/user-client.entity';
-import { Role, UserClientStatus } from '../config/constants';
+import { entities, Role, UserClientStatus } from '../config/constants';
 import * as apiError from '../utils/api-error';
 
 import { IUserRepository } from '../interfaces/user.interface';
@@ -24,6 +24,7 @@ import { IGetAllAndCountResult, IGetOptions } from '../interfaces/paging.interfa
 export default class UserClientRepository extends BaseRepository<UserClient> implements IUserClientRepository {
   private userRepository: IUserRepository;
   private clientRepository: IClientRepository;
+  private manager: EntityManager;
 
   constructor(
     @inject(TYPES.UserRepository) _userRepository: IUserRepository,
@@ -32,6 +33,7 @@ export default class UserClientRepository extends BaseRepository<UserClient> imp
     super(getRepository(UserClient));
     this.userRepository = _userRepository;
     this.clientRepository = _clientRepository;
+    this.manager = getManager();
   }
 
   getAllAndCount = async (args: IGetOptions): Promise<IGetAllAndCountResult<UserClient>> => {
@@ -66,6 +68,37 @@ export default class UserClientRepository extends BaseRepository<UserClient> imp
         count,
         rows,
       };
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  getDetails = async (args: IUserIdQuery): Promise<any> => {
+    const user_id = args.user_id;
+    try {
+      const queryResult = await this.manager.query(
+        `
+      Select 
+      uc.user_id,
+      uc.status,
+      c.name as "clientName",
+      p.id as "projectId",
+      p.name as "projectName",
+      ur.amount as "userRate",
+      ur.invoice_rate as "invoiceRate" ,
+      ur.id as "userPayRateId"
+      from ${entities.clients} as c 
+      join ${entities.usersClients} as uc on c.id = uc.client_id
+      left join ${entities.projects} as p on p.client_id = c.id
+      left join ${entities.userProject} as up on up.project_id = p.id
+      left join ${entities.userPayRate} as ur on ur.project_id = p.id
+      where uc.user_id=$1 
+      and (up.user_id = $1 or up.user_id is NULL)
+      and (ur.user_id = $1 or ur.user_id is NULL)
+      `,
+        [user_id]
+      );
+      return queryResult;
     } catch (err) {
       throw err;
     }

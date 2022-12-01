@@ -28,4 +28,5 @@ export interface IUserClientRepository {
   getSingleEntity(args: ISingleEntityQuery): Promise<UserClient | undefined>;
   create(args: IUserClientCreate): Promise<UserClient>;
   changeStatusToInactive(args: IUserClientMakeInactive): Promise<User>;
+  getDetails(args: IUserIdQuery): Promise<any>;
 }

@@ -102,3 +102,30 @@ export class UserClientQueryInput {
   @Field()
   query: UserClientQuery;
 }
+
+@ObjectType()
+export class UserClientDetail {
+  @Field({ nullable: true })
+  user_id: string;
+
+  @Field({ nullable: true })
+  clientName: string;
+
+  @Field({ nullable: true })
+  projectName: string;
+
+  @Field({ nullable: true })
+  userRate: string;
+
+  @Field({ nullable: true })
+  invoiceRate: string;
+
+  @Field({ nullable: true })
+  status: string;
+
+  @Field({ nullable: true })
+  projectId: string;
+
+  @Field({ nullable: true })
+  userPayRateId: string;
+}
