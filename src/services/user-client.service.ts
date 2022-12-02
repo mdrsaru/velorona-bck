@@ -13,7 +13,7 @@ import {
 import { IPaginationData, IPagingArgs } from '../interfaces/paging.interface';
 import UserClient from '../entities/user-client.entity';
 import Paging from '../utils/paging';
-import { ITimesheetService } from '../interfaces/timesheet.interface';
+import { ITimesheetRepository, ITimesheetService } from '../interfaces/timesheet.interface';
 import moment from 'moment';
 
 @injectable()
@@ -23,17 +23,20 @@ export default class UserClientService implements IUserClientService {
   private logger: ILogger;
   private errorService: IErrorService;
   private timesheetService: ITimesheetService;
+  private timesheetRepository: ITimesheetRepository;
 
   constructor(
     @inject(TYPES.LoggerFactory) loggerFactory: (name: string) => ILogger,
     @inject(TYPES.ErrorService) errorService: IErrorService,
     @inject(TYPES.TimesheetService) timesheetService: ITimesheetService,
+    @inject(TYPES.TimesheetRepository) timesheetRepository: ITimesheetRepository,
     @inject(TYPES.UserClientRepository) _userClientRepository: IUserClientRepository
   ) {
     this.userClientRepository = _userClientRepository;
     this.logger = loggerFactory(this.name);
     this.errorService = errorService;
     this.timesheetService = timesheetService;
+    this.timesheetRepository = timesheetRepository;
   }
 
   getAllAndCount = async (args: IPagingArgs): Promise<IPaginationData<UserClient>> => {
@@ -66,11 +69,22 @@ export default class UserClientService implements IUserClientService {
         user_id,
       });
 
-      this.timesheetService.bulkCreate({
-        date: moment().format('YYYY-MM-DD'),
-        user_id: user_id,
+      let weekStartDate = moment(moment().format('YYYY-MM-DD')).startOf('isoWeek');
+
+      const foundTimesheet = await this.timesheetRepository.getAll({
+        query: {
+          user_id,
+          client_id,
+          weekStartDate,
+        },
       });
 
+      if (!foundTimesheet.length) {
+        this.timesheetService.bulkCreate({
+          date: moment().format('YYYY-MM-DD'),
+          user_id: user_id,
+        });
+      }
       return userClient;
     } catch (err) {
       this.errorService.throwError({
