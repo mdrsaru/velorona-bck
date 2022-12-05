@@ -79,19 +79,19 @@ export default class UserClientRepository extends BaseRepository<UserClient> imp
       const queryResult = await this.manager.query(
         `
       Select 
+      Distinct on (p.name) p.name as "projectName",
       uc.user_id,
       uc.status,
       c.name as "clientName",
       p.id as "projectId",
-      p.name as "projectName",
       ur.amount as "userRate",
       ur.invoice_rate as "invoiceRate" ,
       ur.id as "userPayRateId"
       from ${entities.clients} as c 
       join ${entities.usersClients} as uc on c.id = uc.client_id
-      left join ${entities.projects} as p on p.client_id = c.id
-      left join ${entities.userProject} as up on up.project_id = p.id
-      left join ${entities.userPayRate} as ur on ur.project_id = p.id
+      join ${entities.projects} as p on p.client_id = c.id
+      join ${entities.userProject} as up on up.project_id = p.id
+      left join ${entities.userPayRate} as ur on ur.project_id = up.project_id
       where uc.user_id=$1 
       and (up.user_id = $1 )
       and (ur.user_id = $1 or ur.user_id is NULL)
