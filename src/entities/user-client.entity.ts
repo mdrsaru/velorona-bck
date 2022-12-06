@@ -59,12 +59,18 @@ export class UserClientAssociateInput {
 }
 
 @InputType()
-export class UserClientMakeInactiveInput {
+export class UserClientChangeStatusInput {
   @Field()
   user_id: string;
 
   @Field({ description: 'Company user and client belongs to.' })
   company_id: string;
+
+  @Field()
+  client_id: string;
+
+  @Field((type) => UserClientStatus, { nullable: true })
+  status: UserClientStatus;
 }
 
 @ObjectType()
@@ -110,6 +116,9 @@ export class UserClientDetail {
 
   @Field({ nullable: true })
   clientName: string;
+
+  @Field({ nullable: true })
+  clientId: string;
 
   @Field({ nullable: true })
   projectName: string;

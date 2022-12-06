@@ -9,6 +9,7 @@ import {
   IUserClientRepository,
   IUserClientService,
   IUserClientMakeInactive,
+  IUserClientChangeStatus,
 } from '../interfaces/user-client.interface';
 import { IPaginationData, IPagingArgs } from '../interfaces/paging.interface';
 import UserClient from '../entities/user-client.entity';
@@ -96,14 +97,18 @@ export default class UserClientService implements IUserClientService {
     }
   };
 
-  changeStatusToInactive = async (args: IUserClientMakeInactive): Promise<User> => {
-    const operation = 'changeStatusToInactive';
+  changeStatus = async (args: IUserClientChangeStatus): Promise<UserClient> => {
+    const operation = 'changeStatus';
 
     const user_id = args.user_id;
-
+    const client_id = args.client_id;
+    const status = args.status;
+    console.log;
     try {
-      const userClient = await this.userClientRepository.changeStatusToInactive({
+      const userClient = await this.userClientRepository.update({
         user_id,
+        client_id,
+        status,
       });
 
       return userClient;

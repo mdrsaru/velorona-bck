@@ -9,8 +9,8 @@ import { checkCompanyAccess } from '../middlewares/company';
 import User from '../../entities/user.entity';
 import UserClient, {
   UserClientAssociateInput,
+  UserClientChangeStatusInput,
   UserClientDetail,
-  UserClientMakeInactiveInput,
   UserClientPagingResult,
   UserClientQuery,
   UserClientQueryInput,
@@ -117,13 +117,15 @@ export class UserClientResolver {
     }
   }
 
-  @Mutation((returns) => User, { description: 'Associate user with client' })
+  @Mutation((returns) => UserClient, { description: 'Associate user with client' })
   @UseMiddleware(authenticate, authorize(RoleEnum.SuperAdmin, RoleEnum.CompanyAdmin), checkCompanyAccess)
-  async UserClientMakeInactive(@Arg('input') args: UserClientMakeInactiveInput): Promise<User> {
-    const operation = 'UserClientMakeInactive';
+  async UserClientChangeStatus(@Arg('input') args: UserClientChangeStatusInput): Promise<UserClient> {
+    const operation = 'UserClientChangeStatus';
 
     try {
       const user_id = args.user_id;
+      const client_id = args.client_id;
+      const status = args.status;
 
       const schema = UserClientValidation.changeStatusToInactive();
       await this.joiService.validate({
@@ -133,11 +135,13 @@ export class UserClientResolver {
         },
       });
 
-      const user: User = await this.userClientService.changeStatusToInactive({
+      const userClient: UserClient = await this.userClientService.changeStatus({
         user_id,
+        status,
+        client_id,
       });
 
-      return user;
+      return userClient;
     } catch (err) {
       throw err;
     }

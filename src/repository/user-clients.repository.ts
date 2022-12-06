@@ -15,10 +15,12 @@ import {
   IUserClientRepository,
   IUserIdQuery,
   IUserClientMakeInactive,
+  IUserClientChangeStatus,
 } from '../interfaces/user-client.interface';
 import { IClientRepository } from '../interfaces/client.interface';
 import { isArray } from 'util';
 import { IGetAllAndCountResult, IGetOptions } from '../interfaces/paging.interface';
+import { merge } from 'lodash';
 
 @injectable()
 export default class UserClientRepository extends BaseRepository<UserClient> implements IUserClientRepository {
@@ -83,6 +85,7 @@ export default class UserClientRepository extends BaseRepository<UserClient> imp
       uc.user_id,
       uc.status,
       c.name as "clientName",
+      c.id as "clientId",
       p.id as "projectId",
       ur.amount as "userRate",
       ur.invoice_rate as "invoiceRate" ,
@@ -132,26 +135,30 @@ export default class UserClientRepository extends BaseRepository<UserClient> imp
         },
       });
 
-      if (userClientFound && userClientFound?.status === UserClientStatus.Inactive) {
-        await this.changeStatusToInactive({
-          user_id,
-        });
-        await this.repo.update({ client_id }, { status: UserClientStatus.Active });
+      // if (userClientFound && userClientFound?.status === UserClientStatus.Inactive) {
+      //   await this.changeStatusToInactive({
+      //     user_id,
+      //   });
+      //   await this.repo.update({ client_id }, { status: UserClientStatus.Active });
 
-        const userClient: any = await this.getSingleEntity({
-          query: {
-            client_id,
-          },
-        });
-        return userClient;
-      } else if (userClientFound && userClientFound?.status === UserClientStatus.Active) {
+      //   const userClient: any = await this.getSingleEntity({
+      //     query: {
+      //       client_id,
+      //     },
+      //   });
+      //   return userClient;
+      // } else if (userClientFound && userClientFound?.status === UserClientStatus.Active) {
+      //   return userClientFound;
+      // }
+
+      if (userClientFound) {
         return userClientFound;
       }
-      await this.changeStatusToInactive({
-        user_id,
-      });
+      // await this.changeStatusToInactive({
+      //   user_id,
+      // });
       const userClient = await this.repo.save({
-        status: UserClientStatus.Active,
+        status: UserClientStatus.Inactive,
         client_id,
         user_id,
       });
@@ -162,6 +169,35 @@ export default class UserClientRepository extends BaseRepository<UserClient> imp
     }
   };
 
+  update = async (args: IUserClientChangeStatus): Promise<UserClient> => {
+    try {
+      const client_id = args.client_id;
+      const user_id = args.user_id;
+      const status = args.status;
+
+      const found = await this.getSingleEntity({
+        query: {
+          client_id,
+          user_id,
+        },
+      });
+
+      if (found) {
+        await this.changeStatusToInactive({
+          user_id,
+        });
+      }
+      const update = merge(found, {
+        user_id,
+        client_id,
+        status,
+      });
+      let userClientFound = await this.repo.save(update);
+      return userClientFound;
+    } catch (err) {
+      throw err;
+    }
+  };
   changeStatusToInactive = async (args: IUserClientMakeInactive): Promise<User> => {
     try {
       const user_id = args.user_id;

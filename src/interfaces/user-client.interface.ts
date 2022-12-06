@@ -12,6 +12,11 @@ export interface IUserClientMakeInactive {
   user_id: string;
 }
 
+export interface IUserClientChangeStatus {
+  user_id: string;
+  client_id: string;
+  status: string;
+}
 export interface IUserIdQuery {
   user_id: string;
   relations?: string[];
@@ -19,7 +24,7 @@ export interface IUserIdQuery {
 export interface IUserClientService {
   getAllAndCount(args: IPagingArgs): Promise<IPaginationData<UserClient>>;
   associate(args: IUserClientCreate): Promise<UserClient>;
-  changeStatusToInactive(args: IUserClientMakeInactive): Promise<User>;
+  changeStatus(args: IUserClientChangeStatus): Promise<UserClient>;
 }
 
 export interface IUserClientRepository {
@@ -29,4 +34,5 @@ export interface IUserClientRepository {
   create(args: IUserClientCreate): Promise<UserClient>;
   changeStatusToInactive(args: IUserClientMakeInactive): Promise<User>;
   getDetails(args: IUserIdQuery): Promise<any>;
+  update(args: IUserClientChangeStatus): Promise<UserClient>;
 }
