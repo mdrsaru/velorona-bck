@@ -103,7 +103,6 @@ export default class UserClientService implements IUserClientService {
     const user_id = args.user_id;
     const client_id = args.client_id;
     const status = args.status;
-    console.log;
     try {
       const userClient = await this.userClientRepository.update({
         user_id,
