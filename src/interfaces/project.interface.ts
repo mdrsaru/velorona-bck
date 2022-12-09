@@ -47,6 +47,11 @@ export interface IAssignProjectToUsers {
   project_id: string;
 }
 
+export interface IRemoveAssignProjectToUsers {
+  user_id: string;
+  project_id: string;
+}
+
 export interface IProjectRepository {
   getAllAndCount(args: IPagingArgs): Promise<IGetAllAndCountResult<Project>>;
   getAll(args: IGetOptions): Promise<Project[]>;
@@ -58,6 +63,7 @@ export interface IProjectRepository {
   countProjectInvolved(args: IProjectCountInput): Promise<number>;
   countActiveProjectInvolved(args: IActiveProjectCountInput): Promise<number>;
   assignProjectToUsers(args: IAssignProjectToUsers): Promise<Project>;
+  removeAssignProjectToUsers(args: IRemoveAssignProjectToUsers): Promise<Project | undefined>;
 }
 
 export interface IProjectService {
@@ -65,4 +71,5 @@ export interface IProjectService {
   create(args: IProjectCreateInput): Promise<Project>;
   update(args: IProjectUpdateInput): Promise<Project>;
   remove(args: IEntityRemove): Promise<Project>;
+  removeAssignProjectToUsers(args: IRemoveAssignProjectToUsers): Promise<Project>;
 }

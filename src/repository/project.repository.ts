@@ -20,6 +20,7 @@ import {
   IProjectCreateInput,
   IProjectRepository,
   IProjectUpdateInput,
+  IRemoveAssignProjectToUsers,
 } from '../interfaces/project.interface';
 import { IClientRepository } from '../interfaces/client.interface';
 import { IGetAllAndCountResult, IGetOptions } from '../interfaces/paging.interface';
@@ -335,6 +336,34 @@ export default class ProjectRepository extends BaseRepository<Project> implement
 
       let project = await this.repo.save(update);
       return project;
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async removeAssignProjectToUsers(args: IRemoveAssignProjectToUsers): Promise<Project> {
+    try {
+      const user_id = args.user_id;
+      const project_id = args.project_id;
+
+      const projectFound: any = await this.getSingleEntity({
+        query: {
+          id: project_id,
+        },
+      });
+
+      const queryResult = await this.manager.query(
+        `
+      Delete from user_project
+      where user_id=$1
+      and
+      project_id = $2
+
+      `,
+        [user_id, project_id]
+      );
+
+      return projectFound;
     } catch (err) {
       throw err;
     }

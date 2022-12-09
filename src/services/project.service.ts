@@ -11,6 +11,7 @@ import {
   IProjectRepository,
   IProjectService,
   IProjectUpdateInput,
+  IRemoveAssignProjectToUsers,
 } from '../interfaces/project.interface';
 
 @injectable()
@@ -127,4 +128,19 @@ export default class ProjectService implements IProjectService {
       throw err;
     }
   };
+
+  async removeAssignProjectToUsers(args: IRemoveAssignProjectToUsers): Promise<Project> {
+    try {
+      const user_id = args.user_id;
+      const project_id = args.project_id;
+
+      const project: any = await this.projectRepository.removeAssignProjectToUsers({
+        user_id,
+        project_id,
+      });
+      return project;
+    } catch (err) {
+      throw err;
+    }
+  }
 }

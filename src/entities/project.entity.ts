@@ -224,3 +224,15 @@ export class ProjectItemInput {
   @Field()
   client_id: string;
 }
+
+@InputType()
+export class RemoveProjectUserAssignInput {
+  @Field()
+  user_id: string;
+
+  @Field()
+  project_id: string;
+
+  @Field()
+  company_id: string;
+}

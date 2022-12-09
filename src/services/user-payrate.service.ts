@@ -148,10 +148,10 @@ export default class UserPayRateService implements IUserPayRateService {
   remove = async (args: IEntityRemove) => {
     try {
       const id = args.id;
-      const role = await this.userPayRateRepository.remove({
+      const userPayRate = await this.userPayRateRepository.remove({
         id,
       });
-      return role;
+      return userPayRate;
     } catch (err) {
       throw err;
     }

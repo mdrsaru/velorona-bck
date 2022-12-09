@@ -20,6 +20,7 @@ import Project, {
   ProjectUpdateInput,
   ProjectItem,
   ProjectItemInput,
+  RemoveProjectUserAssignInput,
 } from '../../entities/project.entity';
 
 import { IPaginationData } from '../../interfaces/paging.interface';
@@ -249,6 +250,31 @@ export class ProjectResolver {
         archived,
         user_ids,
         client_id,
+      });
+
+      return project;
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: false,
+      });
+    }
+  }
+
+  @Mutation((returns) => Project)
+  @UseMiddleware(authenticate, authorize(RoleEnum.SuperAdmin, RoleEnum.CompanyAdmin), checkCompanyAccess)
+  async RemoveUserProjectAssign(@Arg('input') args: RemoveProjectUserAssignInput, @Ctx() ctx: any): Promise<IProject> {
+    const operation = 'RemoveProjectUserAssignInput';
+
+    try {
+      const user_id = args.user_id;
+      const project_id = args.project_id;
+
+      let project: Project = await this.projectService.removeAssignProjectToUsers({
+        user_id,
+        project_id,
       });
 
       return project;
