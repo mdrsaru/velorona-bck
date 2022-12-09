@@ -3,7 +3,7 @@ import findIndex from 'lodash/findIndex';
 import merge from 'lodash/merge';
 import cloneDeep from 'lodash/cloneDeep';
 
-import { IProjectRepository } from '../../interfaces/project.interface';
+import { IProjectRepository, IRemoveAssignProjectToUsers } from '../../interfaces/project.interface';
 
 import config from '../../config/constants';
 import strings from '../../config/strings';
@@ -105,6 +105,9 @@ export default class ProjectRepository implements IProjectRepository {
   }
 
   assignProjectToUsers(args: IAssignProjectToUsers): Promise<Project> {
+    throw new Error('not implemented');
+  }
+  removeAssignProjectToUsers(args: IRemoveAssignProjectToUsers): Promise<Project> {
     throw new Error('not implemented');
   }
 }
