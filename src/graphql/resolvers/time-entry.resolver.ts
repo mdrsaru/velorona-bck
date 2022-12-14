@@ -201,7 +201,7 @@ export class TimeEntryResolver {
   }
 
   @Mutation((returns) => TimeEntry)
-  @UseMiddleware(authenticate, authorize(RoleEnum.Employee), checkCompanyAccess)
+  @UseMiddleware(authenticate, authorize(RoleEnum.Employee, RoleEnum.CompanyAdmin), checkCompanyAccess)
   async TimeEntryCreate(@Arg('input') args: TimeEntryCreateInput, @Ctx() ctx: IGraphqlContext): Promise<TimeEntry> {
     const operation = 'TimeEntryCreate';
 
@@ -211,9 +211,9 @@ export class TimeEntryResolver {
       const clientLocation = args.clientLocation;
       const project_id = args.project_id;
       const company_id = args.company_id;
-      const entryType = ctx?.user?.entryType;
+      const entryType = args.entry_type;
       const description = args.description;
-      const created_by = ctx?.user?.id as string;
+      const created_by = args.created_by;
 
       const schema = TimeEntryValidation.create();
       await this.joiService.validate({
@@ -452,7 +452,7 @@ export class TimeEntryResolver {
   }
 
   @Mutation((returns) => Boolean, { description: 'Bulk updates time entries of a day' })
-  @UseMiddleware(authenticate, authorize(RoleEnum.Employee, RoleEnum.SuperAdmin))
+  @UseMiddleware(authenticate, authorize(RoleEnum.Employee, RoleEnum.SuperAdmin, RoleEnum.CompanyAdmin))
   async TimeEntriesBulkUpdate(
     @Arg('input') args: TimeEntryBulkUpdateInput,
     @Ctx() ctx: IGraphqlContext

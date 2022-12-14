@@ -184,6 +184,12 @@ export class TimeEntryCreateInput {
 
   @Field({ nullable: true })
   description: string;
+
+  @Field()
+  created_by: string;
+
+  @Field()
+  entry_type: EntryType;
 }
 
 @InputType()
