@@ -159,6 +159,7 @@ export default class SubscriptionService implements ISubscriptionService {
       const trialEnded = args?.trialEnded;
       const subscriptionPeriodEnd = args?.subscriptionPeriodEnd;
       const trialEndDate = args?.trialEndDate;
+      const collectionMethod = args?.eventObject?.data?.object?.collection_method;
 
       const company = await this.companyRepository.getSingleEntity({
         query: {
@@ -181,6 +182,7 @@ export default class SubscriptionService implements ISubscriptionService {
         trialEnded,
         subscriptionPeriodEnd,
         trialEndDate,
+        collectionMethod,
       });
 
       return company;

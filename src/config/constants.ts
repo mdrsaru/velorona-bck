@@ -199,6 +199,11 @@ export enum DemoRequestStatus {
   Rejected = 'Rejected',
 }
 
+export enum CollectionMethod {
+  ChargeAutomaticatically = 'charge_automatically',
+  SendInvoice = 'send_invoice',
+}
+
 export const emailSetting = {
   testMask: process.env.EMAIL_TEST_MASK as string,
   fromEmail: process.env.EMAIL_FROM_EMAIL as string,

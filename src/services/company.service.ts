@@ -2,7 +2,7 @@ import { injectable, inject } from 'inversify';
 
 import { TYPES } from '../types';
 import strings from '../config/strings';
-import { CompanyStatus, events, plans, stripePrices } from '../config/constants';
+import { CollectionMethod, CompanyStatus, events, plans, stripePrices } from '../config/constants';
 import Company from '../entities/company.entity';
 import Paging from '../utils/paging';
 import userEmitter from '../subscribers/user.subscriber';
@@ -15,18 +15,22 @@ import { ICompanyCreate, ICompanyUpdate, ICompanyRepository, ICompanyService } f
 import { IUserRepository } from '../interfaces/user.interface';
 import companyEmitter from '../subscribers/company.subscriber';
 import moment from 'moment';
+import StripeService from './stripe.service';
 
 @injectable()
 export default class CompanyService implements ICompanyService {
   private companyRepository: ICompanyRepository;
   private userRepository: IUserRepository;
+  private stripeService: StripeService;
 
   constructor(
     @inject(TYPES.CompanyRepository) companyRepository: ICompanyRepository,
-    @inject(TYPES.UserRepository) userRepository: IUserRepository
+    @inject(TYPES.UserRepository) userRepository: IUserRepository,
+    @inject(TYPES.StripeService) _stripeService: StripeService
   ) {
     this.companyRepository = companyRepository;
     this.userRepository = userRepository;
+    this.stripeService = _stripeService;
   }
 
   getAllAndCount = async (args: IPagingArgs): Promise<IPaginationData<Company>> => {
@@ -56,6 +60,7 @@ export default class CompanyService implements ICompanyService {
       const logo_id = args?.logo_id;
       const plan = args?.plan;
       let unapprovedNotification = false;
+
       if (status === CompanyStatus.Unapproved) {
         unapprovedNotification = true;
       }
@@ -67,6 +72,10 @@ export default class CompanyService implements ICompanyService {
         user.password = password;
       }
 
+      let collectionMethod;
+      if (plan === plans.Professional) {
+        collectionMethod = CollectionMethod.ChargeAutomaticatically;
+      }
       const result = await this.companyRepository.create({
         name,
         status,
@@ -75,6 +84,7 @@ export default class CompanyService implements ICompanyService {
         logo_id,
         plan,
         unapprovedNotification,
+        collectionMethod,
       });
 
       if (result?.company?.status === CompanyStatus.Unapproved) {
@@ -112,7 +122,19 @@ export default class CompanyService implements ICompanyService {
       const archived = args?.archived;
       const logo_id = args?.logo_id;
       const user = args?.user;
+      const collectionMethod = args?.collectionMethod;
 
+      if (collectionMethod) {
+        const foundCompany = await this.companyRepository.getById({ id });
+
+        let input: any = {
+          collection_method: collectionMethod,
+        };
+        if (collectionMethod === CollectionMethod.SendInvoice) {
+          input.days_until_due = 3;
+        }
+        this.stripeService.updateSubscription(foundCompany?.subscriptionId as string, input);
+      }
       let data: ICompanyUpdate = {
         id,
         name,
@@ -120,6 +142,7 @@ export default class CompanyService implements ICompanyService {
         archived,
         logo_id,
         user,
+        collectionMethod,
       };
 
       if (status !== CompanyStatus.Unapproved) {
