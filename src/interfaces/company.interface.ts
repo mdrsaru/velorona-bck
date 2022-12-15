@@ -24,7 +24,7 @@ export interface ICompany {
   subscriptionPeriodEnd?: Date;
   trialEndDate?: Date;
   unapprovedNotification?: Boolean;
-  collectionMethod: CollectionMethod;
+  collectionMethod?: CollectionMethod;
   createdAt: string;
   updatedAt: string;
 }
