@@ -241,6 +241,7 @@ export class CompanyResolver {
       const archived = args?.archived;
       const logo_id = args?.logo_id;
       const user = args?.user;
+      const collectionMethod = args?.collectionMethod;
 
       const schema = CompanyValidation.update();
       await this.joiService.validate({
@@ -260,6 +261,7 @@ export class CompanyResolver {
         archived,
         logo_id,
         user,
+        collectionMethod,
       });
 
       return company;

@@ -3,7 +3,7 @@ import { IEntityRemove, IEntityID, ISingleEntityQuery, IReminderInput } from './
 import { IUserUpdate } from './user.interface';
 import Company, { CompanyGrowthOutput } from '../entities/company.entity';
 import User from '../entities/user.entity';
-import { CompanyStatus } from '../config/constants';
+import { CollectionMethod, CompanyStatus } from '../config/constants';
 import Media from '../entities/media.entity';
 
 export interface ICompany {
@@ -24,6 +24,7 @@ export interface ICompany {
   subscriptionPeriodEnd?: Date;
   trialEndDate?: Date;
   unapprovedNotification?: Boolean;
+  collectionMethod: CollectionMethod;
   createdAt: string;
   updatedAt: string;
 }
@@ -57,6 +58,7 @@ export interface ICompanyCreate {
   archived?: ICompany['archived'];
   unapprovedNotification?: ICompany['unapprovedNotification'];
   plan?: ICompany['plan'];
+  collectionMethod?: ICompany['collectionMethod'];
   user: ICompanyAdminCreateInput;
   logo_id?: ICompany['logo_id'];
 }
@@ -81,6 +83,7 @@ export interface ICompanyUpdate {
   subscriptionPeriodEnd?: ICompany['subscriptionPeriodEnd'] | null;
   trialEndDate?: ICompany['trialEndDate'] | null;
   unapprovedNotification?: ICompany['unapprovedNotification'];
+  collectionMethod?: ICompany['collectionMethod'];
 }
 
 export interface ICompanyCodeInput {

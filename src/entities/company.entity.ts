@@ -3,7 +3,7 @@ import { ObjectType, Field, ID, InputType, registerEnumType } from 'type-graphql
 
 import { Base } from './base.entity';
 import User, { UserUpdateInput } from './user.entity';
-import { entities, CompanyStatus, plans } from '../config/constants';
+import { entities, CompanyStatus, plans, CollectionMethod } from '../config/constants';
 import { PagingResult, PagingInput } from './common.entity';
 import Workschedule from './workschedule.entity';
 import Media from './media.entity';
@@ -99,6 +99,11 @@ export default class Company extends Base {
   @Field({ defaultValue: false, nullable: true })
   @Column({ name: 'unapproved_notification', default: false, nullable: true })
   unapprovedNotification: Boolean;
+
+  // Stripe Collection method
+  @Field({ nullable: true, description: 'Collection method for stripe' })
+  @Column({ name: 'collection_method', nullable: true, type: 'varchar' })
+  collectionMethod: CollectionMethod;
 
   @Field(() => User)
   admin: User;
@@ -226,6 +231,9 @@ export class CompanyUpdateInput {
 
   @Field({ nullable: true })
   user: CompanyAdminUpdateInput;
+
+  @Field({ nullable: true })
+  collectionMethod: CollectionMethod;
 }
 
 @InputType()
