@@ -12,6 +12,7 @@ import { ISubscriptionService } from '../interfaces/subscription.interface';
 import { ISubscriptionPaymentRepository } from '../interfaces/subscription-payment.interface';
 import { companyEmitter, subscriptionEmitter } from '../subscribers/emitters';
 import invoice from '../config/inversify/invoice';
+import moment from 'moment';
 
 @injectable()
 export default class WebhookService {
@@ -376,10 +377,14 @@ export default class WebhookService {
       if (invoiceId) {
         const res = await this.stripeService.getInvoiceDetail({ invoiceId });
 
+        const startDate = moment(res.period_start).format('MMM DD,YYYY');
+        const endDate = moment(res.period_end).format('MMM DD,YYYY');
         // Emit event for onSubcriptionChargeSucceed
         subscriptionEmitter.emit(events.onSubscriptionCharged, {
           customer_email: res.customer_email,
           invoice_pdf: res.invoice_pdf,
+          startDate,
+          endDate,
         });
       } else {
         const company = await this.companyRepository.getSingleEntity({

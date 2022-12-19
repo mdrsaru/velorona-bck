@@ -249,6 +249,9 @@ export const emailSetting = {
   companyRegistered: {
     subject: process.env.COMPANY_REGISTERED_EMAIL_SUBJECT || '',
   },
+  paymentSuccessful: {
+    subject: process.env.PAYMENT_SUCCEED_EMAIL_SUBJECT || '',
+  },
 };
 
 export const events = {

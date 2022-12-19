@@ -14,6 +14,8 @@ import { IUserRepository } from '../interfaces/user.interface';
 type CreateCompanySubscription = {
   customer_email: string;
   invoice_pdf: any;
+  startDate?: Date;
+  endDate?: Date;
 };
 
 subscriptionEmitter.on(events.onSubscriptionCharged, async (args: CreateCompanySubscription) => {
@@ -32,7 +34,7 @@ subscriptionEmitter.on(events.onSubscriptionCharged, async (args: CreateCompanyS
     query: {
       email: customer_email,
     },
-    relations: ['company'],
+    relations: ['company', 'company.logo'],
   });
 
   try {
@@ -52,13 +54,15 @@ subscriptionEmitter.on(events.onSubscriptionCharged, async (args: CreateCompanyS
         companyName: user?.company?.name ?? '',
         user: user?.company?.name,
         invoice_pdf,
+        startDate: args?.startDate,
+        endDate: args?.endDate,
       },
     });
 
     const obj: IEmailBasicArgs = {
       to: customer_email ?? '',
       from: `${user?.company?.name} ${emailSetting.fromEmail}`,
-      subject: emailSetting.subscriptionEndReminder.subject,
+      subject: emailSetting.paymentSuccessful.subject,
       html: timesheetHtml,
     };
 
@@ -86,7 +90,7 @@ subscriptionEmitter.on(events.onSubscriptionCharged, async (args: CreateCompanyS
         .then((response) => {
           logger.info({
             operation,
-            message: `Email response for ${user?.company?.adminEmail}`,
+            message: `Email response for ${user?.email}`,
             data: response,
           });
         })
