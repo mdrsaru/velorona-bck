@@ -33,7 +33,6 @@ workscheduleDetailEmitter.on(events.onWorkscheduleDetailCreate, async (args: Cre
       relations: ['user', 'workschedule', 'workschedule.company', 'workschedule.company.logo'],
     });
 
-    console.log(workscheduleDetail);
     const hasLogo = !!workscheduleDetail?.workschedule?.company?.logo_id;
 
     let emailTemplate = await fs.readFile(`${__dirname}/../../templates/add-workschedule-detail.template.html`, {

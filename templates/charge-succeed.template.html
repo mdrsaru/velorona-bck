@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <style scoped>
+      .container {
+        text-align: center;
+        padding: 2rem;
+      }
+
+      .container-outer-body {
+        margin-top: 20px;
+        margin-left: auto;
+        margin-right: auto;
+        min-width: 450px;
+        max-width: 600px;
+      }
+      .container-body {
+        justify-content: center;
+        font-size: 18px;
+        background: white;
+        padding: 3rem;
+      }
+
+      .logo-img {
+        width: 150px;
+        height: 150px;
+      }
+    </style>
+  </head>
+  <body style="background-color: #ebecf7">
+    <div class="container">
+      {{#if hasLogo}}
+      <img src="cid:logo" alt="Vellorona" class="logo-img" />
+      {{else}}
+      <h1>{{companyName}}</h1>
+      {{/if}}
+    </div>
+    <div class="container-outer-body">
+      <div class="container-body">
+        <h1>Hi {{user}}!,</h1>
+        Your payment has been received. Here's the link of the invoice.Please click on the link to view it.
+        <p><a href="{{invoice_pdf}}">Click Here</a></p>
+        <p>If you have any questions, feel free too email us</p>
+        <p>Thanks,</p>
+        <p>Vellorona Team</p>
+      </div>
+    </div>
+    <div class="container">
+      <ul type="none">
+        <li>&#169; All rights reserved</li>
+        <li>Vellorona</li>
+        <li>1001 W Euless Blvd, Euless, TX 76040, USA</li>
+        <li>contact@velorona.com</li>
+      </ul>
+    </div>
+  </body>
+</html>

@@ -270,6 +270,7 @@ export const events = {
   onTimesheetApproveReminder: 'onTimesheetApproveReminder',
   onSubscriptionEndReminder: 'onSubscriptionEndReminder',
   onCompanyRegistered: 'onCompanyRegistered',
+  onSubscriptionCharged: 'onSubscriptionCharged',
 };
 
 export const stripeSetting = {

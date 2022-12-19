@@ -10,3 +10,4 @@ export const timeEntryEmitter = new Emitter();
 export const companyEmitter = new Emitter();
 export const workscheduleEmitter = new Emitter();
 export const workscheduleDetailEmitter = new Emitter();
+export const subscriptionEmitter = new Emitter();

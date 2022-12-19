@@ -10,7 +10,8 @@ import { ILogger } from '../interfaces/common.interface';
 import { ICompanyRepository } from '../interfaces/company.interface';
 import { ISubscriptionService } from '../interfaces/subscription.interface';
 import { ISubscriptionPaymentRepository } from '../interfaces/subscription-payment.interface';
-import { companyEmitter } from '../subscribers/emitters';
+import { companyEmitter, subscriptionEmitter } from '../subscribers/emitters';
+import invoice from '../config/inversify/invoice';
 
 @injectable()
 export default class WebhookService {
@@ -352,6 +353,44 @@ export default class WebhookService {
             subscriptionId,
             stripeCustomerId,
           },
+        });
+      }
+    } catch (err) {
+      this.logger.error({
+        operation,
+        message: 'Error updating subscription with the payment method.',
+        data: err,
+      });
+    }
+  };
+
+  /**
+   * Handle on charge succeed
+   */
+  handleChargeSucceeded = async (eventObject: any): Promise<void> => {
+    const operation = 'handleSetupIntentCreate';
+    try {
+      let response = eventObject?.data?.object;
+      const invoiceId: string = eventObject?.data?.object?.invoice;
+
+      if (invoiceId) {
+        const res = await this.stripeService.getInvoiceDetail({ invoiceId });
+
+        // Emit event for onSubcriptionChargeSucceed
+        subscriptionEmitter.emit(events.onSubscriptionCharged, {
+          customer_email: res.customer_email,
+          invoice_pdf: res.invoice_pdf,
+        });
+      } else {
+        const company = await this.companyRepository.getSingleEntity({
+          query: {
+            stripeCustomerId: eventObject.data.object.customer,
+          },
+        });
+
+        subscriptionEmitter.emit(events.onSubscriptionCharged, {
+          customer_email: company?.adminEmail,
+          invoice_pdf: response.receipt_url,
         });
       }
     } catch (err) {
