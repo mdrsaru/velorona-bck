@@ -89,7 +89,9 @@ export default class UserClientRepository extends BaseRepository<UserClient> imp
       p.id as "projectId",
       ur.amount as "userRate",
       ur.invoice_rate as "invoiceRate" ,
-      ur.id as "userPayRateId"
+      ur.id as "userPayRateId",
+      ur.user_rate_currency_id as "userRateCurrency",
+      ur.invoice_rate_currency_id as "invoiceRateCurrency"
       from ${entities.clients} as c 
       join ${entities.usersClients} as uc on c.id = uc.client_id
       join ${entities.projects} as p on p.client_id = c.id

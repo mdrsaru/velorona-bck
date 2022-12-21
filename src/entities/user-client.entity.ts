@@ -137,4 +137,10 @@ export class UserClientDetail {
 
   @Field({ nullable: true })
   userPayRateId: string;
+
+  @Field({ nullable: true })
+  invoiceRateCurrency: string;
+
+  @Field({ nullable: true })
+  userRateCurrency: string;
 }
