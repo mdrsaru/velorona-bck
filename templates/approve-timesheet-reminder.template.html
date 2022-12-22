@@ -43,7 +43,11 @@
         <p>You haven't approved/rejected timesheet of {{user}} of date: <b>{{weekStartDate}}-{{weekEndDate}}</b> .</p>
         <p>If you have any questions, feel free too email us</p>
         <p>Thanks,</p>
-        <p>Vellorona Team</p>
+        {{#if companyName}}
+        <p>{{companyName}}</p>
+        {{else}}
+        <p>Vellorona</p>
+        {{/if}}
       </div>
     </div>
     <div class="container">
