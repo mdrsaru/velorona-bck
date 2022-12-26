@@ -1,7 +1,7 @@
 import { inject, injectable } from 'inversify';
 
 import { TYPES } from '../types';
-import User from '../entities/user.entity';
+import * as apiError from '../utils/api-error';
 
 import { IErrorService, ILogger } from '../interfaces/common.interface';
 import {
@@ -16,6 +16,10 @@ import UserClient from '../entities/user-client.entity';
 import Paging from '../utils/paging';
 import { ITimesheetRepository, ITimesheetService } from '../interfaces/timesheet.interface';
 import moment from 'moment';
+import { IUserRepository } from '../interfaces/user.interface';
+import strings from '../config/strings';
+import { format } from 'winston';
+import { EntryType, Role, UserClientStatus } from '../config/constants';
 
 @injectable()
 export default class UserClientService implements IUserClientService {
@@ -25,19 +29,22 @@ export default class UserClientService implements IUserClientService {
   private errorService: IErrorService;
   private timesheetService: ITimesheetService;
   private timesheetRepository: ITimesheetRepository;
+  private userRepository: IUserRepository;
 
   constructor(
     @inject(TYPES.LoggerFactory) loggerFactory: (name: string) => ILogger,
     @inject(TYPES.ErrorService) errorService: IErrorService,
     @inject(TYPES.TimesheetService) timesheetService: ITimesheetService,
     @inject(TYPES.TimesheetRepository) timesheetRepository: ITimesheetRepository,
-    @inject(TYPES.UserClientRepository) _userClientRepository: IUserClientRepository
+    @inject(TYPES.UserClientRepository) _userClientRepository: IUserClientRepository,
+    @inject(TYPES.UserRepository) _userRepository: IUserRepository
   ) {
     this.userClientRepository = _userClientRepository;
     this.logger = loggerFactory(this.name);
     this.errorService = errorService;
     this.timesheetService = timesheetService;
     this.timesheetRepository = timesheetRepository;
+    this.userRepository = _userRepository;
   }
 
   getAllAndCount = async (args: IPagingArgs): Promise<IPaginationData<UserClient>> => {
@@ -70,22 +77,6 @@ export default class UserClientService implements IUserClientService {
         user_id,
       });
 
-      let weekStartDate = moment(moment().format('YYYY-MM-DD')).startOf('isoWeek');
-
-      const foundTimesheet = await this.timesheetRepository.getAll({
-        query: {
-          user_id,
-          client_id,
-          weekStartDate,
-        },
-      });
-
-      if (!foundTimesheet.length) {
-        this.timesheetService.bulkCreate({
-          date: moment().format('YYYY-MM-DD'),
-          user_id: user_id,
-        });
-      }
       return userClient;
     } catch (err) {
       this.errorService.throwError({
@@ -109,7 +100,75 @@ export default class UserClientService implements IUserClientService {
         client_id,
         status,
       });
+      if (status === UserClientStatus.Active) {
+        let user = await this.userRepository.getById({ id: user_id, relations: ['roles'] });
 
+        if (!user) {
+          throw new apiError.NotFoundError({ details: [strings.userNotFound] });
+        }
+
+        if (user.roles?.[0]?.name === Role.Employee && user.entryType === EntryType.Timesheet) {
+          const startDate = user.startDate;
+
+          const input = moment(startDate);
+          const firstDayOfMonth = input.clone().startOf('month').format('YYYY-MM-DD');
+
+          const firstWeekStartDate = moment(firstDayOfMonth).startOf('isoWeek');
+
+          let weekStartDate;
+          if (moment(firstDayOfMonth).format('YYYY-MM-DD') === moment(startDate).format('YYYY-MM-DD')) {
+            const foundTimesheet = await this.timesheetRepository.getAll({
+              query: {
+                user_id,
+                client_id,
+                weekStartDate: firstWeekStartDate,
+              },
+            });
+
+            if (!foundTimesheet.length) {
+              this.timesheetService.bulkUserTimesheetCreate({
+                date: moment(firstWeekStartDate).format('YYYY-MM-DD'),
+                user,
+                client_id,
+              });
+            }
+          } else {
+            weekStartDate = moment(user.startDate).startOf('isoWeek');
+            const foundTimesheet = await this.timesheetRepository.getAll({
+              query: {
+                user_id,
+                client_id,
+                weekStartDate: weekStartDate,
+              },
+            });
+            if (!foundTimesheet.length) {
+              this.timesheetService.bulkUserTimesheetCreate({
+                date: moment(weekStartDate).format('YYYY-MM-DD'),
+                user,
+                client_id,
+              });
+            }
+            do {
+              weekStartDate = moment(weekStartDate).isoWeekday(-6).format('YYYY-MM-DD');
+              const foundTimesheet = await this.timesheetRepository.getAll({
+                query: {
+                  user_id,
+                  client_id,
+                  weekStartDate: weekStartDate,
+                },
+              });
+
+              if (!foundTimesheet.length) {
+                this.timesheetService.bulkUserTimesheetCreate({
+                  date: moment(weekStartDate).format('YYYY-MM-DD'),
+                  user,
+                  client_id,
+                });
+              }
+            } while (firstWeekStartDate.format('YYYY-MM-DD') !== moment(weekStartDate).format('YYYY-MM-DD'));
+          }
+        }
+      }
       return userClient;
     } catch (err) {
       this.errorService.throwError({

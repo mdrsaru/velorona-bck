@@ -87,6 +87,12 @@ export interface ITimesheetReminderInput {
   date: string;
 }
 
+export interface IUserTimesheetCreateInput {
+  date: string;
+  user: any;
+  client_id: string;
+}
+
 export interface ITimesheetRepository {
   getAllAndCount(args: IPagingArgs): Promise<IGetAllAndCountResult<Timesheet>>;
   getAll(args: IGetOptions): Promise<Timesheet[]>;
@@ -112,6 +118,7 @@ export interface ITimesheetService {
   getAllAndCount(args: IPagingArgs): Promise<IPaginationData<Timesheet>>;
   update(args: ITimesheetUpdateInput): Promise<Timesheet>;
   bulkCreate(args: ITimesheetBulkCreateInput): Promise<string>;
+  bulkUserTimesheetCreate(args: IUserTimesheetCreateInput): Promise<string>;
   submitReminder(args: ITimesheetReminderInput): Promise<void>;
   approveReminder(args: ITimesheetReminderInput): Promise<void>;
 }

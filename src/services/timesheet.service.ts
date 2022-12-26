@@ -18,6 +18,7 @@ import {
   ITimesheetApproveRejectInput,
   ITimesheetBulkCreateInput,
   ITimesheetReminderInput,
+  IUserTimesheetCreateInput,
 } from '../interfaces/timesheet.interface';
 import { IEntityRemove, IErrorService, ILogger } from '../interfaces/common.interface';
 import { IPaginationData, IPagingArgs } from '../interfaces/paging.interface';
@@ -156,6 +157,32 @@ export default class TimesheetService implements ITimesheetService {
           });
         }
       }
+
+      let result = await this.timesheetRepository.bulkCreate({
+        query: users,
+      });
+      return result;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  bulkUserTimesheetCreate = async (args: IUserTimesheetCreateInput): Promise<string> => {
+    try {
+      let date = args.date;
+      let client_id = args.client_id;
+      let user = args.user;
+      let weekStartDate = moment(date).startOf('isoWeek');
+      const weekEndDate = moment(date).endOf('isoWeek');
+      let users: any = [];
+
+      users.push({
+        weekStartDate: weekStartDate,
+        weekEndDate: weekEndDate,
+        user_id: user?.id,
+        company_id: user?.company_id,
+        client_id: client_id,
+      });
 
       let result = await this.timesheetRepository.bulkCreate({
         query: users,
