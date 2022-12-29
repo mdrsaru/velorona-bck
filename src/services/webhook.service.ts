@@ -2,7 +2,14 @@ import { inject, injectable } from 'inversify';
 import { Request, Response, NextFunction } from 'express';
 
 import { TYPES } from '../types';
-import { plans, subscriptionStatus, SubscriptionPaymentStatus, stripeSetting, events } from '../config/constants';
+import {
+  plans,
+  subscriptionStatus,
+  SubscriptionPaymentStatus,
+  stripeSetting,
+  events,
+  CollectionMethod,
+} from '../config/constants';
 import * as apiError from '../utils/api-error';
 import StripeService from '../services/stripe.service';
 
@@ -167,6 +174,17 @@ export default class WebhookService {
           });
         });
     } else {
+      const company = await this.companyRepository.getById({ id: company_id });
+      const today = moment().format('YYYY-MM-DD');
+      const periodEndDate = moment(new Date(eventObject?.data?.object?.current_period_end * 1000)).format('YYYY-MM-DD');
+
+      if (today === periodEndDate && company?.collectionMethod === CollectionMethod.SendInvoice) {
+        this.companyRepository.update({
+          id: company_id,
+          subscriptionStatus: subscriptionStatus.inactive,
+        });
+      }
+
       this.subscriptionService
         .updateSubscription({
           subscription_id,
