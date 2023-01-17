@@ -43,15 +43,27 @@
       <div class="container-body">
         <h1>Welcome {{fullName}}</h1>
         <p>
-          To log on to Vellorona, visit the homepage
+          To log on to {{#if companyName}}, {{companyName}} {{else}} Vellorona, {{/if}} visit the link
           <a href="{{link}}target" ="_blank">{{link}}</a>
-          and enter your credential in the login area.
+          and enter your credentials.
         </p>
-        <p>For reference, here's the login information</p>
+        <p>Here's the login information:</p>
+        {{#if companyName}}
         <p><b>Company Code:</b> {{companyCode}}</p>
+        {{/if}}
+
         <p><b>Email:</b> {{email}}</p>
         <p><b>Password:</b> {{password}}</p>
-        <p>If you have any questions, feel free too email us</p>
+        <p>If you would like to change the assigned password, please follow the steps below:</p>
+        <ul>
+          <li>Log in and click on the profile in the top-right corner of the web page.</li>
+          <li>Click the Change Password button in the bottom of the page.</li>
+          <li>Follow the prompts to enter the old and new passwords.</li>
+          <li>And then click the Change Password button.</li>
+        </ul>
+        <p>If you have any questions, please contact your office for assistance.</p>
+        <p>Please do not reply to this email, this email box is not monitored.</p>
+
         <p>Thanks,</p>
         {{#if companyName}}
         <p>{{companyName}}</p>

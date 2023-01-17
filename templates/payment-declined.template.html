@@ -39,14 +39,20 @@
     </div>
     <div class="container-outer-body">
       <div class="container-body">
-        <h3>Hi {{user}}!,</h3>
-        <p>You haven't submitted your timesheet for the week {{weekStartDate}} to {{weekEndDate}} .</p>
+        <h1>Dear {{companyName}}!,</h1>
         <p>
-          Please submit your timesheet on time for payroll processing.If you have already submitted you timesheet for
-          this period, please ignore this message.
+          The online payment of {{amount}} on {{createdAt}} applied to VISA number xxxxxxxxxxxxx{{cardNumber}} was
+          declined.
         </p>
-        <p>If you have any questions, please contact your office for assistance</p>
-        <p>Please do not reply to this email, this email box is not monitored</p>
+        <p>Please update your payment information.Ignore this message if you have done so already.</p>
+        Your payment has been received. Here's the link of the invoice.Please click on the link to view it.
+        <p>Payment details:</p>
+        <ol>
+          <li>Base price-invoice number 1234,payment amount is $10.</li>
+          <li>$1 per employee-10 employees, invoice number 1234, payment amount: $10</li>
+        </ol>
+        <p>If you have any questions, please contact us for assistance.</p>
+        <p>Please do not reply to this email, this email box is not monitored.</p>
         <p>Thanks,</p>
         {{#if companyName}}
         <p>{{companyName}}</p>

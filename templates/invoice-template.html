@@ -39,8 +39,10 @@
     </div>
     <div class="container-outer-body">
       <div class="container-body">
-        <h2>Hi {{name}},</h2>
-        Please find the attached invoice.
+        <h2>Hi {{companyName}},</h2>
+        <p>
+          Please find the attached invoice {{#if startDate}} for the period of {{startDate}} to {{endDate}} {{/if}} .
+        </p>
         <p>If you have any questions, feel free too email us</p>
         <p>Thanks,</p>
         {{#if companyName}}

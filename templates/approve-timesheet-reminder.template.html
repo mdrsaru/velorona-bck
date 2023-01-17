@@ -39,9 +39,16 @@
     </div>
     <div class="container-outer-body">
       <div class="container-body">
-        <h1>Hi {{user}}!,</h1>
-        <p>You haven't approved/rejected timesheet of {{user}} of date: <b>{{weekStartDate}}-{{weekEndDate}}</b> .</p>
-        <p>If you have any questions, feel free too email us</p>
+        <h3>Hi {{user}}!,</h3>
+        <p>
+          You haven't approved/rejected timesheet of {{user}}'s timesheet for the week {{weekStartDate}} to
+          {{weekEndDate}}.
+        </p>
+        <p>
+          Please approve/reject the timesheet when time permits and ignore this message if you have already
+          approved/rejected it.
+        </p>
+        <p>Please do not reply to this email,this email box is not monitored.</p>
         <p>Thanks,</p>
         {{#if companyName}}
         <p>{{companyName}}</p>

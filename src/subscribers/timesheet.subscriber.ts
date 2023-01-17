@@ -197,12 +197,15 @@ timesheetEmitter.on(events.onTimeEntriesApprove, async (args: TimesheetApprove) 
     const timesheetHtml = handlebarsService.compile({
       template: emailTemplate,
       data: {
-        week: `${timesheet.weekStartDate} - ${timesheet.weekEndDate}`,
+        weekStartDate: moment(timesheet.weekStartDate).format('MM-DD-YYYY'),
+        weekEndDate: moment(timesheet.weekEndDate).format('MM-DD-YYYY'),
         user: names.join(' '),
         manager: timesheet.user?.manager?.firstName,
         hasLogo: hasLogo,
         status: status,
         companyName: timesheet?.company?.name ?? '',
+        reason: args?.reason,
+        needReason: timesheet?.status === TimesheetStatus.Rejected && args.reason,
       },
     });
 
@@ -239,12 +242,19 @@ timesheetEmitter.on(events.onTimeEntriesApprove, async (args: TimesheetApprove) 
       ];
     }
 
+    const subject = handlebarsService.compile({
+      template: emailSetting.timesheetStatusUpdate.subject,
+      data: {
+        status,
+        weekEndDate: moment(timesheet?.weekEndDate).format('MM-DD-YYYY'),
+      },
+    });
     const promises: any = [];
     if (timesheet?.user?.manager?.email) {
       const obj: IEmailBasicArgs = {
         to: timesheet.user?.manager?.email as string,
         from: `${timesheet?.company?.name} ${emailSetting.fromEmail}`,
-        subject: `Timesheet ${status}`,
+        subject: subject,
         html: timesheetHtml,
         ...(hasLogo && {
           attachments,
@@ -257,7 +267,7 @@ timesheetEmitter.on(events.onTimeEntriesApprove, async (args: TimesheetApprove) 
     const employeeObj: IEmailBasicArgs = {
       to: timesheet.user?.email as string,
       from: `${timesheet?.company?.name} ${emailSetting.fromEmail}`,
-      subject: `Timesheet ${status}`,
+      subject: subject,
       html: employeeHtml,
       ...(hasLogo && {
         attachments,
@@ -326,11 +336,11 @@ timesheetEmitter.on(events.sendTimesheetSubmitEmail, async (args: TimesheetSubmi
 
     const hasLogo = !!timesheet?.company?.logo_id;
 
-    let emailTemplate = await fs.readFile(`${__dirname}/../../templates/submit-timesheet-template.html`, {
+    let emailTemplate = await fs.readFile(`${__dirname}/../../templates/submit-timesheet-manager.template.html`, {
       encoding: 'utf-8',
     });
 
-    let userTemplate = await fs.readFile(`${__dirname}/../../templates/timesheet-submit-user.html`, {
+    let userTemplate = await fs.readFile(`${__dirname}/../../templates/submit-timesheet-user.template.html`, {
       encoding: 'utf-8',
     });
 
@@ -342,21 +352,19 @@ timesheetEmitter.on(events.sendTimesheetSubmitEmail, async (args: TimesheetSubmi
         manager: timesheet.user?.manager?.firstName,
         hasLogo: hasLogo,
         companyName: timesheet?.company?.name ?? '',
+        weekStartDate: moment(timesheet?.weekStartDate).format('MM-DD-YYYY'),
+        weekEndDate: moment(timesheet?.weekEndDate).format('MM-DD-YYYY'),
       },
     });
 
-    const names = [
-      timesheet?.user?.firstName ?? '',
-      timesheet?.user?.middleName ?? '',
-      timesheet?.user?.lastName ?? '',
-    ];
     const userHtml = handlebarsService.compile({
       template: userTemplate,
       data: {
-        week: `${timesheet.weekStartDate} - ${timesheet.weekEndDate}`,
+        weekStartDate: `${timesheet.weekStartDate}`,
+        weekEndDate: timesheet.weekEndDate,
         hasLogo: hasLogo,
         companyName: timesheet?.company?.name ?? '',
-        name: names.join(' '),
+        name: `${timesheet.user.firstName} ${timesheet.user.lastName} `,
       },
     });
 
@@ -379,10 +387,18 @@ timesheetEmitter.on(events.sendTimesheetSubmitEmail, async (args: TimesheetSubmi
     if (timesheet?.user?.status === UserStatus.Active && !timesheet?.user?.archived) {
       let promises: any = [];
       if (timesheet.user?.manager?.email) {
+        const managerSubject = handlebarsService.compile({
+          template: emailSetting.managerSubmitTimesheet.subject,
+          data: {
+            userName: `${timesheet.user.firstName} ${timesheet.user.lastName} `,
+            weekEndDate: moment(timesheet?.weekEndDate).format('MM-DD-YYYY'),
+          },
+        });
+
         const obj: IEmailBasicArgs = {
           to: timesheet.user?.manager?.email as string,
           from: `${timesheet?.company?.name} ${emailSetting.fromEmail}`,
-          subject: emailSetting.submitTimesheet.subject,
+          subject: managerSubject,
           html: managerHtml,
           ...(hasLogo && {
             attachments,
@@ -393,10 +409,17 @@ timesheetEmitter.on(events.sendTimesheetSubmitEmail, async (args: TimesheetSubmi
         promises.push(sendToManager);
       }
 
+      const userSubject = handlebarsService.compile({
+        template: emailSetting.userSubmitTimesheet.subject,
+        data: {
+          weekEndDate: moment(timesheet?.weekEndDate).format('MM-DD-YYYY'),
+        },
+      });
+
       const userObj: IEmailBasicArgs = {
         to: timesheet.user?.email as string,
         from: `${timesheet?.company?.name} ${emailSetting.fromEmail}`,
-        subject: emailSetting.submitTimesheet.subject,
+        subject: userSubject,
         html: userHtml,
         ...(hasLogo && {
           attachments,
@@ -462,10 +485,18 @@ timesheetEmitter.on(events.onTimesheetSubmitReminder, async (args: TimesheetRemi
         user: timesheet?.user?.firstName,
       },
     });
+
+    const subject = handlebarsService.compile({
+      template: emailSetting.submitTimesheetReminder.subject,
+      data: {
+        weekEndDate: moment(timesheet?.weekEndDate).format('MM-DD-YYYY'),
+      },
+    });
+
     const obj: IEmailBasicArgs = {
       to: timesheet?.user.email ?? '',
       from: `${timesheet?.company?.name} ${emailSetting.fromEmail}`,
-      subject: emailSetting.submitTimesheetReminder.subject,
+      subject: subject,
       html: timesheetHtml,
     };
 
@@ -541,6 +572,13 @@ timesheetEmitter.on(events.onTimesheetApproveReminder, async (args: TimesheetRem
       timesheet?.user?.lastName ?? '',
     ];
 
+    const subject = handlebarsService.compile({
+      template: emailSetting.approveTimesheetReminder.subject,
+      data: {
+        weekEndDate: moment(timesheet?.weekEndDate).format('MM-DD-YYYY'),
+      },
+    });
+
     const timesheetHtml = handlebarsService.compile({
       template: emailTemplate,
       data: {
@@ -557,7 +595,7 @@ timesheetEmitter.on(events.onTimesheetApproveReminder, async (args: TimesheetRem
       const obj: IEmailBasicArgs = {
         to: timesheet?.user.manager.email ?? '',
         from: `${timesheet?.company?.name} ${emailSetting.fromEmail}`,
-        subject: emailSetting.approveTimesheetReminder.subject,
+        subject: subject,
         html: timesheetHtml,
       };
 

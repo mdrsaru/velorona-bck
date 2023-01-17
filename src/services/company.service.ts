@@ -92,6 +92,8 @@ export default class CompanyService implements ICompanyService {
         companyEmitter.emit(events.onCompanyRegistered, {
           name: result?.company?.name,
           email: result?.company?.adminEmail,
+          company: result?.company,
+          user: result?.user,
         });
       }
 
@@ -102,12 +104,6 @@ export default class CompanyService implements ICompanyService {
         password,
       });
 
-      if (plan === plans.Professional) {
-        companyEmitter.emit(events.onSubscriptionCreate, {
-          company_id: result.company?.id,
-          prices: [stripePrices.flatPrice, stripePrices.perUser],
-        });
-      }
       return result.company;
     } catch (err) {
       throw err;
@@ -124,9 +120,9 @@ export default class CompanyService implements ICompanyService {
       const user = args?.user;
       const collectionMethod = args?.collectionMethod;
 
-      if (collectionMethod) {
-        const foundCompany = await this.companyRepository.getById({ id });
+      const foundCompany = await this.companyRepository.getById({ id });
 
+      if (collectionMethod) {
         let input: any = {
           collection_method: collectionMethod,
         };
@@ -153,6 +149,15 @@ export default class CompanyService implements ICompanyService {
 
       const company = await this.companyRepository.update(data);
 
+      if (company.plan === plans.Professional) {
+        if (status === CompanyStatus.Active && foundCompany?.status === CompanyStatus.Unapproved) {
+          companyEmitter.emit(events.onSubscriptionCreate, {
+            company_id: company?.id,
+            prices: [stripePrices.flatPrice, stripePrices.perUser],
+            company,
+          });
+        }
+      }
       return company;
     } catch (err) {
       throw err;

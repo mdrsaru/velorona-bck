@@ -11,7 +11,8 @@ import {
 } from '../../interfaces/common.interface';
 import { TYPES } from '../../types';
 import { ContactUsInput } from '../../entities/contact-us.entity';
-import { emailSetting } from '../../config/constants';
+import { emailSetting, Role } from '../../config/constants';
+import { IUserRepository } from '../../interfaces/user.interface';
 
 @injectable()
 @Resolver((of) => String)
@@ -21,17 +22,20 @@ export class ContactUsResolver {
   private handlebarsService: ITemplateService;
   private errorService: IErrorService;
   private logger: ILogger;
+  private userRepository: IUserRepository;
 
   constructor(
     @inject(TYPES.EmailService) _emailService: IEmailService,
     @inject(TYPES.HandlebarsService) _handlebarsService: ITemplateService,
     @inject(TYPES.LoggerFactory) loggerFactory: (name: string) => ILogger,
-    @inject(TYPES.ErrorService) _errorService: IErrorService
+    @inject(TYPES.ErrorService) _errorService: IErrorService,
+    @inject(TYPES.UserRepository) _userRepository: IUserRepository
   ) {
     this.emailService = _emailService;
     this.handlebarsService = _handlebarsService;
     this.errorService = _errorService;
     this.logger = loggerFactory(this.name);
+    this.userRepository = _userRepository;
   }
 
   @Mutation((returns) => String)
@@ -58,10 +62,28 @@ export class ContactUsResolver {
           message,
         },
       });
+
+      const { rows: users } = await this.userRepository.getAllAndCount({
+        query: {
+          role: Role.SuperAdmin,
+        },
+      });
+
+      const mailList = users?.map((user) => {
+        return user.email;
+      });
+
+      const subject = this.handlebarsService.compile({
+        template: emailSetting.contactUs.subject,
+        data: {
+          userName: userName,
+        },
+      });
+
       const obj: IEmailBasicArgs = {
-        to: emailSetting.contactUs.contactEmailAddress as string,
+        to: mailList,
         from: `Vellorona ${emailSetting.fromEmail}`,
-        subject: emailSetting.contactUs.subject,
+        subject: subject,
         html: timesheetHtml,
       };
 
@@ -77,6 +99,52 @@ export class ContactUsResolver {
       ];
       this.emailService
         .sendEmail(obj)
+        .then((response) => {
+          this.logger.info({
+            operation,
+            message: `Email response for ${emailSetting.contactUs.contactEmailAddress}`,
+            data: response,
+          });
+        })
+        .catch((err) => {
+          this.logger.error({
+            operation,
+            message: 'Error sending contact us email',
+            data: err,
+          });
+        });
+      let userEmailTemplate = await fs.readFile(
+        `${__dirname}/../../../templates/contactUsAcknowlegement.template.html`,
+        {
+          encoding: 'utf-8',
+        }
+      );
+      const userEmailHtml = this.handlebarsService.compile({
+        template: userEmailTemplate,
+        data: {
+          user: userName,
+        },
+      });
+
+      const userObj: IEmailBasicArgs = {
+        to: email,
+        from: `Vellorona ${emailSetting.fromEmail}`,
+        subject: emailSetting.contactAcknowledgement.subject,
+        html: userEmailHtml,
+      };
+
+      userObj.attachments = [
+        {
+          content: logo,
+          filename: 'logo.png',
+          cid: 'logo',
+          contentDisposition: 'inline',
+          encoding: 'base64',
+          // type: 'image/png',
+        },
+      ];
+      this.emailService
+        .sendEmail(userObj)
         .then((response) => {
           this.logger.info({
             operation,

@@ -35,12 +35,13 @@
     </div>
     <div class="container-outer-body">
       <div class="container-body">
-        <h1>Hi admin!</h1>
-        <p>New company has registered.Here's the detail:</p>
-        <p>Name:{{name}},</p>
-        <p>Email Address:{{email}}</p>
+        <h1>Hi admin,</h1>
+        <p>A new company with name {{name}} has been registered.</p>
+        <p>Here's the detail:</p>
+        <p><b>Company Name:</b>{{name}},</p>
+        <p><b>Email Address:</b>{{email}}</p>
 
-        <p>If you have any questions, feel free too email us</p>
+        <p>Please do not reply to this email, this email box is not monitored.</p>
         <p>Thanks,</p>
         {{#if companyName}}
         <p>{{companyName}}</p>

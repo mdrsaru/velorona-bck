@@ -40,11 +40,14 @@
     <div class="container-outer-body">
       <div class="container-body">
         <h1>Hi {{name}}!</h1>
-        <p>New workschedule added for you.Here is the detail:</p>
-        <p>Schedule Date:{{scheduleDate}},</p>
-        <p>Start time-End time:{{startTime}}-{{endTime}}</p>
-
-        <p>If you have any questions, feel free too email us</p>
+        <p>A new workschedule has been added for you.</p>
+        <p>Here are the detail:</p>
+        <p>Schedule Date: {{scheduleDate}},</p>
+        <p>Start time: {{startTime}}</p>
+        <p>End time: {{endTime}}</p>
+        <p>Working total hours for this week: {{totalHours}}</p>
+        <p>If you have any questions, please contact your office for assistance.</p>
+        <p>Please do not reply to this email, this email box is not monitored.</p>
         <p>Thanks,</p>
         {{#if companyName}}
         <p>{{companyName}}</p>

@@ -2,7 +2,8 @@
 <html>
   <head>
     <title></title>
-    <style>
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <style scoped>
       .container {
         text-align: center;
         padding: 2rem;
@@ -13,7 +14,7 @@
         margin-left: auto;
         margin-right: auto;
         min-width: 450px;
-        max-width: 900px;
+        max-width: 600px;
       }
       .container-body {
         justify-content: center;
@@ -30,23 +31,21 @@
   </head>
   <body style="background-color: #ebecf7">
     <div class="container">
-      {{#if hasLogo}}
       <img src="cid:logo" alt="Vellorona" class="logo-img" />
-      {{else}}
-      <h1>{{companyName}}</h1>
-      {{/if}}
     </div>
     <div class="container-outer-body">
       <div class="container-body">
-        <h1>Hi {{user}}!,</h1>
-        The timesheet for the week <b>{{week}}</b> has been unlocked
-        <p>If you have any questions, feel free too email us</p>
+        <h1>Hi {{companyName}},</h1>
+        <p>You have been downgrade your plan from Professional to {{planName}}.</p>
+        <p>
+          Thanks for choosing Vellorona {{planName}}.Your new plan will be activated from the next billing cycle.Until
+          then you can continue enjoying the current plan.
+        </p>
+        <p>We emailed your confirmation to {{companyEmail}}</p>
+        <p>If you have any questions, please contact us for assistance.</p>
+        <p>Please do not reply to this email, this email box is not monitored.</p>
         <p>Thanks,</p>
-        {{#if companyName}}
-        <p>{{companyName}}</p>
-        {{else}}
         <p>Vellorona</p>
-        {{/if}}
       </div>
     </div>
     <div class="container">

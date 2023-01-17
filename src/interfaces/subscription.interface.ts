@@ -74,4 +74,6 @@ export interface ISubscriptionService {
    * Cancels the subscription at the period end and downgrades to Free Plan
    */
   downgradeSubscription(args: ISubscriptionDowngradeInput): Promise<void>;
+
+  subscriptionReminder(args: any): Promise<void>;
 }

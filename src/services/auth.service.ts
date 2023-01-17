@@ -322,15 +322,23 @@ export default class AuthService implements IAuthService {
           resetPasswordLink,
           hasLogo: hasLogo,
           companyName: user?.company?.name ?? 'Vellorona',
+          fullName: user?.fullName ?? '',
         },
       });
 
       const logo = await fs.readFile(`${__dirname}/../../public/logo.png`, { encoding: 'base64' });
 
+      const subject = this.handlebarsService.compile({
+        template: emailSetting.resetPassword.subject,
+        data: {
+          companyName: user?.company?.name ?? 'Vellorona',
+        },
+      });
+
       const emailOptions: IEmailArgs = {
         to: user.email,
         from: `${user?.company?.name ?? 'Vellorona'} ${emailSetting.fromEmail}`,
-        subject: emailSetting.resetPassword.subject,
+        subject: subject,
         html: resetPasswordHtml,
       };
 

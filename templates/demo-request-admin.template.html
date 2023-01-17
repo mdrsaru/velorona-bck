@@ -31,28 +31,22 @@
   </head>
   <body style="background-color: #ebecf7">
     <div class="container">
-      {{#if hasLogo}}
       <img src="cid:logo" alt="Vellorona" class="logo-img" />
-      {{else}}
-      <h1>{{companyName}}</h1>
-      {{/if}}
     </div>
     <div class="container-outer-body">
       <div class="container-body">
-        <h3>Hi {{user}}!,</h3>
-        <p>You haven't submitted your timesheet for the week {{weekStartDate}} to {{weekEndDate}} .</p>
-        <p>
-          Please submit your timesheet on time for payroll processing.If you have already submitted you timesheet for
-          this period, please ignore this message.
-        </p>
-        <p>If you have any questions, please contact your office for assistance</p>
-        <p>Please do not reply to this email, this email box is not monitored</p>
+        <h1>Hi Admin,</h1>
+        <p>We have a new demo request from {{fullName}}.</p>
+        <p>Here are the details:</p>
+        <p><b>Full name:</b> {{fullName}}</p>
+        <p><b>Bussiness Email:</b> {{email}}</p>
+        <p><b>Phone number:</b> {{phone}}</p>
+        <p><b>Company Name:</b> {{companyName}}</p>
+        <p><b>Job Title:</b> {{jobTitle}}</p>
+
+        <p>Please do not reply to this email, this email box is not monitored.</p>
         <p>Thanks,</p>
-        {{#if companyName}}
-        <p>{{companyName}}</p>
-        {{else}}
-        <p>Vellorona</p>
-        {{/if}}
+        <p>Vellorona Team</p>
       </div>
     </div>
     <div class="container">

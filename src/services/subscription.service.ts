@@ -13,6 +13,7 @@ import {
   plans,
   Role as RoleEnum,
   subscriptionStatus as subscriptionStatusConfig,
+  events,
 } from '../config/constants';
 import Company from '../entities/company.entity';
 import StripeService from '../services/stripe.service';
@@ -29,6 +30,7 @@ import {
 import { IStripeSubscriptionCreateArgs } from '../interfaces/stripe.interface';
 import { ICompanyRepository } from '../interfaces/company.interface';
 import { IUserRepository } from '../interfaces/user.interface';
+import { subscriptionEmitter } from '../subscribers/emitters';
 
 @injectable()
 export default class SubscriptionService implements ISubscriptionService {
@@ -256,6 +258,12 @@ export default class SubscriptionService implements ISubscriptionService {
         subscriptionStatus: subscriptionStatusConfig.active,
         trialEnded: false,
       });
+
+      subscriptionEmitter.emit(events.onSubscriptionUpdate, {
+        company_id,
+        status: 'upgrade',
+      });
+
       return subscription;
     } catch (err) {
       throw err;
@@ -375,8 +383,37 @@ export default class SubscriptionService implements ISubscriptionService {
           downgrade: args.plan,
         },
       });
+
+      subscriptionEmitter.emit(events.onSubscriptionUpdate, {
+        company_id,
+        status: 'downgrade',
+      });
     } catch (err) {
       throw err;
     }
+  };
+
+  subscriptionReminder = async (args: any): Promise<void> => {
+    const date = args.date;
+
+    const companyList = await this.companyRepository.getAll({
+      select: ['subscriptionPeriodEnd', 'id', 'logo', 'name', 'adminEmail', 'status'],
+      relations: ['logo'],
+    });
+
+    companyList.map((company) => {
+      const prev_date = moment(company.subscriptionPeriodEnd).subtract(1, 'days');
+
+      if (moment(prev_date).format('YYYY-MM-DD') === moment(date).format('YYYY-MM-DD')) {
+        subscriptionEmitter.emit(events.onClientInvoiceReminder, {
+          subscriptionEndDate: company.subscriptionPeriodEnd,
+          companyName: company.name,
+          logo: company?.logo,
+          companyAdminEmail: company.adminEmail,
+          status: company.status,
+          id: company.id,
+        });
+      }
+    });
   };
 }

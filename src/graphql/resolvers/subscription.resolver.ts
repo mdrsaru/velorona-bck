@@ -20,6 +20,7 @@ import {
 import { IErrorService } from '../../interfaces/common.interface';
 import { IGraphqlContext } from '../../interfaces/graphql.interface';
 import { ISubscriptionService } from '../../interfaces/subscription.interface';
+import moment from 'moment';
 
 @injectable()
 @Resolver()
@@ -151,6 +152,29 @@ export class SubscriptionResolver {
       await this.subscriptionService.downgradeSubscription({
         company_id,
         plan: 'Starter',
+      });
+
+      return 'Your subscription will be downgraded at the end of the period.';
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
+    }
+  }
+
+  @Mutation((returns) => String)
+  @UseMiddleware(authenticate, authorize(RoleEnum.CompanyAdmin), checkCompanyAccess)
+  async SubscriptionReminder(@Arg('input') args: SubscriptionDowngradeInput): Promise<String> {
+    const operation = 'SubscriptionDowngrade';
+
+    try {
+      const company_id = args.company_id;
+      const date = moment();
+      await this.subscriptionService.subscriptionReminder({
+        date,
       });
 
       return 'Your subscription will be downgraded at the end of the period.';

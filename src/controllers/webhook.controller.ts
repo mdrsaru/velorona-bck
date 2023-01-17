@@ -53,6 +53,9 @@ export default class WebhookController {
         case 'charge.succeeded':
           this.webhookService.handleChargeSucceeded(event);
           break;
+        case 'invoice.finalized':
+          this.webhookService.handleInvoiceCreate(event);
+          break;
         default:
           throw new apiError.NotImplementedError({
             details: [`Unexpected event type: ${event.type}`],

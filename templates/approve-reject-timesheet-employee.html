@@ -40,14 +40,15 @@
     </div>
     <div class="container-outer-body">
       <div class="container-body">
-        <h1>Hi {{name}}!,</h1>
+        <h3>Hi {{name}}!,</h3>
         <p>The timesheet for the week <b>{{week}}</b> has been {{status}}.</p>
 
         {{#if needReason}}
-        <p><b>Reason: </b>{{reason}}</p>
-        {{/if}}
+        <p><b>Reason for rejection: </b>{{reason}}</p>
+        {{else}} No further action is required at this time. {{/if}}
 
-        <p>If you have any questions, feel free too email us</p>
+        <p>If you have any questions,please contact your office for assistance.</p>
+        <p>Please do not reply to this email is not monitored.</p>
         <p>Thanks,</p>
         {{#if companyName}}
         <p>{{companyName}}</p>

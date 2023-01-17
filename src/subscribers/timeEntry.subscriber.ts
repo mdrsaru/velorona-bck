@@ -205,14 +205,12 @@ timeEntryEmitter.on(events.onTimesheetUnlock, async (args: TimesheetUnlock) => {
   const emailService: IEmailService = container.get<IEmailService>(TYPES.EmailService);
   const handlebarsService: ITemplateService = container.get<ITemplateService>(TYPES.HandlebarsService);
 
-  let emailBody: string = emailSetting.unlockTimesheet.body;
-
   try {
     const timesheet_id = args.timesheet_id;
     const timesheet = await timesheetRepository.getById({
       id: timesheet_id,
       select: ['id', 'weekStartDate', 'weekEndDate'],
-      relations: ['user', 'company', 'company.logo'],
+      relations: ['user', 'company', 'company.logo', 'user.manager'],
     });
 
     if (!timesheet) {
@@ -225,34 +223,43 @@ timeEntryEmitter.on(events.onTimesheetUnlock, async (args: TimesheetUnlock) => {
 
     const hasLogo = !!timesheet?.company?.logo_id;
 
-    let emailTemplate = await fs.readFile(`${__dirname}/../../templates/unlock-timesheet-template.html`, {
+    let managerTemplate = await fs.readFile(`${__dirname}/../../templates/unlock-timesheet-manager.template.html`, {
       encoding: 'utf-8',
     });
 
-    const userHtml = handlebarsService.compile({
-      template: emailTemplate,
+    let userTemplate = await fs.readFile(`${__dirname}/../../templates/unlock-timesheet-user.template.html`, {
+      encoding: 'utf-8',
+    });
+
+    const managerHtml = handlebarsService.compile({
+      template: managerTemplate,
       data: {
-        week: `${timesheet.weekStartDate} - ${timesheet.weekEndDate}`,
+        weekStartDate: timesheet.weekStartDate,
+        weekEndDate: timesheet.weekEndDate,
         user: timesheet.user.firstName,
+        manager: timesheet.user?.manager?.firstName,
         hasLogo: hasLogo,
         companyName: timesheet?.company?.name ?? '',
       },
     });
 
-    const logo = await fs.readFile(`${__dirname}/../../public/logo.png`, { encoding: 'base64' });
+    const userHtml = handlebarsService.compile({
+      template: userTemplate,
+      data: {
+        weekStartDate: timesheet.weekStartDate,
+        weekEndDate: timesheet.weekEndDate,
+        user: timesheet?.user?.firstName,
+        hasLogo: hasLogo,
+        companyName: timesheet?.company?.name ?? '',
+      },
+    });
 
-    const obj: IEmailBasicArgs = {
-      to: timesheet.user.email as string,
-      from: `${timesheet?.company?.name} ${emailSetting.fromEmail}`,
-      subject: emailSetting.unlockTimesheet.subject,
-      html: userHtml,
-    };
-
+    let attachments: EmailAttachmentInput[] | undefined;
     if (hasLogo) {
       const image = await axios.get(timesheet?.company?.logo?.url as string, { responseType: 'arraybuffer' });
       const raw = Buffer.from(image.data).toString('base64');
 
-      obj.attachments = [
+      attachments = [
         {
           content: raw,
           filename: timesheet?.company?.logo.name as string,
@@ -263,9 +270,47 @@ timeEntryEmitter.on(events.onTimesheetUnlock, async (args: TimesheetUnlock) => {
         },
       ];
     }
+
+    const subject = handlebarsService.compile({
+      template: emailSetting.unlockTimesheet.subject,
+      data: {
+        userName: timesheet?.user?.firstName,
+        weekEndDate: moment(timesheet?.weekEndDate).format('MM-DD-YYYY'),
+      },
+    });
+
     if (timesheet?.user?.status === UserStatus.Active && !timesheet?.user?.archived) {
-      emailService
-        .sendEmail(obj)
+      let promises: any = [];
+
+      if (timesheet.user?.manager?.email) {
+        const obj: IEmailBasicArgs = {
+          to: timesheet.user?.manager?.email as string,
+          from: `${timesheet?.company?.name} ${emailSetting.fromEmail}`,
+          subject: subject,
+          html: managerHtml,
+          ...(hasLogo && {
+            attachments,
+          }),
+        };
+
+        const sendToManager = emailService.sendEmail(obj);
+
+        promises.push(sendToManager);
+      }
+
+      const userObj: IEmailBasicArgs = {
+        to: timesheet.user?.email as string,
+        from: `${timesheet?.company?.name} ${emailSetting.fromEmail}`,
+        subject: subject,
+        html: userHtml,
+        ...(hasLogo && {
+          attachments,
+        }),
+      };
+
+      promises.push(emailService.sendEmail(userObj));
+
+      Promise.all(promises)
         .then((response) => {
           logger.info({
             operation,
@@ -276,7 +321,7 @@ timeEntryEmitter.on(events.onTimesheetUnlock, async (args: TimesheetUnlock) => {
         .catch((err) => {
           logger.error({
             operation,
-            message: 'Error sending unlock email',
+            message: 'Error sending timesheet submit email',
             data: err,
           });
         });
@@ -284,7 +329,7 @@ timeEntryEmitter.on(events.onTimesheetUnlock, async (args: TimesheetUnlock) => {
   } catch (err) {
     logger.error({
       operation,
-      message: 'Error sending unlock email',
+      message: 'Error sending timesheet submit email',
       data: err,
     });
   }
