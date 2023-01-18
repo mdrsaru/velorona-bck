@@ -222,11 +222,18 @@ export default class WebhookService {
     const operation = 'handleInvoicePaymentFailed';
     const subscription_id = eventObject.data.object?.subscription;
 
+    const response = eventObject.data.object;
     if (subscription_id) {
       const subscription = await this.stripeService.retrieveSubscription({
         subscription_id,
       });
 
+      const company = await this.companyRepository.getSingleEntity({
+        query: {
+          subscription_id,
+        },
+        relations: ['logo'],
+      });
       this.subscriptionService
         .updateSubscription({
           subscription_id,
@@ -253,6 +260,12 @@ export default class WebhookService {
             },
           });
         });
+
+      // Emit sendPaymentDeclined event
+      subscriptionEmitter.emit(events.onPaymentDeclined, {
+        company,
+        response,
+      });
     }
   };
 
@@ -390,33 +403,45 @@ export default class WebhookService {
     const operation = 'handleSetupIntentCreate';
     try {
       let response = eventObject?.data?.object;
-      const invoiceId: string = eventObject?.data?.object?.invoice;
+      // const invoiceId: string = eventObject?.data?.object?.invoice;
 
-      if (invoiceId) {
-        const res = await this.stripeService.getInvoiceDetail({ invoiceId });
+      // if (invoiceId) {
+      //   const res = await this.stripeService.getInvoiceDetail({ invoiceId });
 
-        const startDate = moment(res.period_start).format('MMM DD,YYYY');
-        const endDate = moment(res.period_end).format('MMM DD,YYYY');
-        // Emit event for onSubcriptionChargeSucceed
-        subscriptionEmitter.emit(events.onSubscriptionCharged, {
-          customer_email: res.customer_email,
-          invoice_pdf: res.invoice_pdf,
-          startDate,
-          endDate,
-          response,
-        });
-      } else {
-        const company = await this.companyRepository.getSingleEntity({
-          query: {
-            stripeCustomerId: eventObject.data.object.customer,
-          },
-        });
+      //   const startDate = moment(res.period_start).format('MMM DD,YYYY');
+      //   const endDate = moment(res.period_end).format('MMM DD,YYYY');
+      //   // Emit event for onSubcriptionChargeSucceed
+      //   subscriptionEmitter.emit(events.onSubscriptionCharged, {
+      //     customer_email: res.customer_email,
+      //     invoice_pdf: res.invoice_pdf,
+      //     startDate,
+      //     endDate,
+      //     response,
+      //   });
+      // } else {
+      const company = await this.companyRepository.getSingleEntity({
+        query: {
+          stripeCustomerId: eventObject.data.object.customer,
+        },
+      });
 
-        subscriptionEmitter.emit(events.onSubscriptionCharged, {
-          customer_email: company?.adminEmail,
-          invoice_pdf: response.receipt_url,
-        });
-      }
+      const subscriptionPayment = await this.subscriptionPaymentRepository.getSingleEntity({
+        query: {
+          company_id: company?.id,
+        },
+      });
+
+      await this.subscriptionPaymentRepository.update({
+        id: subscriptionPayment?.id as string,
+        receiptLink: response.receipt_url,
+      });
+
+      subscriptionEmitter.emit(events.onSubscriptionCharged, {
+        customer_email: company?.adminEmail,
+        invoice_pdf: response.receipt_url,
+      });
+
+      // }
     } catch (err) {
       this.logger.error({
         operation,
@@ -434,6 +459,17 @@ export default class WebhookService {
       const subscription_id = obj?.metadata?.subscription_id;
       const company_id = obj?.metadata?.company_id;
       const customer_id = obj?.metadata?.customer_id;
+
+      const subscriptionPayment = await this.subscriptionPaymentRepository.getSingleEntity({
+        query: {
+          company_id: company_id,
+        },
+      });
+
+      await this.subscriptionPaymentRepository.update({
+        id: subscriptionPayment?.id as string,
+        invoiceLink: obj.invoice_pdf,
+      });
 
       subscriptionEmitter.emit(events.onInvoiceFinalized, {
         invoice_pdf: eventObject?.data?.object?.invoice_pdf,

@@ -46,6 +46,14 @@ export default class SubscriptionPayment extends Base {
   @ManyToOne(() => Company)
   @JoinColumn({ name: 'company_id' })
   company: Company;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true, name: 'invoice_link' })
+  invoiceLink: string;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true, name: 'receipt_link' })
+  receiptLink: string;
 }
 
 @ObjectType()

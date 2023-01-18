@@ -9,6 +9,8 @@ export interface ISubscriptionPayment {
   paymentDate: Date;
   amount: number;
   company_id: string;
+  invoiceLink?: string;
+  receiptLink?: string;
 }
 
 export interface ISubscriptionPaymentCreate {
@@ -18,12 +20,23 @@ export interface ISubscriptionPaymentCreate {
   amount: ISubscriptionPayment['amount'];
 }
 
+export interface ISubscriptionPaymentUpdate {
+  id: string;
+  subscriptionId?: string;
+  status?: ISubscriptionPayment['status'];
+  paymentDate?: ISubscriptionPayment['paymentDate'];
+  amount?: ISubscriptionPayment['amount'];
+  invoiceLink?: ISubscriptionPayment['invoiceLink'];
+  receiptLink?: ISubscriptionPayment['receiptLink'];
+}
+
 export interface ISubscriptionPaymentRepository {
   getAllAndCount(args: IPagingArgs): Promise<IGetAllAndCountResult<SubscriptionPayment>>;
   getAll(args: any): Promise<SubscriptionPayment[]>;
   getById(args: IEntityID): Promise<SubscriptionPayment | undefined>;
   getSingleEntity(args: ISingleEntityQuery): Promise<SubscriptionPayment | undefined>;
   create(args: ISubscriptionPaymentCreate): Promise<SubscriptionPayment>;
+  update(args: ISubscriptionPaymentUpdate): Promise<SubscriptionPayment>;
 }
 
 export interface ISubscriptionPaymentService {
