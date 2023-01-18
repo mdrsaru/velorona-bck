@@ -21,6 +21,7 @@ import {
 import { IUserCreate, IUserUpdate, IUserService } from '../interfaces/user.interface';
 import { ICompanyRepository } from '../interfaces/company.interface';
 import { IProjectRepository } from '../interfaces/project.interface';
+import Role from '../entities/role.entity';
 
 @injectable()
 export default class UserService implements IUserService {
@@ -111,6 +112,13 @@ export default class UserService implements IUserService {
         user: user,
         password,
       });
+
+      if (roles.includes(RoleEnum.TaskManager)) {
+        // Emit event for onApproverAdded
+        userEmitter.emit(events.onApproverAdded, {
+          user,
+        });
+      }
 
       // Emit event for updateCompanySubscriptionUsage
       if (user.company_id && roles.includes(RoleEnum.Employee)) {

@@ -2,8 +2,7 @@
 <html>
   <head>
     <title></title>
-    <meta content="width=device-width, initial-scale=1" name="viewport" />
-    <style scoped>
+    <style>
       .container {
         text-align: center;
         padding: 2rem;
@@ -14,7 +13,7 @@
         margin-left: auto;
         margin-right: auto;
         min-width: 450px;
-        max-width: 600px;
+        max-width: 900px;
       }
       .container-body {
         justify-content: center;
@@ -39,15 +38,10 @@
     </div>
     <div class="container-outer-body">
       <div class="container-body">
-        <h3>Hi {{manager}}!,</h3>
-        <p>
-          You have {{status}} the {{user}}'s timesheet for the week {{weekStartDate}} to {{weekEndDate}}. No further
-          action is required at this moment.
-        </p>
-        {{#if needReason}}
-        <p><b>Reason for rejection: </b>{{reason}}</p>
-        {{/if}} The timesheet for the week <b>{{week}}</b> of {{user}}has been {{status}}
-        <p>If you have any questions, feel free too email us</p>
+        <h1>Hi {{manager}}!,</h1>
+        Your timesheet for the week {{weekStartDate}} to {{weekEndDate}} has been unlocked
+        <p>If you have any questions, please contact your office for assistance</p>
+        <p>Please do not reply to this email , this email box is not monitored.</p>
         <p>Thanks,</p>
         {{#if companyName}}
         <p>{{companyName}}</p>

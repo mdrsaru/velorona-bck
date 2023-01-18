@@ -274,7 +274,7 @@ export default class TimesheetService implements ITimesheetService {
       });
 
       timesheets.map((timesheet) => {
-        if (timesheet.status === TimesheetStatus.Open && timesheet.isSubmitted) {
+        if (timesheet.status === TimesheetStatus.Submitted && timesheet.isSubmitted) {
           if (date > timesheet.weekEndDate) {
             //Emit sendTimesheetApproveReminderEmail event
             timesheetEmitter.emit(events.onTimesheetApproveReminder, {

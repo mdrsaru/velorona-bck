@@ -31,29 +31,21 @@
   </head>
   <body style="background-color: #ebecf7">
     <div class="container">
-      {{#if hasLogo}}
       <img src="cid:logo" alt="Velorona" class="logo-img" />
-      {{else}}
-      <h1>{{companyName}}</h1>
-      {{/if}}
     </div>
     <div class="container-outer-body">
       <div class="container-body">
-        <h3>Hi {{manager}}!,</h3>
+        <h1>Hi {{companyName}},</h1>
+        <p>You have been downgrade your plan from Professional to {{planName}}.</p>
         <p>
-          You have {{status}} the {{user}}'s timesheet for the week {{weekStartDate}} to {{weekEndDate}}. No further
-          action is required at this moment.
+          Thanks for choosing Velorona {{planName}}.Your new plan will be activated from the next billing cycle.Until
+          then you can continue enjoying the current plan.
         </p>
-        {{#if needReason}}
-        <p><b>Reason for rejection: </b>{{reason}}</p>
-        {{/if}} The timesheet for the week <b>{{week}}</b> of {{user}}has been {{status}}
-        <p>If you have any questions, feel free too email us</p>
+        <p>We emailed your confirmation to {{companyEmail}}</p>
+        <p>If you have any questions, please contact us for assistance.</p>
+        <p>Please do not reply to this email, this email box is not monitored.</p>
         <p>Thanks,</p>
-        {{#if companyName}}
-        <p>{{companyName}}</p>
-        {{else}}
         <p>Velorona</p>
-        {{/if}}
       </div>
     </div>
     <div class="container">

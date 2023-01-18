@@ -108,6 +108,8 @@ invoiceEmitter.on(events.sendInvoice, async (data: any) => {
         name: client?.name,
         hasLogo: hasLogo,
         companyName: client?.company?.name ?? '',
+        startDate: invoice.startDate,
+        endDate: invoice.endDate,
       },
     });
 

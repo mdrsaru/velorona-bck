@@ -32,28 +32,30 @@
   <body style="background-color: #ebecf7">
     <div class="container">
       {{#if hasLogo}}
-      <img src="cid:logo" alt="Vellorona" class="logo-img" />
+      <img src="cid:logo" alt="Velorona" class="logo-img" />
       {{else}}
       <h1>{{companyName}}</h1>
       {{/if}}
     </div>
     <div class="container-outer-body">
       <div class="container-body">
-        <h2>Hi {{name}},</h2>
-        Please find the attached invoice.
+        <h2>Hi {{companyName}},</h2>
+        <p>
+          Please find the attached invoice {{#if startDate}} for the period of {{startDate}} to {{endDate}} {{/if}} .
+        </p>
         <p>If you have any questions, feel free too email us</p>
         <p>Thanks,</p>
         {{#if companyName}}
         <p>{{companyName}}</p>
         {{else}}
-        <p>Vellorona</p>
+        <p>Velorona</p>
         {{/if}}
       </div>
     </div>
     <div class="container">
       <ul type="none">
         <li>&#169; All rights reserved</li>
-        <li>Vellorona</li>
+        <li>Velorona</li>
         <li>1001 W Euless Blvd, Euless, TX 76040, USA</li>
         <li>contact@velorona.com</li>
       </ul>

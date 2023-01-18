@@ -9,6 +9,7 @@ import fs from 'fs/promises';
 
 import { IEmailService, ITemplateService, ILogger, IEmailBasicArgs } from '../interfaces/common.interface';
 import { ICompanyRepository } from '../interfaces/company.interface';
+import User from '../entities/user.entity';
 
 /*
  * On user create
@@ -64,10 +65,17 @@ userEmitter.on(events.onUserCreate, async (data: any) => {
     },
   });
 
+  const subject = handlebarsService.compile({
+    template: emailSetting.newUser.subject,
+    data: {
+      companyName: `${company?.name ?? 'Velorona'}`,
+    },
+  });
+
   const obj: IEmailBasicArgs = {
     to: data.user.email,
-    from: `${company?.name ?? 'Vellorona'} ${emailSetting.fromEmail}`,
-    subject: emailSetting.newUser.subject,
+    from: `${company?.name ?? 'Velorona'} ${emailSetting.fromEmail}`,
+    subject: subject,
     html: userHtml,
   };
 
@@ -96,6 +104,100 @@ userEmitter.on(events.onUserCreate, async (data: any) => {
         contentDisposition: 'inline',
         encoding: 'base64',
         contentType: 'image/png',
+      },
+    ];
+  }
+  emailService
+    .sendEmail(obj)
+    .then((response) => {
+      logger.info({
+        operation,
+        message: `Email response for ${data?.user?.email}`,
+        data: response,
+      });
+    })
+    .catch((err) => {
+      logger.error({
+        operation,
+        message: 'Error sending user create email',
+        data: err,
+      });
+    });
+});
+
+type ApproverCreate = {
+  user: User;
+};
+
+userEmitter.on(events.onApproverAdded, async (data: ApproverCreate) => {
+  const operation = events.onApproverAdded;
+
+  const logger = container.get<ILogger>(TYPES.Logger);
+  logger.init('user.subscriber');
+
+  const emailService: IEmailService = container.get<IEmailService>(TYPES.EmailService);
+  const companyRepository: ICompanyRepository = container.get<ICompanyRepository>(TYPES.CompanyRepository);
+  const handlebarsService: ITemplateService = container.get<ITemplateService>(TYPES.HandlebarsService);
+
+  let emailBody: string = emailSetting.newUser.adminBody;
+  let company: Company | undefined;
+
+  if (!data?.user?.email) {
+    return logger.info({
+      operation,
+      message: `User Email not found for sending onApproverAdded email`,
+      data: {},
+    });
+  }
+
+  if (data?.user?.company_id) {
+    emailBody = emailSetting.newUser.companyBody;
+    company = await companyRepository.getById({
+      id: data.user?.company_id,
+      relations: ['logo'],
+    });
+  }
+
+  const hasLogo = !!company?.logo_id;
+
+  let emailTemplate = await fs.readFile(`${__dirname}/../../templates/add-approver.template.html`, {
+    encoding: 'utf-8',
+  });
+  const userHtml = handlebarsService.compile({
+    template: emailTemplate,
+    data: {
+      manager: `${data?.user?.firstName} ${data?.user?.lastName}`,
+      hasLogo: hasLogo,
+      companyName: company?.name ?? '',
+    },
+  });
+
+  const subject = handlebarsService.compile({
+    template: emailSetting.approverAddEmail.subject,
+    data: {
+      userName: `${data?.user?.firstName} ${data?.user?.lastName}`,
+    },
+  });
+
+  const obj: IEmailBasicArgs = {
+    to: data.user.email,
+    from: `${company?.name ?? 'Velorona'} ${emailSetting.fromEmail}`,
+    subject: subject,
+    html: userHtml,
+  };
+
+  if (hasLogo) {
+    const image = await axios.get(company?.logo?.url as string, { responseType: 'arraybuffer' });
+    const raw = Buffer.from(image.data).toString('base64');
+
+    obj.attachments = [
+      {
+        content: raw,
+        filename: company?.logo.name as string,
+        cid: 'logo',
+        contentDisposition: 'inline',
+        encoding: 'base64',
+        // type: 'image/png',
       },
     ];
   }

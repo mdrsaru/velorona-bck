@@ -14,7 +14,7 @@
         margin-left: auto;
         margin-right: auto;
         min-width: 450px;
-        max-width: 900px;
+        max-width: 600px;
       }
       .container-body {
         justify-content: center;
@@ -29,32 +29,26 @@
       }
     </style>
   </head>
-
   <body style="background-color: #ebecf7">
     <div class="container">
-      {{#if hasLogo}}
-      <img src="cid:logo" alt="Vellorona" class="logo-img" />
-      {{else}}
-      <h1>{{companyName}}</h1>
-      {{/if}}
+      <img src="cid:logo" alt="Velorona" class="logo-img" />
     </div>
     <div class="container-outer-body">
       <div class="container-body">
-        <h1>Hi {{name}}!,</h1>
-        You have submitted the timesheet for the week <b>{{week}}</b>.
-        <p>If you have any questions, feel free too email us</p>
+        <h1>Hi {{companyName}},</h1>
+        <p>You have been upgraded your plan from Starter to {{planName}}.</p>
+        <p>Thanks for choosing Velorona {{planName}}.Your plan has been activated from today,</p>
+        <p>We emailed your confirmation to {{companyEmail}}</p>
+        <p>If you have any question, please contact us for assistance.</p>
+        <p>Please do not reply to this email, this email box is not monitored.</p>
         <p>Thanks,</p>
-        {{#if companyName}}
-        <p>{{companyName}}</p>
-        {{else}}
-        <p>Vellorona</p>
-        {{/if}}
+        <p>Velorona</p>
       </div>
     </div>
     <div class="container">
       <ul type="none">
         <li>&#169; All rights reserved</li>
-        <li>Vellorona</li>
+        <li>Velorona</li>
         <li>1001 W Euless Blvd, Euless, TX 76040, USA</li>
         <li>contact@velorona.com</li>
       </ul>

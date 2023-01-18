@@ -227,12 +227,19 @@ export const emailSetting = {
     subject: process.env.UNLOCK_TIMESHEET_EMAIL_SUBJECT || '',
     body: process.env.UNLOCK_TIMESHEET_EMAIL_BODY || '',
   },
-  submitTimesheet: {
-    subject: process.env.SUBMIT_TIMESHEET_EMAIL_SUBJECT || '',
+  managerSubmitTimesheet: {
+    subject: process.env.MANAGER_SUBMIT_TIMESHEET_EMAIL_SUBJECT || '',
+  },
+  userSubmitTimesheet: {
+    subject: process.env.USER_SUBMIT_TIMESHEET_EMAIL_SUBJECT || '',
   },
   contactUs: {
     contactEmailAddress: process.env.CONTACT_EMAIL_ADDRESS as string,
     subject: process.env.CONTACT_US_SUBJECT || 'Contact us',
+  },
+  contactAcknowledgement: {
+    contactEmailAddress: process.env.CONTACT_EMAIL_ADDRESS as string,
+    subject: process.env.CONTACT_ACKNOWLEDGEMENT_SUBJECT || 'Confirmation email',
   },
   workscheduleDetail: {
     subject: process.env.WORKSCHEDULE_DETAIL_ADDED_SUBJECT || '',
@@ -251,6 +258,30 @@ export const emailSetting = {
   },
   paymentSuccessful: {
     subject: process.env.PAYMENT_SUCCEED_EMAIL_SUBJECT || '',
+  },
+  demoRequest: {
+    subject: process.env.DEMO_REQUEST_EMAIL_SUBJECT || '',
+  },
+  demoRequestAcknowledgement: {
+    subject: process.env.DEMO_REQUEST_ACKNOWLEDGEMENT_EMAIL_SUBJECT || '',
+  },
+  timesheetStatusUpdate: {
+    subject: process.env.TIMESHEET_STATUS_UPDATE_EMAIL_SUBJECT || '',
+  },
+  approverAddEmail: {
+    subject: process.env.APPROVER_ADD_EMPLOYEE_EMAIL_SUBJECT || '',
+  },
+  threeMonthTrial: {
+    subject: process.env.THREE_MONTH_TRIAL_EMAIL_SUBJECT || '',
+  },
+  updateSubscription: {
+    subject: process.env.UPDATE_SUBSCRIPTION_EMAIL_SUBJECT || '',
+  },
+  invoiceCompany: {
+    subject: process.env.INVOICE_COMPANY_EMAIL_SUBJECT || '',
+  },
+  subscriptionPaymentReminder: {
+    subject: process.env.SUBSCRIPTION_PAYMENT_REMINDER_EMAIL_SUBJECT || '',
   },
 };
 
@@ -274,6 +305,13 @@ export const events = {
   onSubscriptionEndReminder: 'onSubscriptionEndReminder',
   onCompanyRegistered: 'onCompanyRegistered',
   onSubscriptionCharged: 'onSubscriptionCharged',
+  onDemoRequestCreate: 'onDemoRequestCreate',
+  onApproverAdded: 'OnApproverAdded',
+  onCompanyApproved: 'OnCompanyApproved',
+  onSubscriptionUpdate: 'onSubscriptionUpdate',
+  onSubscriptionDowngrade: 'OnSubscriptionDowngrade',
+  onInvoiceFinalized: 'onInvoiceFinalized',
+  onClientInvoiceReminder: 'onClientInvoiceReminder',
 };
 
 export const stripeSetting = {

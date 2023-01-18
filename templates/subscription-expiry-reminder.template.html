@@ -31,29 +31,20 @@
   </head>
   <body style="background-color: #ebecf7">
     <div class="container">
-      {{#if hasLogo}}
       <img src="cid:logo" alt="Velorona" class="logo-img" />
-      {{else}}
-      <h1>{{companyName}}</h1>
-      {{/if}}
     </div>
     <div class="container-outer-body">
       <div class="container-body">
-        <h3>Hi {{manager}}!,</h3>
-        <p>
-          You have {{status}} the {{user}}'s timesheet for the week {{weekStartDate}} to {{weekEndDate}}. No further
-          action is required at this moment.
-        </p>
-        {{#if needReason}}
-        <p><b>Reason for rejection: </b>{{reason}}</p>
-        {{/if}} The timesheet for the week <b>{{week}}</b> of {{user}}has been {{status}}
-        <p>If you have any questions, feel free too email us</p>
+        <h1>Hi {{companyName}},</h1>
+        <p>Your subscription will end in {{number}} days on {{subscriptionEndDate}}.</p>
+        <p>Please renew before expiration</p>
+        <p>Renew now > <a href="{{renewLink}}" target=" _blank">{{renewLink}}</a></p>
+        <p>You can set up autopay if you want your subscription to never expire</p>
+        <p>Set up autopay > <a href="{{autoPayLink}}" target=" _blank">{{autoPayLink}}</a></p>
+        <p>If you have any questions,please contact us for assistance.</p>
+        <p>Please do not reply to this email, this email box is not monitored.</p>
         <p>Thanks,</p>
-        {{#if companyName}}
-        <p>{{companyName}}</p>
-        {{else}}
-        <p>Velorona</p>
-        {{/if}}
+        <p>Velorona Team</p>
       </div>
     </div>
     <div class="container">

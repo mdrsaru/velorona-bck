@@ -38,6 +38,22 @@ workscheduleDetailEmitter.on(events.onWorkscheduleDetailCreate, async (args: Cre
     let emailTemplate = await fs.readFile(`${__dirname}/../../templates/add-workschedule-detail.template.html`, {
       encoding: 'utf-8',
     });
+
+    let workscheduleDetails = await workscheduleDetailRepository.getAll({
+      query: {
+        workschedule_id: args.workscheduleDetail.workschedule_id,
+        user_id: args.workscheduleDetail.user_id,
+      },
+      select: ['id', 'duration', 'workschedule_id'],
+    });
+
+    let totalHour: any = 0;
+    workscheduleDetails?.map((workscheduleDetail) => {
+      return (totalHour = (workscheduleDetail.duration as number) + totalHour);
+    });
+
+    const totalHours = (totalHour / 3600).toFixed(0);
+
     const workscheduleDetailHtml = handlebarsService.compile({
       template: emailTemplate,
       data: {
@@ -46,14 +62,22 @@ workscheduleDetailEmitter.on(events.onWorkscheduleDetailCreate, async (args: Cre
         name: workscheduleDetail?.user?.firstName,
         startTime: moment(args.startTime).format('HH:mm'),
         endTime: moment(args.endTime).format('HH:mm'),
-        scheduleDate: moment(workscheduleDetail?.schedule_date).format('MMM DD,YYYY'),
+        scheduleDate: moment(workscheduleDetail?.schedule_date).format('MM-DD-YYYY'),
+        totalHours: totalHours + 'hrs',
+      },
+    });
+
+    const subject = handlebarsService.compile({
+      template: emailSetting.workscheduleDetail.subject,
+      data: {
+        weekEndDate: moment(workscheduleDetail?.workschedule?.endDate).format('MM-DD-YYYY'),
       },
     });
 
     const obj: IEmailBasicArgs = {
       to: workscheduleDetail?.user.email ?? '',
       from: `${workscheduleDetail?.workschedule?.company?.name} ${emailSetting.fromEmail}`,
-      subject: emailSetting.workscheduleDetail.subject,
+      subject: subject,
       html: workscheduleDetailHtml,
     };
     if (hasLogo) {

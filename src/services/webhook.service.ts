@@ -403,6 +403,7 @@ export default class WebhookService {
           invoice_pdf: res.invoice_pdf,
           startDate,
           endDate,
+          response,
         });
       } else {
         const company = await this.companyRepository.getSingleEntity({
@@ -416,6 +417,42 @@ export default class WebhookService {
           invoice_pdf: response.receipt_url,
         });
       }
+    } catch (err) {
+      this.logger.error({
+        operation,
+        message: 'Error updating subscription with the payment method.',
+        data: err,
+      });
+    }
+  };
+
+  handleInvoiceCreate = async (eventObject: any): Promise<void> => {
+    const operation = 'handleInvoiceCreate';
+
+    try {
+      const obj = eventObject?.data?.object;
+      const subscription_id = obj?.metadata?.subscription_id;
+      const company_id = obj?.metadata?.company_id;
+      const customer_id = obj?.metadata?.customer_id;
+
+      subscriptionEmitter.emit(events.onInvoiceFinalized, {
+        invoice_pdf: eventObject?.data?.object?.invoice_pdf,
+        periodStart: moment.unix(eventObject?.data?.object?.period_start).format('MM-DD-YYYY'),
+        periodEnd: moment.unix(eventObject?.data?.object?.period_end).format('MM-DD-YYYY'),
+        billingDate: moment.unix(eventObject?.data?.object?.created).format('MM-DD-YYYY'),
+        invoiceNumber: eventObject?.data?.object?.number,
+        customerEmail: eventObject?.data?.object?.customer_email,
+        amount: eventObject?.data?.object?.amount_due,
+      });
+      this.logger.info({
+        operation,
+        message: `Payment details for ${company_id} has been updated.`,
+        data: {
+          subscription_id,
+          customer_id,
+          company_id,
+        },
+      });
     } catch (err) {
       this.logger.error({
         operation,

@@ -11,6 +11,8 @@ import Paging from '../utils/paging';
 import { TYPES } from '../types';
 import { IPagingArgs, IPaginationData } from '../interfaces/paging.interface';
 import { IEntityRemove, IEntityID } from '../interfaces/common.interface';
+import { demoRequestEmitter } from '../subscribers/emitters';
+import { events } from '../config/constants';
 
 @injectable()
 export default class DemoRequestService implements IDemoRequestService {
@@ -52,6 +54,15 @@ export default class DemoRequestService implements IDemoRequestService {
         phone,
         jobTitle,
         companyName,
+      });
+
+      // Emit event for onUserCreate
+      demoRequestEmitter.emit(events.onDemoRequestCreate, {
+        fullName,
+        email,
+        phone,
+        companyName,
+        jobTitle,
       });
 
       return demoRequest;

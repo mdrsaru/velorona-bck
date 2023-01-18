@@ -2,7 +2,8 @@
 <html>
   <head>
     <title></title>
-    <style>
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <style scoped>
       .container {
         text-align: center;
         padding: 2rem;
@@ -13,7 +14,7 @@
         margin-left: auto;
         margin-right: auto;
         min-width: 450px;
-        max-width: 900px;
+        max-width: 600px;
       }
       .container-body {
         justify-content: center;
@@ -30,29 +31,31 @@
   </head>
   <body style="background-color: #ebecf7">
     <div class="container">
-      {{#if hasLogo}}
-      <img src="cid:logo" alt="Vellorona" class="logo-img" />
-      {{else}}
-      <h1>{{companyName}}</h1>
-      {{/if}}
+      <img src="cid:logo" alt="Velorona" class="logo-img" />
     </div>
     <div class="container-outer-body">
       <div class="container-body">
-        <h1>Hi {{user}}!,</h1>
-        The timesheet for the week <b>{{week}}</b> has been unlocked
-        <p>If you have any questions, feel free too email us</p>
+        <h1>Hi {{companyName}},</h1>
+        <p>
+          Your invoice is ready to review(see below),sight in to view it. If you have already paid,disregard this email.
+          If you have set up autopay, we will automatically charge the card we have in file within 15 days of the
+          billing date .
+        </p>
+        <p>Invoice number:{{invoiceNumber}}</p>
+        <p>Amount:{{amount}}</p>
+        <p>Billing period:{{periodStart}} - {{periodEnd}}</p>
+        <p>Billing date: {{billingDate}}</p>
+
+        <p>Link: {{invoicePdf}}</p>
+        <p>Please do not reply to this email, this email box is not monitored.</p>
         <p>Thanks,</p>
-        {{#if companyName}}
-        <p>{{companyName}}</p>
-        {{else}}
-        <p>Vellorona</p>
-        {{/if}}
+        <p>Velorona</p>
       </div>
     </div>
     <div class="container">
       <ul type="none">
         <li>&#169; All rights reserved</li>
-        <li>Vellorona</li>
+        <li>Velorona</li>
         <li>1001 W Euless Blvd, Euless, TX 76040, USA</li>
         <li>contact@velorona.com</li>
       </ul>
