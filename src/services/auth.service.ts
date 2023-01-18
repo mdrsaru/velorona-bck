@@ -321,7 +321,7 @@ export default class AuthService implements IAuthService {
         data: {
           resetPasswordLink,
           hasLogo: hasLogo,
-          companyName: user?.company?.name ?? 'Vellorona',
+          companyName: user?.company?.name ?? 'Velorona',
           fullName: user?.fullName ?? '',
         },
       });
@@ -331,13 +331,13 @@ export default class AuthService implements IAuthService {
       const subject = this.handlebarsService.compile({
         template: emailSetting.resetPassword.subject,
         data: {
-          companyName: user?.company?.name ?? 'Vellorona',
+          companyName: user?.company?.name ?? 'Velorona',
         },
       });
 
       const emailOptions: IEmailArgs = {
         to: user.email,
-        from: `${user?.company?.name ?? 'Vellorona'} ${emailSetting.fromEmail}`,
+        from: `${user?.company?.name ?? 'Velorona'} ${emailSetting.fromEmail}`,
         subject: subject,
         html: resetPasswordHtml,
       };

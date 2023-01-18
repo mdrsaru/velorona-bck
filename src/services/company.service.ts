@@ -174,10 +174,13 @@ export default class CompanyService implements ICompanyService {
           let threeDayPriorDate = moment(company.subscriptionPeriodEnd).subtract(3, 'days').utc().format('YYYY-MM-DD');
           if (date === threeDayPriorDate) {
             // Emit sendSubscriptionEndReminderEmail event
-            companyEmitter.emit(events.onSubscriptionEndReminder, {
-              company,
-              date: company.subscriptionPeriodEnd,
-            });
+            if (company.collectionMethod !== CollectionMethod.ChargeAutomaticatically) {
+              companyEmitter.emit(events.onSubscriptionEndReminder, {
+                company,
+                date: company.subscriptionPeriodEnd,
+                numberOfDays: 3,
+              });
+            }
           }
         }
       });

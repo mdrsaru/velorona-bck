@@ -82,7 +82,7 @@ export class ContactUsResolver {
 
       const obj: IEmailBasicArgs = {
         to: mailList,
-        from: `Vellorona ${emailSetting.fromEmail}`,
+        from: `Velorona ${emailSetting.fromEmail}`,
         subject: subject,
         html: timesheetHtml,
       };
@@ -128,7 +128,7 @@ export class ContactUsResolver {
 
       const userObj: IEmailBasicArgs = {
         to: email,
-        from: `Vellorona ${emailSetting.fromEmail}`,
+        from: `Velorona ${emailSetting.fromEmail}`,
         subject: emailSetting.contactAcknowledgement.subject,
         html: userEmailHtml,
       };

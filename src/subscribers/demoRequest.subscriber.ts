@@ -66,7 +66,7 @@ demoRequestEmitter.on(events.onDemoRequestCreate, async (args: CreateDemoRequest
 
     const adminObj: IEmailBasicArgs = {
       to: mailList,
-      from: `Vellorona ${emailSetting.fromEmail}`,
+      from: `Velorona ${emailSetting.fromEmail}`,
       subject: emailSetting.demoRequest.subject,
       html: adminDemoRequestHtml,
     };
@@ -112,7 +112,7 @@ demoRequestEmitter.on(events.onDemoRequestCreate, async (args: CreateDemoRequest
 
     const userObj: IEmailBasicArgs = {
       to: email,
-      from: `Vellorona ${emailSetting.fromEmail}`,
+      from: `Velorona ${emailSetting.fromEmail}`,
       subject: emailSetting.demoRequestAcknowledgement.subject,
       html: userDemoRequestHtml,
     };

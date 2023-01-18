@@ -68,13 +68,13 @@ userEmitter.on(events.onUserCreate, async (data: any) => {
   const subject = handlebarsService.compile({
     template: emailSetting.newUser.subject,
     data: {
-      companyName: `${company?.name ?? 'Vellorona'}`,
+      companyName: `${company?.name ?? 'Velorona'}`,
     },
   });
 
   const obj: IEmailBasicArgs = {
     to: data.user.email,
-    from: `${company?.name ?? 'Vellorona'} ${emailSetting.fromEmail}`,
+    from: `${company?.name ?? 'Velorona'} ${emailSetting.fromEmail}`,
     subject: subject,
     html: userHtml,
   };
@@ -181,7 +181,7 @@ userEmitter.on(events.onApproverAdded, async (data: ApproverCreate) => {
 
   const obj: IEmailBasicArgs = {
     to: data.user.email,
-    from: `${company?.name ?? 'Vellorona'} ${emailSetting.fromEmail}`,
+    from: `${company?.name ?? 'Velorona'} ${emailSetting.fromEmail}`,
     subject: subject,
     html: userHtml,
   };

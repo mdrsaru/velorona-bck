@@ -39,9 +39,21 @@ workscheduleDetailEmitter.on(events.onWorkscheduleDetailCreate, async (args: Cre
       encoding: 'utf-8',
     });
 
-    const totalHours =
-      workscheduleDetail?.workschedule?.payrollAllocatedHours &&
-      ((workscheduleDetail?.workschedule?.payrollAllocatedHours as number) / 3600).toFixed(0);
+    let workscheduleDetails = await workscheduleDetailRepository.getAll({
+      query: {
+        workschedule_id: args.workscheduleDetail.workschedule_id,
+        user_id: args.workscheduleDetail.user_id,
+      },
+      select: ['id', 'duration', 'workschedule_id'],
+    });
+
+    let totalHour: any = 0;
+    workscheduleDetails?.map((workscheduleDetail) => {
+      return (totalHour = (workscheduleDetail.duration as number) + totalHour);
+    });
+
+    const totalHours = (totalHour / 3600).toFixed(0);
+
     const workscheduleDetailHtml = handlebarsService.compile({
       template: emailTemplate,
       data: {
@@ -50,8 +62,8 @@ workscheduleDetailEmitter.on(events.onWorkscheduleDetailCreate, async (args: Cre
         name: workscheduleDetail?.user?.firstName,
         startTime: moment(args.startTime).format('HH:mm'),
         endTime: moment(args.endTime).format('HH:mm'),
-        scheduleDate: moment(workscheduleDetail?.schedule_date).format('MMM DD,YYYY'),
-        totalHours: totalHours,
+        scheduleDate: moment(workscheduleDetail?.schedule_date).format('MM-DD-YYYY'),
+        totalHours: totalHours + 'hrs',
       },
     });
 

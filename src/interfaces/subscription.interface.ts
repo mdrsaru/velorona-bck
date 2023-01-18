@@ -75,5 +75,5 @@ export interface ISubscriptionService {
    */
   downgradeSubscription(args: ISubscriptionDowngradeInput): Promise<void>;
 
-  subscriptionReminder(args: any): Promise<void>;
+  subscriptionPaymentReminder(args: any): Promise<void>;
 }

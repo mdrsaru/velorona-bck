@@ -393,7 +393,7 @@ export default class SubscriptionService implements ISubscriptionService {
     }
   };
 
-  subscriptionReminder = async (args: any): Promise<void> => {
+  subscriptionPaymentReminder = async (args: any): Promise<void> => {
     const date = args.date;
 
     const companyList = await this.companyRepository.getAll({

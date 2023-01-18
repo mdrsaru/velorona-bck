@@ -164,7 +164,7 @@ companyEmitter.on(events.onSubscriptionCreate, async (args: CreateCompanySubscri
   companyObj.attachments = [
     {
       content: logo,
-      filename: 'Vellorona Logo',
+      filename: 'Velorona Logo',
       cid: 'logo',
       contentDisposition: 'inline',
       encoding: 'base64',
@@ -193,6 +193,7 @@ companyEmitter.on(events.onSubscriptionCreate, async (args: CreateCompanySubscri
 type SubscriptionEndReminderUsage = {
   company: Company;
   date: Date;
+  numberOfDays: number;
 };
 
 companyEmitter.on(events.onSubscriptionEndReminder, async (args: SubscriptionEndReminderUsage) => {
@@ -203,12 +204,26 @@ companyEmitter.on(events.onSubscriptionEndReminder, async (args: SubscriptionEnd
 
   const emailService: IEmailService = container.get<IEmailService>(TYPES.EmailService);
   const handlebarsService: ITemplateService = container.get<ITemplateService>(TYPES.HandlebarsService);
+  const userRepository: IUserRepository = container.get<IUserRepository>(TYPES.UserRepository);
 
   const company = args.company;
+
+  const user: any = await userRepository.getSingleEntity({
+    query: {
+      company_id: company?.id,
+    },
+    select: ['id', 'email'],
+  });
+
+  const subscriptionEndDate = moment(company?.subscriptionPeriodEnd).format('MM-DD-YYYY');
+  const number = args.numberOfDays;
+  const renewLink = `${constants.frontEndUrl}/${company.companyCode}/subscriptions`;
+  const autoPayLink = `${constants.frontEndUrl}/profile/${user?.id}`;
+
   try {
     const hasLogo = !!company?.logo_id;
 
-    let emailTemplate = await fs.readFile(`${__dirname}/../../templates/subscription-end-reminder.template.html`, {
+    let emailTemplate = await fs.readFile(`${__dirname}/../../templates/subscription-expiry-reminder.template.html`, {
       encoding: 'utf-8',
     });
 
@@ -219,11 +234,15 @@ companyEmitter.on(events.onSubscriptionEndReminder, async (args: SubscriptionEnd
         companyName: company?.name ?? '',
         user: company?.name,
         date: moment(args.date).format('YYYY-MM-DD'),
+        subscriptionEndDate,
+        number,
+        renewLink,
+        autoPayLink,
       },
     });
 
     const obj: IEmailBasicArgs = {
-      to: company?.adminEmail ?? '',
+      to: user?.email ?? '',
       from: `${company?.name} ${emailSetting.fromEmail}`,
       subject: emailSetting.subscriptionEndReminder.subject,
       html: timesheetHtml,
@@ -336,7 +355,7 @@ companyEmitter.on(events.onCompanyRegistered, async (args: CompanyRegisteredUsag
 
     const obj: any = {
       to: mailList,
-      from: `Vellorona ${emailSetting.fromEmail}`,
+      from: `Velorona ${emailSetting.fromEmail}`,
       subject: subject,
       html: adminHtml,
     };
@@ -344,7 +363,7 @@ companyEmitter.on(events.onCompanyRegistered, async (args: CompanyRegisteredUsag
     obj.attachments = [
       {
         content: logo,
-        filename: 'Vellorona Logo',
+        filename: 'Velorona Logo',
         cid: 'logo',
         contentDisposition: 'inline',
         encoding: 'base64',

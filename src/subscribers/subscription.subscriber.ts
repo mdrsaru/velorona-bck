@@ -365,7 +365,7 @@ subscriptionEmitter.on(events.onInvoiceFinalized, async (args: InvoiceFinalized)
   }
 });
 
-type SubscriptionReminder = {
+type ClientInvoiceReminder = {
   subscriptionEndDate: string;
   companyName: string;
   logo?: any;
@@ -374,7 +374,7 @@ type SubscriptionReminder = {
   id: string;
 };
 
-subscriptionEmitter.on(events.onClientInvoiceReminder, async (args: SubscriptionReminder) => {
+subscriptionEmitter.on(events.onClientInvoiceReminder, async (args: ClientInvoiceReminder) => {
   const operation = events.onClientInvoiceReminder;
   const logger = container.get<ILogger>(TYPES.Logger);
   logger.init('subscription.subscriber');
@@ -445,7 +445,7 @@ subscriptionEmitter.on(events.onClientInvoiceReminder, async (args: Subscription
         .catch((err) => {
           logger.error({
             operation,
-            message: 'Error sending charge succeed email',
+            message: 'Error sending subscription payment reminder email',
             data: err,
           });
         });
@@ -453,7 +453,7 @@ subscriptionEmitter.on(events.onClientInvoiceReminder, async (args: Subscription
   } catch (err) {
     logger.error({
       operation,
-      message: 'Error sending charge succeed email',
+      message: 'Error sending subscription payment reminder email',
       data: {
         err,
       },

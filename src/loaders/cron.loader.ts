@@ -328,16 +328,16 @@ export default (): void => {
   );
 
   /**
-   * Timesheet approve/reject reminder to task manager
+   * Subscription payment reminder
    */
   new CronJob(
     '0 1 * * *',
     function () {
-      const operation = 'timesheetapproveReminder';
+      const operation = 'subscriptionPaymentReminder';
       const date = moment().format('YYYY-MM-DD');
       try {
         subscriptionService
-          .subscriptionReminder({
+          .subscriptionPaymentReminder({
             date,
           })
           .then(() => {
