@@ -10,7 +10,6 @@ import { TYPES } from '../types';
 
 import { subscriptionEmitter } from './emitters';
 import { IUserRepository } from '../interfaces/user.interface';
-import { company } from '../config/db/columns';
 import { ICompanyRepository } from '../interfaces/company.interface';
 
 type CreateCompanySubscription = {
@@ -454,6 +453,94 @@ subscriptionEmitter.on(events.onClientInvoiceReminder, async (args: ClientInvoic
     logger.error({
       operation,
       message: 'Error sending subscription payment reminder email',
+      data: {
+        err,
+      },
+    });
+  }
+});
+
+type PaymentDeclined = {
+  company: any;
+  response: any;
+};
+
+subscriptionEmitter.on(events.onPaymentDeclined, async (args: PaymentDeclined) => {
+  const operation = events.onPaymentDeclined;
+  const logger = container.get<ILogger>(TYPES.Logger);
+  logger.init('subscription.subscriber');
+
+  const emailService: IEmailService = container.get<IEmailService>(TYPES.EmailService);
+  const handlebarsService: ITemplateService = container.get<ITemplateService>(TYPES.HandlebarsService);
+
+  const companyName = args.company.companyName;
+  const companyAdminEmail = args.company.companyAdminEmail;
+  const logo = args.company?.logo;
+  try {
+    const hasLogo = !!logo?.id;
+
+    let subscriptionTemplate = await fs.readFile(`${__dirname}/../../templates/payment-declined.template.html`, {
+      encoding: 'utf-8',
+    });
+
+    const subscriptionHtml = handlebarsService.compile({
+      template: subscriptionTemplate,
+      data: {
+        hasLogo: hasLogo,
+        companyName: companyName ?? '',
+        cardNumber: args.response?.payment_method_details.card.last4,
+        createdAt: args.response?.created,
+        amount: args.response?.amount_captured,
+      },
+    });
+
+    const obj: IEmailBasicArgs = {
+      to: companyAdminEmail ?? '',
+      from: `${companyName} ${emailSetting.fromEmail}`,
+      subject: emailSetting.paymentDeclinedReminder.subject,
+      html: subscriptionHtml,
+    };
+
+    if (hasLogo) {
+      const image = await axios.get(logo?.url as string, {
+        responseType: 'arraybuffer',
+      });
+      const raw = Buffer.from(image.data).toString('base64');
+
+      obj.attachments = [
+        {
+          content: raw,
+          filename: logo.name as string,
+          cid: 'logo',
+          contentDisposition: 'inline',
+          encoding: 'base64',
+          // type: 'image/png',
+        },
+      ];
+    }
+
+    if (args.company?.status === CompanyStatus.Active) {
+      emailService
+        .sendEmail(obj)
+        .then((response) => {
+          logger.info({
+            operation,
+            message: `Email response for ${companyAdminEmail}`,
+            data: response,
+          });
+        })
+        .catch((err) => {
+          logger.error({
+            operation,
+            message: 'Error sending Payment declined email',
+            data: err,
+          });
+        });
+    }
+  } catch (err) {
+    logger.error({
+      operation,
+      message: 'Error sending Payment declined email',
       data: {
         err,
       },

@@ -9,10 +9,11 @@ import SubscriptionPayment from '../entities/subscription-payment.entity';
 import {
   ISubscriptionPaymentCreate,
   ISubscriptionPaymentRepository,
+  ISubscriptionPaymentUpdate,
 } from '../interfaces/subscription-payment.interface';
 import { ICompanyRepository } from '../interfaces/company.interface';
 import { IGetAllAndCountResult, IGetOptions } from '../interfaces/paging.interface';
-import { isArray } from 'lodash';
+import { isArray, merge } from 'lodash';
 
 @injectable()
 export default class SubscriptionPaymentRepository
@@ -104,6 +105,33 @@ export default class SubscriptionPaymentRepository
       });
 
       return subscriptionPayment;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  update = async (args: ISubscriptionPaymentUpdate): Promise<SubscriptionPayment> => {
+    try {
+      const id = args.id;
+      const invoiceLink = args.invoiceLink;
+      const receiptLink = args.receiptLink;
+
+      const found = await this.getById({ id });
+
+      if (!found) {
+        throw new apiError.NotFoundError({
+          details: ['Subscription Payment not found'],
+        });
+      }
+
+      const update = merge(found, {
+        id,
+        invoiceLink,
+        receiptLink,
+      });
+      const subascriptionPayment = await this.repo.save(update);
+
+      return subascriptionPayment;
     } catch (err) {
       throw err;
     }
