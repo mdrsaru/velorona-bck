@@ -16,6 +16,7 @@ import { IUserRepository } from '../interfaces/user.interface';
 import companyEmitter from '../subscribers/company.subscriber';
 import moment from 'moment';
 import StripeService from './stripe.service';
+import { subscriptionEmitter } from '../subscribers/emitters';
 
 @injectable()
 export default class CompanyService implements ICompanyService {
@@ -120,7 +121,10 @@ export default class CompanyService implements ICompanyService {
       const user = args?.user;
       const collectionMethod = args?.collectionMethod;
 
-      const foundCompany = await this.companyRepository.getById({ id });
+      const foundCompany = await this.companyRepository.getById({
+        id,
+        relations: ['logo'],
+      });
 
       if (collectionMethod) {
         let input: any = {
@@ -129,7 +133,14 @@ export default class CompanyService implements ICompanyService {
         if (collectionMethod === CollectionMethod.SendInvoice) {
           input.days_until_due = 3;
         }
-        this.stripeService.updateSubscription(foundCompany?.subscriptionId as string, input);
+        const subscription = await this.stripeService.updateSubscription(foundCompany?.subscriptionId as string, input);
+
+        if (collectionMethod === CollectionMethod.ChargeAutomaticatically) {
+          subscriptionEmitter.emit(events.onAutoPayEnrolled, {
+            company: foundCompany,
+            response: subscription,
+          });
+        }
       }
       let data: ICompanyUpdate = {
         id,

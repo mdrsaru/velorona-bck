@@ -57,7 +57,7 @@ userEmitter.on(events.onUserCreate, async (data: any) => {
       fullName: data?.user?.firstName ?? 'User!',
       companyCode: company?.companyCode ?? '',
       password: data?.password,
-      link: `${constants.frontEndUrl}/login`,
+      link: superAdmin ? `${constants.frontEndUrl}/login/admin` : `${constants.frontEndUrl}/login`,
       email: data?.user?.email,
       hasLogo: hasLogo,
       companyName: company?.name ?? '',
