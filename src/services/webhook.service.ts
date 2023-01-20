@@ -457,12 +457,16 @@ export default class WebhookService {
     try {
       const obj = eventObject?.data?.object;
       const subscription_id = obj?.metadata?.subscription_id;
-      const company_id = obj?.metadata?.company_id;
       const customer_id = obj?.metadata?.customer_id;
 
+      const company = await this.companyRepository.getSingleEntity({
+        query: {
+          stripeCustomerId: obj?.customer,
+        },
+      });
       const subscriptionPayment = await this.subscriptionPaymentRepository.getSingleEntity({
         query: {
-          company_id: company_id,
+          company_id: company?.id,
         },
       });
 
@@ -482,17 +486,17 @@ export default class WebhookService {
       });
       this.logger.info({
         operation,
-        message: `Payment details for ${company_id} has been updated.`,
+        message: `Invoice created for ${company?.id} .`,
         data: {
           subscription_id,
           customer_id,
-          company_id,
+          company_id: company?.id,
         },
       });
     } catch (err) {
       this.logger.error({
         operation,
-        message: 'Error updating subscription with the payment method.',
+        message: 'Error creating invoice.',
         data: err,
       });
     }

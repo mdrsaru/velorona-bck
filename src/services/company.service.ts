@@ -105,6 +105,14 @@ export default class CompanyService implements ICompanyService {
         password,
       });
 
+      if (plan === plans.Professional && status === CompanyStatus.Active) {
+        companyEmitter.emit(events.onSubscriptionCreate, {
+          company_id: result?.company?.id,
+          prices: [stripePrices.flatPrice, stripePrices.perUser],
+          company: result?.company,
+        });
+      }
+
       return result.company;
     } catch (err) {
       throw err;

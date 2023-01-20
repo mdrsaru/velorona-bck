@@ -308,9 +308,7 @@ subscriptionEmitter.on(events.onInvoiceFinalized, async (args: InvoiceFinalized)
     });
 
     const obj: IEmailBasicArgs = {
-      // to: user?.email ?? '',
-      to: 'msaruiw@gmail.com' ?? '',
-
+      to: user?.email ?? '',
       from: `${user?.company?.name} ${emailSetting.fromEmail}`,
       subject: subject,
       html: invoiceHtml,
@@ -583,7 +581,7 @@ subscriptionEmitter.on(events.onAutoPayEnrolled, async (args: AutoPayEnrolled) =
       data: {
         hasLogo: hasLogo,
         companyName: companyName ?? '',
-        nextScheduledDate: moment.unix(args.response.cancel_at).format('MM-DD-YYYY'),
+        nextScheduledDate: args.response.cancel_at && moment.unix(args.response.cancel_at).format('MM-DD-YYYY'),
       },
     });
 
