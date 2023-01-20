@@ -547,3 +547,95 @@ subscriptionEmitter.on(events.onPaymentDeclined, async (args: PaymentDeclined) =
     });
   }
 });
+
+type AutoPayEnrolled = {
+  company: any;
+  response: any;
+};
+
+subscriptionEmitter.on(events.onAutoPayEnrolled, async (args: AutoPayEnrolled) => {
+  const operation = events.onAutoPayEnrolled;
+  const logger = container.get<ILogger>(TYPES.Logger);
+  logger.init('subscription.subscriber');
+
+  const emailService: IEmailService = container.get<IEmailService>(TYPES.EmailService);
+  const handlebarsService: ITemplateService = container.get<ITemplateService>(TYPES.HandlebarsService);
+  const userRepository: IUserRepository = container.get<IUserRepository>(TYPES.UserRepository);
+
+  const companyName = args.company.name;
+  const logo = args.company?.logo;
+  try {
+    const hasLogo = !!logo?.id;
+
+    let user = await userRepository.getSingleEntity({
+      query: {
+        company_id: args.company.id,
+      },
+      select: ['email'],
+    });
+
+    let subscriptionTemplate = await fs.readFile(`${__dirname}/../../templates/autopay-enrolled.template.html`, {
+      encoding: 'utf-8',
+    });
+
+    const subscriptionHtml = handlebarsService.compile({
+      template: subscriptionTemplate,
+      data: {
+        hasLogo: hasLogo,
+        companyName: companyName ?? '',
+        nextScheduledDate: moment.unix(args.response.cancel_at).format('MM-DD-YYYY'),
+      },
+    });
+
+    const obj: IEmailBasicArgs = {
+      to: user?.email ?? '',
+      from: `${companyName} ${emailSetting.fromEmail}`,
+      subject: emailSetting.autoPayEnrolled.subject,
+      html: subscriptionHtml,
+    };
+    if (hasLogo) {
+      const image = await axios.get(logo?.url as string, {
+        responseType: 'arraybuffer',
+      });
+      const raw = Buffer.from(image.data).toString('base64');
+
+      obj.attachments = [
+        {
+          content: raw,
+          filename: logo.name as string,
+          cid: 'logo',
+          contentDisposition: 'inline',
+          encoding: 'base64',
+          // type: 'image/png',
+        },
+      ];
+    }
+
+    if (args.company?.status === CompanyStatus.Active) {
+      emailService
+        .sendEmail(obj)
+        .then((response) => {
+          logger.info({
+            operation,
+            message: `Email response for ${user?.email}`,
+            data: response,
+          });
+        })
+        .catch((err) => {
+          logger.error({
+            operation,
+            message: 'Error sending Autopay subscription enabled email',
+            data: err,
+          });
+        });
+    }
+  } catch (err) {
+    logger.error({
+      operation,
+      message: 'Error sending Autopay subscription enabled email',
+      data: {
+        err,
+      },
+    });
+  }
+});

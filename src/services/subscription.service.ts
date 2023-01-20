@@ -62,7 +62,7 @@ export default class SubscriptionService implements ISubscriptionService {
 
       const company = await this.companyRepository.getById({
         id: company_id,
-        select: ['id', 'adminEmail', 'plan', 'subscriptionStatus'],
+        select: ['id', 'name', 'adminEmail', 'plan', 'subscriptionStatus'],
       });
 
       if (!company) {
@@ -84,6 +84,7 @@ export default class SubscriptionService implements ISubscriptionService {
       } else {
         const customer = await this.stripeService.createCustomer({
           email: company.adminEmail,
+          name: company.name,
         });
         customerId = customer.id;
       }

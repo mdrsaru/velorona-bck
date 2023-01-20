@@ -286,6 +286,9 @@ export const emailSetting = {
   paymentDeclinedReminder: {
     subject: process.env.PAYMENT_DECLINED_EMAIL_SUBJECT || '',
   },
+  autoPayEnrolled: {
+    subject: process.env.AUTOPAY_ENROLLED_EMAIL_SUBJECT || '',
+  },
 };
 
 export const events = {
@@ -316,6 +319,7 @@ export const events = {
   onInvoiceFinalized: 'onInvoiceFinalized',
   onClientInvoiceReminder: 'onClientInvoiceReminder',
   onPaymentDeclined: 'onPaymentDeclined',
+  onAutoPayEnrolled: 'onAutoPayEnrolled',
 };
 
 export const stripeSetting = {
