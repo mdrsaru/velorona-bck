@@ -220,7 +220,6 @@ export default class TimesheetService implements ITimesheetService {
       if (!isSubmitted) {
         status = TimesheetStatus.Open;
       }
-      console.log(args, status);
       const timesheet = await this.timesheetRepository.update({
         id,
         status,

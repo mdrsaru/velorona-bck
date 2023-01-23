@@ -40,7 +40,10 @@
           You have successfully enrolled in Autopay for your Velorona account. Below is a summary of changes to your
           account:
         </p>
+        {{#if nextScheduledDate}}
         <p>Your next automatic payment is scheduled for {{nextScheduledDate}}</p>
+        {{/if}}
+
         <p>Your total payment due will be paid monthly while enrolled in Autopay.</p>
         <p>Continue to make payments until your Autopay becomes active.</p>
 
