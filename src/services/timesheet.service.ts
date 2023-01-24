@@ -30,6 +30,7 @@ import { IUserClientRepository } from '../interfaces/user-client.interface';
 import { IClientRepository } from '../interfaces/client.interface';
 import timeEntryEmitter from '../subscribers/timeEntry.subscriber';
 import timesheetEmitter from '../subscribers/timesheet.subscriber';
+import { IProjectRepository } from '../interfaces/project.interface';
 
 @injectable()
 export default class TimesheetService implements ITimesheetService {
@@ -42,6 +43,7 @@ export default class TimesheetService implements ITimesheetService {
   private timeEntryRepository: ITimeEntryRepository;
   private attachedTimesheetRepository: IAttachedTimesheetRepository;
   private clientRepository: IClientRepository;
+  private projectRepository: IProjectRepository;
 
   constructor(
     @inject(TYPES.TimesheetRepository) timesheetRepository: ITimesheetRepository,
@@ -51,7 +53,8 @@ export default class TimesheetService implements ITimesheetService {
     @inject(TYPES.AttachedTimesheetRepository) _attachedTimesheet: IAttachedTimesheetRepository,
     @inject(TYPES.UserRepository) _userRepository: IUserRepository,
     @inject(TYPES.UserClientRepository) _userClientRepository: IUserClientRepository,
-    @inject(TYPES.ClientRepository) _clientRepository: IClientRepository
+    @inject(TYPES.ClientRepository) _clientRepository: IClientRepository,
+    @inject(TYPES.ProjectRepository) _projectRepository: IProjectRepository
   ) {
     this.timesheetRepository = timesheetRepository;
     this.logger = loggerFactory(this.name);
@@ -61,6 +64,7 @@ export default class TimesheetService implements ITimesheetService {
     this.userRepository = _userRepository;
     this.userClientRepository = _userClientRepository;
     this.clientRepository = _clientRepository;
+    this.projectRepository = _projectRepository;
   }
 
   getAllAndCount = async (args: IPagingArgs): Promise<IPaginationData<Timesheet>> => {
@@ -254,13 +258,26 @@ export default class TimesheetService implements ITimesheetService {
 
       const timesheets = await this.timesheetRepository.getAll({ relations: ['company', 'user', 'company.logo'] });
 
-      timesheets.map((timesheet) => {
+      timesheets.map(async (timesheet) => {
         if (!timesheet.isSubmitted) {
-          if (date > timesheet.weekEndDate) {
-            // Emit sendTimesheetSubmitReminderEmail event
-            timesheetEmitter.emit(events.onTimesheetSubmitReminder, {
-              timesheet,
-            });
+          const timeEntry = await this.timeEntryRepository.getAll({
+            query: {
+              timesheet_id: timesheet.id,
+            },
+            select: ['timesheet_id', 'created_by', 'project_id'],
+          });
+
+          const userProject = await this.projectRepository.getUsersAssignedProject({
+            user_id: timeEntry?.[0]?.created_by,
+            project_id: timeEntry?.[0]?.project_id,
+          });
+          if (userProject?.length) {
+            if (date > timesheet.weekEndDate) {
+              // Emit sendTimesheetSubmitReminderEmail event
+              timesheetEmitter.emit(events.onTimesheetSubmitReminder, {
+                timesheet,
+              });
+            }
           }
         }
       });
@@ -277,13 +294,27 @@ export default class TimesheetService implements ITimesheetService {
         relations: ['company', 'user', 'company.logo', 'user.manager'],
       });
 
-      timesheets.map((timesheet) => {
+      timesheets.map(async (timesheet) => {
         if (timesheet.status === TimesheetStatus.Submitted && timesheet.isSubmitted) {
-          if (date > timesheet.weekEndDate) {
-            //Emit sendTimesheetApproveReminderEmail event
-            timesheetEmitter.emit(events.onTimesheetApproveReminder, {
-              timesheet,
-            });
+          const timeEntry = await this.timeEntryRepository.getAll({
+            query: {
+              timesheet_id: timesheet.id,
+            },
+            select: ['timesheet_id', 'created_by', 'project_id'],
+          });
+
+          const userProject = await this.projectRepository.getUsersAssignedProject({
+            user_id: timeEntry?.[0]?.created_by,
+            project_id: timeEntry?.[0]?.project_id,
+          });
+
+          if (userProject?.length) {
+            if (date > timesheet.weekEndDate) {
+              //Emit sendTimesheetApproveReminderEmail event
+              timesheetEmitter.emit(events.onTimesheetApproveReminder, {
+                timesheet,
+              });
+            }
           }
         }
       });

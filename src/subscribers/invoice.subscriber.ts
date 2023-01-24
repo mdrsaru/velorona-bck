@@ -5,7 +5,7 @@ import axios from 'axios';
 import InvoiceItem from '../entities/invoice-item.entity';
 import Client from '../entities/client.entity';
 import { invoiceEmitter } from './emitters';
-import { ClientStatus, emailSetting, events } from '../config/constants';
+import { ClientStatus, CompanyStatus, emailSetting, events } from '../config/constants';
 import { TYPES } from '../types';
 import container from '../inversify.config';
 import Company from '../entities/company.entity';
@@ -152,7 +152,12 @@ invoiceEmitter.on(events.sendInvoice, async (data: any) => {
         });
       });
     }
-    if (client.status === ClientStatus.Active && !client?.archived) {
+    if (
+      client.status === ClientStatus.Active &&
+      !client?.archived &&
+      client.company?.status === CompanyStatus.Active &&
+      !client?.company?.archived
+    ) {
       emailService
         .sendEmail({
           to: email,

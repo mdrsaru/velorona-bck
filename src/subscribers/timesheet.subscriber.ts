@@ -11,6 +11,7 @@ import {
   InvoiceSchedule,
   emailSetting,
   UserStatus,
+  CompanyStatus,
 } from '../config/constants';
 import container from '../inversify.config';
 
@@ -273,24 +274,30 @@ timesheetEmitter.on(events.onTimeEntriesApprove, async (args: TimesheetApprove) 
         attachments,
       }),
     };
+    if (
+      timesheet?.company?.status === CompanyStatus.Active &&
+      !timesheet?.company?.archived &&
+      timesheet?.user?.status === UserStatus.Active &&
+      !timesheet?.user?.archived
+    ) {
+      promises.push(emailService.sendEmail(employeeObj));
 
-    promises.push(emailService.sendEmail(employeeObj));
-
-    Promise.all(promises)
-      .then((response) => {
-        logger.info({
-          operation,
-          message: `Email response for ${timesheet.user?.manager?.email}`,
-          data: response,
+      Promise.all(promises)
+        .then((response) => {
+          logger.info({
+            operation,
+            message: `Email response for ${timesheet.user?.manager?.email}`,
+            data: response,
+          });
+        })
+        .catch((err) => {
+          logger.error({
+            operation,
+            message: 'Error sending approve/reject email',
+            data: err,
+          });
         });
-      })
-      .catch((err) => {
-        logger.error({
-          operation,
-          message: 'Error sending approve/reject email',
-          data: err,
-        });
-      });
+    }
   } catch (err) {
     logger.error({
       operation,
@@ -384,7 +391,12 @@ timesheetEmitter.on(events.sendTimesheetSubmitEmail, async (args: TimesheetSubmi
         },
       ];
     }
-    if (timesheet?.user?.status === UserStatus.Active && !timesheet?.user?.archived) {
+    if (
+      timesheet?.company?.status === CompanyStatus.Active &&
+      !timesheet?.company?.archived &&
+      timesheet?.user?.status === UserStatus.Active &&
+      !timesheet?.user?.archived
+    ) {
       let promises: any = [];
       if (timesheet.user?.manager?.email) {
         const managerSubject = handlebarsService.compile({
@@ -517,7 +529,12 @@ timesheetEmitter.on(events.onTimesheetSubmitReminder, async (args: TimesheetRemi
         },
       ];
     }
-    if (timesheet?.user?.status === UserStatus.Active && !timesheet?.user?.archived) {
+    if (
+      timesheet?.company?.status === CompanyStatus.Active &&
+      !timesheet?.company?.archived &&
+      timesheet?.user?.status === UserStatus.Active &&
+      !timesheet?.user?.archived
+    ) {
       emailService
         .sendEmail(obj)
         .then((response) => {
@@ -616,7 +633,12 @@ timesheetEmitter.on(events.onTimesheetApproveReminder, async (args: TimesheetRem
           },
         ];
       }
-      if (timesheet?.user?.status === UserStatus.Active && !timesheet?.user?.archived) {
+      if (
+        timesheet?.company?.status === CompanyStatus.Active &&
+        !timesheet?.company?.archived &&
+        timesheet?.user?.status === UserStatus.Active &&
+        !timesheet?.user?.archived
+      ) {
         emailService
           .sendEmail(obj)
           .then((response) => {

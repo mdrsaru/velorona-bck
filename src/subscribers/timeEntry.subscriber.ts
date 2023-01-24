@@ -2,7 +2,7 @@ import fs from 'fs/promises';
 
 import { timesheetEmitter, timeEntryEmitter } from './emitters';
 import { TYPES } from '../types';
-import { events, UserStatus } from '../config/constants';
+import { CompanyStatus, events, UserStatus } from '../config/constants';
 import container from '../inversify.config';
 
 import { emailSetting } from '../config/constants';
@@ -279,7 +279,12 @@ timeEntryEmitter.on(events.onTimesheetUnlock, async (args: TimesheetUnlock) => {
       },
     });
 
-    if (timesheet?.user?.status === UserStatus.Active && !timesheet?.user?.archived) {
+    if (
+      timesheet?.company?.status === CompanyStatus.Active &&
+      !timesheet?.company?.archived &&
+      timesheet?.user?.status === UserStatus.Active &&
+      !timesheet?.user?.archived
+    ) {
       let promises: any = [];
 
       if (timesheet.user?.manager?.email) {

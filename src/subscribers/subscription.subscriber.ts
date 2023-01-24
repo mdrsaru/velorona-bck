@@ -517,7 +517,7 @@ subscriptionEmitter.on(events.onPaymentDeclined, async (args: PaymentDeclined) =
       ];
     }
 
-    if (args.company?.status === CompanyStatus.Active) {
+    if (args.company?.status === CompanyStatus.Active && !args?.company?.archived) {
       emailService
         .sendEmail(obj)
         .then((response) => {
@@ -609,7 +609,7 @@ subscriptionEmitter.on(events.onAutoPayEnrolled, async (args: AutoPayEnrolled) =
       ];
     }
 
-    if (args.company?.status === CompanyStatus.Active) {
+    if (args.company?.status === CompanyStatus.Active && !args?.company?.archived) {
       emailService
         .sendEmail(obj)
         .then((response) => {

@@ -134,7 +134,12 @@ companyEmitter.on(events.onSubscriptionCreate, async (args: CreateCompanySubscri
   });
 
   const threeMonths = moment().add(3, 'months').format('MM-DD-YYYY');
-
+  const user: any = await userRepository.getSingleEntity({
+    query: {
+      company_id: company?.id,
+    },
+    select: ['id', 'email'],
+  });
   const companyHtml = handlebarsService.compile({
     template: companyTemplate,
     data: {
@@ -155,7 +160,7 @@ companyEmitter.on(events.onSubscriptionCreate, async (args: CreateCompanySubscri
   const logo = await fs.readFile(`${__dirname}/../../public/logo.png`, { encoding: 'base64' });
 
   const companyObj: IEmailBasicArgs = {
-    to: company?.adminEmail as string,
+    to: user?.email as string,
     from: `${company?.name} ${emailSetting.fromEmail}`,
     subject: companySubject,
     html: companyHtml,
@@ -171,23 +176,24 @@ companyEmitter.on(events.onSubscriptionCreate, async (args: CreateCompanySubscri
       // type: 'image/png',
     },
   ];
-
-  emailService
-    .sendEmail(companyObj)
-    .then((response) => {
-      logger.info({
-        operation,
-        message: `Email response for ${company?.adminEmail}`,
-        data: response,
+  if (company.status === CompanyStatus.Active && !company?.archived) {
+    emailService
+      .sendEmail(companyObj)
+      .then((response) => {
+        logger.info({
+          operation,
+          message: `Email response for ${user?.email}`,
+          data: response,
+        });
+      })
+      .catch((err) => {
+        logger.error({
+          operation,
+          message: 'Error sending workschedule added email',
+          data: err,
+        });
       });
-    })
-    .catch((err) => {
-      logger.error({
-        operation,
-        message: 'Error sending workschedule added email',
-        data: err,
-      });
-    });
+  }
 });
 
 type SubscriptionEndReminderUsage = {
@@ -370,24 +376,25 @@ companyEmitter.on(events.onCompanyRegistered, async (args: CompanyRegisteredUsag
         // type: 'image/png',
       },
     ];
+    if (company?.status === CompanyStatus.Active && !company?.archived) {
+      promises.push(emailService.sendEmail(obj));
 
-    promises.push(emailService.sendEmail(obj));
-
-    Promise.all(promises)
-      .then((response) => {
-        logger.info({
-          operation,
-          message: `Email response for ${mailList}`,
-          data: response,
+      Promise.all(promises)
+        .then((response) => {
+          logger.info({
+            operation,
+            message: `Email response for ${mailList}`,
+            data: response,
+          });
+        })
+        .catch((err) => {
+          logger.error({
+            operation,
+            message: 'Error sending company registered email',
+            data: err,
+          });
         });
-      })
-      .catch((err) => {
-        logger.error({
-          operation,
-          message: 'Error sending company registered email',
-          data: err,
-        });
-      });
+    }
   } catch (err) {
     logger.error({
       operation,

@@ -16,6 +16,7 @@ import { IUserRepository } from '../interfaces/user.interface';
 import {
   IActiveProjectCountInput,
   IAssignProjectToUsers,
+  IGetUsersAssignedProject,
   IProjectCountInput,
   IProjectCreateInput,
   IProjectRepository,
@@ -364,6 +365,28 @@ export default class ProjectRepository extends BaseRepository<Project> implement
       );
 
       return projectFound;
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async getUsersAssignedProject(args: IGetUsersAssignedProject): Promise<any> {
+    try {
+      const user_id = args.user_id;
+      const project_id = args.project_id;
+
+      const queryResult = await this.manager.query(
+        `
+      Select * from user_project
+      where user_id=$1
+      and
+      project_id = $2
+
+      `,
+        [user_id, project_id]
+      );
+
+      return queryResult;
     } catch (err) {
       throw err;
     }
