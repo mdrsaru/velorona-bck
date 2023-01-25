@@ -1,20 +1,18 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class AddUserPayRateStatus1674629997265 implements MigrationInterface {
-  name = 'AddUserPayRateStatus1674629997265';
+export class AddUserPayrateStatus1674647698961 implements MigrationInterface {
+  name = 'AddUserPayrateStatus1674647698961';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
             ALTER TABLE "user_payrate"
-            ALTER COLUMN "status" DROP NOT NULL
+            ADD "status" character varying DEFAULT 'Active'
         `);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
-            ALTER TABLE "user_payrate"
-            ALTER COLUMN "status"
-            SET NOT NULL
+            ALTER TABLE "user_payrate" DROP COLUMN "status"
         `);
   }
 }
