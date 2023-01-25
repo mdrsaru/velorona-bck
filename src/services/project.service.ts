@@ -13,20 +13,25 @@ import {
   IProjectUpdateInput,
   IRemoveAssignProjectToUsers,
 } from '../interfaces/project.interface';
+import { IUserPayRateRepository } from '../interfaces/user-payrate.interface';
+import { UserPayRateStatus } from '../config/constants';
 
 @injectable()
 export default class ProjectService implements IProjectService {
   private name = 'ProjectService';
   private projectRepository: IProjectRepository;
+  private userPayRateRepository: IUserPayRateRepository;
   private logger: ILogger;
   private errorService: IErrorService;
 
   constructor(
     @inject(TYPES.ProjectRepository) _projectRepository: IProjectRepository,
+    @inject(TYPES.UserPayRateRepository) _userPayRateRepository: IUserPayRateRepository,
     @inject(TYPES.LoggerFactory) loggerFactory: (name: string) => ILogger,
     @inject(TYPES.ErrorService) _errorService: IErrorService
   ) {
     this.projectRepository = _projectRepository;
+    this.userPayRateRepository = _userPayRateRepository;
     this.logger = loggerFactory(this.name);
     this.errorService = _errorService;
   }
@@ -87,14 +92,25 @@ export default class ProjectService implements IProjectService {
     const archived = args?.archived;
     const user_ids = args.user_ids;
     const client_id = args.client_id;
+    const removedUser = args.removedUser;
 
-    if (user_ids) {
-      await this.projectRepository.assignProjectToUsers({
-        user_id: user_ids,
-        project_id: id,
-      });
-    }
     try {
+      let foundProject = await this.projectRepository.getById({
+        id,
+        select: ['client_id'],
+      });
+      // Remove user project of previous client if client is changed
+      if (client_id !== foundProject?.client_id) {
+        await this.projectRepository.removeAssignProject({
+          project_id: id,
+        });
+      }
+      if (user_ids) {
+        await this.projectRepository.assignProjectToUsers({
+          user_id: user_ids,
+          project_id: id,
+        });
+      }
       let project = await this.projectRepository.update({
         id,
         name,
@@ -103,6 +119,22 @@ export default class ProjectService implements IProjectService {
         user_ids,
         client_id,
       });
+      if (removedUser) {
+        removedUser?.map(async (user_id, index) => {
+          let userPayRate = await this.userPayRateRepository.getAll({
+            query: {
+              user_id,
+              project_id: project.id,
+            },
+          });
+          if (userPayRate.length) {
+            let result = await this.userPayRateRepository.update({
+              id: userPayRate?.[0]?.id,
+              status: UserPayRateStatus.Inactive,
+            });
+          }
+        });
+      }
 
       return project;
     } catch (err) {

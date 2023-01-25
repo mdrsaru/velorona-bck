@@ -65,7 +65,6 @@ export default class UserPayRateRepository extends BaseRepository<UserPayRate> i
         ...(_select?.length && { select: _select }),
         ...rest,
       });
-
       return {
         count,
         rows,
@@ -157,6 +156,7 @@ export default class UserPayRateRepository extends BaseRepository<UserPayRate> i
       const invoiceRate = args.invoiceRate;
       const user_rate_currency_id = args.user_rate_currency_id;
       const invoice_rate_currency_id = args.invoice_rate_currency_id;
+      const status = args?.status;
 
       const found = await this.getById({ id });
       if (!found) {
@@ -174,6 +174,7 @@ export default class UserPayRateRepository extends BaseRepository<UserPayRate> i
         invoiceRate,
         user_rate_currency_id,
         invoice_rate_currency_id,
+        status,
       });
 
       let UserPayRate = await this.repo.save(update);

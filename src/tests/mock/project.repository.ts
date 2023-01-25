@@ -114,6 +114,10 @@ export default class ProjectRepository implements IProjectRepository {
   removeAssignProjectToUsers(args: IRemoveAssignProjectToUsers): Promise<Project> {
     throw new Error('not implemented');
   }
+  async removeAssignProject(args: IRemoveAssignProjectToUsers): Promise<Project> {
+    throw new Error('not implemented');
+  }
+
   getUsersAssignedProject(args: IGetUsersAssignedProject): Promise<any> {
     throw new Error('not implemented');
   }

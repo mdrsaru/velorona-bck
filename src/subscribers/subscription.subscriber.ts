@@ -308,7 +308,7 @@ subscriptionEmitter.on(events.onInvoiceFinalized, async (args: InvoiceFinalized)
     });
 
     const obj: IEmailBasicArgs = {
-      to: user?.email ?? '',
+      to: user?.company?.adminEmail ?? '',
       from: `${user?.company?.name} ${emailSetting.fromEmail}`,
       subject: subject,
       html: invoiceHtml,
@@ -338,7 +338,7 @@ subscriptionEmitter.on(events.onInvoiceFinalized, async (args: InvoiceFinalized)
         .then((response) => {
           logger.info({
             operation,
-            message: `Email response for ${user?.email}`,
+            message: `Email response for ${user?.company?.adminEmail}`,
             data: response,
           });
         })
@@ -586,7 +586,7 @@ subscriptionEmitter.on(events.onAutoPayEnrolled, async (args: AutoPayEnrolled) =
     });
 
     const obj: IEmailBasicArgs = {
-      to: user?.email ?? '',
+      to: args?.company?.adminEmail ?? '',
       from: `${companyName} ${emailSetting.fromEmail}`,
       subject: emailSetting.autoPayEnrolled.subject,
       html: subscriptionHtml,
@@ -615,7 +615,7 @@ subscriptionEmitter.on(events.onAutoPayEnrolled, async (args: AutoPayEnrolled) =
         .then((response) => {
           logger.info({
             operation,
-            message: `Email response for ${user?.email}`,
+            message: `Email response for ${args?.company?.adminEmail}`,
             data: response,
           });
         })

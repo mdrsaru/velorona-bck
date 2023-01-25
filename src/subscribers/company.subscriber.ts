@@ -160,7 +160,7 @@ companyEmitter.on(events.onSubscriptionCreate, async (args: CreateCompanySubscri
   const logo = await fs.readFile(`${__dirname}/../../public/logo.png`, { encoding: 'base64' });
 
   const companyObj: IEmailBasicArgs = {
-    to: user?.email as string,
+    to: company?.adminEmail as string,
     from: `${company?.name} ${emailSetting.fromEmail}`,
     subject: companySubject,
     html: companyHtml,
@@ -182,7 +182,7 @@ companyEmitter.on(events.onSubscriptionCreate, async (args: CreateCompanySubscri
       .then((response) => {
         logger.info({
           operation,
-          message: `Email response for ${user?.email}`,
+          message: `Email response for ${company?.adminEmail}`,
           data: response,
         });
       })
@@ -248,7 +248,7 @@ companyEmitter.on(events.onSubscriptionEndReminder, async (args: SubscriptionEnd
     });
 
     const obj: IEmailBasicArgs = {
-      to: user?.email ?? '',
+      to: company?.adminEmail ?? '',
       from: `${company?.name} ${emailSetting.fromEmail}`,
       subject: emailSetting.subscriptionEndReminder.subject,
       html: timesheetHtml,

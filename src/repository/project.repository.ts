@@ -26,6 +26,7 @@ import {
 import { IClientRepository } from '../interfaces/client.interface';
 import { IGetAllAndCountResult, IGetOptions } from '../interfaces/paging.interface';
 import User from '../entities/user.entity';
+import { entities } from '../config/constants';
 
 @injectable()
 export default class ProjectRepository extends BaseRepository<Project> implements IProjectRepository {
@@ -364,6 +365,31 @@ export default class ProjectRepository extends BaseRepository<Project> implement
         [user_id, project_id]
       );
 
+      return projectFound;
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async removeAssignProject(args: IRemoveAssignProjectToUsers): Promise<Project> {
+    try {
+      const project_id = args.project_id;
+
+      const projectFound: any = await this.getSingleEntity({
+        query: {
+          id: project_id,
+        },
+      });
+
+      const queryResult = await this.manager.query(
+        `
+      Delete from user_project
+      where 
+      project_id = $1
+
+      `,
+        [project_id]
+      );
       return projectFound;
     } catch (err) {
       throw err;

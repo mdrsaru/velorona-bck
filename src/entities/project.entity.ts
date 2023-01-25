@@ -127,6 +127,9 @@ export class ProjectUpdateInput {
 
   @Field(() => [String], { nullable: true })
   user_ids: string[];
+
+  @Field(() => [String], { nullable: true })
+  removedUser: string[];
 }
 
 @InputType()

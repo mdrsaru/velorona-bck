@@ -1,6 +1,7 @@
 import { IPagingArgs, IGetAllAndCountResult, IPaginationData, IGetOptions } from './paging.interface';
 import { IEntityRemove, IEntityID } from './common.interface';
 import UserPayRate from '../entities/user-payrate.entity';
+import { UserPayRateStatus } from '../config/constants';
 
 export interface IUserPayRate {
   id: string;
@@ -37,6 +38,7 @@ export interface IUserPayRateUpdateInput {
   invoiceRate?: IUserPayRate['invoiceRate'];
   user_rate_currency_id?: IUserPayRate['user_rate_currency_id'];
   invoice_rate_currency_id?: IUserPayRate['invoice_rate_currency_id'];
+  status?: string;
 }
 
 export interface IPayrateByUserAndProject {

@@ -1,7 +1,7 @@
-import { Field, InputType, ObjectType } from 'type-graphql';
+import { Field, InputType, ObjectType, registerEnumType } from 'type-graphql';
 import { Column, Entity, JoinColumn, ManyToOne, Unique } from 'typeorm';
 
-import { entities } from '../config/constants';
+import { entities, UserPayRateStatus } from '../config/constants';
 import { userPayRate } from '../config/db/columns';
 import { Base } from './base.entity';
 import { PagingInput, PagingResult } from './common.entity';
@@ -9,6 +9,9 @@ import Project from './project.entity';
 import User from './user.entity';
 import Currency from './currency.entity';
 
+registerEnumType(UserPayRateStatus, {
+  name: 'UserPayRateStatus',
+});
 @ObjectType()
 @Unique(['user_id', 'project_id'])
 @Entity({ name: entities.userPayRate })
@@ -46,6 +49,10 @@ export default class UserPayRate extends Base {
   @Field()
   @Column({ name: userPayRate.invoice_rate, default: 0 })
   invoiceRate: number;
+
+  @Field({ nullable: true })
+  @Column({ default: UserPayRateStatus.Active, nullable: true })
+  status: UserPayRateStatus;
 
   @Field()
   @Column()
@@ -139,6 +146,9 @@ export class UserPayRateQuery {
 
   @Field({ nullable: true })
   company_id: string;
+
+  @Field({ nullable: true })
+  status: string;
 }
 
 @InputType()

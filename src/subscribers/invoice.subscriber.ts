@@ -121,6 +121,7 @@ invoiceEmitter.on(events.sendInvoice, async (data: any) => {
         filename: `invoice-${invoice.invoiceNumber}.pdf`,
         contentType: 'application/pdf',
         contentDisposition: 'attachment',
+        encoding: 'base64',
       },
     ];
 
@@ -149,6 +150,7 @@ invoiceEmitter.on(events.sendInvoice, async (data: any) => {
           filename: att.name,
           contentType: att.contentType,
           contentDisposition: 'attachment',
+          encoding: 'base64',
         });
       });
     }

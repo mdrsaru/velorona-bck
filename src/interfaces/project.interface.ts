@@ -30,6 +30,7 @@ export interface IProjectUpdateInput {
   client_id?: IProject['client_id'];
   archived?: IProject['archived'];
   user_ids?: string[];
+  removedUser?: string[];
 }
 
 export interface IProjectCountInput extends ICountInput {
@@ -48,7 +49,7 @@ export interface IAssignProjectToUsers {
 }
 
 export interface IRemoveAssignProjectToUsers {
-  user_id: string;
+  user_id?: string;
   project_id: string;
 }
 
@@ -69,6 +70,7 @@ export interface IProjectRepository {
   countActiveProjectInvolved(args: IActiveProjectCountInput): Promise<number>;
   assignProjectToUsers(args: IAssignProjectToUsers): Promise<Project>;
   removeAssignProjectToUsers(args: IRemoveAssignProjectToUsers): Promise<Project | undefined>;
+  removeAssignProject(args: IRemoveAssignProjectToUsers): Promise<Project | undefined>;
   getUsersAssignedProject(args: IGetUsersAssignedProject): Promise<any>;
 }
 

@@ -229,6 +229,7 @@ export class ProjectResolver {
       const archived = args.archived;
       const user_ids = args.user_ids;
       const client_id = args.client_id;
+      const removedUser = args.removedUser;
 
       const schema = ProjectValidation.update();
       await this.joiService.validate({
@@ -250,6 +251,7 @@ export class ProjectResolver {
         archived,
         user_ids,
         client_id,
+        removedUser,
       });
 
       return project;
