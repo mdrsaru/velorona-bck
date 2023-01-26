@@ -93,7 +93,11 @@ export class InvoiceResolver {
   }
 
   @Mutation((returns) => Invoice)
-  @UseMiddleware(authenticate, authorize(RoleEnum.SuperAdmin, RoleEnum.CompanyAdmin), checkCompanyAccess)
+  @UseMiddleware(
+    authenticate,
+    authorize(RoleEnum.SuperAdmin, RoleEnum.CompanyAdmin, RoleEnum.BookKeeper),
+    checkCompanyAccess
+  )
   async InvoiceCreate(@Arg('input') args: InvoiceCreateInput, @Ctx() ctx: any): Promise<Invoice> {
     const operation = 'InvoiceCreate';
 
@@ -176,7 +180,11 @@ export class InvoiceResolver {
   }
 
   @Mutation((returns) => Invoice)
-  @UseMiddleware(authenticate, authorize(RoleEnum.SuperAdmin, RoleEnum.CompanyAdmin), checkCompanyAccess)
+  @UseMiddleware(
+    authenticate,
+    authorize(RoleEnum.SuperAdmin, RoleEnum.CompanyAdmin, RoleEnum.BookKeeper),
+    checkCompanyAccess
+  )
   async InvoiceUpdate(@Arg('input') args: InvoiceUpdateInput, @Ctx() ctx: any): Promise<Invoice> {
     const operation = 'InvoiceUpdate';
 

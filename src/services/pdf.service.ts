@@ -82,7 +82,7 @@ export default class PDFService {
           .text(invoice?.client?.name, 50, customerInformationTop + 15)
           .font('Helvetica')
           .text(clientAddress, 50, customerInformationTop + 30)
-          .text(invoice?.client?.name, 50, customerInformationTop + 15)
+          // .text(invoice?.client?.name, 50, customerInformationTop + 15)
           .font('Helvetica-Bold')
           .text('Invoice Number: ', 380, customerInformationTop)
           .font('Helvetica')

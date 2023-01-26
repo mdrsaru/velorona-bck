@@ -109,14 +109,15 @@ export default class UserClientService implements IUserClientService {
 
         if (user.roles?.[0]?.name === Role.Employee && user.entryType === EntryType.Timesheet) {
           const startDate = user.startDate;
-
-          const input = moment(startDate);
-          const firstDayOfMonth = input.clone().startOf('month').format('YYYY-MM-DD');
+          const today = moment();
+          // const input = moment(startDate);
+          const firstDayOfMonth = today.clone().startOf('month').format('YYYY-MM-DD');
 
           const firstWeekStartDate = moment(firstDayOfMonth).startOf('isoWeek');
 
           let weekStartDate;
-          if (moment(firstDayOfMonth).format('YYYY-MM-DD') === moment(startDate).format('YYYY-MM-DD')) {
+
+          if (moment(firstDayOfMonth).format('YYYY-MM-DD') === moment(today).format('YYYY-MM-DD')) {
             const foundTimesheet = await this.timesheetRepository.getAll({
               query: {
                 user_id,
@@ -133,7 +134,7 @@ export default class UserClientService implements IUserClientService {
               });
             }
           } else {
-            weekStartDate = moment(user.startDate).startOf('isoWeek');
+            weekStartDate = moment(today).startOf('isoWeek');
             const foundTimesheet = await this.timesheetRepository.getAll({
               query: {
                 user_id,
