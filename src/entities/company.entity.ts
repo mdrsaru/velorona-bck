@@ -105,7 +105,7 @@ export default class Company extends Base {
   @Column({ name: 'collection_method', nullable: true, type: 'varchar' })
   collectionMethod: CollectionMethod;
 
-  @Field(() => User)
+  @Field(() => User, { nullable: true })
   admin: User;
 }
 
