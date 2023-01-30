@@ -54,6 +54,14 @@ export default class SubscriptionPayment extends Base {
   @Field({ nullable: true })
   @Column({ nullable: true, name: 'receipt_link' })
   receiptLink: string;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true, name: 'period_start_date' })
+  periodStartDate: string;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true, name: 'period_end_date' })
+  periodEndDate: string;
 }
 
 @ObjectType()

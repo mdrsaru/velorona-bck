@@ -7,6 +7,8 @@ export interface ISubscriptionPayment {
   id: string;
   status: SubscriptionPaymentStatus;
   paymentDate: Date;
+  periodStartDate: string;
+  periodEndDate: string;
   amount: number;
   company_id: string;
   invoiceLink?: string;
@@ -25,6 +27,8 @@ export interface ISubscriptionPaymentUpdate {
   subscriptionId?: string;
   status?: ISubscriptionPayment['status'];
   paymentDate?: ISubscriptionPayment['paymentDate'];
+  periodStartDate?: ISubscriptionPayment['periodStartDate'];
+  periodEndDate?: ISubscriptionPayment['periodEndDate'];
   amount?: ISubscriptionPayment['amount'];
   invoiceLink?: ISubscriptionPayment['invoiceLink'];
   receiptLink?: ISubscriptionPayment['receiptLink'];

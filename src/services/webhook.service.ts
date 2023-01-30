@@ -473,6 +473,8 @@ export default class WebhookService {
       await this.subscriptionPaymentRepository.update({
         id: subscriptionPayment?.id as string,
         invoiceLink: obj.invoice_pdf,
+        periodStartDate: moment.unix(obj.period_start).format('MM-DD-YYYY'),
+        periodEndDate: moment.unix(obj.period_end).format('MM-DD-YYYY'),
       });
 
       subscriptionEmitter.emit(events.onInvoiceFinalized, {
