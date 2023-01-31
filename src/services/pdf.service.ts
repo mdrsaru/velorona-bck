@@ -97,7 +97,7 @@ export default class PDFService {
           .text(moment(invoice.dueDate).format('YYYY-MM-DD'), 480, customerInformationTop + 30)
           .font('Helvetica-Bold')
           .text('Amount Due: ', 380, customerInformationTop + 45)
-          .text(`$${invoice.totalAmount}`, 480, customerInformationTop + 45)
+          .text(`${invoice.items?.[0].currency}${invoice.totalAmount}`, 480, customerInformationTop + 45)
           .moveDown();
 
         if (invoice?.startDate && invoice?.endDate) {
@@ -140,8 +140,8 @@ export default class PDFService {
             item: items[i]?.project?.name,
             description: items[i]?.description,
             quantity: `${items[i]?.quantity}`,
-            price: `$${items[i]?.rate}`,
-            amount: `$${items[i]?.amount}`,
+            price: `${items[i]?.currency}${items[i]?.rate}`,
+            amount: `${items[i]?.currency}${items[i]?.amount}`,
           });
 
           this.generateHr(doc, position + 25);
@@ -156,7 +156,7 @@ export default class PDFService {
           description: '',
           quantity: '',
           price: 'Subtotal',
-          amount: `$${invoice.subtotal}`,
+          amount: `${invoice.items?.[0].currency}${invoice.subtotal}`,
         });
 
         const taxPosition = subtotalPosition + 20;
@@ -168,7 +168,7 @@ export default class PDFService {
           description: '',
           quantity: '',
           price: 'Tax amount',
-          amount: `$${invoice.taxAmount ?? 0}`,
+          amount: `${invoice.items?.[0].currency}${invoice.taxAmount ?? 0}`,
         });
 
         const paidToDatePosition = taxPosition + 20;
@@ -179,7 +179,7 @@ export default class PDFService {
           description: '',
           quantity: '',
           price: 'Total',
-          amount: `$${invoice?.totalAmount}`,
+          amount: ` ${invoice.items?.[0].currency}${invoice?.totalAmount}`,
         });
 
         if (invoice.notes) {

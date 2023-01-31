@@ -73,7 +73,7 @@ export default class CompanyRepository extends BaseRepository<Company> implement
       if (search) {
         _searchWhere = [
           {
-            name: ILike(`%${search}`),
+            name: ILike(`%${search}%`),
             ...where,
           },
         ];

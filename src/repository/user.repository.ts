@@ -61,11 +61,11 @@ export default class UserRepository extends BaseRepository<User> implements IUse
       if (search) {
         _searchWhere = [
           {
-            firstName: ILike(`%${search}`),
+            firstName: ILike(`%${search}%`),
             ...where,
           },
           {
-            email: ILike(`%${search}`),
+            email: ILike(`%${search}%`),
             ...where,
           },
         ];

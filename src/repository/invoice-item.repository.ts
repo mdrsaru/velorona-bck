@@ -57,6 +57,7 @@ export default class InvoiceItemRepository extends BaseRepository<InvoiceItem> i
           invoice_id,
           description: item.description || '',
           project_id: item.project_id,
+          currency: item.currency,
           quantity: item.quantity ?? 0,
           rate: item.rate ?? 0,
           amount: item.amount ?? 0,
