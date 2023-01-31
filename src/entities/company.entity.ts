@@ -284,6 +284,36 @@ export class CompanyGrowthOutput {
   createdAt: Date;
 }
 
+@ObjectType()
+export class Card {
+  @Field({ nullable: true })
+  last4: string;
+
+  @Field({ nullable: true })
+  exp_month: string;
+
+  @Field({ nullable: true })
+  brand: string;
+
+  @Field({ nullable: true })
+  exp_year: string;
+}
+
+@ObjectType()
+export class Customer {
+  @Field({ nullable: true })
+  id: string;
+
+  @Field(() => Card, { nullable: true })
+  card: Card;
+
+  @Field({ nullable: true })
+  customer: string;
+
+  @Field({ nullable: true })
+  type: string;
+}
+
 @InputType()
 export class CompanyResendInvitationInput {
   @Field()

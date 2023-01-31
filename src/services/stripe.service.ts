@@ -16,6 +16,7 @@ import {
   IStripeUsageRecordCreateArgs,
   IStripeSubscriptionCancelArgs,
   IStripeSubscriptionRetrieveArgs,
+  IStripeCustomerArgs,
 } from '../interfaces/stripe.interface';
 
 @injectable()
@@ -69,6 +70,33 @@ export default class StripeService {
       });
 
       return customer;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  retrieveCustomer = async (args: IStripeCustomerArgs) => {
+    try {
+      const customerId = args.customerId;
+      let errors = [];
+
+      if (isNil(customerId) || !isString(customerId)) {
+        errors.push(strings.customerRequired);
+      }
+
+      if (errors.length) {
+        throw new apiError.ValidationError({
+          details: errors,
+        });
+      }
+
+      const paymentMethods: any = await this.stripe.paymentMethods.list({
+        customer: customerId,
+        type: 'card',
+      });
+
+      // console.log(paymentMethods,'paymentMethod')
+      return paymentMethods?.data;
     } catch (err) {
       throw err;
     }
@@ -269,5 +297,54 @@ export default class StripeService {
     } catch (err) {
       throw err;
     }
+  };
+
+  createToken = async (args: any) => {
+    try {
+      //     // const subscription = await this.stripe.subscriptions.update(id, params);
+      //     var param:any = {};
+      //     param.card ={
+      //         number: '4242424242424242',
+      //         exp_month: 2,
+      //         exp_year:2024,
+      //         cvc:'212'
+      //     }
+
+      //     const token = await this.stripe.tokens.create(param)
+      // console.log(token)
+
+      // let res = await this.stripe.customers.createSource('cus_NCfvpL3pYvVzQz',{source: token?.id})
+      // console.log(res,'res')
+
+      //  const cardDetail:any = await this.stripe.customers.retrieve('cus_NCfvpL3pYvVzQz')
+      //   console.log(cardDetail)
+      return 'createToken';
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  createPaymentIntent = async (args: any) => {
+    const paymentIntent = await this.stripe.paymentIntents.create({
+      payment_method_types: ['card'],
+      amount: 1000,
+      currency: 'usd',
+    });
+
+    return {
+      clientSecret: paymentIntent.client_secret,
+    };
+  };
+  subscriptionPayment = async (args: any) => {
+    const customerId = args.customerId;
+    const cardId = args.cardId;
+    const paymentIntent = await this.stripe.paymentIntents.create({
+      payment_method_types: ['card'],
+      amount: 1000,
+      currency: 'usd',
+      customer: customerId,
+      payment_method: cardId,
+    });
+    const paymentIntents = await this.stripe.paymentIntents.confirm(paymentIntent?.id, { payment_method: cardId });
   };
 }

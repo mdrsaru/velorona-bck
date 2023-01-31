@@ -6,7 +6,12 @@ import { TYPES } from '../../types';
 import * as apiError from '../../utils/api-error';
 import Paging from '../../utils/paging';
 import User from '../../entities/user.entity';
-import Company, { CompanyCountInput, CompanyGrowthOutput, CompanyByIdInput } from '../../entities/company.entity';
+import Company, {
+  CompanyCountInput,
+  CompanyGrowthOutput,
+  CompanyByIdInput,
+  Customer,
+} from '../../entities/company.entity';
 import { Role as RoleEnum, CompanyStatus } from '../../config/constants';
 import CompanyValidation from '../../validation/company.validation';
 import authenticate from '../middlewares/authenticate';
@@ -28,6 +33,7 @@ import { IErrorService, IJoiService } from '../../interfaces/common.interface';
 import { IGraphqlContext } from '../../interfaces/graphql.interface';
 import { IUserRepository } from '../../interfaces/user.interface';
 import { IAuthService } from '../../interfaces/auth.interface';
+import StripeService from '../../services/stripe.service';
 
 @injectable()
 @Resolver((of) => Company)
@@ -38,6 +44,7 @@ export class CompanyResolver {
   private errorService: IErrorService;
   private companyRepository: ICompanyRepository;
   private userRepository: IUserRepository;
+  private stripeService: StripeService;
   private authService: IAuthService;
 
   constructor(
@@ -46,6 +53,7 @@ export class CompanyResolver {
     @inject(TYPES.ErrorService) errorService: IErrorService,
     @inject(TYPES.CompanyRepository) _companyRepostitory: ICompanyRepository,
     @inject(TYPES.UserRepository) _userRepostitory: IUserRepository,
+    @inject(TYPES.StripeService) _stripeService: StripeService,
     @inject(TYPES.AuthService) _authService: IAuthService
   ) {
     this.companyService = companyService;
@@ -54,6 +62,7 @@ export class CompanyResolver {
     this.companyRepository = _companyRepostitory;
     this.userRepository = _userRepostitory;
     this.authService = _authService;
+    this.stripeService = _stripeService;
   }
 
   @Query((returns) => Company)
@@ -133,6 +142,31 @@ export class CompanyResolver {
     try {
       let result: CompanyGrowthOutput[] = await this.companyRepository.companyGrowth({ query: args });
       return result;
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
+    }
+  }
+
+  @Query((returns) => [Customer])
+  @UseMiddleware(authenticate, authorize(RoleEnum.SuperAdmin, RoleEnum.CompanyAdmin))
+  async RetrieveCustomer(
+    @Arg('input', { nullable: true }) args: CompanyByIdInput,
+    @Ctx() ctx: any
+  ): Promise<Customer[]> {
+    const operation = 'Customer Retrieve';
+    try {
+      const companyId = args?.id;
+      let company: any = await this.companyRepository.getById({ id: companyId });
+
+      const customer = await this.stripeService.retrieveCustomer({
+        customerId: company?.stripeCustomerId,
+      });
+      return customer;
     } catch (err) {
       this.errorService.throwError({
         err,

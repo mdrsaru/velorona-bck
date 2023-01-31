@@ -15,26 +15,33 @@ import {
   SetupIntentSecretInput,
   SetupIntentResult,
   SubscriptionDowngradeInput,
+  SubscriptionPaymentInput,
+  CreatePaymentIntentInput,
+  PaymentIntentResponse,
 } from '../../entities/subscription.entity';
 
 import { IErrorService } from '../../interfaces/common.interface';
 import { IGraphqlContext } from '../../interfaces/graphql.interface';
 import { ISubscriptionService } from '../../interfaces/subscription.interface';
 import moment from 'moment';
+import StripeService from '../../services/stripe.service';
 
 @injectable()
 @Resolver()
 export class SubscriptionResolver {
   private name = 'SubscriptionResolver';
   private errorService: IErrorService;
+  private stripeService: StripeService;
   private subscriptionService: ISubscriptionService;
 
   constructor(
     @inject(TYPES.ErrorService) _errorService: IErrorService,
-    @inject(TYPES.SubscriptionService) _subscriptionService: ISubscriptionService
+    @inject(TYPES.SubscriptionService) _subscriptionService: ISubscriptionService,
+    @inject(TYPES.StripeService) _stripeService: StripeService
   ) {
     this.errorService = _errorService;
     this.subscriptionService = _subscriptionService;
+    this.stripeService = _stripeService;
   }
 
   @Mutation((returns) => SubscriptionCreateResult)
@@ -155,6 +162,57 @@ export class SubscriptionResolver {
       });
 
       return 'Your subscription will be downgraded at the end of the period.';
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
+    }
+  }
+
+  @Mutation((returns) => String)
+  @UseMiddleware(authenticate)
+  async SubscriptionPayment(@Arg('input') args: SubscriptionPaymentInput, @Ctx() ctx: any): Promise<String> {
+    const operation = 'SubscriptionUpgrade';
+
+    try {
+      const customerId = args.customerId;
+      const cardId = args.cardId;
+
+      const subscription = await this.stripeService.subscriptionPayment({
+        customerId,
+        cardId,
+      });
+
+      return 'Successful';
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
+    }
+  }
+
+  @Mutation((returns) => PaymentIntentResponse)
+  @UseMiddleware(authenticate)
+  async CreatePaymentIntent(
+    @Arg('input') args: CreatePaymentIntentInput,
+    @Ctx() ctx: any
+  ): Promise<PaymentIntentResponse> {
+    const operation = 'SubscriptionUpgrade';
+
+    try {
+      const customerId = args.customerId;
+
+      const subscription: any = await this.stripeService.createPaymentIntent({
+        customerId,
+      });
+
+      return subscription;
     } catch (err) {
       this.errorService.throwError({
         err,

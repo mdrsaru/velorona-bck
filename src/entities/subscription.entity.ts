@@ -30,6 +30,27 @@ export class SubscriptionUpgradeInput {
 }
 
 @InputType()
+export class SubscriptionPaymentInput {
+  @Field()
+  cardId: string;
+
+  @Field()
+  customerId: string;
+}
+
+@InputType()
+export class CreatePaymentIntentInput {
+  @Field({ nullable: true })
+  customerId: string;
+}
+
+@ObjectType()
+export class PaymentIntentResponse {
+  @Field({ nullable: true })
+  clientSecret: string;
+}
+
+@InputType()
 export class SubscriptionCancelInput {
   @Field()
   company_id: string;

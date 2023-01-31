@@ -4,6 +4,10 @@ export interface IStripeCustomerCreateArgs {
   metadata?: any;
 }
 
+export interface IStripeCustomerArgs {
+  customerId: string;
+}
+
 export interface IStripeSubscriptionItem {
   price: string;
 }
