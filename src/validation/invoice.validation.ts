@@ -27,6 +27,7 @@ export default class CompanyValidation {
             quantity: Joi.number().required().error(new Error(strings.quantityRequired)),
             rate: Joi.number().required().error(new Error(strings.rateRequired)),
             amount: Joi.number().required().error(new Error(strings.amountRequired)),
+            currency: Joi.string(),
           })
         )
         .required(),

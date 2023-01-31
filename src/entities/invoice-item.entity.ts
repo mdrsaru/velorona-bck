@@ -57,6 +57,10 @@ export default class InvoiceItem extends Base {
     type: 'float',
   })
   amount: number;
+
+  @Field({ nullable: true })
+  @Column({ default: '$' })
+  currency: string;
 }
 
 @InputType()
@@ -66,6 +70,9 @@ export class InvoiceItemCreateInput {
 
   @Field({ nullable: true })
   description: string;
+
+  @Field({ nullable: true })
+  currency: string;
 
   @Field((type) => Float)
   quantity: number;

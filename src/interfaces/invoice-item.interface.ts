@@ -17,6 +17,7 @@ export interface IInvoiceItem {
 export interface IInvoiceItemInput {
   project_id: IInvoiceItem['project_id'];
   description?: IInvoiceItem['description'];
+  currency?: string;
   quantity: IInvoiceItem['quantity'];
   rate: IInvoiceItem['rate'];
   amount: IInvoiceItem['amount'];
