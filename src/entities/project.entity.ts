@@ -172,6 +172,9 @@ export class ProjectCountInput {
 
   @Field({ nullable: true })
   user_id: string;
+
+  @Field({ nullable: true, defaultValue: false })
+  archived: boolean;
 }
 
 @InputType()

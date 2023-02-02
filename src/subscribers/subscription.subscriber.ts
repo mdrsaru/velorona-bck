@@ -146,6 +146,12 @@ subscriptionEmitter.on(events.onSubscriptionUpdate, async (args: UpdateCompanySu
     relations: ['company', 'company.logo'],
   });
 
+  const company = await companyRepository.getSingleEntity({
+    query: {
+      id: company_id,
+    },
+    select: ['id', 'name', 'adminEmail'],
+  });
   try {
     if (!user) {
       return;
@@ -187,7 +193,7 @@ subscriptionEmitter.on(events.onSubscriptionUpdate, async (args: UpdateCompanySu
     });
 
     const obj: IEmailBasicArgs = {
-      to: user?.email ?? '',
+      to: company?.adminEmail ?? '',
       from: `${user?.company?.name} ${emailSetting.fromEmail}`,
       subject: subject,
       html: updateHtml,
