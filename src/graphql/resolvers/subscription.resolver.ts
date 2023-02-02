@@ -18,13 +18,15 @@ import {
   SubscriptionPaymentInput,
   CreatePaymentIntentInput,
   PaymentIntentResponse,
+  RetrieveSubscriptionInput,
+  Subscription,
 } from '../../entities/subscription.entity';
 
 import { IErrorService } from '../../interfaces/common.interface';
 import { IGraphqlContext } from '../../interfaces/graphql.interface';
 import { ISubscriptionService } from '../../interfaces/subscription.interface';
-import moment from 'moment';
 import StripeService from '../../services/stripe.service';
+import { ICompanyRepository } from '../../interfaces/company.interface';
 
 @injectable()
 @Resolver()
@@ -32,16 +34,19 @@ export class SubscriptionResolver {
   private name = 'SubscriptionResolver';
   private errorService: IErrorService;
   private stripeService: StripeService;
+  private companyRepository: ICompanyRepository;
   private subscriptionService: ISubscriptionService;
 
   constructor(
     @inject(TYPES.ErrorService) _errorService: IErrorService,
     @inject(TYPES.SubscriptionService) _subscriptionService: ISubscriptionService,
-    @inject(TYPES.StripeService) _stripeService: StripeService
+    @inject(TYPES.StripeService) _stripeService: StripeService,
+    @inject(TYPES.CompanyRepository) _companyRepository: ICompanyRepository
   ) {
     this.errorService = _errorService;
     this.subscriptionService = _subscriptionService;
     this.stripeService = _stripeService;
+    this.companyRepository = _companyRepository;
   }
 
   @Mutation((returns) => SubscriptionCreateResult)
@@ -138,6 +143,29 @@ export class SubscriptionResolver {
       return {
         clientSecret: setupIntent.client_secret,
       };
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
+    }
+  }
+
+  @Query((returns) => Subscription)
+  @UseMiddleware(authenticate, authorize(RoleEnum.CompanyAdmin), checkCompanyAccess)
+  async RetrieveSubscription(@Arg('input') args: RetrieveSubscriptionInput): Promise<Subscription> {
+    const operation = 'RetrieveSubscription';
+
+    try {
+      const company_id = args.company_id;
+
+      const company = await this.companyRepository.getById({ id: company_id });
+      const subscription: any = await this.stripeService.retrieveSubscription({
+        subscription_id: company?.subscriptionId as string,
+      });
+      return subscription;
     } catch (err) {
       this.errorService.throwError({
         err,

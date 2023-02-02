@@ -84,6 +84,9 @@ export default class SubscriptionPaymentRepository
       const paymentDate = args.paymentDate;
       const amount = args.amount;
       const subscriptionId = args.subscriptionId;
+      const receiptLink = args?.receiptLink;
+      const periodStartDate = args?.periodStartDate;
+      const periodEndDate = args?.periodEndDate;
 
       const company = await this.companyRepository.getSingleEntity({
         query: {
@@ -102,6 +105,9 @@ export default class SubscriptionPaymentRepository
         paymentDate,
         amount,
         company_id: company.id,
+        receiptLink,
+        periodStartDate,
+        periodEndDate,
       });
 
       return subscriptionPayment;

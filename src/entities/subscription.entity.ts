@@ -69,6 +69,24 @@ export class SetupIntentResult {
 }
 
 @InputType()
+export class RetrieveSubscriptionInput {
+  @Field()
+  company_id: string;
+}
+
+@ObjectType()
+export class Subscription {
+  @Field()
+  id: string;
+
+  @Field({ nullable: true })
+  current_period_start: string;
+
+  @Field({ nullable: true })
+  current_period_end: string;
+}
+
+@InputType()
 export class SubscriptionDowngradeInput {
   @Field()
   company_id: string;

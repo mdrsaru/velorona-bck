@@ -369,7 +369,7 @@ export default class SubscriptionService implements ISubscriptionService {
       if (subscription.cancel_at_period_end) {
         const periodEnd = moment.unix(subscription?.current_period_end).format('MM-DD-YYYY');
         throw new apiError.ConflictError({
-          message: 'Cannot downgrade',
+          message: 'Subscription downgraded already',
           details: [`Your subscription is downgraded to starter. It will be downgraded after ${periodEnd}.`],
         });
       }

@@ -61,8 +61,8 @@ subscriptionEmitter.on(events.onSubscriptionCharged, async (args: CreateCompanyS
         cardNumber: args.response?.payment_method_details.card.last4,
         createdAt: args.response?.created,
         amount: args.response?.amount_captured,
-        paymentIntent: args.response.payment_intent,
-        invoiceNumber: args.response.invoice,
+        paymentIntent: args.response?.id,
+        invoiceNumber: args.response?.invoice,
       },
     });
 

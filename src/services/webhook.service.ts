@@ -424,17 +424,51 @@ export default class WebhookService {
           stripeCustomerId: eventObject.data.object.customer,
         },
       });
+      // console.log(company?.subscriptionId)
+      // const subscription = await this.stripeService.retrieveSubscription({
+      //   subscription_id: company?.subscriptionId as string
+      // })
+      // console.log(subscription)
+      await this.subscriptionPaymentRepository
+        .create({
+          amount: (eventObject?.data?.object?.amount_captured ?? 0) / 100,
+          subscriptionId: company?.subscriptionId as string,
+          paymentDate: new Date(),
+          status: SubscriptionPaymentStatus.Paid,
+          receiptLink: eventObject?.data?.object?.receipt_url,
+        })
+        .then((subscriptionPayment) => {
+          this.logger.info({
+            operation,
+            message: `Payment invoice genereted for company ${subscriptionPayment.company_id}`,
+            data: {
+              company: subscriptionPayment.company_id,
+            },
+          });
+        })
+        .catch((err) => {
+          this.logger.error({
+            operation,
+            message: `Error updating the subscription.`,
+            data: {
+              err,
+              event: eventObject,
+            },
+          });
+        });
 
-      const subscriptionPayment = await this.subscriptionPaymentRepository.getSingleEntity({
-        query: {
-          company_id: company?.id,
-        },
-      });
+      // const subscriptionPayment = await this.subscriptionPaymentRepository.getSingleEntity({
+      //   query: {
+      //     company_id: company?.id,
+      //     // periodStartDate: moment.unix(subscription?.current_period_start).format('MM-DD-YYYY'),
+      //     // periodEndDate: moment.unix(subscription?.current_period_start).format('MM-DD-YYYY'),
+      //   },
+      // });
 
-      await this.subscriptionPaymentRepository.update({
-        id: subscriptionPayment?.id as string,
-        receiptLink: response.receipt_url,
-      });
+      // await this.subscriptionPaymentRepository.update({
+      //   id: subscriptionPayment?.id as string,
+      //   receiptLink: response.receipt_url,
+      // });
 
       subscriptionEmitter.emit(events.onSubscriptionCharged, {
         customer_email: company?.adminEmail,
