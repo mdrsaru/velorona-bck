@@ -458,6 +458,7 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
       const company_id = args.query?.company_id;
       const client_id = args.query?.client_id;
       const user_id = args.query?.user_id;
+      const search = args.query?.search;
 
       let fields: any = [];
 
@@ -495,6 +496,16 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
         where = 'where ' + conditions.join(' and ');
       }
 
+      if (search) {
+        const length = fields.length;
+        parameters.push(search);
+        if (where) {
+          where += ' and ';
+        }
+
+        where += `(c.name ILike $${length + 1} or u.first_name ILike $${length + 1})`;
+      }
+
       let paginationQuery = '';
       if (!isNil(skip)) {
         paginationQuery += ` offset ${skip}`;
@@ -512,7 +523,6 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
        * Third Case: Monthly - Truncate start date to month
        * Fourth Case: Weekly - Truncate start date to week
        */
-
       const cte = `with time_entry_cte as (
         select
         ts.id as timesheet_id,
@@ -548,6 +558,7 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
         join projects as p on t.project_id = p.id
         join clients as c on c.id = p.client_id
         join timesheet as ts on t.timesheet_id = ts.id
+        join users as u on t.created_by = u.id
         ${where}
       ),
       grouped_timesheet as (
