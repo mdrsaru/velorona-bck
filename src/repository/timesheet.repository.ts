@@ -459,6 +459,9 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
       const client_id = args.query?.client_id;
       const user_id = args.query?.user_id;
       const search = args.query?.search;
+      const status = args.query?.status;
+      const startDate = args.query?.weekStartDate;
+      const endDate = args.query?.weekEndDate;
 
       let fields: any = [];
 
@@ -483,6 +486,13 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
         });
       }
 
+      if (status) {
+        fields.push({
+          column: 'ts.status',
+          value: status,
+        });
+      }
+
       const conditions = [];
       const parameters = [];
 
@@ -497,13 +507,25 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
       }
 
       if (search) {
-        const length = fields.length;
         parameters.push(search);
+        const searchParameter = parameters.length;
+
         if (where) {
           where += ' and ';
         }
 
-        where += `(c.name ILike $${length + 1} or u.first_name ILike $${length + 1})`;
+        where += `(c.name ILike $${searchParameter} or u.first_name ILike $${searchParameter})`;
+      }
+
+      if (startDate && endDate) {
+        parameters.push(startDate, endDate);
+        const length = parameters.length;
+
+        if (where) {
+          where += ' and ';
+        }
+
+        where += ` t.start_time >= $${length - 1} and t.end_time <= $${length}`;
       }
 
       let paginationQuery = '';
