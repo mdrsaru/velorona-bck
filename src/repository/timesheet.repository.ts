@@ -528,6 +528,7 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
         where += ` t.start_time >= $${length - 1} and t.end_time <= $${length}`;
       }
 
+      // where += `and (a.timesheet_id is NULL or a.timesheet_id is not NULL)`
       let paginationQuery = '';
       if (!isNil(skip)) {
         paginationQuery += ` offset ${skip}`;
@@ -559,19 +560,21 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
         t.company_id as _company_id,
         c.invoice_schedule as invoice_schedule,
         inv.status as invoice_status,
+        p.name as project_name,
+        a.amount as attachment_expense,
         CASE
         WHEN invoice_schedule = 'Biweekly' THEN
           CASE
           WHEN c.schedule_start_date is NULL THEN (to_char(date_trunc('week', c.created_at), 'YYYY-MM-DD')::date + floor((to_char(start_time, 'YYYY-MM-DD')::date - to_char(date_trunc('week', c.created_at), 'YYYY-MM-DD')::date ) / 14)::int * 14)::text
           ELSE  (to_char(date_trunc('week', c.schedule_start_date), 'YYYY-MM-DD')::date + floor((to_char(start_time, 'YYYY-MM-DD')::date - to_char(date_trunc('week', c.schedule_start_date), 'YYYY-MM-DD')::date ) / 14)::int * 14)::text
-          END
+          END 
 
         WHEN invoice_schedule = 'Custom' THEN
           CASE
           WHEN c.schedule_start_date is NULL THEN (to_char(date_trunc('week', c.created_at), 'YYYY-MM-DD')::date + floor((week_start_date - to_char(date_trunc('week', c.created_at), 'YYYY-MM-DD')::date ) / 30)::int * 30)::text
           ELSE  (c.schedule_start_date + floor((to_char(start_time, 'YYYY-MM-DD'):: date - c.schedule_start_date) / 30)::int * 30)::text
           END
-
+ 
         WHEN invoice_schedule = 'Monthly'  THEN to_char(date_trunc('month', start_time::timestamp)::date, 'YYYY-MM-DD')
         ELSE to_char(date_trunc('week', start_time::timestamp)::date, 'YYYY-MM-DD')
         END AS start_date
@@ -581,6 +584,7 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
         join clients as c on c.id = p.client_id
         join timesheet as ts on t.timesheet_id = ts.id
         join users as u on t.created_by = u.id
+        left join attachments as a on a.timesheet_id = t.timesheet_id
         ${where}
       ),
       grouped_timesheet as (
@@ -607,6 +611,7 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
         _client_id,
         _company_id,
         invoice_schedule,
+        string_agg(distinct project_name::text, ' , ') as project_name,
         string_agg(distinct invoice_status::text, ',') as invoice_status,
         string_agg(distinct timesheet_id::text, ',') as timesheet_id,
         string_agg(distinct timesheet_status::text, ',') as timesheet_status,
@@ -646,8 +651,9 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
             _client_id as client_id,
             total_duration as "duration",
             "totalExpense",
-            "userPayment"
-          from grouped_timesheet 
+            "userPayment",
+            project_name as "projectName"
+          from grouped_timesheet
           ${paginationQuery};
         `,
         parameters

@@ -1,6 +1,10 @@
 export interface IStripeCustomerCreateArgs {
   email: string;
   name?: string;
+  city?: string;
+  country?: string;
+  streetAddress?: string;
+  state?: string;
   metadata?: any;
 }
 

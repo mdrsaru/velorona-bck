@@ -210,6 +210,12 @@ export default class Timesheet extends Base {
 
   @Field({ nullable: true, description: 'Comma separated invoice status' })
   invoiceStatus: string;
+
+  @Field({ nullable: true, description: 'Comma separated project Name' })
+  projectName: string;
+
+  @Field({ nullable: true, description: 'Attachment Expense' })
+  expense: string;
 }
 
 @InputType()

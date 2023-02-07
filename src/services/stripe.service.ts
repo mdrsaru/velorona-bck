@@ -54,7 +54,11 @@ export default class StripeService {
   createCustomer = async (args: IStripeCustomerCreateArgs) => {
     try {
       const email = args.email;
-      const name = args.name;
+      const name: any = args.name;
+      const city: any = args.city;
+      const country: any = args.country;
+      const streetAddress: any = args.streetAddress;
+      const state: any = args.state;
       const metadata = args.metadata;
 
       let errors = [];
@@ -69,9 +73,15 @@ export default class StripeService {
         });
       }
 
+      const address: any = streetAddress + ',' + state;
       const customer = await this.stripe.customers.create({
         name,
         email,
+        address: {
+          line1: address,
+          city: city,
+          country: country,
+        },
         metadata,
       });
 

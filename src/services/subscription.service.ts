@@ -60,9 +60,10 @@ export default class SubscriptionService implements ISubscriptionService {
       const trial = args?.trial;
       const prices = args.prices;
 
-      const company = await this.companyRepository.getById({
+      const company: any = await this.companyRepository.getById({
         id: company_id,
-        select: ['id', 'name', 'adminEmail', 'plan', 'subscriptionStatus'],
+        relations: ['users', 'users.address'],
+        // select: ['id', 'name', 'adminEmail', 'plan', 'subscriptionStatus','users','users.address'],
       });
 
       if (!company) {
@@ -85,6 +86,10 @@ export default class SubscriptionService implements ISubscriptionService {
         const customer = await this.stripeService.createCustomer({
           email: company.adminEmail,
           name: company.name,
+          state: company?.users?.[0]?.address?.state ?? '',
+          streetAddress: company?.users?.[0]?.address?.streetAddress ?? '',
+          city: company?.users?.[0]?.address?.city ?? '',
+          country: company?.users?.[0]?.address?.country ?? '',
         });
         customerId = customer.id;
       }
