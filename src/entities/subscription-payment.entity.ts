@@ -29,8 +29,8 @@ export default class SubscriptionPayment extends Base {
   @Column({ type: 'varchar' })
   status: SubscriptionPaymentStatus;
 
-  @Field()
-  @Column({ name: 'payment_date' })
+  @Field({ nullable: true })
+  @Column({ name: 'payment_date', nullable: true })
   paymentDate: Date;
 
   @Field()
@@ -62,6 +62,10 @@ export default class SubscriptionPayment extends Base {
   @Field({ nullable: true })
   @Column({ nullable: true, name: 'period_end_date' })
   periodEndDate: string;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true, name: 'invoice_id' })
+  invoiceId: string;
 }
 
 @ObjectType()
@@ -92,6 +96,9 @@ export class SubscriptionPaymentQuery {
 
   @Field({ nullable: true })
   status: string;
+
+  @Field({ nullable: true })
+  paymentDate: string;
 }
 
 @InputType()

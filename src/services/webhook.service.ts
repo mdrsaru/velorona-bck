@@ -18,7 +18,6 @@ import { ICompanyRepository } from '../interfaces/company.interface';
 import { ISubscriptionService } from '../interfaces/subscription.interface';
 import { ISubscriptionPaymentRepository } from '../interfaces/subscription-payment.interface';
 import { companyEmitter, subscriptionEmitter } from '../subscribers/emitters';
-import invoice from '../config/inversify/invoice';
 import moment from 'moment';
 
 @injectable()
@@ -54,32 +53,32 @@ export default class WebhookService {
       const subscription_id = eventObject.data.object?.subscription;
 
       if (subscription_id) {
-        this.subscriptionPaymentRepository
-          .create({
-            amount: (eventObject?.data?.object?.total ?? 0) / 100,
-            subscriptionId: subscription_id,
-            paymentDate: new Date(),
-            status: SubscriptionPaymentStatus.Paid,
-          })
-          .then((subscriptionPayment) => {
-            this.logger.info({
-              operation,
-              message: `Payment invoice genereted for company ${subscriptionPayment.company_id}`,
-              data: {
-                company: subscriptionPayment.company_id,
-              },
-            });
-          })
-          .catch((err) => {
-            this.logger.error({
-              operation,
-              message: `Error updating the subscription.`,
-              data: {
-                err,
-                event: eventObject,
-              },
-            });
-          });
+        // this.subscriptionPaymentRepository
+        //   .create({
+        //     amount: (eventObject?.data?.object?.total ?? 0) / 100,
+        //     subscriptionId: subscription_id,
+        //     paymentDate: new Date(),
+        //     status: SubscriptionPaymentStatus.Paid,
+        //   })
+        //   .then((subscriptionPayment) => {
+        //     this.logger.info({
+        //       operation,
+        //       message: `Payment invoice genereted for company ${subscriptionPayment.company_id}`,
+        //       data: {
+        //         company: subscriptionPayment.company_id,
+        //       },
+        //     });
+        //   })
+        //   .catch((err) => {
+        //     this.logger.error({
+        //       operation,
+        //       message: `Error updating the subscription.`,
+        //       data: {
+        //         err,
+        //         event: eventObject,
+        //       },
+        //     });
+        //   });
 
         let subscriptionPeriodEnd: Date | undefined;
         let trialEndDate: Date | undefined;
@@ -429,34 +428,34 @@ export default class WebhookService {
       //   subscription_id: company?.subscriptionId as string
       // })
       // console.log(subscription)
-      await this.subscriptionPaymentRepository
-        .create({
-          amount: (eventObject?.data?.object?.amount_captured ?? 0) / 100,
-          subscriptionId: company?.subscriptionId as string,
-          paymentDate: new Date(),
-          status: SubscriptionPaymentStatus.Paid,
-          receiptLink: eventObject?.data?.object?.receipt_url,
-        })
-        .then((subscriptionPayment) => {
-          this.logger.info({
-            operation,
-            message: `Payment invoice genereted for company ${subscriptionPayment.company_id}`,
-            data: {
-              company: subscriptionPayment.company_id,
-            },
-          });
-        })
-        .catch((err) => {
-          this.logger.error({
-            operation,
-            message: `Error updating the subscription.`,
-            data: {
-              err,
-              event: eventObject,
-            },
-          });
-        });
-
+      // await this.subscriptionPaymentRepository
+      //   .create({
+      //     amount: (eventObject?.data?.object?.amount_captured ?? 0) / 100,
+      //     subscriptionId: company?.subscriptionId as string,
+      //     paymentDate: new Date(),
+      //     status: SubscriptionPaymentStatus.Paid,
+      //     receiptLink: eventObject?.data?.object?.receipt_url,
+      //   })
+      //   .then((subscriptionPayment) => {
+      //     this.logger.info({
+      //       operation,
+      //       message: `Payment invoice genereted for company ${subscriptionPayment.company_id}`,
+      //       data: {
+      //         company: subscriptionPayment.company_id,
+      //       },
+      //     });
+      //   })
+      //   .catch((err) => {
+      //     this.logger.error({
+      //       operation,
+      //       message: `Error updating the subscription.`,
+      //       data: {
+      //         err,
+      //         event: eventObject,
+      //       },
+      //     });
+      //   });
+      // console.log(response)
       // const subscriptionPayment = await this.subscriptionPaymentRepository.getSingleEntity({
       //   query: {
       //     company_id: company?.id,
@@ -465,10 +464,20 @@ export default class WebhookService {
       //   },
       // });
 
-      // await this.subscriptionPaymentRepository.update({
-      //   id: subscriptionPayment?.id as string,
-      //   receiptLink: response.receipt_url,
-      // });
+      const subscriptionPayment = await this.subscriptionPaymentRepository.getSingleEntity({
+        query: {
+          paymentDate: null,
+          company_id: company?.id,
+          status: SubscriptionPaymentStatus.Draft,
+        },
+      });
+
+      await this.subscriptionPaymentRepository.update({
+        id: subscriptionPayment?.id as string,
+        receiptLink: response.receipt_url,
+        paymentDate: new Date(),
+        status: response?.status ?? 'Paid',
+      });
 
       subscriptionEmitter.emit(events.onSubscriptionCharged, {
         customer_email: company?.adminEmail,
@@ -490,26 +499,55 @@ export default class WebhookService {
 
     try {
       const obj = eventObject?.data?.object;
-      const subscription_id = obj?.metadata?.subscription_id;
-      const customer_id = obj?.metadata?.customer_id;
+      const subscription_id = obj?.subscription;
+      const customer_id = obj?.customer;
 
       const company = await this.companyRepository.getSingleEntity({
         query: {
           stripeCustomerId: obj?.customer,
         },
       });
-      const subscriptionPayment = await this.subscriptionPaymentRepository.getSingleEntity({
-        query: {
-          company_id: company?.id,
-        },
-      });
+      // const subscriptionPayment = await this.subscriptionPaymentRepository.getSingleEntity({
+      //   query: {
+      //     company_id: company?.id,
+      //   },
+      // });
 
-      await this.subscriptionPaymentRepository.update({
-        id: subscriptionPayment?.id as string,
-        invoiceLink: obj.invoice_pdf,
-        periodStartDate: moment.unix(obj.period_start).format('MM-DD-YYYY'),
-        periodEndDate: moment.unix(obj.period_end).format('MM-DD-YYYY'),
-      });
+      // await this.subscriptionPaymentRepository.update({
+      //   id: subscriptionPayment?.id as string,
+      //   invoiceLink: obj.invoice_pdf,
+      //   periodStartDate: moment.unix(obj.period_start).format('MM-DD-YYYY'),
+      //   periodEndDate: moment.unix(obj.period_end).format('MM-DD-YYYY'),
+      // });
+      const subscriptionPayment = await this.subscriptionPaymentRepository
+        .create({
+          amount: (eventObject?.data?.object?.total ?? 0) / 100,
+          subscriptionId: company?.subscriptionId as string,
+          status: obj?.status,
+          invoiceLink: obj.invoice_pdf,
+          periodStartDate: moment.unix(obj.period_start).format('MM-DD-YYYY'),
+          periodEndDate: moment.unix(obj.period_end).format('MM-DD-YYYY'),
+          invoiceId: obj?.id,
+        })
+        .then((subscriptionPayment) => {
+          this.logger.info({
+            operation,
+            message: `Payment invoice genereted for company ${subscriptionPayment.company_id}`,
+            data: {
+              company: subscriptionPayment.company_id,
+            },
+          });
+        })
+        .catch((err) => {
+          this.logger.error({
+            operation,
+            message: `Error updating the subscription.`,
+            data: {
+              err,
+              event: eventObject,
+            },
+          });
+        });
 
       subscriptionEmitter.emit(events.onInvoiceFinalized, {
         invoice_pdf: eventObject?.data?.object?.invoice_pdf,

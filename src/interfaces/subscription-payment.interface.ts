@@ -13,6 +13,7 @@ export interface ISubscriptionPayment {
   company_id: string;
   invoiceLink?: string;
   receiptLink?: string;
+  invoiceId?: string;
 }
 
 export interface ISubscriptionPaymentCreate {
@@ -20,10 +21,11 @@ export interface ISubscriptionPaymentCreate {
   receiptLink?: ISubscriptionPayment['receiptLink'];
   invoiceLink?: ISubscriptionPayment['invoiceLink'];
   status: ISubscriptionPayment['status'];
-  paymentDate: ISubscriptionPayment['paymentDate'];
+  paymentDate?: ISubscriptionPayment['paymentDate'];
   amount: ISubscriptionPayment['amount'];
   periodStartDate?: ISubscriptionPayment['periodStartDate'];
   periodEndDate?: ISubscriptionPayment['periodEndDate'];
+  invoiceId?: ISubscriptionPayment['invoiceId'];
 }
 
 export interface ISubscriptionPaymentUpdate {

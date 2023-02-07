@@ -31,6 +31,7 @@ export default class SubscriptionPaymentRepository
     try {
       let { query = {}, select = [], relations = [], ...rest } = args;
       let { role: roleName, search, startDate, endDate, ...where } = query;
+
       const _select = select as (keyof SubscriptionPayment)[];
 
       for (let key in query) {
@@ -85,8 +86,10 @@ export default class SubscriptionPaymentRepository
       const amount = args.amount;
       const subscriptionId = args.subscriptionId;
       const receiptLink = args?.receiptLink;
+      const invoiceLink = args?.invoiceLink;
       const periodStartDate = args?.periodStartDate;
       const periodEndDate = args?.periodEndDate;
+      const invoiceId = args?.invoiceId;
 
       const company = await this.companyRepository.getSingleEntity({
         query: {
@@ -108,6 +111,8 @@ export default class SubscriptionPaymentRepository
         receiptLink,
         periodStartDate,
         periodEndDate,
+        invoiceLink,
+        invoiceId,
       });
 
       return subscriptionPayment;
@@ -121,6 +126,8 @@ export default class SubscriptionPaymentRepository
       const id = args.id;
       const invoiceLink = args.invoiceLink;
       const receiptLink = args.receiptLink;
+      const paymentDate = args.paymentDate;
+      const status = args.status;
 
       const found = await this.getById({ id });
 
@@ -134,6 +141,8 @@ export default class SubscriptionPaymentRepository
         id,
         invoiceLink,
         receiptLink,
+        paymentDate,
+        status,
       });
       const subascriptionPayment = await this.repo.save(update);
 

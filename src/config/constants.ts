@@ -357,7 +357,9 @@ export const subscriptionStatus = {
 export enum SubscriptionPaymentStatus {
   Paid = 'Paid',
   Pending = 'Pending',
+  Draft = 'draft',
   RequiredAction = 'Requires Action',
+  Succeeded = 'succeeded',
 }
 
 export default {

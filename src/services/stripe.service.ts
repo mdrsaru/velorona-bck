@@ -6,7 +6,7 @@ import { inject, injectable } from 'inversify';
 
 import strings from '../config/strings';
 import * as apiError from '../utils/api-error';
-import constants, { stripeSetting } from '../config/constants';
+import constants, { stripeSetting, SubscriptionPaymentStatus } from '../config/constants';
 
 import {
   IStripeCustomerCreateArgs,
@@ -18,15 +18,21 @@ import {
   IStripeSubscriptionRetrieveArgs,
   IStripeCustomerArgs,
 } from '../interfaces/stripe.interface';
+import { ISubscriptionPaymentRepository } from '../interfaces/subscription-payment.interface';
+import { TYPES } from '../types';
 
 @injectable()
 export default class StripeService {
   private readonly stripe: Stripe;
+  private subscriptionPaymentRepository: ISubscriptionPaymentRepository;
 
-  constructor() {
+  constructor(
+    @inject(TYPES.SubscriptionPaymentRepository) subscriptionPaymentRepository: ISubscriptionPaymentRepository
+  ) {
     this.stripe = new Stripe(stripeSetting.secretKey, {
       apiVersion: '2020-08-27',
     });
+    this.subscriptionPaymentRepository = subscriptionPaymentRepository;
   }
 
   constructEvent(args: { req: Request }) {
@@ -95,7 +101,6 @@ export default class StripeService {
         type: 'card',
       });
 
-      // console.log(paymentMethods,'paymentMethod')
       return paymentMethods?.data;
     } catch (err) {
       throw err;
@@ -311,13 +316,10 @@ export default class StripeService {
       //     }
 
       //     const token = await this.stripe.tokens.create(param)
-      // console.log(token)
 
       // let res = await this.stripe.customers.createSource('cus_NCfvpL3pYvVzQz',{source: token?.id})
-      // console.log(res,'res')
 
       //  const cardDetail:any = await this.stripe.customers.retrieve('cus_NCfvpL3pYvVzQz')
-      //   console.log(cardDetail)
       return 'createToken';
     } catch (err) {
       throw err;
@@ -338,13 +340,23 @@ export default class StripeService {
   subscriptionPayment = async (args: any) => {
     const customerId = args.customerId;
     const cardId = args.cardId;
+    const company_id = args.company_id;
+    const subscriptionPaymentId = args.subscriptionPaymentId;
+
+    const subscriptionPayment = await this.subscriptionPaymentRepository.getById({
+      id: subscriptionPaymentId,
+    });
+
     const paymentIntent = await this.stripe.paymentIntents.create({
       payment_method_types: ['card'],
-      amount: 1000,
+      amount: subscriptionPayment?.amount ?? 1000,
       currency: 'usd',
       customer: customerId,
       payment_method: cardId,
     });
     const paymentIntents = await this.stripe.paymentIntents.confirm(paymentIntent?.id, { payment_method: cardId });
+    //  const id = subscriptionPayment?.invoiceId as string;
+    //   const paidInvoice = await this.stripe.invoices.pay(id);
+    // };
   };
 }

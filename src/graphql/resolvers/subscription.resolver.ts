@@ -208,10 +208,14 @@ export class SubscriptionResolver {
     try {
       const customerId = args.customerId;
       const cardId = args.cardId;
+      const company_id = args.company_id;
+      const subscriptionPaymentId = args.subscriptionPaymentId;
 
       const subscription = await this.stripeService.subscriptionPayment({
         customerId,
         cardId,
+        company_id,
+        subscriptionPaymentId,
       });
 
       return 'Successful';

@@ -31,11 +31,17 @@ export class SubscriptionUpgradeInput {
 
 @InputType()
 export class SubscriptionPaymentInput {
-  @Field()
+  @Field({ nullable: true })
   cardId: string;
 
-  @Field()
+  @Field({ nullable: true })
   customerId: string;
+
+  @Field()
+  company_id: string;
+
+  @Field({ nullable: true })
+  subscriptionPaymentId: string;
 }
 
 @InputType()

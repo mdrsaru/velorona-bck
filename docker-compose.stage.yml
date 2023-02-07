@@ -4,6 +4,7 @@ services:
   app:
     build:
       target: stage
+    restart: always
     volumes:
       - /app/node_modules
       - /app/build
