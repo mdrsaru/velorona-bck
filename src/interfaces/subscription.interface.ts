@@ -76,4 +76,5 @@ export interface ISubscriptionService {
   downgradeSubscription(args: ISubscriptionDowngradeInput): Promise<void>;
 
   subscriptionPaymentReminder(args: any): Promise<void>;
+  bulkUpdateSystem(args: any): Promise<void>;
 }

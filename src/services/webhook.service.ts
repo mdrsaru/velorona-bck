@@ -309,6 +309,36 @@ export default class WebhookService {
             },
           });
         });
+    } else {
+      const status = eventObject?.data?.object?.status ?? subscriptionStatus.active;
+      const subscriptionPeriodEnd = new Date(eventObject?.data?.object?.current_period_end * 1000);
+      this.subscriptionService
+        .updateSubscription({
+          subscription_id,
+          plan: plans.Professional,
+          eventObject: eventObject,
+          subscriptionStatus: status,
+          subscriptionPeriodEnd,
+        })
+        .then((company) => {
+          this.logger.info({
+            operation,
+            message: `Company ${company.id} - ${company.companyCode} subscription updated with Professional plan`,
+            data: {
+              company: company.id,
+            },
+          });
+        })
+        .catch((err) => {
+          this.logger.error({
+            operation,
+            message: `Error updating the subscription.`,
+            data: {
+              err,
+              event: eventObject,
+            },
+          });
+        });
     }
   };
 

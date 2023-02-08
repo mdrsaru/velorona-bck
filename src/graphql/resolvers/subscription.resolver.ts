@@ -136,12 +136,12 @@ export class SubscriptionResolver {
     try {
       const company_id = args.company_id;
 
-      const setupIntent = await this.subscriptionService.createSetupIntent({
+      const setupIntent: any = await this.stripeService.createPaymentIntent({
         company_id,
       });
 
       return {
-        clientSecret: setupIntent.client_secret,
+        clientSecret: setupIntent.clientSecret,
       };
     } catch (err) {
       this.errorService.throwError({

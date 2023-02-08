@@ -9,6 +9,7 @@ import { ITimesheetService } from '../interfaces/timesheet.interface';
 import { IWorkscheduleRepository } from '../interfaces/workschedule.interface';
 import { ICompanyService } from '../interfaces/company.interface';
 import { ISubscriptionService } from '../interfaces/subscription.interface';
+import StripeService from '../services/stripe.service';
 
 const CronJob = cron.CronJob;
 
@@ -21,6 +22,7 @@ export default (): void => {
   const companyService = container.get<ICompanyService>(TYPES.CompanyService);
   const workscheduleRepository = container.get<IWorkscheduleRepository>(TYPES.WorkscheduleRepository);
   const subscriptionService = container.get<ISubscriptionService>(TYPES.SubscriptionService);
+  const stripeService = container.get<StripeService>(TYPES.StripeService);
 
   /**
   new CronJob(
@@ -53,7 +55,7 @@ export default (): void => {
   */
 
   new CronJob(
-    '0 5 * * MON',
+    '0 1 * * MON',
     function () {
       const operation = 'bulkCreate';
 
@@ -79,7 +81,7 @@ export default (): void => {
     },
     null,
     true,
-    'Asia/Kathmandu'
+    'UTC'
   );
 
   /**
@@ -365,6 +367,47 @@ export default (): void => {
           message: 'Error sending timesheet reminder',
           data: {
             date,
+            err,
+          },
+        });
+      }
+    },
+    null,
+    true,
+    'UTC'
+  );
+
+  /**
+   * Subscription payment reminder
+   */
+  new CronJob(
+    '50 11 * * *',
+    function () {
+      const operation = 'subscriptionPaymentReminder';
+      try {
+        subscriptionService
+          .bulkUpdateSystem({})
+          .then(() => {
+            logger.info({
+              operation,
+              message: `Company subscription updated sucessfully`,
+              data: {},
+            });
+          })
+          .catch((err) => {
+            logger.error({
+              operation,
+              message: 'Error updating company subscription',
+              data: {
+                err,
+              },
+            });
+          });
+      } catch (err) {
+        logger.error({
+          operation,
+          message: 'Error updating company subscription',
+          data: {
             err,
           },
         });

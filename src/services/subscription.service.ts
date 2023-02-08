@@ -423,4 +423,31 @@ export default class SubscriptionService implements ISubscriptionService {
       }
     });
   };
+
+  bulkUpdateSystem = async (args: any): Promise<void> => {
+    try {
+      const companies = await this.companyRepository.getAll({
+        query: {
+          plan: plans.Professional,
+        },
+        select: ['id', 'companyCode', 'subscriptionId', 'adminEmail'],
+      });
+
+      if (companies.length) {
+        companies?.map(async (company) => {
+          const subscription = await this.stripeService.retrieveSubscription({
+            subscription_id: company?.subscriptionId,
+          });
+          const subscriptionPeriodEnd = new Date(subscription?.current_period_end * 1000);
+
+          await this.companyRepository.update({
+            id: company.id,
+            subscriptionPeriodEnd,
+          });
+        });
+      }
+    } catch (err) {
+      throw err;
+    }
+  };
 }
