@@ -635,6 +635,7 @@ export default class TimesheetRepository extends BaseRepository<Timesheet> imple
           select
             start_date as "weekStartDate",
             invoice_schedule as period,
+            (select COALESCE(SUM(amount), 0) from attachments as a where a.timesheet_id = ANY(('{' || grouped_timesheet.timesheet_id || '}')::uuid[])) as expense,
             case
               when invoice_schedule = 'Biweekly' then to_char(start_date::date + 13, 'YYYY-MM-DD')
               when invoice_schedule = 'Custom' then to_char(start_date::date + 29, 'YYYY-MM-DD')
