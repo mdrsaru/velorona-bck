@@ -174,15 +174,15 @@ export default class WebhookService {
         });
     } else {
       const company = await this.companyRepository.getById({ id: company_id });
-      const today = moment().format('YYYY-MM-DD');
-      const periodEndDate = moment(new Date(eventObject?.data?.object?.current_period_end * 1000)).format('YYYY-MM-DD');
+      // const today = moment().format('YYYY-MM-DD');
+      // const periodEndDate = moment(new Date(eventObject?.data?.object?.current_period_end * 1000)).format('YYYY-MM-DD');
 
-      if (today === periodEndDate && company?.collectionMethod === CollectionMethod.SendInvoice) {
-        this.companyRepository.update({
-          id: company_id,
-          subscriptionStatus: subscriptionStatus.inactive,
-        });
-      }
+      // if (today === periodEndDate && company?.collectionMethod === CollectionMethod.SendInvoice) {
+      this.companyRepository.update({
+        id: company_id,
+        subscriptionStatus: subscriptionStatus.inactive,
+      });
+      // }
 
       this.subscriptionService
         .updateSubscription({
@@ -190,13 +190,13 @@ export default class WebhookService {
           eventObject,
           subscriptionStatus: eventObject?.data?.object?.status ?? subscriptionStatus.canceled,
         })
-        .then((company) => {
+        .then((response) => {
           this.logger.info({
             operation,
-            message: `Subscription deleted/canceled for. company ${company.id} - ${company.companyCode}`,
+            message: `Subscription deleted/canceled for company ${company_id} - ${company?.companyCode}`,
             data: {
-              company: company.id,
-              companyCode: company.companyCode,
+              company: company?.id,
+              companyCode: company?.companyCode,
             },
           });
         })

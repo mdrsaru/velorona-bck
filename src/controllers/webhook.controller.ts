@@ -53,7 +53,7 @@ export default class WebhookController {
         case 'charge.succeeded':
           this.webhookService.handleChargeSucceeded(event);
           break;
-        case 'invoice.created':
+        case 'invoice.finalized':
           this.webhookService.handleInvoiceCreate(event);
           break;
         default:
