@@ -59,7 +59,7 @@ subscriptionEmitter.on(events.onSubscriptionCharged, async (args: CreateCompanyS
         startDate: args?.startDate,
         endDate: args?.endDate,
         cardNumber: args.response?.payment_method_details.card.last4,
-        createdAt: args.response?.created,
+        createdAt: moment.unix(args.response?.created).format('MM-DD-YYYY'),
         amount: args.response?.amount_captured,
         paymentIntent: args.response?.id,
         invoiceNumber: args.response?.invoice,
@@ -68,28 +68,22 @@ subscriptionEmitter.on(events.onSubscriptionCharged, async (args: CreateCompanyS
 
     const obj: IEmailBasicArgs = {
       to: customer_email ?? '',
-      from: `${user?.company?.name} ${emailSetting.fromEmail}`,
+      from: `Velorona ${emailSetting.fromEmail}`,
       subject: emailSetting.paymentSuccessful.subject,
       html: timesheetHtml,
     };
 
-    if (hasLogo) {
-      const image = await axios.get(user?.company?.logo?.url as string, {
-        responseType: 'arraybuffer',
-      });
-      const raw = Buffer.from(image.data).toString('base64');
-
-      obj.attachments = [
-        {
-          content: raw,
-          filename: user?.company?.logo.name as string,
-          cid: 'logo',
-          contentDisposition: 'inline',
-          encoding: 'base64',
-          // type: 'image/png',
-        },
-      ];
-    }
+    const logo = await fs.readFile(`${__dirname}/../../public/logo.png`, { encoding: 'base64' });
+    obj.attachments = [
+      {
+        content: logo,
+        filename: 'logo.png',
+        cid: 'logo',
+        contentDisposition: 'inline',
+        encoding: 'base64',
+        // type: 'image/png',
+      },
+    ];
 
     if (user?.company?.status === CompanyStatus.Active && !user?.company?.archived) {
       emailService
@@ -194,28 +188,22 @@ subscriptionEmitter.on(events.onSubscriptionUpdate, async (args: UpdateCompanySu
 
     const obj: IEmailBasicArgs = {
       to: company?.adminEmail ?? '',
-      from: `${user?.company?.name} ${emailSetting.fromEmail}`,
+      from: `Velorona ${emailSetting.fromEmail}`,
       subject: subject,
       html: updateHtml,
     };
 
-    if (hasLogo) {
-      const image = await axios.get(user?.company?.logo?.url as string, {
-        responseType: 'arraybuffer',
-      });
-      const raw = Buffer.from(image.data).toString('base64');
-
-      obj.attachments = [
-        {
-          content: raw,
-          filename: user?.company?.logo.name as string,
-          cid: 'logo',
-          contentDisposition: 'inline',
-          encoding: 'base64',
-          // type: 'image/png',
-        },
-      ];
-    }
+    const logo = await fs.readFile(`${__dirname}/../../public/logo.png`, { encoding: 'base64' });
+    obj.attachments = [
+      {
+        content: logo,
+        filename: 'logo.png',
+        cid: 'logo',
+        contentDisposition: 'inline',
+        encoding: 'base64',
+        // type: 'image/png',
+      },
+    ];
 
     if (user?.company?.status === CompanyStatus.Active && !user?.company?.archived) {
       emailService
@@ -258,7 +246,7 @@ type InvoiceFinalized = {
 };
 
 subscriptionEmitter.on(events.onInvoiceFinalized, async (args: InvoiceFinalized) => {
-  const operation = events.onSubscriptionCharged;
+  const operation = events.onInvoiceFinalized;
   const logger = container.get<ILogger>(TYPES.Logger);
   logger.init('subscription.subscriber');
 
@@ -286,8 +274,6 @@ subscriptionEmitter.on(events.onInvoiceFinalized, async (args: InvoiceFinalized)
     if (!user) {
       return;
     }
-    const hasLogo = !!user?.company?.logo_id;
-
     let invoiceTemplate = await fs.readFile(`${__dirname}/../../templates/invoice-company.template.html`, {
       encoding: 'utf-8',
     });
@@ -301,7 +287,6 @@ subscriptionEmitter.on(events.onInvoiceFinalized, async (args: InvoiceFinalized)
         billingDate,
         invoiceNumber,
         amount,
-        hasLogo: hasLogo,
         companyName: user?.company?.name ?? '',
       },
     });
@@ -315,28 +300,22 @@ subscriptionEmitter.on(events.onInvoiceFinalized, async (args: InvoiceFinalized)
 
     const obj: IEmailBasicArgs = {
       to: user?.company?.adminEmail ?? '',
-      from: `${user?.company?.name} ${emailSetting.fromEmail}`,
+      from: `Velorona ${emailSetting.fromEmail}`,
       subject: subject,
       html: invoiceHtml,
     };
 
-    if (hasLogo) {
-      const image = await axios.get(user?.company?.logo?.url as string, {
-        responseType: 'arraybuffer',
-      });
-      const raw = Buffer.from(image.data).toString('base64');
-
-      obj.attachments = [
-        {
-          content: raw,
-          filename: user?.company?.logo.name as string,
-          cid: 'logo',
-          contentDisposition: 'inline',
-          encoding: 'base64',
-          // type: 'image/png',
-        },
-      ];
-    }
+    const logo = await fs.readFile(`${__dirname}/../../public/logo.png`, { encoding: 'base64' });
+    obj.attachments = [
+      {
+        content: logo,
+        filename: 'logo.png',
+        cid: 'logo',
+        contentDisposition: 'inline',
+        encoding: 'base64',
+        // type: 'image/png',
+      },
+    ];
 
     if (user?.company?.status === CompanyStatus.Active && !user?.company?.archived) {
       emailService
@@ -479,10 +458,7 @@ subscriptionEmitter.on(events.onPaymentDeclined, async (args: PaymentDeclined) =
 
   const companyName = args.company.companyName;
   const companyAdminEmail = args.company.companyAdminEmail;
-  const logo = args.company?.logo;
   try {
-    const hasLogo = !!logo?.id;
-
     let subscriptionTemplate = await fs.readFile(`${__dirname}/../../templates/payment-declined.template.html`, {
       encoding: 'utf-8',
     });
@@ -490,7 +466,6 @@ subscriptionEmitter.on(events.onPaymentDeclined, async (args: PaymentDeclined) =
     const subscriptionHtml = handlebarsService.compile({
       template: subscriptionTemplate,
       data: {
-        hasLogo: hasLogo,
         companyName: companyName ?? '',
         cardNumber: args.response?.payment_method_details.card.last4,
         createdAt: args.response?.created,
@@ -500,28 +475,22 @@ subscriptionEmitter.on(events.onPaymentDeclined, async (args: PaymentDeclined) =
 
     const obj: IEmailBasicArgs = {
       to: companyAdminEmail ?? '',
-      from: `${companyName} ${emailSetting.fromEmail}`,
+      from: `Velorona ${emailSetting.fromEmail}`,
       subject: emailSetting.paymentDeclinedReminder.subject,
       html: subscriptionHtml,
     };
 
-    if (hasLogo) {
-      const image = await axios.get(logo?.url as string, {
-        responseType: 'arraybuffer',
-      });
-      const raw = Buffer.from(image.data).toString('base64');
-
-      obj.attachments = [
-        {
-          content: raw,
-          filename: logo.name as string,
-          cid: 'logo',
-          contentDisposition: 'inline',
-          encoding: 'base64',
-          // type: 'image/png',
-        },
-      ];
-    }
+    const logo = await fs.readFile(`${__dirname}/../../public/logo.png`, { encoding: 'base64' });
+    obj.attachments = [
+      {
+        content: logo,
+        filename: 'logo.png',
+        cid: 'logo',
+        contentDisposition: 'inline',
+        encoding: 'base64',
+        // type: 'image/png',
+      },
+    ];
 
     if (args.company?.status === CompanyStatus.Active && !args?.company?.archived) {
       emailService
@@ -567,9 +536,9 @@ subscriptionEmitter.on(events.onAutoPayEnrolled, async (args: AutoPayEnrolled) =
   const userRepository: IUserRepository = container.get<IUserRepository>(TYPES.UserRepository);
 
   const companyName = args.company.name;
-  const logo = args.company?.logo;
+  const companyLogo = args.company?.logo;
   try {
-    const hasLogo = !!logo?.id;
+    const hasLogo = !!companyLogo?.id;
 
     let user = await userRepository.getSingleEntity({
       query: {
@@ -593,27 +562,21 @@ subscriptionEmitter.on(events.onAutoPayEnrolled, async (args: AutoPayEnrolled) =
 
     const obj: IEmailBasicArgs = {
       to: args?.company?.adminEmail ?? '',
-      from: `${companyName} ${emailSetting.fromEmail}`,
+      from: `Velorona ${emailSetting.fromEmail}`,
       subject: emailSetting.autoPayEnrolled.subject,
       html: subscriptionHtml,
     };
-    if (hasLogo) {
-      const image = await axios.get(logo?.url as string, {
-        responseType: 'arraybuffer',
-      });
-      const raw = Buffer.from(image.data).toString('base64');
-
-      obj.attachments = [
-        {
-          content: raw,
-          filename: logo.name as string,
-          cid: 'logo',
-          contentDisposition: 'inline',
-          encoding: 'base64',
-          // type: 'image/png',
-        },
-      ];
-    }
+    const logo = await fs.readFile(`${__dirname}/../../public/logo.png`, { encoding: 'base64' });
+    obj.attachments = [
+      {
+        content: logo,
+        filename: 'logo.png',
+        cid: 'logo',
+        contentDisposition: 'inline',
+        encoding: 'base64',
+        // type: 'image/png',
+      },
+    ];
 
     if (args.company?.status === CompanyStatus.Active && !args?.company?.archived) {
       emailService

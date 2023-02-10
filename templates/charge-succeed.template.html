@@ -31,18 +31,14 @@
   </head>
   <body style="background-color: #ebecf7">
     <div class="container">
-      {{#if hasLogo}}
       <img src="cid:logo" alt="Velorona" class="logo-img" />
-      {{else}}
-      <h1>{{companyName}}</h1>
-      {{/if}}
     </div>
     <div class="container-outer-body">
       <div class="container-body">
         <h1>Dear {{user}}!,</h1>
         <p>
           This message confirms your online payment of {{amount}} on {{createdAt}} applied to VISA number
-          xxxxxxxxxxxxx{{cardNumber}}.
+          xxxxxxxxxxxx{{cardNumber}}.
         </p>
         <p>The confirmation number for this payment is {{paymentIntent}}.</p>
         Your payment has been received. Here's the link of the invoice.Please click on the link to view it.
@@ -55,11 +51,7 @@
         </ol>
         <p>If you have any questions, feel free too email us.</p>
         <p>Thanks,</p>
-        {{#if companyName}}
-        <p>{{companyName}}</p>
-        {{else}}
         <p>Velorona</p>
-        {{/if}}
       </div>
     </div>
     <div class="container">

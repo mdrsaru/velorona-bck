@@ -512,6 +512,7 @@ export default class WebhookService {
       subscriptionEmitter.emit(events.onSubscriptionCharged, {
         customer_email: company?.adminEmail,
         invoice_pdf: response.receipt_url,
+        response,
       });
 
       // }
@@ -562,7 +563,7 @@ export default class WebhookService {
         .then((subscriptionPayment) => {
           this.logger.info({
             operation,
-            message: `Payment invoice genereted for company ${subscriptionPayment.company_id}`,
+            message: `Payment invoice generated for company ${subscriptionPayment.company_id}`,
             data: {
               company: subscriptionPayment.company_id,
             },

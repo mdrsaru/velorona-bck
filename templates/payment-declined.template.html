@@ -31,17 +31,13 @@
   </head>
   <body style="background-color: #ebecf7">
     <div class="container">
-      {{#if hasLogo}}
       <img src="cid:logo" alt="Velorona" class="logo-img" />
-      {{else}}
-      <h1>{{companyName}}</h1>
-      {{/if}}
     </div>
     <div class="container-outer-body">
       <div class="container-body">
         <h1>Dear {{companyName}}!,</h1>
         <p>
-          The online payment of {{amount}} on {{createdAt}} applied to VISA number xxxxxxxxxxxxx{{cardNumber}} was
+          The online payment of {{amount}} on {{createdAt}} applied to VISA number xxxxxxxxxxxx{{cardNumber}} was
           declined.
         </p>
         <p>Please update your payment information.Ignore this message if you have done so already.</p>
@@ -53,11 +49,7 @@
         <p>If you have any questions, please contact us for assistance.</p>
         <p>Please do not reply to this email, this email box is not monitored.</p>
         <p>Thanks,</p>
-        {{#if companyName}}
-        <p>{{companyName}}</p>
-        {{else}}
         <p>Velorona</p>
-        {{/if}}
       </div>
     </div>
     <div class="container">

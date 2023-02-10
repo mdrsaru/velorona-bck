@@ -254,23 +254,18 @@ companyEmitter.on(events.onSubscriptionEndReminder, async (args: SubscriptionEnd
       html: timesheetHtml,
     };
 
-    if (hasLogo) {
-      const image = await axios.get(company?.logo?.url as string, {
-        responseType: 'arraybuffer',
-      });
-      const raw = Buffer.from(image.data).toString('base64');
+    const logo = await fs.readFile(`${__dirname}/../../public/logo.png`, { encoding: 'base64' });
+    obj.attachments = [
+      {
+        content: logo,
+        filename: 'logo.png',
+        cid: 'logo',
+        contentDisposition: 'inline',
+        encoding: 'base64',
+        // type: 'image/png',
+      },
+    ];
 
-      obj.attachments = [
-        {
-          content: raw,
-          filename: company?.logo.name as string,
-          cid: 'logo',
-          contentDisposition: 'inline',
-          encoding: 'base64',
-          // type: 'image/png',
-        },
-      ];
-    }
     if (company?.status === CompanyStatus.Active && !company?.archived) {
       emailService
         .sendEmail(obj)
