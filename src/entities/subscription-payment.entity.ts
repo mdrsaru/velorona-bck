@@ -25,7 +25,7 @@ const indexPrefix = entities.subscriptionPayments;
 @Entity({ name: entities.subscriptionPayments })
 @ObjectType()
 export default class SubscriptionPayment extends Base {
-  @Field(() => SubscriptionPaymentStatus)
+  @Field()
   @Column({ type: 'varchar' })
   status: SubscriptionPaymentStatus;
 

@@ -31,7 +31,7 @@ export interface ISubscriptionPaymentCreate {
 export interface ISubscriptionPaymentUpdate {
   id: string;
   subscriptionId?: string;
-  status?: ISubscriptionPayment['status'];
+  status?: string;
   paymentDate?: ISubscriptionPayment['paymentDate'];
   periodStartDate?: ISubscriptionPayment['periodStartDate'];
   periodEndDate?: ISubscriptionPayment['periodEndDate'];
