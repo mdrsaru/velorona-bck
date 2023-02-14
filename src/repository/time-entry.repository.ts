@@ -595,12 +595,14 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
         COALESCE(up.${userPayRate.invoice_rate}, 0) as "hourlyRate",
         COALESCE(SUM(t.${timeEntry.duration}), 0) AS "totalDuration",
         ROUND(COALESCE((SUM(t.${timeEntry.duration})::numeric / 3600), 0), 2) AS "totalHours",
-        ROUND(COALESCE(((SUM(t.${timeEntry.duration})::numeric / 3600) * up.${userPayRate.invoice_rate}), 0), 2) AS "totalExpense" 
+        ROUND(COALESCE(((SUM(t.${timeEntry.duration})::numeric / 3600) * up.${userPayRate.invoice_rate}), 0), 2) AS "totalExpense" ,
+        string_agg(distinct p.${projects.name}::text, ' , ') as "projectName"
         FROM ${entities.timeEntry} as t 
         JOIN ${entities.projects} as p on t.${timeEntry.project_id} = p.id
         LEFT JOIN ${entities.userPayRate} up ON t.project_id = up.project_id AND t.created_by = up.user_id
-        WHERE t.approval_status = 'Approved'
-        AND t.timesheet_id IS NOT NULL
+        WHERE 
+       
+         t.timesheet_id IS NOT NULL
         AND t.${timeEntry.start_time} >= $1
         AND t.${timeEntry.start_time} <= $2
         AND t.${timeEntry.company_id} = $3
@@ -610,7 +612,8 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
         `,
         [startTime, endTime, company_id, user_id, client_id]
       );
-
+      //  If approved status
+      // WHERE t.approval_status = 'Approved'
       const items = queryResult?.map((item: any) => {
         return {
           ...item,

@@ -251,7 +251,7 @@ export class TimesheetResolver {
   }
 
   @FieldResolver()
-  projectItems(@Root() root: Timesheet, @Ctx() ctx: IGraphqlContext) {
+  async projectItems(@Root() root: Timesheet, @Ctx() ctx: IGraphqlContext) {
     const operation = 'projectItems';
 
     try {
@@ -265,13 +265,14 @@ export class TimesheetResolver {
       const company_id = root.company_id;
       const user_id = root.user_id;
 
-      return this.timeEntryRepository.getProjectItems({
+      const timeEntries = await this.timeEntryRepository.getProjectItems({
         client_id,
         company_id,
         startTime,
         endTime,
         user_id,
       });
+      return timeEntries;
     } catch (err) {
       this.errorService.throwError({
         err,
@@ -330,7 +331,7 @@ export class TimesheetResolver {
       const company_id = root.company_id;
       const user_id = root.user_id;
 
-      const entries = this.timeEntryRepository.getWeeklyDetails({
+      const entries = await this.timeEntryRepository.getWeeklyDetails({
         timesheet_id: root.id,
         startTime,
         endTime,

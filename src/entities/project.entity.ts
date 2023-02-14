@@ -200,6 +200,9 @@ export class ProjectItem {
   @Field()
   project_id: string;
 
+  @Field({ nullable: true })
+  projectName: string;
+
   @Field({ description: 'Total duration in hours' })
   totalHours: number;
 
