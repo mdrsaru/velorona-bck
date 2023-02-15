@@ -279,6 +279,9 @@ export class TimesheetQuery {
 
   @Field({ nullable: true })
   weekEndDate: string;
+
+  @Field({ nullable: true })
+  approver_id: string;
 }
 
 @InputType()
