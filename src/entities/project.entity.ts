@@ -214,6 +214,9 @@ export class ProjectItem {
 
   @Field()
   totalExpense: number;
+
+  @Field({ nullable: true })
+  timesheet_id?: string;
 }
 
 @InputType({ description: 'Input for fetching project items with total expense and duration' })

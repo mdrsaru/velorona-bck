@@ -53,6 +53,7 @@ export const timeEntry = {
 };
 
 export const timesheet = {
+  id: 'id',
   week_start_date: 'week_start_date',
   week_end_date: 'week_end_date',
   duration: 'duration',
