@@ -2,7 +2,7 @@ import { injectable, inject } from 'inversify';
 
 import strings from '../config/strings';
 import * as apiError from '../utils/api-error';
-import { InvoiceStatus, events } from '../config/constants';
+import { InvoiceStatus, events, TimesheetStatus } from '../config/constants';
 import Invoice from '../entities/invoice.entity';
 import Client from '../entities/client.entity';
 import InvoiceItem from '../entities/invoice-item.entity';
@@ -128,18 +128,31 @@ export default class InvoiceService implements IInvoiceService {
         attachments,
       });
 
-      if (invoice.timesheet_id) {
-        try {
-          await this.attachedTimesheetRepository.updateTimesheetAttachmentWithInvoice({
-            invoice_id: invoice.id,
-            timesheet_id: invoice.timesheet_id,
-          });
-        } catch (err) {
-          this.logger.error({
-            operation: 'create',
-            message: 'Error updating timesheet attachments with invoice',
-          });
-        }
+      const timesheets = await this.timesheetRepository.getAllAndCount({
+        query: {
+          weekStartDate: startDate,
+          weekEndDate: endDate,
+          user_id,
+          company_id,
+          client_id,
+          status: TimesheetStatus.Approved,
+        },
+      });
+
+      if (timesheets.rows.length) {
+        timesheets.rows.map(async (timesheet) => {
+          try {
+            await this.attachedTimesheetRepository.updateTimesheetAttachmentWithInvoice({
+              invoice_id: invoice.id,
+              timesheet_id: timesheet.id,
+            });
+          } catch (err) {
+            this.logger.error({
+              operation: 'create',
+              message: 'Error updating timesheet attachments with invoice',
+            });
+          }
+        });
       }
 
       if (invoice.status === InvoiceStatus.Sent) {

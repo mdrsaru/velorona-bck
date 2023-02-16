@@ -3,7 +3,7 @@ import { inject, injectable } from 'inversify';
 import { Arg, Ctx, Mutation, Query, Resolver, UseMiddleware, FieldResolver, Root } from 'type-graphql';
 
 import { TYPES } from '../../types';
-import { Role as RoleEnum, UserClientStatus } from '../../config/constants';
+import { Role as RoleEnum, TimeEntryApprovalStatus, UserClientStatus } from '../../config/constants';
 import { checkRoles } from '../../utils/roles';
 import Paging from '../../utils/paging';
 import authenticate from '../middlewares/authenticate';
@@ -101,6 +101,7 @@ export class ProjectResolver {
     const operation = 'ProjectItems';
 
     try {
+      args.status = TimeEntryApprovalStatus.Approved;
       let projectItems = await this.timeEntryRepository.getProjectItems(args);
 
       return projectItems;

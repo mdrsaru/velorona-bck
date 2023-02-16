@@ -588,9 +588,12 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
       const company_id = args.company_id;
       const user_id = args.user_id;
       const client_id = args.client_id;
+      const status = args.status;
 
-      const queryResult = await this.manager.query(
-        `
+      let queryResult;
+      if (status) {
+        queryResult = await this.manager.query(
+          `
         SELECT t.${timeEntry.project_id},ts.${timesheet.id} as "timesheet_id",
         COALESCE(up.${userPayRate.amount}, 0) as "hourlyRate",
         COALESCE(SUM(t.${timeEntry.duration}), 0) AS "totalDuration",
@@ -609,10 +612,37 @@ export default class TimeEntryRepository extends BaseRepository<TimeEntry> imple
         AND t.${timeEntry.company_id} = $3
         AND t.${timeEntry.created_by} = $4
         AND p.client_id = $5
+        AND t.${timeEntry.approval_status} =$6
         GROUP BY t.${timeEntry.project_id}, up.${userPayRate.amount},ts.${timesheet.id};
         `,
-        [startTime, endTime, company_id, user_id, client_id]
-      );
+          [startTime, endTime, company_id, user_id, client_id, status]
+        );
+      } else {
+        queryResult = await this.manager.query(
+          `
+          SELECT t.${timeEntry.project_id},ts.${timesheet.id} as "timesheet_id",
+          COALESCE(up.${userPayRate.amount}, 0) as "hourlyRate",
+          COALESCE(SUM(t.${timeEntry.duration}), 0) AS "totalDuration",
+          ROUND(COALESCE((SUM(t.${timeEntry.duration})::numeric / 3600), 0), 2) AS "totalHours",
+          ROUND(COALESCE(((SUM(t.${timeEntry.duration})::numeric / 3600) * up.${userPayRate.amount}), 0), 2) AS "totalExpense" ,
+          string_agg(distinct p.${projects.name}::text, ' , ') as "projectName"
+          FROM ${entities.timeEntry} as t
+          JOIN ${entities.timesheet} as ts on t.${timeEntry.timesheet_id} = ts.id
+          JOIN ${entities.projects} as p on t.${timeEntry.project_id} = p.id
+          LEFT JOIN ${entities.userPayRate} up ON t.project_id = up.project_id AND t.created_by = up.user_id
+          WHERE
+         
+           t.timesheet_id IS NOT NULL
+          AND t.${timeEntry.start_time} >= $1
+          AND t.${timeEntry.start_time} <= $2
+          AND t.${timeEntry.company_id} = $3
+          AND t.${timeEntry.created_by} = $4
+          AND p.client_id = $5
+          GROUP BY t.${timeEntry.project_id}, up.${userPayRate.amount},ts.${timesheet.id};
+          `,
+          [startTime, endTime, company_id, user_id, client_id]
+        );
+      }
       //  If approved status
       // WHERE t.approval_status = 'Approved'
       const items = queryResult?.map((item: any) => {

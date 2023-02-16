@@ -136,6 +136,7 @@ export interface IProjectItemInput {
   user_id: string;
   client_id: string;
   type?: string;
+  status?: string;
 }
 
 export interface IDurationMap {

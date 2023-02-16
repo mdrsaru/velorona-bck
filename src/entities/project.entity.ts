@@ -235,6 +235,9 @@ export class ProjectItemInput {
 
   @Field()
   client_id: string;
+
+  @Field({ nullable: true })
+  status: string;
 }
 
 @InputType()
