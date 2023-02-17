@@ -180,6 +180,11 @@ export enum UserClientStatus {
   Inactive = 'Inactive',
 }
 
+export enum UserProjectStatus {
+  Active = 'Active',
+  Inactive = 'Inactive',
+}
+
 export enum UserPayRateStatus {
   Active = 'Active',
   Inactive = 'Inactive',

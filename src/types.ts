@@ -16,6 +16,7 @@ const COMMON = {
   AddressRepository: Symbol('AddressRepository'),
   HandlebarsService: Symbol('HandlebarsService'),
   UserClientRepository: Symbol('UserClientRepository'),
+  UserProjectRepository: Symbol('UserProjectRepository'),
   WebhookController: Symbol('WebhookController'),
   WebhookService: Symbol('WebhookService'),
   AWSController: Symbol('AWSController'),
@@ -189,6 +190,12 @@ const BLOCKED_EMAILS = {
   BlockedEmailsRepository: Symbol('BlockedEmailRepository'),
 };
 
+const USERPROJECT = {
+  UserProjectRepository: Symbol('UserProjectRepository'),
+  UserProjectService: Symbol('UserProjectService'),
+  UserProjectResolver: Symbol('UserProjectResolver'),
+};
+
 const TYPES = {
   ...COMMON,
   ...COMPANY,
@@ -220,6 +227,7 @@ const TYPES = {
   ...BREAK_TIME,
   ...CURRENCY,
   ...BLOCKED_EMAILS,
+  ...USERPROJECT,
 };
 
 export { TYPES };

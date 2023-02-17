@@ -46,6 +46,7 @@ import breakTime from './config/inversify/break-time';
 import currency from './config/inversify/currency';
 import contactUs from './config/inversify/contact-us';
 import blockedEmails from './config/inversify/blocked-emails';
+import userProject from './config/inversify/user-project';
 
 const container = new Container({ skipBaseClassChecks: true });
 
@@ -94,6 +95,7 @@ container.load(
   aws,
   blockedEmails,
   upload,
+  userProject,
 );
 
 export default container;

@@ -26,6 +26,7 @@ import { InvoicePaymentConfigResolver } from './resolvers/invoice-payment-config
 import { DemoRequestResolver } from './resolvers/demo-request.resolver';
 import { CurrencyResolver } from './resolvers/currency';
 import { ContactUsResolver } from './resolvers/contact-us.resolver';
+import { UserProjectResolver } from './resolvers/user-project.resolver';
 
 export default buildSchema({
   container,
@@ -57,5 +58,6 @@ export default buildSchema({
     DemoRequestResolver,
     CurrencyResolver,
     ContactUsResolver,
+    UserProjectResolver,
   ],
 });

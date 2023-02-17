@@ -90,6 +90,7 @@ export default class UserClientRepository extends BaseRepository<UserClient> imp
       ur.amount as "userRate",
       ur.invoice_rate as "invoiceRate" ,
       ur.id as "userPayRateId",
+      up.status "userProjectStatus",
       ur.user_rate_currency_id as "userRateCurrency",
       ur.invoice_rate_currency_id as "invoiceRateCurrency"
       from ${entities.clients} as c 

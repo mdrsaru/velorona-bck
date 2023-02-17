@@ -143,4 +143,7 @@ export class UserClientDetail {
 
   @Field({ nullable: true })
   userRateCurrency: string;
+
+  @Field({ nullable: true })
+  userProjectStatus: string;
 }

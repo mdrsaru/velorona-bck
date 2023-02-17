@@ -73,6 +73,11 @@ export const usersClients = {
   client_id: 'client_id',
 };
 
+export const usersProjects = {
+  user_id: 'user_id',
+  project_id: 'project_id',
+};
+
 export const invoices = {
   verified: 'verified',
   sent_as_email: 'sent_as_email',
