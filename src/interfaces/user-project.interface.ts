@@ -8,6 +8,12 @@ export interface IUserProjectCreate {
   user_id: string;
 }
 
+export interface IUserProjectQueryInput {
+  user_id: string;
+  project_id?: string;
+  client_id: string;
+}
+
 export interface IUserProjectMakeInactive {
   user_id: string;
 }
@@ -20,6 +26,7 @@ export interface IUserProjectChangeStatus {
 export interface IUserProjectService {
   getAllAndCount(args: IPagingArgs): Promise<IPaginationData<UserProject>>;
   changeStatus(args: IUserProjectChangeStatus): Promise<UserProject>;
+  getDetails(args: IUserProjectQueryInput): Promise<any>;
 }
 
 export interface IUserProjectRepository {
@@ -27,5 +34,6 @@ export interface IUserProjectRepository {
   getAllAndCount(args: IPagingArgs): Promise<IGetAllAndCountResult<UserProject>>;
   getSingleEntity(args: ISingleEntityQuery): Promise<UserProject | undefined>;
   update(args: IUserProjectChangeStatus): Promise<UserProject>;
+  getDetails(args: IUserProjectQueryInput): Promise<any>;
   changeStatusToInactive(args: IUserProjectMakeInactive): Promise<User>;
 }

@@ -6,6 +6,7 @@ import { IProjectRepository } from '../interfaces/project.interface';
 import { IUserClientService } from '../interfaces/user-client.interface';
 import {
   IUserProjectChangeStatus,
+  IUserProjectQueryInput,
   IUserProjectRepository,
   IUserProjectService,
 } from '../interfaces/user-project.interface';
@@ -48,6 +49,15 @@ export default class UserProjectService implements IUserProjectService {
         paging,
         data: rows,
       };
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  getDetails = async (args: IUserProjectQueryInput): Promise<any> => {
+    try {
+      const userProject = await this.userProjectRepository.getDetails(args);
+      return userProject;
     } catch (err) {
       throw err;
     }

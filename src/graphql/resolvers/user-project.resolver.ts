@@ -1,9 +1,17 @@
 import { inject, injectable } from 'inversify';
-import { Resolver, Mutation, UseMiddleware, Arg } from 'type-graphql';
+import { Resolver, Mutation, UseMiddleware, Arg, Ctx, Query } from 'type-graphql';
 
 import { Role as RoleEnum } from '../../config/constants';
 
-import UserProject, { UserProjectChangeStatusInput } from '../../entities/user-project.entity';
+import UserProject, {
+  UserProjectChangeStatusInput,
+  UserProjectDetail,
+  UserProjectPagingResult,
+  UserProjectQueryInput,
+} from '../../entities/user-project.entity';
+import { IErrorService } from '../../interfaces/common.interface';
+import { IGraphqlContext } from '../../interfaces/graphql.interface';
+import { IPaginationData } from '../../interfaces/paging.interface';
 import { IUserProjectService } from '../../interfaces/user-project.interface';
 import { TYPES } from '../../types';
 import authenticate from '../middlewares/authenticate';
@@ -15,9 +23,40 @@ import { checkCompanyAccess } from '../middlewares/company';
 export class UserProjectResolver {
   private name = 'UserProjectResolver';
   private userProjectService: IUserProjectService;
+  private errorService: IErrorService;
 
-  constructor(@inject(TYPES.UserProjectService) userProjectService: IUserProjectService) {
+  constructor(
+    @inject(TYPES.UserProjectService) userProjectService: IUserProjectService,
+    @inject(TYPES.ErrorService) errorService: IErrorService
+  ) {
     this.userProjectService = userProjectService;
+    this.errorService = errorService;
+  }
+
+  @Query((returns) => [UserProjectDetail])
+  @UseMiddleware(authenticate)
+  async UserProjectDetail(
+    @Arg('input') args: UserProjectQueryInput,
+    @Ctx() ctx: IGraphqlContext
+  ): Promise<UserProjectDetail[]> {
+    const operation = 'UserProject';
+
+    const user_id = args.query.user_id;
+    const client_id = args.query.client_id;
+    try {
+      let result: any = await this.userProjectService.getDetails({
+        user_id,
+        client_id,
+      });
+      return result;
+    } catch (err) {
+      this.errorService.throwError({
+        err,
+        name: this.name,
+        operation,
+        logError: true,
+      });
+    }
   }
 
   @Mutation((returns) => UserProject, { description: 'Associate user with project' })
