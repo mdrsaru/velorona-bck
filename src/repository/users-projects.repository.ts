@@ -81,7 +81,7 @@ export default class UserProjectRepository extends BaseRepository<UserProject> i
       const queryResult = await this.manager.query(
         `
         Select 
-        p.id as "projectId",
+        distinct p.id as "projectId",
         p.name as "projectName",
         up.user_id,
         uc.status as "userClientStatus",
