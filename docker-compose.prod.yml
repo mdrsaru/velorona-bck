@@ -10,3 +10,5 @@ services:
     volumes:
       - /app/node_modules
       - /app/build
+    network_mode: 'host'
+    restart: always
