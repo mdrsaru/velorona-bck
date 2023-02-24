@@ -3,7 +3,7 @@ import fs from 'fs/promises';
 
 import { timesheetEmitter } from './emitters';
 import { TYPES } from '../types';
-import {
+import constants, {
   events,
   TimesheetStatus,
   TimeEntryApprovalStatus,
@@ -207,6 +207,7 @@ timesheetEmitter.on(events.onTimeEntriesApprove, async (args: TimesheetApprove) 
         companyName: timesheet?.company?.name ?? '',
         reason: args?.reason,
         needReason: timesheet?.status === TimesheetStatus.Rejected && args.reason,
+        marketingUrl: constants.marketingEndUrl,
       },
     });
 
@@ -224,6 +225,7 @@ timesheetEmitter.on(events.onTimeEntriesApprove, async (args: TimesheetApprove) 
         companyName: timesheet?.company?.name ?? '',
         reason: args?.reason,
         needReason: timesheet?.status === TimesheetStatus.Rejected && args.reason,
+        marketingUrl: constants.marketingEndUrl,
       },
     });
 
@@ -361,6 +363,7 @@ timesheetEmitter.on(events.sendTimesheetSubmitEmail, async (args: TimesheetSubmi
         companyName: timesheet?.company?.name ?? '',
         weekStartDate: moment(timesheet?.weekStartDate).format('MM-DD-YYYY'),
         weekEndDate: moment(timesheet?.weekEndDate).format('MM-DD-YYYY'),
+        marketingUrl: constants.marketingEndUrl,
       },
     });
 
@@ -372,6 +375,7 @@ timesheetEmitter.on(events.sendTimesheetSubmitEmail, async (args: TimesheetSubmi
         hasLogo: hasLogo,
         companyName: timesheet?.company?.name ?? '',
         name: `${timesheet.user.firstName} ${timesheet.user.lastName} `,
+        marketingUrl: constants.marketingEndUrl,
       },
     });
 
@@ -495,6 +499,7 @@ timesheetEmitter.on(events.onTimesheetSubmitReminder, async (args: TimesheetRemi
         weekStartDate: moment(timesheet.weekStartDate).format('MMM DD,YYYY'),
         weekEndDate: moment(timesheet.weekEndDate).format('MMM DD,YYYY'),
         user: timesheet?.user?.firstName,
+        marketingUrl: constants.marketingEndUrl,
       },
     });
 
@@ -605,6 +610,7 @@ timesheetEmitter.on(events.onTimesheetApproveReminder, async (args: TimesheetRem
         weekEndDate: moment(timesheet.weekEndDate).format('MMM DD,YYYY'),
         user: names.join(' '),
         manager: timesheet.user?.manager?.firstName,
+        marketingUrl: constants.marketingEndUrl,
       },
     });
 

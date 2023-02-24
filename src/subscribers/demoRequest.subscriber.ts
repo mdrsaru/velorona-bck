@@ -51,6 +51,7 @@ demoRequestEmitter.on(events.onDemoRequestCreate, async (args: CreateDemoRequest
         phone,
         companyName,
         jobTitle,
+        marketingUrl: constants.marketingEndUrl,
       },
     });
 
@@ -107,6 +108,7 @@ demoRequestEmitter.on(events.onDemoRequestCreate, async (args: CreateDemoRequest
       template: userEmailTemplate,
       data: {
         fullName,
+        marketingUrl: constants.marketingEndUrl,
       },
     });
 

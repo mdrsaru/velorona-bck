@@ -3,7 +3,7 @@ import moment from 'moment';
 
 import fs from 'fs/promises';
 
-import { CompanyStatus, emailSetting, events } from '../config/constants';
+import constants, { CompanyStatus, emailSetting, events } from '../config/constants';
 import { IEmailBasicArgs, IEmailService, ILogger, ITemplateService } from '../interfaces/common.interface';
 import container from '../inversify.config';
 import { TYPES } from '../types';
@@ -63,6 +63,7 @@ subscriptionEmitter.on(events.onSubscriptionCharged, async (args: CreateCompanyS
         amount: args.response?.amount_captured,
         paymentIntent: args.response?.id,
         invoiceNumber: args.response?.invoice,
+        marketingUrl: constants.marketingEndUrl,
       },
     });
 
@@ -183,6 +184,7 @@ subscriptionEmitter.on(events.onSubscriptionUpdate, async (args: UpdateCompanySu
         companyName: user?.company?.name ?? '',
         plan: user?.company?.plan,
         companyEmail: user?.company?.adminEmail,
+        marketingUrl: constants.marketingEndUrl,
       },
     });
 
@@ -288,6 +290,7 @@ subscriptionEmitter.on(events.onInvoiceFinalized, async (args: InvoiceFinalized)
         invoiceNumber,
         amount,
         companyName: user?.company?.name ?? '',
+        marketingUrl: constants.marketingEndUrl,
       },
     });
 
@@ -386,6 +389,7 @@ subscriptionEmitter.on(events.onClientInvoiceReminder, async (args: ClientInvoic
         companyAdminEmail,
         hasLogo: hasLogo,
         companyName: companyName ?? '',
+        marketingUrl: constants.marketingEndUrl,
       },
     });
 
@@ -470,6 +474,7 @@ subscriptionEmitter.on(events.onPaymentDeclined, async (args: PaymentDeclined) =
         cardNumber: args.response?.payment_method_details.card.last4,
         createdAt: args.response?.created,
         amount: args.response?.amount_captured,
+        marketingUrl: constants.marketingEndUrl,
       },
     });
 
@@ -557,6 +562,7 @@ subscriptionEmitter.on(events.onAutoPayEnrolled, async (args: AutoPayEnrolled) =
         hasLogo: hasLogo,
         companyName: companyName ?? '',
         nextScheduledDate: args.response.cancel_at && moment.unix(args.response.cancel_at).format('MM-DD-YYYY'),
+        marketingUrl: constants.marketingEndUrl,
       },
     });
 

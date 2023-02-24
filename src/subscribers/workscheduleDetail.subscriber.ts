@@ -64,6 +64,7 @@ workscheduleDetailEmitter.on(events.onWorkscheduleDetailCreate, async (args: Cre
         endTime: moment(args.endTime).format('HH:mm'),
         scheduleDate: moment(workscheduleDetail?.schedule_date).format('MM-DD-YYYY'),
         totalHours: totalHours + 'hrs',
+        marketingUrl: constants.marketingEndUrl,
       },
     });
 

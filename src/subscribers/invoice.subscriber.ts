@@ -5,7 +5,7 @@ import axios from 'axios';
 import InvoiceItem from '../entities/invoice-item.entity';
 import Client from '../entities/client.entity';
 import { invoiceEmitter } from './emitters';
-import { ClientStatus, CompanyStatus, emailSetting, events } from '../config/constants';
+import constants, { ClientStatus, CompanyStatus, emailSetting, events } from '../config/constants';
 import { TYPES } from '../types';
 import container from '../inversify.config';
 import Company from '../entities/company.entity';
@@ -110,6 +110,7 @@ invoiceEmitter.on(events.sendInvoice, async (data: any) => {
         companyName: client?.company?.name ?? '',
         startDate: invoice.startDate,
         endDate: invoice.endDate,
+        marketingUrl: constants.marketingEndUrl,
       },
     });
 

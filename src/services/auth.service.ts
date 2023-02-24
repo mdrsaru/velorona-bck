@@ -323,6 +323,7 @@ export default class AuthService implements IAuthService {
           hasLogo: hasLogo,
           companyName: user?.company?.name ?? 'Velorona',
           fullName: user?.fullName ?? '',
+          marketingUrl: constants.marketingEndUrl,
         },
       });
 

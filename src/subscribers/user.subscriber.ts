@@ -62,6 +62,7 @@ userEmitter.on(events.onUserCreate, async (data: any) => {
       hasLogo: hasLogo,
       companyName: company?.name ?? '',
       superAdmin: superAdmin,
+      marketingUrl: constants.marketingEndUrl,
     },
   });
 
@@ -169,6 +170,7 @@ userEmitter.on(events.onApproverAdded, async (data: ApproverCreate) => {
       manager: `${data?.user?.firstName} ${data?.user?.lastName}`,
       hasLogo: hasLogo,
       companyName: company?.name ?? '',
+      marketingUrl: constants.marketingEndUrl,
     },
   });
 

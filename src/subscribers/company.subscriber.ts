@@ -147,6 +147,7 @@ companyEmitter.on(events.onSubscriptionCreate, async (args: CreateCompanySubscri
       companyEmail: company?.adminEmail,
       endDate: company?.trialEndDate !== null ? moment(company?.trialEndDate).format('MM-DD-YYYY') : threeMonths,
       planName: company?.plan,
+      marketingUrl: constants.marketingEndUrl,
     },
   });
 
@@ -244,6 +245,7 @@ companyEmitter.on(events.onSubscriptionEndReminder, async (args: SubscriptionEnd
         number,
         renewLink,
         autoPayLink,
+        marketingUrl: constants.marketingEndUrl,
       },
     });
 
@@ -331,6 +333,7 @@ companyEmitter.on(events.onCompanyRegistered, async (args: CompanyRegisteredUsag
       data: {
         name,
         email,
+        marketingUrl: constants.marketingEndUrl,
       },
     });
 
@@ -425,6 +428,7 @@ companyEmitter.on(events.onCompanyApproved, async (args: SubscriptionEndReminder
         companyName: company?.name ?? '',
         user: company?.name,
         date: moment(args.date).format('YYYY-MM-DD'),
+        marketingUrl: constants.marketingEndUrl,
       },
     });
 

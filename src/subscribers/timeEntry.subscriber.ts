@@ -2,7 +2,7 @@ import fs from 'fs/promises';
 
 import { timesheetEmitter, timeEntryEmitter } from './emitters';
 import { TYPES } from '../types';
-import { CompanyStatus, events, UserStatus } from '../config/constants';
+import constants, { CompanyStatus, events, UserStatus } from '../config/constants';
 import container from '../inversify.config';
 
 import { emailSetting } from '../config/constants';
@@ -240,6 +240,7 @@ timeEntryEmitter.on(events.onTimesheetUnlock, async (args: TimesheetUnlock) => {
         manager: timesheet.user?.manager?.firstName,
         hasLogo: hasLogo,
         companyName: timesheet?.company?.name ?? '',
+        marketingUrl: constants.marketingEndUrl,
       },
     });
 
@@ -251,6 +252,7 @@ timeEntryEmitter.on(events.onTimesheetUnlock, async (args: TimesheetUnlock) => {
         user: timesheet?.user?.firstName,
         hasLogo: hasLogo,
         companyName: timesheet?.company?.name ?? '',
+        marketingUrl: constants.marketingEndUrl,
       },
     });
 

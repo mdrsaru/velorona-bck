@@ -11,7 +11,7 @@ import {
 } from '../../interfaces/common.interface';
 import { TYPES } from '../../types';
 import { ContactUsInput } from '../../entities/contact-us.entity';
-import { emailSetting, Role } from '../../config/constants';
+import constants, { emailSetting, Role } from '../../config/constants';
 import { IUserRepository } from '../../interfaces/user.interface';
 
 @injectable()
@@ -60,6 +60,7 @@ export class ContactUsResolver {
           email,
           contact,
           message,
+          marketingUrl: constants.marketingEndUrl,
         },
       });
 
@@ -123,6 +124,7 @@ export class ContactUsResolver {
         template: userEmailTemplate,
         data: {
           user: userName,
+          marketingUrl: constants.marketingEndUrl,
         },
       });
 

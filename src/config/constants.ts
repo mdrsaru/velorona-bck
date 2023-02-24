@@ -373,6 +373,7 @@ export default {
   port: process.env.PORT,
   baseUrl: process.env.BASE_URL,
   frontEndUrl: process.env.FRONT_END_URL,
+  marketingEndUrl: process.env.MARKETING_END_URL,
   appName: process.env.APP_NAME || 'Vellorum_API',
   refreshTokenCookieName: process.env.REFRESH_TOKEN_COOKIE_NAME || 'refreshToken',
   saltRounds: process.env.SALT_ROUNDS || 10,
