@@ -404,6 +404,109 @@ companyEmitter.on(events.onCompanyRegistered, async (args: CompanyRegisteredUsag
   }
 });
 
+/*
+ * On company create
+ * Send email
+ */
+companyEmitter.on(events.onCompanyCreate, async (data: any) => {
+  const operation = events.onCompanyCreate;
+
+  const logger = container.get<ILogger>(TYPES.Logger);
+  logger.init('user.subscriber');
+
+  const emailService: IEmailService = container.get<IEmailService>(TYPES.EmailService);
+  const companyRepository: ICompanyRepository = container.get<ICompanyRepository>(TYPES.CompanyRepository);
+  const handlebarsService: ITemplateService = container.get<ITemplateService>(TYPES.HandlebarsService);
+
+  let emailBody: string = emailSetting.newUser.adminBody;
+  let company: Company | undefined;
+
+  console.log(data, 'data');
+  if (!data?.user?.email) {
+    return logger.info({
+      operation,
+      message: `User Email not found for sending onCompanyCreate email`,
+      data: {},
+    });
+  }
+
+  if (data?.company_id) {
+    emailBody = emailSetting.newUser.companyBody;
+    company = await companyRepository.getById({
+      id: data.company_id,
+      relations: ['logo'],
+    });
+  }
+
+  let superAdmin = false;
+  if (data?.user.roles?.[0]?.name === Role.SuperAdmin) {
+    superAdmin = true;
+  }
+  const hasLogo = !!company?.logo_id;
+
+  let emailTemplate = await fs.readFile(`${__dirname}/../../templates/new-company.template.html`, {
+    encoding: 'utf-8',
+  });
+  const userHtml = handlebarsService.compile({
+    template: emailTemplate,
+    data: {
+      fullName: data?.user?.firstName ?? 'User!',
+      companyCode: company?.companyCode ?? '',
+      password: data?.password,
+      link: `${constants.frontEndUrl}/login`,
+      email: data?.user?.email,
+      hasLogo: hasLogo,
+      companyName: company?.name ?? '',
+      superAdmin: superAdmin,
+      marketingUrl: constants.marketingEndUrl,
+    },
+  });
+
+  const subject = handlebarsService.compile({
+    template: emailSetting.newUser.subject,
+    data: {
+      companyName: `${company?.name ?? 'Velorona'}`,
+    },
+  });
+
+  const obj: IEmailBasicArgs = {
+    to: data.user.email,
+    from: `Velorona ${emailSetting.fromEmail}`,
+    subject: subject,
+    html: userHtml,
+  };
+
+  const logo = await fs.readFile(`${__dirname}/../../public/logo.png`, { encoding: 'base64' });
+
+  obj.attachments = [
+    {
+      content: logo,
+      filename: 'logo.png',
+      cid: 'logo',
+      contentDisposition: 'inline',
+      encoding: 'base64',
+      contentType: 'image/png',
+    },
+  ];
+
+  emailService
+    .sendEmail(obj)
+    .then((response) => {
+      logger.info({
+        operation,
+        message: `Email response for ${data?.user?.email}`,
+        data: response,
+      });
+    })
+    .catch((err) => {
+      logger.error({
+        operation,
+        message: 'Error sending company create email',
+        data: err,
+      });
+    });
+});
+
 companyEmitter.on(events.onCompanyApproved, async (args: SubscriptionEndReminderUsage) => {
   const operation = events.onCompanyApproved;
 

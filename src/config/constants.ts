@@ -330,6 +330,7 @@ export const events = {
   onClientInvoiceReminder: 'onClientInvoiceReminder',
   onPaymentDeclined: 'onPaymentDeclined',
   onAutoPayEnrolled: 'onAutoPayEnrolled',
+  onCompanyCreate: 'onCompanyCreate',
 };
 
 export const stripeSetting = {

@@ -99,7 +99,7 @@ export default class CompanyService implements ICompanyService {
       }
 
       // Emit event for onUserCreate
-      userEmitter.emit(events.onUserCreate, {
+      companyEmitter.emit(events.onCompanyCreate, {
         company_id: result.company?.id,
         user: result.user,
         password,

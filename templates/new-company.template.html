@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "w3.org/TR/REC-html40/loose.dtd">
+<html xmlns="w3.org/1999/xhtml">
+  <head>
+    <title></title>
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <style scoped>
+      .container {
+        text-align: center;
+        padding: 2rem;
+      }
+
+      .container-outer-body {
+        margin-top: 20px;
+        margin-left: auto;
+        margin-right: auto;
+        min-width: 450px;
+        max-width: 900px;
+      }
+      .container-body {
+        justify-content: center;
+        font-size: 18px;
+        background: white;
+        padding: 3rem;
+      }
+
+      .logo-img {
+        width: 150px;
+        height: 150px;
+      }
+    </style>
+  </head>
+  <body style="background-color: #ebecf7">
+    <div class="container">
+      <img src="cid:logo" alt="Velorona" class="logo-img" />
+    </div>
+    <div class="container-outer-body">
+      <div class="container-body">
+        <h1>Welcome {{fullName}}</h1>
+        <p>Thank you for registering with us.Here is the confirmation email.</p>
+        <p>
+          To log on to {{#if companyName}} {{companyName}}, {{else}} Velorona, {{/if}} visit the link
+          <a href="{{link}}" target="_blank">{{link}}</a>
+          and enter your credentials.
+        </p>
+        <p>Here's the login information:</p>
+        {{#if companyName}}
+        <p><b>Company Code:</b> {{companyCode}}</p>
+        {{/if}}
+
+        <p><b>Email:</b> {{email}}</p>
+        <p><b>Password:</b> {{password}}</p>
+        <!-- <p>If you would like to change the assigned password, please follow the steps below:</p>
+        <ul>
+          <li>Log in and click on the profile in the top-right corner of the web page.</li>
+          <li>Click the Change Password button in the bottom of the page.</li>
+          <li>Follow the prompts to enter the old and new passwords.</li>
+          <li>And then click the Change Password button.</li>
+        </ul> -->
+        <p>If you have any questions, please contact your office for assistance.</p>
+        <p>Please do not reply to this email, this email box is not monitored.</p>
+
+        <p>Thanks,</p>
+        <p>Velorona</p>
+      </div>
+    </div>
+    <div class="container">
+      <ul type="none">
+        <li>&#169; All rights reserved</li>
+        <li><a href="{{marketingUrl}}">Velorona</a></li>
+
+        <li>1001 W Euless Blvd, Euless, TX 76040, USA</li>
+        <li>contact@velorona.com</li>
+      </ul>
+    </div>
+  </body>
+</html>
