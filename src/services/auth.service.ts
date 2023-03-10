@@ -236,7 +236,10 @@ export default class AuthService implements IAuthService {
       const user_id = args.user_id;
       const company_id = args.company_id;
 
-      let user = await this.userRepository.getById({ id: user_id });
+      let user = await this.userRepository.getById({
+        id: user_id,
+        relations: ['roles'],
+      });
 
       if (user?.loggedIn) {
         throw new apiError.ConflictError({ details: ['User has already logged in'] });
